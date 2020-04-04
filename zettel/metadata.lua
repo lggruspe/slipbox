@@ -28,13 +28,10 @@ function M.get_date(m)
 end
 
 function M.get_keywords(m)
-    local keywords = {}
-    if m.keywords then
-        for _, kw in pairs(m.keywords[1].content) do
-            if kw.text then table.insert(keywords, kw.text) end
-        end
+    if not m.keywords then
+        return nil
     end
-    return keywords
+    return pandoc.utils.stringify(m.keywords)
 end
 
 return M
