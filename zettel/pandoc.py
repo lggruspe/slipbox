@@ -10,6 +10,15 @@ def lua_filter(*args):
         option += f"--lua-filter=filters/{arg} "
     return option
 
+def pandoc_filter(*args):
+    option = ""
+    for arg in args:
+        option += f"--filter={arg} "
+    return option
+
+def bibliography(filename):
+    return f"--bibliography={filename}"
+
 def pandoc(*args):
     cmd = ["pandoc"]
     for arg in args:
