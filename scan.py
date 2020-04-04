@@ -55,7 +55,7 @@ def main():
     for note in glob.iglob("**/*.md", recursive=True):
         filename = os.path.abspath(note)
         meta = metadata(filename=filename, port=port)
-        cmd = pandoc(meta, lua_filter("prepare.lua"), filename)
+        cmd = pandoc(meta, lua_filter("title.lua", "prepare.lua"), filename)
         tasks.append(sp.Popen(cmd, stdout=sp.DEVNULL, cwd=os.path.dirname(__file__)))
     for task in tasks:
         task.wait()
