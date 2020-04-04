@@ -15,8 +15,11 @@ def main():
         meta = metadata(filename=filename, database=abspath(Config.database))
         html = re.sub("(.*).md", r"\1.html", filename)
         cmd = pandoc("-s -c basic.css", meta,
-               lua_filter("title.lua", "back-links.lua", "html-links.lua", "tags.lua"),
-               filename, "-o", html)
+                lua_filter("title.lua", "back-links.lua", "html-links.lua",
+                    "tags.lua", "refs.lua"),
+                bibliography(abspath("zettel.bib")),
+                pandoc_filter("pandoc-citeproc"),
+                filename, "-o", html)
         tasks.append(sp.Popen(cmd, stdout=sp.DEVNULL, cwd=dirname(__file__)))
     for task in tasks:
         status = task.wait()

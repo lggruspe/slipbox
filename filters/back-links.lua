@@ -18,8 +18,10 @@ function Pandoc(doc)
         table.insert(blocklists, {block})
     end
 
+    table.insert(doc.blocks, pandoc.HorizontalRule())
+
     if next(blocklists) then
-        table.insert(doc.blocks, pandoc.Header(1, pandoc.Str "See also"))
+        table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
         table.insert(doc.blocks, pandoc.BulletList(blocklists))
     end
     db:close()
