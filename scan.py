@@ -21,9 +21,7 @@ def init():
     cur.execute("""
         CREATE TABLE notes(
             filename TEXT PRIMARY KEY,
-            title TEXT,
-            author TEXT,
-            date TEXT
+            title TEXT
         );
     """)
 

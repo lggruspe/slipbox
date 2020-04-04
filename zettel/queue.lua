@@ -8,14 +8,10 @@ local function sqlite_string(s)
 end
 
 function M.add_note(note)
-    local sql = "INSERT INTO notes (filename, title, author, date) VALUES (@filename@, @title@, @author@, @date@)"
+    local sql = "INSERT INTO notes (filename, title) VALUES (@filename@, @title@)"
     local filename = sqlite_string(note.filename)
     local title = sqlite_string(note.title)
-    local author = sqlite_string(note.author)
-    local date = sqlite_string(note.date or os.date("%Y-%m-%d %H:%M:%S"))
-    sql = sql:gsub("@date@", date)
-        :gsub("@author@", author, 1)
-        :gsub("@title@", title, 1)
+    sql = sql:gsub("@title@", title, 1)
         :gsub("@filename@", filename, 1)
     return sql
 end

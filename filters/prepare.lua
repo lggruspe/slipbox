@@ -17,8 +17,6 @@ function Meta(m)
     local note_sql = queue.add_note {
         filename = filename,
         title = metadata.get_title(m),
-        author = metadata.get_author(m),
-        date = metadata.get_date(m),
     }
     queue.message(host, port, note_sql)
     links[""] = nil
