@@ -15,8 +15,8 @@ def main():
         meta = metadata(filename=filename, database=abspath(Config.database))
         html = re.sub("(.*).md", r"\1.html", filename)
         cmd = pandoc("-s -c basic.css", meta,
-               lua_filter("back-links.lua", "html-links.lua",
-                          "clean-meta.lua", "tags.lua", "filename.lua"),
+               lua_filter("back-links.lua", "html-links.lua", "tags.lua",
+                          "filename.lua"),
                filename, "-o", html)
         tasks.append(sp.Popen(cmd, stdout=sp.DEVNULL, cwd=dirname(__file__)))
     for task in tasks:
