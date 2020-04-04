@@ -6,11 +6,11 @@ local session = require "zettel.session"
 
 function Pandoc(doc)
     local db = sqlite3.open(doc.meta.database)
-    local note = session.first_note(db, "title", metadata.get_title(doc.meta)) or {}
-    assert(note.filename)
+    local filename = metadata.get_filename(doc.meta)
+    assert(filename)
     
     local blocklists = {}
-    for backlink in session.get_backlinks(db, note.filename) do
+    for backlink in session.get_backlinks(db, filename) do
         local link = backlink.filename
         local content = string.format("%s (%s)", backlink.title or "", link)
         local inline = pandoc.Link(pandoc.Str(content), link)
