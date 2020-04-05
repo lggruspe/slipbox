@@ -6,7 +6,9 @@ local queue = require "zettel.queue"
 local links = {}
 
 function Link(elem)
-    links[elem.target] = true
+    if elem.title ~= "" then
+        links[elem.target] = elem.title
+    end
 end
 
 function Meta(m)
@@ -19,10 +21,11 @@ function Meta(m)
     }
     queue.message(host, port, note_sql)
     links[""] = nil
-    for link in pairs(links) do
+    for link, title in pairs(links) do
         local link_sql = queue.add_link {
             src = filename,
             dest = link,
+            title = title,
         }
         queue.message(host, port, link_sql)
     end
