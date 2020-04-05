@@ -21,11 +21,11 @@ function Meta(m)
     }
     queue.message(host, port, note_sql)
     links[""] = nil
-    for link, title in pairs(links) do
+    for link, description in pairs(links) do
         local link_sql = queue.add_link {
             src = filename,
             dest = link,
-            title = title,
+            description = description,
         }
         queue.message(host, port, link_sql)
     end

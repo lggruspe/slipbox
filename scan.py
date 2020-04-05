@@ -29,7 +29,7 @@ def init():
         CREATE TABLE links(
             src TEXT,
             dest TEXT,
-            title TEXT,
+            description TEXT,
             FOREIGN KEY (src) REFERENCES notes(filename),
             PRIMARY KEY (src, dest)
         );

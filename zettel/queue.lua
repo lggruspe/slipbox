@@ -17,11 +17,11 @@ function M.add_note(note)
 end
 
 function M.add_link(link)
-    local sql = "INSERT INTO links (src, dest, title) VALUES " 
+    local sql = "INSERT INTO links (src, dest, description) VALUES " 
         .. string.format("(%s, %s, %s)",
             sqlite_string(link.src),
             sqlite_string(link.dest),
-            sqlite_string(link.title))
+            sqlite_string(link.description))
     return sql
 end
 

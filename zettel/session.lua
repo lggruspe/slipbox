@@ -44,7 +44,7 @@ end
 function M.get_links(db, filename)
     local stmt = db:prepare [[
         SELECT * FROM
-            (SELECT dest FROM links WHERE src = ?)
+            (SELECT * FROM links WHERE src = ?)
             JOIN notes ON dest = filename
     ]]
     stmt:bind_values(filename)
@@ -54,19 +54,11 @@ end
 function M.get_backlinks(db, filename)
     local stmt = db:prepare [[
         SELECT * FROM
-            (SELECT src FROM links WHERE dest = ?)
+            (SELECT * FROM links WHERE dest = ?)
             JOIN notes ON src = filename
     ]]
     stmt:bind_values(filename)
     return stmt:nrows()
-end
-
-function M.add_link(db, src, dest)
-    local stmt = db:prepare [[
-        INSERT INTO links (src, dest) VALUES (?, ?)
-    ]]
-    stmt:bind_values(src, dest)
-    return stmt:step()
 end
 
 local function params(m, n)
