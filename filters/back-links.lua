@@ -13,8 +13,11 @@ function Pandoc(doc)
     for backlink in session.get_backlinks(db, filename) do
         local link = backlink.filename
         local content = string.format("%s (%s)", backlink.title or "", link)
-        local inline = pandoc.Link(pandoc.Str(content), link)
-        local block = pandoc.Plain{inline}
+        local description = string.format(" - %s", backlink.description)
+        local block = pandoc.Plain {
+            pandoc.Link(pandoc.Str(content), link),
+            pandoc.Str(description),
+        }
         table.insert(blocklists, {block})
     end
 
