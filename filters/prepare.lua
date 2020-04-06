@@ -4,9 +4,14 @@ local metadata = require "zettel.metadata"
 local queue = require "zettel.queue"
 
 local links = {}
+local warnings = {}
 
 function Link(elem)
-    if elem.title ~= "" then
+    if elem.title == "" then
+        if elem.target ~= "" then
+            warnings["unannotated link"] = pandoc.utils.stringify(elem.content)
+        end
+    else
         links[elem.target] = elem.title
     end
 end
@@ -28,5 +33,9 @@ function Meta(m)
             description = description,
         }
         queue.message(host, port, link_sql)
+    end
+
+    for warning, context in pairs(warnings) do
+        io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, filename, context))
     end
 end
