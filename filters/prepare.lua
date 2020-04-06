@@ -2,6 +2,7 @@
 
 local metadata = require "zettel.metadata"
 local queue = require "zettel.queue"
+local request = require "zettel.request"
 
 local links = {}
 local warnings = {}
@@ -19,20 +20,14 @@ end
 function Meta(m)
     local host = "localhost"
     local port = m.port or 5000
+    local title = metadata.get_title(m)
     local filename = metadata.get_filename(m)
-    local note_sql = queue.add_note {
-        filename = filename,
-        title = metadata.get_title(m),
-    }
-    queue.message(host, port, note_sql)
+    local note_req = request.note(title, filename)
+    queue.message(host, port, note_req)
     links[""] = nil
     for link, description in pairs(links) do
-        local link_sql = queue.add_link {
-            src = filename,
-            dest = link,
-            description = description,
-        }
-        queue.message(host, port, link_sql)
+        local link_req = request.link(filename, link, description)
+        queue.message(host, port, link_req)
     end
 
     for warning, context in pairs(warnings) do

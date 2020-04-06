@@ -4,6 +4,7 @@ import glob
 import os
 import sqlite3
 import subprocess as sp
+import sys
 import threading
 
 from zettel import client, server
@@ -49,6 +50,11 @@ def init():
 def main():
     host = "localhost"
     port = 5000
+    try:
+        port = int(sys.argv[1])
+    except:
+        pass
+
     threading.Thread(target=server.main, args=(host, port)).start()
     init()
 

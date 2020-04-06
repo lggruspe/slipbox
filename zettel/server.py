@@ -1,9 +1,11 @@
+import json
 import socketserver
 import sqlite3
 import sys
 import threading
 
 from .config import Config
+from .request import to_sql
 
 class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -13,7 +15,12 @@ class RequestHandler(socketserver.BaseRequestHandler):
             process(self.server.queue)
             threading.Thread(target=self.server.shutdown).start()
         else:
-            self.server.queue.append(data)
+            try:
+                sql = to_sql(json.loads(data))
+                if sql:
+                    self.server.queue.append(sql)
+            except json.decoder.JSONDecodeError:
+                pass
 
 class Server(socketserver.TCPServer):
     queue = []
