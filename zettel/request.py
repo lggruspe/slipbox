@@ -43,3 +43,13 @@ def keyword(req):
     keyword = _get_str(req, "keyword")
     return (sql.replace("@keyword@", keyword, 1)
             .replace("@note@", note, 1))
+
+def to_sql(req):
+    t = req.get("type", "")
+    if t == "note":
+        return note(req)
+    elif t == "link":
+        return link(req)
+    elif t == "keyword":
+        return keyword(req)
+    return ""
