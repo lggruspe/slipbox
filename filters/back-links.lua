@@ -1,12 +1,21 @@
 -- add backlinks stored in sqlite3 database into document
 
 local sqlite3 = require "lsqlite3"
-local session = require "zettel.session"
+
+local function get_backlinks(db, filename)
+    local stmt = db:prepare [[
+        SELECT * FROM
+            (SELECT * FROM links WHERE dest = ?)
+            JOIN notes ON src = filename
+    ]]
+    stmt:bind_values(filename)
+    return stmt:nrows()
+end
 
 function Pandoc(doc)
     local db = sqlite3.open(doc.meta.database)
     local blocklists = {}
-    for backlink in session.get_backlinks(db, doc.meta.relpath) do
+    for backlink in get_backlinks(db, doc.meta.relpath) do
         local filename = backlink.filename
         local link = backlink.relative_backlink
         local content = string.format("%s (%s)", backlink.title or "", filename)
