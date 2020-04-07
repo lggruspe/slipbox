@@ -7,8 +7,9 @@ function Pandoc(doc)
     local db = sqlite3.open(doc.meta.database)
     local blocklists = {}
     for backlink in session.get_backlinks(db, doc.meta.relpath) do
-        local link = backlink.filename
-        local content = string.format("%s (%s)", backlink.title or "", link)
+        local filename = backlink.filename
+        local link = backlink.relative_backlink
+        local content = string.format("%s (%s)", backlink.title or "", filename)
         local description = string.format(" - %s", backlink.description)
         local block = pandoc.Plain {
             pandoc.Link(pandoc.Str(content), link),
