@@ -1,6 +1,6 @@
 import re
 
-from .filenames import fix_path
+from .filenames import fix_path, relative_backlink
 
 def _sqlite_str(s):
     if not s:
@@ -26,15 +26,17 @@ def note(req):
 
 def link(req):
     sql = """
-        INSERT INTO links (src, dest, description)
-            VALUES (@src@, @dest@, @description@)
+        INSERT INTO links (src, dest, description, relative_backlink)
+            VALUES (@src@, @dest@, @description@, @backlink@)
     """
     src = _get_data(req, "src")
     dest = fix_path(_get_data(req, "dest"), src)
     if not dest:
         return ""
     description = _get_str(req, "description")
-    return (sql.replace("@description@", description, 1)
+    backlink = _sqlite_str(relative_backlink(src, dest))
+    return (sql.replace("@backlink@", backlink, 1)
+            .replace("@description@", description, 1)
             .replace("@dest@", _sqlite_str(dest), 1)
             .replace("@src@", _sqlite_str(src), 1))
 
