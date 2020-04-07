@@ -3,7 +3,7 @@ pandoc.utils = require "pandoc.utils"
 local M = {}
 
 function M.get_filename(m)
-    return m.filename:gsub(".*/([^/]*).md", "%1.md")
+    return m.relpath:gsub(".*/([^/]*).md", "%1.md")
 end
 
 function M.get_author(m)

@@ -1,4 +1,5 @@
 pandoc.utils = require "pandoc.utils"
+local metadata = require "zettel.metadata"
 
 local title = nil
 
@@ -14,6 +15,6 @@ function Pandoc(doc)
     if not doc.meta.title then
         doc.meta.title = pandoc.MetaString(title or "")
     end
-    doc.meta.subtitle = pandoc.MetaString(doc.meta.filename)
+    doc.meta.subtitle = pandoc.MetaString(metadata.get_filename(doc.meta))
     return doc
 end
