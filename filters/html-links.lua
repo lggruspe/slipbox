@@ -1,5 +1,4 @@
 pandoc.utils = require "pandoc.utils"
-local metadata = require "zettel.metadata"
 
 local warnings = {}
 
@@ -14,8 +13,7 @@ function Link(elem)
 end
 
 function Meta(m)
-    local filename = metadata.get_filename(m)
     for warning, context in pairs(warnings) do
-        io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, filename, context))
+        io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, m.relpath, context))
     end
 end
