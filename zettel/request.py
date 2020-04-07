@@ -1,5 +1,7 @@
 import re
 
+from .filenames import fix_path
+
 def _sqlite_str(s):
     if not s:
         return "NULL"
@@ -27,12 +29,14 @@ def link(req):
         INSERT INTO links (src, dest, description)
             VALUES (@src@, @dest@, @description@)
     """
-    src = _get_str(req, "src")
-    dest = _get_str(req, "dest")
+    src = _get_data(req, "src")
+    dest = fix_path(_get_data(req, "dest"), src)
+    if not dest:
+        return ""
     description = _get_str(req, "description")
     return (sql.replace("@description@", description, 1)
-            .replace("@dest@", dest, 1)
-            .replace("@src@", src, 1))
+            .replace("@dest@", _sqlite_str(dest), 1)
+            .replace("@src@", _sqlite_str(src), 1))
 
 def keyword(req):
     sql = """
