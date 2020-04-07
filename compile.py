@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import glob
-from os.path import abspath, dirname
+from os.path import abspath, curdir, dirname, join
 import re
 import subprocess as sp
 
@@ -10,9 +10,10 @@ from zettel.pandoc import *
 
 def main():
     tasks = []
+    basedir = abspath(curdir)
     for note in glob.iglob("**/*.md", recursive=True):
-        filename = abspath(note)
-        meta = metadata(filename=filename, database=abspath(Config.database))
+        meta = metadata(basedir=basedir, relpath=note, database=abspath(Config.database))
+        filename = join(basedir, note)
         html = re.sub("(.*).md", r"\1.html", filename)
         cmd = pandoc("-s -c basic.css", meta,
                 lua_filter("title.lua", "back-links.lua", "html-links.lua",
