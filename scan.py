@@ -33,6 +33,7 @@ def init():
             description TEXT,
             relative_backlink TEXT,
             FOREIGN KEY (src) REFERENCES notes(filename),
+            FOREIGN KEY (dest) REFERENCES notes(filename),
             PRIMARY KEY (src, dest)
         );
     """)
