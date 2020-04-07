@@ -13,6 +13,11 @@ def fix_path(path: str, src: str) -> str or None:
         return path
     return None
 
+def relative_backlink(src: str, dest: str) -> str or None:
+    if not is_in_subdir(src) or not is_in_subdir(dest):
+        return None
+    return op.relpath(src, op.dirname(dest))
+
 def main():
     import sys
     if len(sys.argv) < 3:
