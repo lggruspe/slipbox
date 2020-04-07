@@ -21,16 +21,15 @@ function Meta(m)
     local host = "localhost"
     local port = m.port or 5000
     local title = metadata.get_title(m)
-    local filename = metadata.get_filename(m)
-    local note_req = request.note(title, filename)
+    local note_req = request.note(title, m.relpath)
     queue.message(host, port, note_req)
     links[""] = nil
     for link, description in pairs(links) do
-        local link_req = request.link(filename, link, description)
+        local link_req = request.link(m.relpath, link, description)
         queue.message(host, port, link_req)
     end
 
     for warning, context in pairs(warnings) do
-        io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, filename, context))
+        io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, m.relpath, context))
     end
 end
