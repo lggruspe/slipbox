@@ -1,11 +1,16 @@
 -- store metadata and links in database
 
-local metadata = require "zettel.metadata"
+pandoc.utils = require "pandoc.utils"
 local queue = require "zettel.queue"
 local request = require "zettel.request"
 
 local links = {}
 local warnings = {}
+
+local function get_title(m)
+    if not m.title then return nil end
+    return pandoc.utils.stringify(m.title)
+end
 
 function Link(elem)
     if elem.title == "" then
@@ -20,7 +25,7 @@ end
 function Meta(m)
     local host = "localhost"
     local port = m.port or 5000
-    local title = metadata.get_title(m)
+    local title = get_title(m)
     local note_req = request.note(title, m.relpath)
     queue.message(host, port, note_req)
     links[""] = nil
