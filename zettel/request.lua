@@ -47,7 +47,7 @@ function M.keyword(note, keyword)
         }
     }
     ]]
-    return tmpl:gsub("@keyword@", keyword)
+    return tmpl:gsub("@keyword@", json_string(keyword))
         :gsub("@note@", json_string(note))
 end
 
