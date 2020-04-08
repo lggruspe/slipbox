@@ -4,12 +4,19 @@ pandoc.utils = require "pandoc.utils"
 local queue = require "zettel.queue"
 local request = require "zettel.request"
 
+local keywords = {}
 local links = {}
 local warnings = {}
 
 local function get_title(m)
     if not m.title then return nil end
     return pandoc.utils.stringify(m.title)
+end
+
+function Str(elem)
+    if elem.text:match("^#[a-zA-Z][-a-zA-Z0-9]+$") then
+        keywords[elem.text] = true
+    end
 end
 
 function Link(elem)
@@ -32,6 +39,12 @@ function Meta(m)
     for link, description in pairs(links) do
         local link_req = request.link(m.relpath, link, description)
         queue.message(host, port, link_req)
+    end
+
+    keywords[""] = nil
+    for kw in pairs(keywords) do
+        local kw_req = request.keyword(m.relpath, kw)
+        queue.message(host, port, kw_req)
     end
 
     for warning, context in pairs(warnings) do
