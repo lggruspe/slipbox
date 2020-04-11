@@ -27,17 +27,19 @@ def note(req):
 def link(req):
     sql = """
         INSERT INTO links (src, dest, description, relative_link,
-                relative_backlink)
-            VALUES (@src@, @dest@, @description@, @link@, @backlink@)
+                relative_backlink, original_link)
+            VALUES (@src@, @dest@, @description@, @link@, @backlink@, @original@)
     """
     src = _get_data(req, "src")
-    dest = fix_path(_get_data(req, "dest"), src)
+    original = _get_data(req, "dest")
+    dest = fix_path(original, src)
     if not dest:
         return ""
     description = _get_str(req, "description")
     backlink = _sqlite_str(relative_backlink(src, dest))
     link = _sqlite_str(relative_backlink(dest, src))
-    return (sql.replace("@link@", link, 1)
+    return (sql.replace("@original@", _sqlite_str(original), 1)
+            .replace("@link@", link, 1)
             .replace("@backlink@", backlink, 1)
             .replace("@description@", description, 1)
             .replace("@dest@", _sqlite_str(dest), 1)
