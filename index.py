@@ -9,8 +9,9 @@ def get_top_notes():
     conn = sqlite3.connect(Config.database)
     cur = conn.cursor()
     cur.execute("""
-        SELECT title, filename, count(*) FROM notes JOIN links ON filename = dest
-            GROUP BY filename ORDER BY count(*) DESC
+        SELECT title, filename, count(*) FROM notes JOIN links
+            ON filename = dest WHERE description != ''
+                GROUP BY filename ORDER BY count(*) DESC
     """)
     rows = cur.fetchall()
     conn.close()
