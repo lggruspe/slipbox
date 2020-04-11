@@ -4,9 +4,8 @@ local sqlite3 = require "lsqlite3"
 
 local function get_backlinks(db, filename)
     local stmt = db:prepare [[
-        SELECT * FROM
-            (SELECT * FROM links WHERE dest = ?)
-            JOIN notes ON src = filename
+        SELECT * FROM links JOIN notes ON src = filename
+            WHERE dest = ? AND description != ""
     ]]
     stmt:bind_values(filename)
     return stmt:nrows()
