@@ -20,12 +20,10 @@ function Str(elem)
 end
 
 function Link(elem)
-    if elem.title == "" then
-        if elem.target ~= "" then
-            warnings["unannotated link"] = pandoc.utils.stringify(elem.content)
-        end
-    else
-        links[elem.target] = elem.title
+    -- even if elem.target == "", Meta sets links[""] to nil
+    links[elem.target] = elem.title
+    if elem.target ~= "" and elem.title == "" then
+        warnings["unannotated link"] = pandoc.utils.stringify(elem.content)
     end
 end
 
