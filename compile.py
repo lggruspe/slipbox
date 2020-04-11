@@ -16,8 +16,8 @@ def main():
         filename = join(basedir, note)
         html = re.sub("(.*).md", r"\1.html", filename)
         cmd = pandoc("-s -c basic.css", meta,
-                lua_filter("title.lua", "back-links.lua", "html-links.lua",
-                    "refs.lua"),
+                lua_filter("title.lua", "fix-links.lua", "back-links.lua",
+                    "html-links.lua", "refs.lua"),
                 bibliography(abspath("zettel.bib")),
                 pandoc_filter("pandoc-citeproc"),
                 filename, "-o", html)
