@@ -26,8 +26,9 @@ def note(req):
 
 def link(req):
     sql = """
-        INSERT INTO links (src, dest, description, relative_backlink)
-            VALUES (@src@, @dest@, @description@, @backlink@)
+        INSERT INTO links (src, dest, description, relative_link,
+                relative_backlink)
+            VALUES (@src@, @dest@, @description@, @link@, @backlink@)
     """
     src = _get_data(req, "src")
     dest = fix_path(_get_data(req, "dest"), src)
@@ -35,7 +36,9 @@ def link(req):
         return ""
     description = _get_str(req, "description")
     backlink = _sqlite_str(relative_backlink(src, dest))
-    return (sql.replace("@backlink@", backlink, 1)
+    link = _sqlite_str(relative_backlink(dest, src))
+    return (sql.replace("@link@", link, 1)
+            .replace("@backlink@", backlink, 1)
             .replace("@description@", description, 1)
             .replace("@dest@", _sqlite_str(dest), 1)
             .replace("@src@", _sqlite_str(src), 1))
