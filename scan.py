@@ -9,7 +9,7 @@ import threading
 
 from zettel import client, server
 from zettel.config import Config
-from zettel.pandoc import *
+from zettel.pandoc.commands import scan_metadata
 
 def init():
     try:
@@ -64,10 +64,9 @@ def main():
 
     tasks = []
     for note in glob.iglob("**/*.md", recursive=True):
-        basedir = os.path.abspath(os.path.curdir)
-        meta = metadata(basedir=basedir, relpath=note, port=port)
-        cmd = pandoc(meta, lua_filter("title.lua", "prepare.lua"), os.path.join(basedir, note))
-        tasks.append(sp.Popen(cmd, stdout=sp.DEVNULL, cwd=os.path.dirname(__file__)))
+        cmd = scan_metadata(note, port)
+        task = sp.Popen(cmd, stdout=sp.DEVNULL, cwd=os.path.dirname(__file__))
+        tasks.append(task)
     for task in tasks:
         task.wait()
     client.shutdown(host, port)

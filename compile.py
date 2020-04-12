@@ -1,27 +1,20 @@
 #!/usr/bin/env python3
 
 import glob
-from os.path import abspath, curdir, dirname, join
+from os.path import abspath, dirname
 import re
 import subprocess as sp
 
 from zettel.config import Config
-from zettel.pandoc import *
+from zettel.pandoc.commands import generate_html
 
 def main():
     tasks = []
-    basedir = abspath(curdir)
+    database = abspath(Config.database)
     for note in glob.iglob("**/*.md", recursive=True):
-        meta = metadata(basedir=basedir, relpath=note, database=abspath(Config.database))
-        filename = join(basedir, note)
-        html = re.sub("(.*).md", r"\1.html", filename)
-        cmd = pandoc("-s -c basic.css", meta,
-                lua_filter("title.lua", "fix-links.lua", "back-links.lua",
-                    "html-links.lua", "refs.lua"),
-                bibliography(abspath("zettel.bib")),
-                pandoc_filter("pandoc-citeproc"),
-                filename, "-o", html)
-        tasks.append(sp.Popen(cmd, stdout=sp.DEVNULL, cwd=dirname(__file__)))
+        cmd = generate_html(note, database)
+        task = sp.Popen(cmd, stdout=sp.DEVNULL, cwd=dirname(__file__))
+        tasks.append(task)
     for task in tasks:
         status = task.wait()
 
