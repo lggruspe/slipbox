@@ -29,7 +29,7 @@ def process(queue):
     conn = sqlite3.connect(Config.database)
     cur = conn.cursor()
     for req in queue:
-        cur.execute(req)
+        cur.execute(*req)
     conn.commit()
     conn.close()
 

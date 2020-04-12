@@ -30,7 +30,7 @@ def init():
             original_link TEXT,
             FOREIGN KEY (src) REFERENCES notes(filename),
             FOREIGN KEY (dest) REFERENCES notes(filename),
-            PRIMARY KEY (src, dest)
+            PRIMARY KEY (src, dest, original_link)
         );
     """)
 
