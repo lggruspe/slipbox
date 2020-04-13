@@ -11,6 +11,7 @@ import time
 
 from zettel import client, server
 from zettel.config import Config
+from zettel.init import init
 from zettel.pandoc.commands import scan_metadata
 
 def get_options():
@@ -45,7 +46,12 @@ def notes_modified_recently(last_scan=None):
         if mtime >= last_scan:
             yield note
 
+def check_database():
+    if not os.path.isfile(Config.database):
+        init()
+
 def main():
+    check_database()
     args = get_options()
     host = "localhost"
     port = args.port

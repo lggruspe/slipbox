@@ -3,7 +3,7 @@
 import os
 import sqlite3
 
-from zettel.config import Config
+from .config import Config
 
 def init():
     try:
@@ -45,6 +45,3 @@ def init():
     """)
     conn.commit()
     conn.close()
-
-if __name__ == "__main__":
-    init()
