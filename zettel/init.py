@@ -27,15 +27,15 @@ def init():
             relative_link TEXT,
             relative_backlink TEXT,
             original_link TEXT,
-            FOREIGN KEY (src) REFERENCES notes(filename),
-            FOREIGN KEY (dest) REFERENCES notes(filename),
+            FOREIGN KEY (src) REFERENCES notes(filename) ON DELETE CASCADE,
+            FOREIGN KEY (dest) REFERENCES notes(filename) ON DELETE CASCADE,
             PRIMARY KEY (src, dest, original_link)
         );
 
         CREATE TABLE keywords (
             note TEXT,
             keyword TEXT,
-            FOREIGN KEY (note) REFERENCES notes(filename),
+            FOREIGN KEY (note) REFERENCES notes(filename) ON DELETE CASCADE,
             PRIMARY KEY (note, keyword)
         );
 
