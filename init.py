@@ -12,16 +12,15 @@ def init():
         pass
     conn = sqlite3.connect(Config.database)
     cur = conn.cursor()
-    cur.execute("PRAGMA foreign_keys = ON")
-    cur.execute("""
-        CREATE TABLE notes(
+    cur.executescript("""
+        PRAGMA foreign_keys = ON;
+
+        CREATE TABLE notes (
             filename TEXT PRIMARY KEY,
             title TEXT
         );
-    """)
 
-    cur.execute("""
-        CREATE TABLE links(
+        CREATE TABLE links (
             src TEXT,
             dest TEXT,
             description TEXT,
@@ -32,10 +31,8 @@ def init():
             FOREIGN KEY (dest) REFERENCES notes(filename),
             PRIMARY KEY (src, dest, original_link)
         );
-    """)
 
-    cur.execute("""
-        CREATE TABLE keywords(
+        CREATE TABLE keywords (
             note TEXT,
             keyword TEXT,
             FOREIGN KEY (note) REFERENCES notes(filename),
