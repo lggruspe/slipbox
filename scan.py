@@ -21,22 +21,21 @@ def get_options():
     return args
 
 def get_last_scan():
-    conn = sqlite3.connect(Config.database)
-    cur = conn.cursor()
-    cur.execute("SELECT value FROM meta WHERE key = 'last_scan'")
-    last_scan = int(cur.fetchone()[0])
-    conn.close()
+    with sqlite3.connect(Config.database) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT value FROM meta WHERE key = 'last_scan'")
+        last_scan = int(cur.fetchone()[0])
     return last_scan
 
 def update_last_scan():
-    conn = sqlite3.connect(Config.database)
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO meta (key, value) VALUES ('last_scan', :last_scan)
-            ON CONFLICT (key) DO UPDATE SET value = :last_scan
-    """, {"last_scan": time.time()})
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(Config.database) as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO meta (key, value)
+                VALUES ('last_scan', :last_scan)
+                    ON CONFLICT (key) DO UPDATE SET value = :last_scan
+        """, {"last_scan": time.time()})
+        conn.commit()
 
 def notes_modified_recently(last_scan=None):
     if last_scan is None:
