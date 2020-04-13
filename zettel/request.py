@@ -1,31 +1,18 @@
 from .filenames import fix_path, relative_backlink
 
-def _get_data(req, key, default=None):
-    return req.get("data", {}).get(key, default)
+def delete_note():
+    return """
+        DELETE FROM notes WHERE filename = :filename
+    """
 
-def note(req):
-    filename = _get_data(req, "filename")
-    title = _get_data(req, "title")
-    if not filename:
-        return ("",)
-    sql = """
+def add_note():
+    return """
         INSERT INTO notes (filename, title) VALUES (:filename, :title)
             ON CONFLICT (filename) DO UPDATE SET title = :title
     """
-    params = {"filename": filename, "title": title}
-    return sql, params
 
-def link(req):
-    src = _get_data(req, "src")
-    original = _get_data(req, "dest")
-    dest = fix_path(original, src)
-    if not dest:
-        return ("",)
-
-    description = _get_data(req, "description")
-    link = relative_backlink(dest, src)
-    backlink = relative_backlink(src, dest)
-    sql = """
+def add_link():
+    return """
         INSERT INTO links (src, dest, description, relative_link,
                 relative_backlink, original_link)
             VALUES (:src, :dest, :description, :relative_link,
@@ -33,27 +20,36 @@ def link(req):
                 ON CONFLICT (src, dest, original_link) DO UPDATE
                     SET description = description
     """
-    params = {
+
+def add_keyword():
+    return """
+        INSERT OR IGNORE INTO keywords (note, keyword)
+            VALUES (:note, :keyword)
+    """
+
+def transform_note_params(params):
+    return params
+
+def transform_link_params(params):
+    src = params.get("src")
+    original = params.get("dest")
+    dest = fix_path(original, src)
+    if not dest:
+        return None
+    description = params.get("description")
+    link = relative_backlink(dest, src)
+    backlink = relative_backlink(src, dest)
+    return {
         "src": src,
+        "original_link": original,
         "dest": dest,
         "description": description,
         "relative_link": link,
         "relative_backlink": backlink,
-        "original_link": original,
     }
-    return sql, params
 
-def keyword(req):
-    note = _get_data(req, "note")
-    keyword = _get_data(req, "keyword")
-    if not note or not keyword:
-        return ("",)
-    sql = """
-        INSERT OR IGNORE INTO keywords (note, keyword)
-            VALUES (:note, :keyword)
-    """
-    params = {"note": note, "keyword": keyword}
-    return sql, params
+def transform_keyword_params(params):
+    return params
 
 def to_sql(req):
     t = req.get("type", "")

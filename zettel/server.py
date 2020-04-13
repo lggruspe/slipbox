@@ -5,31 +5,50 @@ import sys
 import threading
 
 from .config import Config
-from .request import to_sql
+from .request import *
 
 class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request.recv(1024).decode().strip()
         self.request.sendall(b"ok")
         if data == "shutdown":
-            process(self.server.queue)
+            process(self.server)
             threading.Thread(target=self.server.shutdown).start()
         else:
             try:
-                sql = to_sql(json.loads(data))
-                if sql:
-                    self.server.queue.append(sql)
+                req = json.loads(data)
+                req_t = req.get("type")
+                params = req.get("data")
+                if req_t == "note":
+                    if params:
+                        self.server.notes_queue.append(params)
+                elif req_t == "link":
+                    if params:
+                        self.server.links_queue.append(params)
+                elif req_t == "keyword":
+                    if params:
+                        self.server.keywords_queue.append(params)
             except json.decoder.JSONDecodeError:
                 pass
 
 class Server(socketserver.TCPServer):
-    queue = []
+    notes_queue = []
+    links_queue = []
+    keywords_queue = []
 
-def process(queue):
+def process(server):
     conn = sqlite3.connect(Config.database)
     cur = conn.cursor()
-    for req in queue:
-        cur.execute(*req)
+    cur.execute("PRAGMA foreign_keys = ON;")
+    for params in server.notes_queue:
+        cur.execute(delete_note(), params)
+        cur.execute(add_note(), params)
+    for params in server.keywords_queue:
+        cur.execute(add_keyword(), params)
+    for params in server.links_queue:
+        fixed_params = transform_link_params(params)
+        if fixed_params:
+            cur.execute(add_link(), fixed_params)
     conn.commit()
     conn.close()
 
