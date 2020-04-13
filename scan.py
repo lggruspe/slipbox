@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
+import os.path
 import subprocess as sp
 import sys
 import threading

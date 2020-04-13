@@ -38,6 +38,10 @@ def init():
             FOREIGN KEY (note) REFERENCES notes(filename),
             PRIMARY KEY (note, keyword)
         );
+
+        CREATE TABLE meta(key PRIMARY KEY, value);
+
+        INSERT INTO meta (key, value) VALUES ('last_scan', 0)
     """)
     conn.commit()
     conn.close()
