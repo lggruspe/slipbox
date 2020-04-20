@@ -2,7 +2,7 @@
 
 import argparse
 import glob
-import os.path
+import os
 import sqlite3
 import subprocess as sp
 import sys
@@ -21,26 +21,19 @@ def get_options():
     args = parser.parse_args()
     return args
 
-def get_last_scan():
+def touch_modified(notes):
+    """Touch notes and links from notes."""
+    sql = "SELECT dest FROM links WHERE src = :src"
     with sqlite3.connect(Config.database) as conn:
         cur = conn.cursor()
-        cur.execute("SELECT value FROM meta WHERE key = 'last_scan'")
-        last_scan = int(cur.fetchone()[0])
-    return last_scan
-
-def update_last_scan():
-    with sqlite3.connect(Config.database) as conn:
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO meta (key, value)
-                VALUES ('last_scan', :last_scan)
-                    ON CONFLICT (key) DO UPDATE SET value = :last_scan
-        """, {"last_scan": time.time()})
-        conn.commit()
+        for note in notes:
+            os.utime(note)
+            for row in cur.execute(sql, {"src": note}):
+                os.utime(row[0])
 
 def notes_modified_recently(last_scan=None):
     if last_scan is None:
-        last_scan = get_last_scan()
+        last_scan = os.path.getmtime(Config.database)
     for note in glob.iglob("**/*.md", recursive=True):
         mtime = os.path.getmtime(note)
         if mtime >= last_scan:
@@ -72,7 +65,8 @@ def main():
     for task in tasks:
         task.wait()
     client.shutdown(host, port)
-    update_last_scan()
+    touch_modified(notes)
+    os.utime(Config.database)
 
 if __name__ == "__main__":
     main()
