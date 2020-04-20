@@ -2,7 +2,7 @@ pandoc.utils = require "pandoc.utils"
 
 local title = nil
 
-function Header(elem)
+local function get_alternative_title_from_header(elem)
     if not title and elem.level == 1 then
         title = pandoc.utils.stringify(elem.content)
         elem = {}
@@ -10,10 +10,14 @@ function Header(elem)
     return elem
 end
 
-function Pandoc(doc)
-    if not doc.meta.title then
-        doc.meta.title = pandoc.MetaString(title or "")
+local function set_missing_titles(m)
+    if not m.title then
+        m.title = pandoc.MetaString(title or "")
     end
-    doc.meta.subtitle = pandoc.MetaString(doc.meta.relpath)
-    return doc
+    m.subtitle = pandoc.MetaString(m.relpath)
+    return m
 end
+
+return {
+    { Header = get_alternative_title_from_header, Meta = set_missing_titles }
+}

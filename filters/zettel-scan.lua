@@ -4,6 +4,24 @@ pandoc.utils = require "pandoc.utils"
 local queue = require "zettel.queue"
 local request = require "zettel.request"
 
+local title = nil
+
+local function get_alternative_title_from_header(elem)
+    if not title and elem.level == 1 then
+        title = pandoc.utils.stringify(elem.content)
+        elem = {}
+    end
+    return elem
+end
+
+local function set_missing_titles(m)
+    if not m.title then
+        m.title = pandoc.MetaString(title or "")
+    end
+    m.subtitle = pandoc.MetaString(m.relpath)
+    return m
+end
+
 local keywords = {}
 local links = {}
 local warnings = {}
@@ -13,13 +31,13 @@ local function get_title(m)
     return pandoc.utils.stringify(m.title)
 end
 
-function Str(elem)
+local function Str(elem)
     if elem.text:match("^#[a-zA-Z][-a-zA-Z0-9]+$") then
         keywords[elem.text] = true
     end
 end
 
-function Link(elem)
+local function Link(elem)
     -- even if elem.target == "", Meta sets links[""] to nil
     links[elem.target] = elem.title
     if elem.target ~= "" and elem.title == "" then
@@ -27,7 +45,7 @@ function Link(elem)
     end
 end
 
-function Meta(m)
+local function Meta(m)
     local host = "localhost"
     local port = m.port or 5000
     local title = get_title(m)
@@ -49,3 +67,8 @@ function Meta(m)
         io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, m.relpath, context))
     end
 end
+
+return {
+    { Header = get_alternative_title_from_header, Meta = set_missing_titles },
+    { Str = Str, Link = Link, Meta = Meta },
+}
