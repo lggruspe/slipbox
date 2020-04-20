@@ -31,26 +31,32 @@ def touch_modified(notes):
             for row in cur.execute(sql, {"src": note}):
                 os.utime(row[0])
 
-def notes_modified_recently():
-    last_scan = os.path.getmtime(Config.database)
+def notes_modified_recently(last_scan=None):
+    if last_scan is None:
+        last_scan = os.path.getmtime(Config.database)
     for note in glob.iglob("**/*.md", recursive=True):
         mtime = os.path.getmtime(note)
         if mtime >= last_scan:
             yield note
 
 def check_database():
-    if not os.path.isfile(Config.database):
-        init()
+    """Initialize database if it does not exist.
+
+    Return modification time (or 0 if it has never been modified)."""
+    if os.path.isfile(Config.database):
+        return os.path.getmtime(Config.database)
+    init()
+    return 0
 
 def main():
-    check_database()
+    last_scan = check_database()
     args = get_options()
     host = "localhost"
     port = args.port
 
     delete_missing_notes_from_database()
 
-    notes = list(notes_modified_recently())
+    notes = list(notes_modified_recently(last_scan=last_scan))
     if not notes:
         return
 
