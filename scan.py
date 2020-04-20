@@ -31,9 +31,8 @@ def touch_modified(notes):
             for row in cur.execute(sql, {"src": note}):
                 os.utime(row[0])
 
-def notes_modified_recently(last_scan=None):
-    if last_scan is None:
-        last_scan = os.path.getmtime(Config.database)
+def notes_modified_recently():
+    last_scan = os.path.getmtime(Config.database)
     for note in glob.iglob("**/*.md", recursive=True):
         mtime = os.path.getmtime(note)
         if mtime >= last_scan:
