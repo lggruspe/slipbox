@@ -16,12 +16,9 @@ def sqlite_string(s):
     t = s.replace("'", "''")
     return f"'{t}'"
 
-def main():
+def delete_missing_notes_from_database():
     missing = filter(lambda note: not os.path.exists(note), get_notes())
     args = ", ".join(map(sqlite_string, missing))
     with sqlite3.connect(Config.database) as conn:
         cur = conn.cursor()
         cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
-
-if __name__ == "__main__":
-    main()
