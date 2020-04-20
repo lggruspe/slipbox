@@ -18,7 +18,6 @@ def init():
         CREATE TABLE notes (
             filename TEXT PRIMARY KEY,
             title TEXT,
-            outdated INTEGER DEFAULT (1)
         );
 
         CREATE TABLE links (
