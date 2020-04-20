@@ -2,6 +2,24 @@ pandoc.utils = require "pandoc.utils"
 
 local sqlite3 = require "lsqlite3"
 
+local title = nil
+
+local function get_alternative_title_from_header(elem)
+    if not title and elem.level == 1 then
+        title = pandoc.utils.stringify(elem.content)
+        elem = {}
+    end
+    return elem
+end
+
+local function set_missing_titles(m)
+    if not m.title then
+        m.title = pandoc.MetaString(title or "")
+    end
+    m.subtitle = pandoc.MetaString(m.relpath)
+    return m
+end
+
 local function get_relative_link(db, src, dest)
     local stmt = db:prepare [[
         SELECT relative_link FROM links WHERE src = ? AND original_link = ?
@@ -90,6 +108,7 @@ local function add_reference_section(doc)
 end
 
 return {
+    { Header = get_alternative_title_from_header, Meta = set_missing_titles },
     { Meta = get_some_metadata },
     { Link = fix_relative_links },
     { Pandoc = add_backlinks },

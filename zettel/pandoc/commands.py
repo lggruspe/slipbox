@@ -15,7 +15,7 @@ def generate_html(note, database):
     meta = metadata(basedir=BASEDIR, relpath=note, database=database)
     filename = os.path.join(BASEDIR, note)
     html = re.sub("(.*).md", r"\1.html", filename)
-    lua_filters = lua_filter("title.lua", "zettel-compile.lua")
+    lua_filters = lua_filter("zettel-compile.lua")
     filters = pandoc_filter("pandoc-citeproc")
     bib = bibliography(os.path.abspath("zettel.bib"))
     return pandoc("-s -c basic.css", meta, lua_filters, bib, filters, filename,
