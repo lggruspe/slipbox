@@ -18,5 +18,5 @@ def generate_html(note, database):
     lua_filters = lua_filter("zettel-compile.lua")
     filters = pandoc_filter("pandoc-citeproc")
     bib = bibliography(os.path.abspath("zettel.bib"))
-    return pandoc("-s -c basic.css", meta, lua_filters, bib, filters, filename,
+    return pandoc("-s -c zettel.css", meta, lua_filters, bib, filters, filename,
         "-o", html)

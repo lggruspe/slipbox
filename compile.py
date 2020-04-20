@@ -37,7 +37,7 @@ def main():
 
     for filename in glob.iglob("**/*.html", recursive=True):
         pardir = re.sub("(.*)/[^/]*.html", r"\1", abspath(filename))
-        sp.run(["cp", "basic.css", pardir], cwd=dirname(__file__))
+        sp.run(["cp", "zettel.css", pardir], cwd=dirname(__file__))
 
 if __name__ == "__main__":
     main()
