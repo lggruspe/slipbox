@@ -1,9 +1,10 @@
 from .filenames import fix_path, relative_backlink
 
-def delete_note():
-    return """
-        DELETE FROM notes WHERE filename = :filename
-    """
+def delete_note_keywords():
+    return "DELETE FROM keywords WHERE note = :note"
+
+def delete_note_links():
+    return "DELETE FROM links WHERE src = :src"
 
 def add_note():
     return """

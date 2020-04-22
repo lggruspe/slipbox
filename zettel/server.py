@@ -41,7 +41,14 @@ def process(server):
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys = ON;")
     for params in server.notes_queue:
-        cur.execute(delete_note(), params)
+        # delete existing keywords and links in note but don't delete the note
+        # itself to keep backlinks
+        cur.execute(delete_note_keywords(), {
+            "note": params.get("filename")
+        })
+        cur.execute(delete_note_links(), {
+            "src": params.get("filename")
+        })
         cur.execute(add_note(), params)
     for params in server.keywords_queue:
         cur.execute(add_keyword(), params)
