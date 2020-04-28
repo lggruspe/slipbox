@@ -32,10 +32,12 @@ end
 
 local database
 local relpath
+local bibliography_html
 
 local function get_some_metadata(m)
     database = m.database
     relpath = m.relpath
+    bibliography_html = m["bibliography-zettel"] or ""
 end
 
 function fix_relative_links(elem)
@@ -87,7 +89,7 @@ local function modify_html_links(elem)
         warnings["empty link"] = pandoc.utils.stringify(elem.content)
         elem = elem.content
     else
-        elem.target = elem.target:gsub("(.*).md", "%1.html")
+        elem.target = elem.target:gsub("(.*).md$", "%1.html")
     end
     return elem
 end
@@ -98,10 +100,18 @@ local function log_warnings(m)
     end
 end
 
+local function fix_citation_links(elem)
+    if elem.target:match("^#ref-") then
+        elem.target = bibliography_html .. elem.target
+        return elem
+    end
+end
+
 return {
     { Header = get_alternative_title_from_header, Meta = set_missing_titles },
     { Meta = get_some_metadata },
     { Link = fix_relative_links },
     { Pandoc = add_backlinks },
     { Link = modify_html_links, Meta = log_warnings },
+    { Link = fix_citation_links },
 }
