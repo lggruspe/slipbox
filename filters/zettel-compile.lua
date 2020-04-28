@@ -71,9 +71,8 @@ function add_backlinks(doc)
         table.insert(blocklists, {block})
     end
 
-    table.insert(doc.blocks, pandoc.HorizontalRule())
-
     if next(blocklists) then
+        table.insert(doc.blocks, pandoc.HorizontalRule())
         table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
         table.insert(doc.blocks, pandoc.BulletList(blocklists))
     end
@@ -99,19 +98,10 @@ local function log_warnings(m)
     end
 end
 
-local function add_reference_section(doc)
-    local header = pandoc.Header(3, pandoc.Str "References")
-    local blocks = {header}
-    local section = pandoc.Div(blocks, pandoc.Attr("refs"))
-    table.insert(doc.blocks, section)
-    return doc
-end
-
 return {
     { Header = get_alternative_title_from_header, Meta = set_missing_titles },
     { Meta = get_some_metadata },
     { Link = fix_relative_links },
     { Pandoc = add_backlinks },
     { Link = modify_html_links, Meta = log_warnings },
-    { Pandoc = add_reference_section },
 }
