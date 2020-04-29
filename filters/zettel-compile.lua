@@ -5,12 +5,14 @@ local title
 local database
 local relpath
 local bibliography_html
+local db
 
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     database = m.database
     relpath = m.relpath
     bibliography_html = m["bibliography-zettel"] or ""
+    db = sqlite3.open(database) -- closed in log_warnings
 end
 
 local function get_alternative_title_from_header(elem)
@@ -33,10 +35,8 @@ end
 
 function fix_relative_links(elem)
     -- fixes links not relative to file
-    local db = sqlite3.open(database)
     local dest = get_relative_link(db, relpath, elem.target)
     elem.target = dest or elem.target
-    db:close()
     return elem
 end
 
@@ -56,7 +56,6 @@ local function set_missing_metadata(m)
 end
 
 function add_backlinks(doc)
-    local db = sqlite3.open(doc.meta.database)
     local blocklists = {}
     for backlink in get_backlinks(db, doc.meta.relpath) do
         local filename = backlink.filename
@@ -75,7 +74,6 @@ function add_backlinks(doc)
         table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
         table.insert(doc.blocks, pandoc.BulletList(blocklists))
     end
-    db:close()
     return doc
 end
 
@@ -98,11 +96,16 @@ local function log_warnings(m)
     for warning, context in pairs(warnings) do
         io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, m.relpath, context))
     end
+    db:close()
 end
 
 return {
     { Meta = get_some_metadata },
-    { Header = get_alternative_title_from_header, Link = fix_relative_links },
-    { Meta = set_missing_metadata, Pandoc = add_backlinks },
+    {
+        Header = get_alternative_title_from_header,
+        Link = fix_relative_links,
+        Meta = set_missing_metadata,
+        Pandoc = add_backlinks,
+    },
     { Link = fix_links, Meta = log_warnings },
 }
