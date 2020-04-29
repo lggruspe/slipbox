@@ -6,32 +6,24 @@ local request = require "zettel.request"
 
 local title = nil
 
-local function get_alternative_title_from_header(elem)
-    if not title and elem.level == 1 then
-        title = pandoc.utils.stringify(elem.content)
-        elem = {}
-    end
-    return elem
+local function get_title_from_metadata(m)
+    title = pandoc.utils.stringify(m.title or "")
 end
 
-local function set_missing_titles(m)
-    if not m.title then
-        m.title = pandoc.MetaString(title or "")
+local function get_alternative_title_from_header(elem)
+    assert(title)
+    if title == "" and elem.level == 1 then
+        title = pandoc.utils.stringify(elem.content)
+        return {}
     end
-    m.subtitle = pandoc.MetaString(m.relpath)
-    return m
 end
 
 local keywords = {}
 local links = {}
 local warnings = {}
 
-local function get_title(m)
-    if not m.title then return nil end
-    return pandoc.utils.stringify(m.title)
-end
-
 local function Str(elem)
+    -- TODO does this include #id info in divs, spans, etc.?
     if elem.text:match("^#[a-zA-Z][-a-zA-Z0-9]+$") then
         keywords[elem.text] = true
     end
@@ -48,7 +40,7 @@ end
 local function Meta(m)
     local host = "localhost"
     local port = m.port or 5000
-    local title = get_title(m)
+    local title = title
     local note_req = request.note(title, m.relpath)
     queue.message(host, port, note_req)
     links[""] = nil
@@ -66,9 +58,14 @@ local function Meta(m)
     for warning, context in pairs(warnings) do
         io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, m.relpath, context))
     end
+
+    --- edit metadata if not set already
+    m.title = m.title or pandoc.MetaString(title or "")
+    m.subtitle = m.subtitle or pandoc.MetaString(m.relpath or "")
+    return m
 end
 
 return {
-    { Header = get_alternative_title_from_header, Meta = set_missing_titles },
-    { Str = Str, Link = Link, Meta = Meta },
+    { Meta = get_title_from_metadata },
+    { Header = get_alternative_title_from_header, Str = Str, Link = Link, Meta = Meta },
 }
