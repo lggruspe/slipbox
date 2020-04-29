@@ -1,23 +1,24 @@
 pandoc.utils = require "pandoc.utils"
-
 local sqlite3 = require "lsqlite3"
 
-local title = nil
+local title
+local database
+local relpath
+local bibliography_html
 
-local function get_alternative_title_from_header(elem)
-    if not title and elem.level == 1 then
-        title = pandoc.utils.stringify(elem.content)
-        elem = {}
-    end
-    return elem
+local function get_some_metadata(m)
+    title = pandoc.utils.stringify(m.title or "")
+    database = m.database
+    relpath = m.relpath
+    bibliography_html = m["bibliography-zettel"] or ""
 end
 
-local function set_missing_titles(m)
-    if not m.title then
-        m.title = pandoc.MetaString(title or "")
+local function get_alternative_title_from_header(elem)
+    assert(title)
+    if title == "" and elem.level == 1 then
+        title = pandoc.utils.stringify(elem.content)
+        return {}
     end
-    m.subtitle = pandoc.MetaString(m.relpath)
-    return m
 end
 
 local function get_relative_link(db, src, dest)
@@ -28,16 +29,6 @@ local function get_relative_link(db, src, dest)
     for row in stmt:nrows() do
         return row.relative_link
     end
-end
-
-local database
-local relpath
-local bibliography_html
-
-local function get_some_metadata(m)
-    database = m.database
-    relpath = m.relpath
-    bibliography_html = m["bibliography-zettel"] or ""
 end
 
 function fix_relative_links(elem)
@@ -56,6 +47,12 @@ local function get_backlinks(db, filename)
     ]]
     stmt:bind_values(filename)
     return stmt:nrows()
+end
+
+local function set_missing_metadata(m)
+    m.title = m.title or pandoc.MetaString(title or "")
+    m.subtitle = m.subtitle or pandoc.MetaString(m.relpath or "")
+    return m
 end
 
 function add_backlinks(doc)
@@ -84,10 +81,13 @@ end
 
 local warnings = {}
 
-local function modify_html_links(elem)
+local function fix_links(elem)
+    -- converts markdown to html links and fixes citation links
     if elem.target == "" then
         warnings["empty link"] = pandoc.utils.stringify(elem.content)
         elem = elem.content
+    elseif elem.target:match("^#ref-") then
+        elem.target = bibliography_html .. elem.target
     else
         elem.target = elem.target:gsub("(.*).md$", "%1.html")
     end
@@ -100,18 +100,9 @@ local function log_warnings(m)
     end
 end
 
-local function fix_citation_links(elem)
-    if elem.target:match("^#ref-") then
-        elem.target = bibliography_html .. elem.target
-        return elem
-    end
-end
-
 return {
-    { Header = get_alternative_title_from_header, Meta = set_missing_titles },
     { Meta = get_some_metadata },
-    { Link = fix_relative_links },
-    { Pandoc = add_backlinks },
-    { Link = modify_html_links, Meta = log_warnings },
-    { Link = fix_citation_links },
+    { Header = get_alternative_title_from_header, Link = fix_relative_links },
+    { Meta = set_missing_metadata, Pandoc = add_backlinks },
+    { Link = fix_links, Meta = log_warnings },
 }
