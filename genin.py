@@ -31,7 +31,7 @@ def main():
         "basedir": basedir,
         "bibliography": "--bibliography=$zettel_bib",
         "filters": "-Fpandoc-citeproc --lua-filter=$zettel_filter",
-        "metadata": "-Msuppress-bibliography=true -Mlink-citations=true",
+        "metadata": "-Mlink-citations=true",
         "zettel_args": "-Mbasedir=$basedir -Mdatabase=$zettel_db",
     }
     for k, v in variables.items():
