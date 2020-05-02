@@ -23,6 +23,11 @@ local function get_alternative_title_from_header(elem)
     end
 end
 
+local citations = 0
+local function count_citations(elem)
+    citations = citations + 1
+end
+
 local function get_backlinks(db, filename)
     local stmt = db:prepare [[
         SELECT * FROM links JOIN notes ON src = filename
@@ -38,9 +43,9 @@ local function set_missing_metadata(m)
     return m
 end
 
-function add_backlinks(doc)
+local function backlinks_section()
     local blocklists = {}
-    for backlink in get_backlinks(db, doc.meta.relpath) do
+    for backlink in get_backlinks(db, relpath) do
         local filename = backlink.filename
         local link = backlink.relative_backlink
         local content = string.format("%s (%s)", backlink.title or "", filename)
@@ -51,13 +56,35 @@ function add_backlinks(doc)
         }
         table.insert(blocklists, {block})
     end
-
     if next(blocklists) then
-        table.insert(doc.blocks, pandoc.HorizontalRule())
-        table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
-        table.insert(doc.blocks, pandoc.BulletList(blocklists))
+        return pandoc.BulletList(blocklists)
+    else
+        return nil
     end
-    return doc
+end
+
+local function references_section()
+    if citations > 0 then
+        return pandoc.Header(3, pandoc.Str "References")
+    else
+        return nil
+    end
+end
+
+local function generate_extra_sections(doc)
+    local backlinks = backlinks_section()
+    local references = references_section()
+    if backlinks or references then
+        table.insert(doc.blocks, pandoc.HorizontalRule())
+        if backlinks then
+            table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
+            table.insert(doc.blocks, backlinks)
+        end
+        if references then
+            table.insert(doc.blocks, references)
+        end
+        return doc
+    end
 end
 
 local warnings = {}
@@ -86,8 +113,9 @@ return {
     { Meta = get_some_metadata },
     {
         Header = get_alternative_title_from_header,
+        Cite = count_citations,
         Meta = set_missing_metadata,
-        Pandoc = add_backlinks,
+        Pandoc = generate_extra_sections,
     },
     { Link = fix_links, Meta = log_warnings },
 }
