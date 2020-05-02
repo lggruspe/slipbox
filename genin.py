@@ -6,8 +6,8 @@ import sys
 import ninja_syntax as ns
 
 zettel_css = abspath("zettel.css")
-zettel_bib_note = abspath("sources.markdown")
-zettel_bib_html = re.sub(".markdown$", ".html", zettel_bib_note)
+zettel_bib_note = abspath("index.md")
+zettel_bib_html = re.sub(".md$", ".html", zettel_bib_note)
 zettel_filter = abspath(join(dirname(__file__), "filters", "zettel-compile.lua"))
 basedir = abspath(curdir)
 
@@ -58,11 +58,6 @@ def main():
             html = re.sub(".md$", ".html", note)
             w.build(html, "pandoc", inputs=[note], order_only=["$zettel_db"], variables=shadow)
             w.newline()
-
-    w.build(zettel_bib_html, "pandoc", inputs=[zettel_bib_note], order_only=["$zettel_db"], variables={
-        "zettel_css": relpath(zettel_css, dirname(zettel_bib_note)),
-        "metadata": "",
-    })
 
     print(w.output.getvalue())
     w.output.close()
