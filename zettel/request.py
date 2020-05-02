@@ -14,10 +14,8 @@ def add_note():
 
 def add_link():
     return """
-        INSERT INTO links (src, dest, description, relative_link,
-                relative_backlink)
-            VALUES (:src, :dest, :description, :relative_link,
-                    :relative_backlink)
+        INSERT INTO links (src, dest, description, relative_backlink)
+            VALUES (:src, :dest, :description, :relative_backlink)
                 ON CONFLICT (src, dest) DO UPDATE
                     SET description = description
     """
@@ -34,13 +32,11 @@ def transform_link_params(params):
     if not dest:
         return None
     description = params.get("description")
-    link = relative_backlink(dest, src)
     backlink = relative_backlink(src, dest)
     return {
         "src": src,
         "dest": dest,
         "description": description,
-        "relative_link": link,
         "relative_backlink": backlink,
     }
 
