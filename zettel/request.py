@@ -15,10 +15,10 @@ def add_note():
 def add_link():
     return """
         INSERT INTO links (src, dest, description, relative_link,
-                relative_backlink, original_link)
+                relative_backlink)
             VALUES (:src, :dest, :description, :relative_link,
-                    :relative_backlink, :original_link)
-                ON CONFLICT (src, dest, original_link) DO UPDATE
+                    :relative_backlink)
+                ON CONFLICT (src, dest) DO UPDATE
                     SET description = description
     """
 
@@ -30,8 +30,7 @@ def add_keyword():
 
 def transform_link_params(params):
     src = params.get("src")
-    original = params.get("dest")
-    dest = fix_path(original, src)
+    dest = fix_path(params.get("dest"), src)
     if not dest:
         return None
     description = params.get("description")
@@ -39,7 +38,6 @@ def transform_link_params(params):
     backlink = relative_backlink(src, dest)
     return {
         "src": src,
-        "original_link": original,
         "dest": dest,
         "description": description,
         "relative_link": link,
