@@ -28,9 +28,6 @@ def add_keyword():
             VALUES (:note, :keyword)
     """
 
-def transform_note_params(params):
-    return params
-
 def transform_link_params(params):
     src = params.get("src")
     original = params.get("dest")
@@ -48,9 +45,6 @@ def transform_link_params(params):
         "relative_link": link,
         "relative_backlink": backlink,
     }
-
-def transform_keyword_params(params):
-    return params
 
 def to_sql(req):
     t = req.get("type", "")

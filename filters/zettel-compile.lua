@@ -23,23 +23,6 @@ local function get_alternative_title_from_header(elem)
     end
 end
 
-local function get_relative_link(db, src, dest)
-    local stmt = db:prepare [[
-        SELECT relative_link FROM links WHERE src = ? AND original_link = ?
-    ]]
-    stmt:bind_values(src, dest)
-    for row in stmt:nrows() do
-        return row.relative_link
-    end
-end
-
-function fix_relative_links(elem)
-    -- fixes links not relative to file
-    local dest = get_relative_link(db, relpath, elem.target)
-    elem.target = dest or elem.target
-    return elem
-end
-
 local function get_backlinks(db, filename)
     local stmt = db:prepare [[
         SELECT * FROM links JOIN notes ON src = filename
@@ -103,7 +86,6 @@ return {
     { Meta = get_some_metadata },
     {
         Header = get_alternative_title_from_header,
-        Link = fix_relative_links,
         Meta = set_missing_metadata,
         Pandoc = add_backlinks,
     },
