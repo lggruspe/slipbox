@@ -30,7 +30,7 @@ def main():
         "options": "--mathjax --strip-comments ",
         "basedir": basedir,
         "bibliography": "--bibliography=$zettel_bib",
-        "filters": "-Fpandoc-citeproc --lua-filter=$zettel_filter",
+        "filters": "--lua-filter=$zettel_filter -Fpandoc-citeproc",
         "metadata": "-Mlink-citations=true",
         "zettel_args": "-Mbasedir=$basedir -Mdatabase=$zettel_db",
     }
