@@ -4,14 +4,12 @@ local sqlite3 = require "lsqlite3"
 local title
 local database
 local relpath
-local bibliography_html
 local db
 
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     database = m.database
     relpath = m.relpath
-    bibliography_html = m["bibliography-zettel"] or ""
     db = sqlite3.open(database) -- closed in log_warnings
 end
 
@@ -90,12 +88,10 @@ end
 local warnings = {}
 
 local function fix_links(elem)
-    -- converts markdown to html links and fixes citation links
+    -- converts markdown to html links
     if elem.target == "" then
         warnings["empty link"] = pandoc.utils.stringify(elem.content)
         elem = elem.content
-    elseif elem.target:match("^#ref-") then
-        elem.target = bibliography_html .. elem.target
     else
         elem.target = elem.target:gsub("(.*).md$", "%1.html")
     end

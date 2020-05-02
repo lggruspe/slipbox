@@ -6,8 +6,6 @@ import sys
 import ninja_syntax as ns
 
 zettel_css = abspath("zettel.css")
-zettel_bib_note = abspath("index.md")
-zettel_bib_html = re.sub(".md$", ".html", zettel_bib_note)
 zettel_filter = abspath(join(dirname(__file__), "filters", "zettel-compile.lua"))
 basedir = abspath(curdir)
 
@@ -25,13 +23,11 @@ def main():
         "zettel_bib": "zettel.bib",
         "zettel_css": zettel_css,
         "zettel_db": "zettel.db.sqlite3",
-        "zettel_bib_note": zettel_bib_html,
         "zettel_filter": zettel_filter,
         "options": "--mathjax --strip-comments ",
         "basedir": basedir,
         "bibliography": "--bibliography=$zettel_bib",
         "filters": "--lua-filter=$zettel_filter -Fpandoc-citeproc",
-        "metadata": "-Mlink-citations=true",
         "zettel_args": "-Mbasedir=$basedir -Mdatabase=$zettel_db",
     }
     for k, v in variables.items():
@@ -44,17 +40,14 @@ def main():
     w.build(None, "scan", implicit_outputs=["$zettel_db"])
     w.newline()
 
-    w.rule("pandoc", "$pandoc -s $in -o $out $options $bibliography $filters $metadata -Mrelpath=$in -c $zettel_css $zettel_args -Mbibliography-zettel=$zettel_bib_note")
+    w.rule("pandoc", "$pandoc -s $in -o $out $options $bibliography $filters -Mrelpath=$in -c $zettel_css $zettel_args")
     w.newline()
 
     with sqlite3.connect(db) as conn:
         cur = conn.cursor()
         for row in cur.execute("SELECT filename FROM notes"):
             note = row[0]
-            shadow = {
-                "zettel_css": relpath(zettel_css, dirname(note)),
-                "zettel_bib_note": relpath(zettel_bib_html, dirname(note)),
-            }
+            shadow = {"zettel_css": relpath(zettel_css, dirname(note))}
             html = re.sub(".md$", ".html", note)
             w.build(html, "pandoc", inputs=[note], order_only=["$zettel_db"], variables=shadow)
             w.newline()
