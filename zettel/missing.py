@@ -8,7 +8,7 @@ def notes_in_db(conn):
     cur = conn.cursor()
     return (note[0] for note in cur.execute("SELECT filename FROM notes"))
 
-def delete_missing_notes(conn):
+def delete_missing_notes_from_db(conn):
     missing = filter(lambda note: not exists(note), notes_in_db(conn))
     args = ", ".join(map(sqlite_string, missing))
     cur = conn.cursor()
