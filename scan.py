@@ -101,17 +101,17 @@ def delete_missing_notes_from_db(conn):
     cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
 
 def main(config=Config()):
-    last_scan = check_database(config.database)
-    with sqlite3.connect(config.database) as conn:
+    last_scan = check_database(config.user.database)
+    with sqlite3.connect(config.user.database) as conn:
         delete_missing_notes_from_db(conn)
     all_notes = iglob("**/*.md", recursive=True)
     modified_recently = lambda note: getmtime(note) >= last_scan
     modified_notes = list(filter(modified_recently, all_notes))
     if modified_notes:
         scan_modified(modified_notes, config.host, config.port)
-        with sqlite3.connect(config.database) as conn:
+        with sqlite3.connect(config.user.database) as conn:
             touch_modified(modified_notes, conn)
-        utime(config.database)
+        utime(config.user.database)
 
 if __name__ == "__main__":
     main(get_options())
