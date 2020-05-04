@@ -37,7 +37,7 @@ class Server(socketserver.TCPServer):
     keywords_queue = []
 
 def process(server):
-    conn = sqlite3.connect(Config.database)
+    conn = sqlite3.connect(Config().database)
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys = ON;")
     for params in server.notes_queue:

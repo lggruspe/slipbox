@@ -1,4 +1,3 @@
-from argparse import ArgumentParser
 from glob import iglob
 from os.path import dirname, exists, getmtime, isfile
 from os import remove, utime
@@ -12,15 +11,16 @@ from zettel import client, server
 from zettel.config import Config
 from zettel.pandoc.commands import scan_metadata
 
-def get_options():
+def get_options(config=Config()):
+    from argparse import ArgumentParser
     description = "Scan zettels that have been modified."
     parser = ArgumentParser(description=description)
-    parser.add_argument("-H", "--host", type=str, default="localhost",
-                        help="host address (default='localhost')")
-    parser.add_argument("-p", "--port", type=int, default=5000,
-                        help="port number (default=5000)")
-    args = parser.parse_args()
-    return args
+    parser.add_argument("-H", "--host", type=str, default=config.host,
+                        help=f"host address (default={config.host!r})")
+    parser.add_argument("-p", "--port", type=int, default=config.port,
+                        help=f"port number (default={config.port!r})")
+    parser.parse_args(namespace=config)
+    return config
 
 def touch_modified(notes, conn):
     """Touch notes and links from notes."""
@@ -100,19 +100,18 @@ def delete_missing_notes_from_db(conn):
     args = ", ".join(map(sqlite_string, missing))
     cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
 
-def main(host="localhost", port=5000):
-    last_scan = check_database(Config.database)
-    with sqlite3.connect(Config.database) as conn:
+def main(config=Config()):
+    last_scan = check_database(config.database)
+    with sqlite3.connect(config.database) as conn:
         delete_missing_notes_from_db(conn)
     all_notes = iglob("**/*.md", recursive=True)
     modified_recently = lambda note: getmtime(note) >= last_scan
     modified_notes = list(filter(modified_recently, all_notes))
     if modified_notes:
-        scan_modified(modified_notes, host, port)
-        with sqlite3.connect(Config.database) as conn:
+        scan_modified(modified_notes, config.host, config.port)
+        with sqlite3.connect(config.database) as conn:
             touch_modified(modified_notes, conn)
-        utime(Config.database)
+        utime(config.database)
 
 if __name__ == "__main__":
-    args = get_options()
-    main(host=args.host, port=args.port)
+    main(get_options())
