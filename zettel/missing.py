@@ -1,24 +1,15 @@
-#!/usr/bin/env python3
-
-import os.path
-import sqlite3
-
-from zettel.config import Config
-
-def get_notes():
-    with sqlite3.connect(Config.database) as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT filename FROM notes")
-        notes = cur.fetchall()
-    return (note[0] for note in notes)
+from os.path import exists
 
 def sqlite_string(s):
     t = s.replace("'", "''")
     return f"'{t}'"
 
-def delete_missing_notes_from_database():
-    missing = filter(lambda note: not os.path.exists(note), get_notes())
+def notes_in_db(conn):
+    cur = conn.cursor()
+    return (note[0] for note in cur.execute("SELECT filename FROM notes"))
+
+def delete_missing_notes(conn):
+    missing = filter(lambda note: not exists(note), notes_in_db(conn))
     args = ", ".join(map(sqlite_string, missing))
-    with sqlite3.connect(Config.database) as conn:
-        cur = conn.cursor()
-        cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")

@@ -12,7 +12,7 @@ import time
 from zettel import client, server
 from zettel.config import Config
 from zettel.init import init
-from zettel.missing import delete_missing_notes_from_database
+from zettel.missing import delete_missing_notes
 from zettel.pandoc.commands import scan_metadata
 
 def get_options():
@@ -54,7 +54,8 @@ def main():
     host = "localhost"
     port = args.port
 
-    delete_missing_notes_from_database()
+    with sqlite3.connect(Config.database) as conn:
+        delete_missing_notes(conn)
 
     notes = list(notes_modified_recently(last_scan=last_scan))
     if not notes:
