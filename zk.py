@@ -1,4 +1,4 @@
-from caps import CmdTree
+from zettel.caps import CmdTree
 from zettel.config import Config, UserConfig
 import genin
 import scan
