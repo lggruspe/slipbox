@@ -5,27 +5,30 @@ import sqlite3
 import sys
 import ninja_syntax as ns
 
-zettel_css = abspath("zettel.css")
-zettel_filter = abspath(join(dirname(__file__), "filters", "zettel-compile.lua"))
-basedir = abspath(curdir)
+from zettel.config import UserConfig
 
-def main():
-    try:
-        db = sys.argv[1]
-    except IndexError:
-        print("Usage: python3 -m genin (sqlite3 database)", file=sys.stderr)
-        return
+def get_options(config=UserConfig()):
+    from argparse import ArgumentParser
+    description = "Generate ninja file for generating HTML from zettels."
+    parser = ArgumentParser(description=description)
+    help_msg = f"zettel sqlite3 database filename (default={config.database!r})"
+    parser.add_argument("-d", "--database", type=str, default=config.database,
+                        help=help_msg)
+    parser.parse_args(namespace=config)
+    return config
 
+def main(config=UserConfig()):
     w = ns.Writer(StringIO())
     variables = {
-        "pandoc": "pandoc",
-        "python": "python3",
-        "zettel_bib": "zettel.bib",
-        "zettel_css": zettel_css,
-        "zettel_db": "zettel.db.sqlite3",
-        "zettel_filter": zettel_filter,
-        "options": "--mathjax --strip-comments ",
-        "basedir": basedir,
+        "pandoc": config.pandoc,
+        "python": config.python,
+        "zettel_bib": config.bib,
+        "zettel_css": abspath(config.css),
+        "zettel_db": config.database,
+        "zettel_filter": abspath(join(dirname(__file__), "filters",
+                                      "zettel-compile.lua")),
+        "options": config.options,
+        "basedir": config.basedir,
         "bibliography": "--bibliography=$zettel_bib",
         "filters": "--lua-filter=$zettel_filter -Fpandoc-citeproc",
         "zettel_args": "-Mbasedir=$basedir -Mdatabase=$zettel_db",
@@ -40,20 +43,22 @@ def main():
     w.build(None, "scan", implicit_outputs=["$zettel_db"])
     w.newline()
 
-    w.rule("pandoc", "$pandoc -s $in -o $out $options $bibliography $filters -Mrelpath=$in -c $zettel_css $zettel_args")
+    w.rule("pandoc", "$pandoc -s $in -o $out $options $bibliography $filters" +\
+           " -Mrelpath=$in -c $zettel_css $zettel_args")
     w.newline()
 
-    with sqlite3.connect(db) as conn:
+    with sqlite3.connect(config.database) as conn:
         cur = conn.cursor()
         for row in cur.execute("SELECT filename FROM notes"):
             note = row[0]
-            shadow = {"zettel_css": relpath(zettel_css, dirname(note))}
+            shadow = {"zettel_css": relpath(abspath(config.css), dirname(note))}
             html = re.sub(".md$", ".html", note)
-            w.build(html, "pandoc", inputs=[note], order_only=["$zettel_db"], variables=shadow)
+            w.build(html, "pandoc", inputs=[note], order_only=["$zettel_db"],
+                    variables=shadow)
             w.newline()
 
     print(w.output.getvalue())
     w.output.close()
 
 if __name__ == "__main__":
-    main()
+    main(get_options())
