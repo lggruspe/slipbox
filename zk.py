@@ -5,10 +5,10 @@ import scan
 
 def main(config=Config()):
     cmd = CmdTree(
-        prog="zk",
-        description="Manage zettelkasten notes",
-        scan=scan.argparser(config),
-        genin=genin.argparser(config)
+        "zk",
+        "Manage zettelkasten notes",
+        scan.argparser(config),
+        genin.argparser(config)
     )
     parser, args = cmd.get_subcommand()
     config = Config()

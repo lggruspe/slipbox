@@ -2,13 +2,13 @@ from argparse import ArgumentParser
 import sys
 
 class CmdTree:
-    def __init__(self, prog, description="", **subcommands):
+    def __init__(self, prog, description, *subcommands):
         self.prog = prog
         self.description = description
-        self.subcommands = subcommands
+        self.subcommands = {p.prog:p for p in subcommands}
         self.parser = ArgumentParser(description=description, add_help=False)
         self.parser.add_argument("subcommand", type=str,
-                                choices=subcommands.keys() | ["help"])
+                                choices=self.subcommands.keys() | ["help"])
 
     def get_subcommand(self, args=None):
         if args is None:
