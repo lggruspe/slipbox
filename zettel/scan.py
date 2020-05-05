@@ -37,20 +37,23 @@ def initialize_db(db):
         );
 
         CREATE TABLE links (
-            src TEXT,
-            dest TEXT,
+            src TEXT REFERENCES notes(filename) ON DELETE CASCADE,
+            dest TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             description TEXT,
             relative_backlink TEXT,
-            FOREIGN KEY (src) REFERENCES notes(filename) ON DELETE CASCADE,
-            FOREIGN KEY (dest) REFERENCES notes(filename) ON DELETE CASCADE,
             PRIMARY KEY (src, dest)
         );
 
         CREATE TABLE keywords (
-            note TEXT,
+            note TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             keyword TEXT,
-            FOREIGN KEY (note) REFERENCES notes(filename) ON DELETE CASCADE,
             PRIMARY KEY (note, keyword)
+        );
+
+        CREATE TABLE sequences (
+            prev TEXT REFERENCES notes(filename) ON DELETE CASCADE,
+            next TEXT REFERENCES notes(filename) ON DELETE CASCADE,
+            outline TEXT REFERENCES notes(filename) ON DELETE CASCADE
         );
     """)
     conn.commit()
