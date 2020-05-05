@@ -8,23 +8,7 @@ import ninja_syntax as ns
 
 from zettel.config import Config
 
-def argparser(config=Config()):
-    from argparse import ArgumentParser
-    description = "Generate ninja file for generating HTML from zettels."
-    parser = ArgumentParser(prog="genin", description=description)
-    help_msg = "zettel sqlite3 database filename (default={})".format(
-        repr(config.user.database)
-    )
-    parser.add_argument("-d", "--database", type=str,
-                        default=config.user.database, help=help_msg)
-    return parser
-
-def get_options(config=Config()):
-    parser = argparser(config)
-    parser.parse_args(namespace=config.user)
-    return config
-
-def main(config=Config()):
+def generate_ninja(config=Config()):
     w = ns.Writer(StringIO())
     for k, v in asdict(config.user).items():
         w.variable(k, v)
@@ -47,6 +31,3 @@ def main(config=Config()):
 
     print(w.output.getvalue())
     w.output.close()
-
-if __name__ == "__main__":
-    main(get_options())

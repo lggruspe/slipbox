@@ -2,8 +2,8 @@ from argparse import ArgumentParser
 
 from zettel.caps import CmdTree
 from zettel.config import Config, UserConfig
+from zettel.genin import generate_ninja
 from zettel.scan import scan_zettels
-import genin
 
 def scan_cli(config=Config()):
     description = "Scan zettels that have been modified."
@@ -14,12 +14,22 @@ def scan_cli(config=Config()):
                         help=f"port number (default={config.port!r})")
     return parser
 
+def genin_cli(config=Config()):
+    description = "Generate ninja file for generating HTML from zettels."
+    parser = ArgumentParser(prog="genin", description=description)
+    help_msg = "zettel sqlite3 database filename (default={})".format(
+        repr(config.user.database)
+    )
+    parser.add_argument("-d", "--database", type=str,
+                        default=config.user.database, help=help_msg)
+    return parser
+
 def main(config=Config()):
     cmd = CmdTree(
         "zk",
         "Manage zettelkasten notes",
         scan_cli(config),
-        genin.argparser(config)
+        genin_cli(config)
     )
     parser, args = cmd.get_subcommand()
     config = Config()
@@ -28,7 +38,7 @@ def main(config=Config()):
         scan_zettels(config)
     elif parser.prog == "genin":
         parser.parse_args(args=args, namespace=config.user)
-        genin.main(config)
+        generate_ninja(config)
 
 if __name__ == "__main__":
     main()
