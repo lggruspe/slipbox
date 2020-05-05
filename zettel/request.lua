@@ -51,4 +51,20 @@ function M.keyword(note, keyword)
         :gsub("@note@", json_string(note))
 end
 
+function M.sequence(outline, prev_note, next_note)
+    local tmpl = [[
+    {
+        "type": "sequence",
+        "data": {
+            "prev": @prev@,
+            "next": @next@,
+            "outline": @outline@
+        }
+    }
+    ]]
+    return tmpl:gsub("@outline@", json_string(outline))
+        :gsub("@next@", json_string(next_note))
+        :gsub("@prev@", json_string(prev_note))
+end
+
 return M

@@ -8,11 +8,13 @@ local request = require "zettel.request"
 local title
 local relpath
 local basedir
+local outline -- TODO set to true if title starts with Outline of...
 
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     basedir = m.basedir
     relpath = m.relpath
+    outline = m.outline == true
 end
 
 local function get_alternative_title_from_header(elem)
@@ -38,6 +40,7 @@ end
 local keywords = {}
 local links = {}
 local warnings = {}
+local sequence = {} -- for outlines
 
 local function Str(elem)
     -- TODO does this include #id info in divs, spans, etc.?
@@ -51,6 +54,9 @@ local function Link(elem)
     links[elem.target] = elem.title
     if elem.target ~= "" and elem.title == "" then
         warnings["unannotated link"] = pandoc.utils.stringify(elem.content)
+    end
+    if outline and elem.target and elem.target ~= "" then
+        table.insert(sequence, elem.target)
     end
 end
 
@@ -70,6 +76,13 @@ local function Meta(m)
     for kw in pairs(keywords) do
         local kw_req = request.keyword(relpath, kw)
         queue.message(host, port, kw_req)
+    end
+
+    for i = 2, #sequence do
+        local prev_note = sequence[i-1]
+        local next_note = sequence[i]
+        local seq_req = request.sequence(relpath, prev_note, next_note)
+        queue.message(host, port, seq_req)
     end
 
     for warning, context in pairs(warnings) do

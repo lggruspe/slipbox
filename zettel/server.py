@@ -28,6 +28,9 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 elif req_t == "keyword":
                     if params:
                         self.server.keywords_queue.append(params)
+                elif req_t == "sequence":
+                    if params:
+                        self.server.sequences_queue.append(params)
             except json.decoder.JSONDecodeError:
                 pass
 
@@ -35,6 +38,7 @@ class Server(socketserver.TCPServer):
     notes_queue = []
     links_queue = []
     keywords_queue = []
+    sequences_queue = []
 
 def process(server):
     conn = sqlite3.connect(UserConfig().database)
@@ -56,6 +60,10 @@ def process(server):
         fixed_params = transform_link_params(params)
         if fixed_params:
             cur.execute(add_link(), fixed_params)
+    for params in server.sequences_queue:
+        fixed_params = transform_sequence_params(params)
+        if fixed_params:
+            cur.execute(add_sequence(), fixed_params)
     conn.commit()
     conn.close()
 

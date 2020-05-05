@@ -26,6 +26,12 @@ def add_keyword():
             VALUES (:note, :keyword)
     """
 
+def add_sequence():
+    return """
+        INSERT INTO sequences (prev, next, outline)
+            VALUES (:prev, :next, :outline)
+    """
+
 def transform_link_params(params):
     src = params.get("src")
     dest = fix_path(params.get("dest"), src)
@@ -38,6 +44,18 @@ def transform_link_params(params):
         "dest": dest,
         "description": description,
         "relative_backlink": backlink,
+    }
+
+def transform_sequence_params(params):
+    outline = params.get("outline")
+    prev_note = fix_path(params.get("prev"), outline)
+    next_note = fix_path(params.get("next"), outline)
+    if not prev_note or not next_note:
+        return None
+    return {
+        "prev": prev_note,
+        "next": next_note,
+        "outline": outline,
     }
 
 def to_sql(req):
