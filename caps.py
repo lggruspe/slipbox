@@ -2,8 +2,8 @@ from argparse import ArgumentParser
 import sys
 
 class CmdTree:
-    def __init__(self, name, description="", **subcommands):
-        self.name = name
+    def __init__(self, prog, description="", **subcommands):
+        self.prog = prog
         self.description = description
         self.subcommands = subcommands
         self.parser = ArgumentParser(description=description, add_help=False)
@@ -27,29 +27,3 @@ class CmdTree:
         if type(subcommand) == CmdTree:
             return subcommand.get_subcommand(remaining)
         return subcommand, remaining
-
-foo = ArgumentParser(description="Run foo")
-foo.add_argument("-x", type=int, default=0)
-
-bar = ArgumentParser(description="Run bar")
-bar.add_argument("-x", type=int, default=1)
-
-baz = ArgumentParser(description="Run baz")
-baz.add_argument("-x", type=int, default=2)
-
-cmd = CmdTree(
-    name="main",
-    description="Run main",
-    foo=foo,
-    barbaz=CmdTree(
-        name="barbaz",
-        description="Run barbaz",
-        bar=bar,
-        baz=baz
-    )
-)
-
-parser, remaining = cmd.get_subcommand()
-
-args = parser.parse_args(args=remaining)
-print(args)
