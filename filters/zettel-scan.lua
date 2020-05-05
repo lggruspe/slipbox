@@ -53,7 +53,7 @@ local function Link(elem)
     -- even if elem.target == "", Meta sets links[""] to nil
     links[elem.target] = elem.title
     if elem.target ~= "" and elem.title == "" then
-        warnings["unannotated link"] = pandoc.utils.stringify(elem.content)
+        warnings["Unannotated link"] = pandoc.utils.stringify(elem.content)
     end
     if outline and elem.target and elem.target ~= "" then
         table.insert(sequence, elem.target)
@@ -86,7 +86,7 @@ local function Meta(m)
     end
 
     for warning, context in pairs(warnings) do
-        io.stderr:write(string.format("Warning: %s in %s (%s)\n", warning, relpath, context))
+        io.stderr:write(string.format("[WARNING] %s in %s (%s)\n", warning, relpath, context))
     end
 
     --- edit metadata if not set already
