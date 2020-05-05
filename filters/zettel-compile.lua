@@ -1,14 +1,18 @@
 pandoc.utils = require "pandoc.utils"
+local pl = {}
+pl.path = require "pl.path"
 local sqlite3 = require "lsqlite3"
 
 local title
 local database
 local relpath
+local basedir
 local db
 
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     database = m.database
+    basedir = m.basedir
     relpath = m.relpath
     db = sqlite3.open(database) -- closed in log_warnings
 end
@@ -91,21 +95,26 @@ local function sequences_section()
     local block = {}
     local sequences = get_sequences(db)
     if not next(sequences) then return nil end
+
+    local current_start = pl.path.join(basedir, pl.path.dirname(relpath))
     for outline, links in pairs(sequences) do
+        local target = pl.path.join(basedir, outline)
         table.insert(block, pandoc.Para{
-            pandoc.Link(pandoc.Str(outline), outline)
+            pandoc.Link(pandoc.Str(outline), pl.path.relpath(target, current_start))
         })  -- TODO use outline title
         local list = {}
         for _, note in ipairs(links.prevs) do
+            local target = pl.path.join(basedir, note)
             table.insert(list, pandoc.Para{
                 pandoc.Str "Prev: ",
-                pandoc.Link(pandoc.Str(note), note),    -- TODO use note title
+                pandoc.Link(pandoc.Str(note), pl.path.relpath(target, current_start)),    -- TODO use note title
             })
         end
         for _, note in ipairs(links.nexts) do
+            local target = pl.path.join(basedir, note)
             table.insert(list, pandoc.Para{
                 pandoc.Str "Next: ",
-                pandoc.Link(pandoc.Str(note), note),
+                pandoc.Link(pandoc.Str(note), pl.path.relpath(target, current_start)),
             })
         end
         table.insert(block, pandoc.Div(list))
