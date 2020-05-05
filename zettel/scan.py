@@ -1,5 +1,5 @@
 from glob import iglob
-from os.path import dirname, exists, getmtime, isfile
+from os.path import dirname, exists, getmtime, isfile, join, pardir
 from os import remove, utime
 import sqlite3
 import subprocess as sp
@@ -10,21 +10,6 @@ import time
 from zettel import client, server
 from zettel.config import Config
 from zettel.pandoc.commands import scan_metadata
-
-def argparser(config=Config()):
-    from argparse import ArgumentParser
-    description = "Scan zettels that have been modified."
-    parser = ArgumentParser(prog="scan", description=description)
-    parser.add_argument("-H", "--host", type=str, default=config.host,
-                        help=f"host address (default={config.host!r})")
-    parser.add_argument("-p", "--port", type=int, default=config.port,
-                        help=f"port number (default={config.port!r})")
-    return parser
-
-def get_options(config=Config()):
-    parser = argparser(config)
-    parser.parse_args(namespace=config)
-    return config
 
 def touch_modified(notes, conn):
     """Touch notes and links from notes."""
@@ -87,7 +72,8 @@ def scan_modified(notes, host, port):
     tasks = []
     for note in notes:
         cmd = scan_metadata(note, port)
-        task = sp.Popen(cmd, stdout=sp.DEVNULL, cwd=dirname(__file__))
+        task = sp.Popen(cmd, stdout=sp.DEVNULL, cwd=join(dirname(__file__),
+                                                         pardir))
         tasks.append(task)
     for task in tasks:
         task.wait()
@@ -104,7 +90,7 @@ def delete_missing_notes_from_db(conn):
     args = ", ".join(map(sqlite_string, missing))
     cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
 
-def main(config=Config()):
+def scan_zettels(config=Config()):
     last_scan = check_database(config.user.database)
     with sqlite3.connect(config.user.database) as conn:
         delete_missing_notes_from_db(conn)
@@ -116,6 +102,3 @@ def main(config=Config()):
         with sqlite3.connect(config.user.database) as conn:
             touch_modified(modified_notes, conn)
         utime(config.user.database)
-
-if __name__ == "__main__":
-    main(get_options())
