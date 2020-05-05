@@ -61,6 +61,58 @@ local function backlinks_section()
     end
 end
 
+local function get_sequences(db)
+    -- TODO include titles of prev, next and outline notes
+    local seqs = {}
+    local prevs = db:prepare [[
+        SELECT prev, outline FROM sequences WHERE next = ?
+    ]]
+    prevs:bind_values(relpath)
+    for row in prevs:nrows() do
+        if not seqs[row.outline] then
+            seqs[row.outline] = {prevs = {}, nexts = {}}
+        end
+        table.insert(seqs[row.outline].prevs, row.prev)
+    end
+    local nexts = db:prepare [[
+        SELECT next, outline FROM sequences WHERE prev = ?
+    ]]
+    nexts:bind_values(relpath)
+    for row in nexts:nrows() do
+        if not seqs[row.outline] then
+            seqs[row.outline] = {prevs = {}, nexts = {}}
+        end
+        table.insert(seqs[row.outline].nexts, row.next)
+    end
+    return seqs
+end
+
+local function sequences_section()
+    local block = {}
+    local sequences = get_sequences(db)
+    if not next(sequences) then return nil end
+    for outline, links in pairs(sequences) do
+        table.insert(block, pandoc.Para{
+            pandoc.Link(pandoc.Str(outline), outline)
+        })  -- TODO use outline title
+        local list = {}
+        for _, note in ipairs(links.prevs) do
+            table.insert(list, pandoc.Para{
+                pandoc.Str "Prev: ",
+                pandoc.Link(pandoc.Str(note), note),    -- TODO use note title
+            })
+        end
+        for _, note in ipairs(links.nexts) do
+            table.insert(list, pandoc.Para{
+                pandoc.Str "Next: ",
+                pandoc.Link(pandoc.Str(note), note),
+            })
+        end
+        table.insert(block, pandoc.Div(list))
+    end
+    return pandoc.Div(block)
+end
+
 local function references_section()
     if citations > 0 then
         return pandoc.Header(3, pandoc.Str "References")
@@ -72,8 +124,13 @@ end
 local function generate_extra_sections(doc)
     local backlinks = backlinks_section()
     local references = references_section()
-    if backlinks or references then
+    local sequences = sequences_section()
+    if backlinks or references or sequences then
         table.insert(doc.blocks, pandoc.HorizontalRule())
+        if sequences then
+            table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Sequences"))
+            table.insert(doc.blocks, sequences)
+        end
         if backlinks then
             table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
             table.insert(doc.blocks, backlinks)
