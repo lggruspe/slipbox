@@ -22,16 +22,16 @@ def main(config=UserConfig()):
     variables = {
         "pandoc": config.pandoc,
         "python": config.python,
-        "zettel_bib": config.bib,
-        "zettel_css": abspath(config.css),
-        "zettel_db": config.database,
+        "bib": config.bib,
+        "css": config.css,
+        "database": config.database,
         "zettel_filter": abspath(join(dirname(__file__), "filters",
                                       "zettel-compile.lua")),
         "options": config.options,
         "basedir": config.basedir,
-        "bibliography": "--bibliography=$zettel_bib",
+        "bibliography": "--bibliography=$bib",
         "filters": "--lua-filter=$zettel_filter -Fpandoc-citeproc",
-        "zettel_args": "-Mbasedir=$basedir -Mdatabase=$zettel_db",
+        "zettel_args": "-Mbasedir=$basedir -Mdatabase=$database",
     }
     for k, v in variables.items():
         w.variable(k, v)
@@ -40,20 +40,20 @@ def main(config=UserConfig()):
     w.rule("scan", "$python -m scan")
     w.newline()
 
-    w.build(None, "scan", implicit_outputs=["$zettel_db"])
+    w.build(None, "scan", implicit_outputs=["$database"])
     w.newline()
 
     w.rule("pandoc", "$pandoc -s $in -o $out $options $bibliography $filters" +\
-           " -Mrelpath=$in -c $zettel_css $zettel_args")
+           " -Mrelpath=$in -c $css $zettel_args")
     w.newline()
 
     with sqlite3.connect(config.database) as conn:
         cur = conn.cursor()
         for row in cur.execute("SELECT filename FROM notes"):
             note = row[0]
-            shadow = {"zettel_css": relpath(abspath(config.css), dirname(note))}
+            shadow = {"css": relpath(config.css, dirname(note))}
             html = re.sub(".md$", ".html", note)
-            w.build(html, "pandoc", inputs=[note], order_only=["$zettel_db"],
+            w.build(html, "pandoc", inputs=[note], order_only=["$database"],
                     variables=shadow)
             w.newline()
 
