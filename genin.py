@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from io import StringIO
 from os.path import abspath, curdir, dirname, join, relpath
 import re
@@ -19,32 +20,17 @@ def get_options(config=UserConfig()):
 
 def main(config=UserConfig()):
     w = ns.Writer(StringIO())
-    variables = {
-        "pandoc": config.pandoc,
-        "python": config.python,
-        "bib": config.bib,
-        "css": config.css,
-        "database": config.database,
-        "zettel_filter": abspath(join(dirname(__file__), "filters",
-                                      "zettel-compile.lua")),
-        "options": config.options,
-        "basedir": config.basedir,
-        "bibliography": "--bibliography=$bib",
-        "filters": "--lua-filter=$zettel_filter -Fpandoc-citeproc",
-        "zettel_args": "-Mbasedir=$basedir -Mdatabase=$database",
-    }
-    for k, v in variables.items():
+    for k, v in asdict(config).items():
         w.variable(k, v)
     w.newline()
 
     w.rule("scan", "$python -m scan")
     w.newline()
-
     w.build(None, "scan", implicit_outputs=["$database"])
     w.newline()
-
-    w.rule("pandoc", "$pandoc -s $in -o $out $options $bibliography $filters" +\
-           " -Mrelpath=$in -c $css $zettel_args")
+    w.rule("pandoc", "$pandoc -s $in -o $out $options --bibliography=$bib " +\
+           "$filters -Mrelpath=$in -c $css -Mbasedir=$basedir " +\
+           "-Mdatabase=$database")
     w.newline()
 
     with sqlite3.connect(config.database) as conn:
