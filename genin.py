@@ -8,7 +8,7 @@ import ninja_syntax as ns
 
 from zettel.config import Config
 
-def get_options(config=Config()):
+def argparser(config=Config()):
     from argparse import ArgumentParser
     description = "Generate ninja file for generating HTML from zettels."
     parser = ArgumentParser(description=description)
@@ -17,6 +17,10 @@ def get_options(config=Config()):
     )
     parser.add_argument("-d", "--database", type=str,
                         default=config.user.database, help=help_msg)
+    return parser
+
+def get_options(config=Config()):
+    parser = argparser(config)
     parser.parse_args(namespace=config.user)
     return config
 

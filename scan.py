@@ -11,14 +11,18 @@ from zettel import client, server
 from zettel.config import Config
 from zettel.pandoc.commands import scan_metadata
 
-def get_options(config=Config()):
+def argparser(config=Config()):
     from argparse import ArgumentParser
     description = "Scan zettels that have been modified."
-    parser = ArgumentParser(description=description)
+    parser = ArgumentParser(prog="scan", description=description)
     parser.add_argument("-H", "--host", type=str, default=config.host,
                         help=f"host address (default={config.host!r})")
     parser.add_argument("-p", "--port", type=int, default=config.port,
                         help=f"port number (default={config.port!r})")
+    return parser
+
+def get_options(config=Config()):
+    parser = argparser(config)
     parser.parse_args(namespace=config)
     return config
 
