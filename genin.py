@@ -11,7 +11,7 @@ from zettel.config import Config
 def argparser(config=Config()):
     from argparse import ArgumentParser
     description = "Generate ninja file for generating HTML from zettels."
-    parser = ArgumentParser(description=description)
+    parser = ArgumentParser(prog="genin", description=description)
     help_msg = "zettel sqlite3 database filename (default={})".format(
         repr(config.user.database)
     )
