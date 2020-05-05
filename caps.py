@@ -20,7 +20,7 @@ class CmdTree:
             for k, v in self.subcommands.items():
                 print(k + "\n\t" + v.description)
             if "help" not in self.subcommands:
-                print("help\n\tshow this help message and exit")
+                print("help\n\tShow this help message and exit.")
             sys.exit()
         namespace, remaining = self.parser.parse_known_args(args)
         subcommand = self.subcommands.get(namespace.subcommand)
