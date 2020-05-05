@@ -24,10 +24,6 @@ def main(config=UserConfig()):
         w.variable(k, v)
     w.newline()
 
-    w.rule("scan", "$python -m scan")
-    w.newline()
-    w.build(None, "scan", implicit_outputs=["$database"])
-    w.newline()
     w.rule("pandoc", "$pandoc -s $in -o $out $options --bibliography=$bib " +\
            "$filters -Mrelpath=$in -c $css -Mbasedir=$basedir " +\
            "-Mdatabase=$database")
