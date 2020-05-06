@@ -14,9 +14,17 @@ def generate_ninja(config=Config()):
         w.variable(k, v)
     w.newline()
 
+    w.rule("scan", "$python -m zk scan")
+    w.newline()
+    w.rule("ninja", "$python -m zk genin > build.ninja", generator=True)
+    w.newline()
     w.rule("pandoc", "$pandoc -s $in -o $out $options --bibliography=$bib " +\
            "$filters -Mrelpath=$in -c $css -Mbasedir=$basedir " +\
            "-Mdatabase=$database")
+    w.newline()
+    w.build("scan", "scan")
+    w.newline()
+    w.build("ninja", "ninja", order_only=["scan"])
     w.newline()
 
     with sqlite3.connect(config.user.database) as conn:
@@ -25,7 +33,7 @@ def generate_ninja(config=Config()):
             note = row[0]
             shadow = {"css": relpath(config.user.css, dirname(note))}
             html = re.sub(".md$", ".html", note)
-            w.build(html, "pandoc", inputs=[note], order_only=["$database"],
+            w.build(html, "pandoc", inputs=[note], order_only=["ninja"],
                     variables=shadow)
             w.newline()
 
