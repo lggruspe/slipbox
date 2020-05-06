@@ -32,7 +32,6 @@ def main(config=Config()):
         genin_cli(config)
     )
     parser, args = cmd.get_subcommand()
-    config = Config()
     if parser.prog == "scan":
         parser.parse_args(args=args, namespace=config)
         scan_zettels(config)
