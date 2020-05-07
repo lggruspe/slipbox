@@ -6,6 +6,9 @@ def delete_note_keywords():
 def delete_note_links():
     return "DELETE FROM links WHERE src = :src"
 
+def delete_note_sequences():
+    return "DELETE FROM sequences WHERE outline = :outline"
+
 def add_note():
     return """
         INSERT INTO notes (filename, title) VALUES (:filename, :title)

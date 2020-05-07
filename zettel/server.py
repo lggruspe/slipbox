@@ -53,6 +53,11 @@ def process(server):
         cur.execute(delete_note_links(), {
             "src": params.get("filename")
         })
+        # delete outline entries before inserting to remove deleted and duplicate
+        # sequence links
+        cur.execute(delete_note_sequences(), {
+            "outline": params.get("outline")
+        })
         cur.execute(add_note(), params)
     for params in server.keywords_queue:
         cur.execute(add_keyword(), params)
