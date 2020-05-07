@@ -53,7 +53,8 @@ def initialize_db(db):
         CREATE TABLE sequences (
             prev TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             next TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            outline TEXT REFERENCES notes(filename) ON DELETE CASCADE
+            outline TEXT REFERENCES notes(filename) ON DELETE CASCADE,
+            PRIMARY KEY (prev, next, outline)
         );
     """)
     conn.commit()

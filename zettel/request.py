@@ -31,7 +31,7 @@ def add_keyword():
 
 def add_sequence():
     return """
-        INSERT INTO sequences (prev, next, outline)
+        INSERT OR IGNORE INTO sequences (prev, next, outline)
             VALUES (:prev, :next, :outline)
     """
 
