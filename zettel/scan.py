@@ -40,7 +40,6 @@ def initialize_db(db):
             src TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             dest TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             description TEXT,
-            relative_backlink TEXT,
             PRIMARY KEY (src, dest)
         );
 

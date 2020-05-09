@@ -1,4 +1,4 @@
-from .filenames import fix_path, relative_backlink
+from .filenames import fix_path
 
 def delete_note_keywords():
     return "DELETE FROM keywords WHERE note = :note"
@@ -17,8 +17,8 @@ def add_note():
 
 def add_link():
     return """
-        INSERT INTO links (src, dest, description, relative_backlink)
-            VALUES (:src, :dest, :description, :relative_backlink)
+        INSERT INTO links (src, dest, description)
+            VALUES (:src, :dest, :description)
                 ON CONFLICT (src, dest) DO UPDATE
                     SET description = description
     """
@@ -40,13 +40,10 @@ def transform_link_params(params):
     dest = fix_path(params.get("dest"), src)
     if not dest:
         return None
-    description = params.get("description")
-    backlink = relative_backlink(src, dest)
     return {
         "src": src,
         "dest": dest,
-        "description": description,
-        "relative_backlink": backlink,
+        "description": params.get("description"),
     }
 
 def transform_sequence_params(params):

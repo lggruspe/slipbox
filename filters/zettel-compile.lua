@@ -47,9 +47,10 @@ end
 
 local function backlinks_section()
     local blocklists = {}
+    local start = pl.path.join(basedir, pl.path.dirname(relpath))
     for backlink in get_backlinks(db, relpath) do
         local filename = backlink.filename
-        local link = backlink.relative_backlink
+        local link = pl.path.relpath(pl.path.join(basedir, backlink.src), start)
         local content = string.format("%s (%s)", backlink.title or "", filename)
         local description = string.format(" - %s", backlink.description)
         local block = pandoc.Plain {
