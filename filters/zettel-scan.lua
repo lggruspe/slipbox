@@ -1,7 +1,8 @@
 -- store metadata and links in database
 
 pandoc.utils = require "pandoc.utils"
-local path = require "path"
+local pl = {}
+pl.path = require "pl.path"
 local queue = require "zettel.queue"
 local request = require "zettel.request"
 
@@ -28,7 +29,7 @@ end
 local function extract_code(block)
     local save_as = block.attributes["save-as"]
     if save_as and save_as ~= "" then
-        local code = path.join(basedir, path.dirname(relpath), save_as)
+        local code = pl.path.join(basedir, pl.path.dirname(relpath), save_as)
         local f = io.open(code, "w")
         if f then
             f:write(block.text)
