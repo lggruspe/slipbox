@@ -11,12 +11,11 @@ from zettel import client, server
 from zettel.config import Config
 from zettel.pandoc.commands import scan_metadata
 
-def touch_modified(notes, conn):
-    """Touch notes and links from notes."""
-    sql = "SELECT dest FROM links WHERE src = :src"
+def touch_with_backlinks(notes, conn):
+    """Touch files with backlink to notes."""
+    sql = "SELECT dest FROM links WHERE src = :src AND description != ''"
     cur = conn.cursor()
     for note in notes:
-        utime(note)
         for row in cur.execute(sql, {"src": note}):
             utime(row[0])
 
@@ -103,5 +102,5 @@ def scan_zettels(config=Config()):
     if modified_notes:
         scan_modified(modified_notes, config.host, config.port)
         with sqlite3.connect(config.user.database) as conn:
-            touch_modified(modified_notes, conn)
+            touch_with_backlinks(modified_notes, conn)
         utime(config.user.database)
