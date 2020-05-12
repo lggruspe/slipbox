@@ -73,8 +73,48 @@ local function backlinks_section()
 end
 
 local function get_folgezettels(db)
-    -- TODO
-    return {}
+    -- get neighbor notes based on folgezettel-type outlines
+    local folgezettels = {}
+
+    -- first get fz-outlines that contain current note
+    local sql = db:prepare [[
+        SELECT outline, seqnum FROM folgezettels WHERE note = ?
+    ]]
+    sql:bind_values(relpath)
+    for row in sql:nrows() do
+        if not folgezettels[row.outline] then
+            folgezettels[row.outline] = {}
+            folgezettels[row.outline].seqnums = {}
+            folgezettels[row.outline].parents = {}
+            folgezettels[row.outline].children = {}
+        end
+        folgezettels[row.outline].seqnums[row.seqnum] = true
+
+        -- then get neighbor notes
+        local fz_sql = db:prepare [[
+            SELECT title, filename, seqnum
+                FROM notes JOIN folgezettels ON note = filename
+                    WHERE outline = ? AND (seqnum = ? OR seqnum LIKE ?)
+        ]]
+        local parent = fz_parent(row.seqnum)
+        local children = string.format("%s_", row.seqnum)
+        fz_sql:bind_values(row.outline, parent, children)
+        for neighbor in fz_sql:nrows() do
+            -- check if really parent or child
+            if neighbor.seqnum == parent then
+                folgezettels[row.outline].parents[neighbor.seqnum] = {
+                    title = neighbor.title,
+                    filename = neighbor.filename
+                }
+            elseif fz_parent(neighbor.seqnum) == row.seqnum then
+                folgezettels[row.outline].children[neighbor.seqnum] = {
+                    title = neighbor.title,
+                    filename = neighbor.title
+                }
+            end
+        end
+    end
+    return folgezettels
 end
 
 local function get_sequences(db)
