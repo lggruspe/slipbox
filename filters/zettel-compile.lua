@@ -243,25 +243,24 @@ local function folgezettels_section()
 
         local self_links = {pandoc.Str "Current note: "}
         for seqnum in pairs(outline.seqnums) do
-            table.insert(self_links, pandoc.Link(pandoc.Str(seqnum), "#"))
-            table.insert(self_links, pandoc.Str " ")
+            table.insert(self_links, pandoc.Str(seqnum .. ' '))
         end
         table.insert(block, pandoc.Para(self_links))
 
         for seqnum, parent in pairs(outline.parents) do
             table.insert(block, pandoc.Para{
-                pandoc.Str(parent.title .. ": "),
+                pandoc.Str(string.format("[%s]: ", seqnum)),
                 pandoc.Link(
-                    pandoc.Str(seqnum),
+                    pandoc.Str(string.format("%s (%s)", parent.title, parent.filename)),
                     pl.path.relpath(pl.path.join(basedir, parent.filename), pl.path.join(basedir, pl.path.dirname(relpath)))
                 ),
             })
         end
         for seqnum, child in pairs(outline.children) do
             table.insert(block, pandoc.Para{
-                pandoc.Str(child.title .. ": "),
+                pandoc.Str(string.format("[%s]: ", seqnum)),
                 pandoc.Link(
-                    pandoc.Str(seqnum),
+                    pandoc.Str(string.format("%s (%s)", child.title, child.filename)),
                     pl.path.relpath(pl.path.join(basedir, child.filename), pl.path.join(basedir, pl.path.dirname(relpath)))
                 ),
             })
