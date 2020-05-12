@@ -10,12 +10,14 @@ local title
 local relpath
 local basedir
 local outline -- TODO set to true if title starts with Outline of...
+local folgezettel -- TODO specify as outline value
 
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     basedir = m.basedir
     relpath = m.relpath
     outline = m.outline == true
+    folgezettel = m.folgezettel == true
 end
 
 local function get_alternative_title_from_header(elem)
@@ -42,6 +44,7 @@ local keywords = {}
 local links = {}
 local warnings = {}
 local sequence = {} -- for outlines
+local folgezettels = {} -- for folgezettel
 
 local function Str(elem)
     -- TODO does this include #id info in divs, spans, etc.?
@@ -58,6 +61,13 @@ local function Link(elem)
     end
     if outline and elem.target and elem.target ~= "" then
         table.insert(sequence, elem.target)
+    end
+    if folgezettel then
+        local seqnum = pandoc.utils.stringify(elem.content or "")
+        local target = elem.target or ""
+        if seqnum ~= "" and target ~= "" then
+            folgezettels[seqnum] = target
+        end
     end
 end
 
@@ -84,6 +94,13 @@ local function Meta(m)
         local next_note = sequence[i]
         local seq_req = request.sequence(relpath, prev_note, next_note)
         queue.message(host, port, seq_req)
+    end
+
+    folgezettels[""] = nil
+    for seqnum, v in pairs(folgezettels) do
+        local target = pl.path.normpath(pl.path.join(pl.path.dirname(relpath), v))
+        local fz_req = request.folgezettel(relpath, target, seqnum)
+        queue.message(host, port, fz_req)
     end
 
     for warning, context in pairs(warnings) do

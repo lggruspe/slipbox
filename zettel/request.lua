@@ -67,4 +67,20 @@ function M.sequence(outline, prev_note, next_note)
         :gsub("@prev@", json_string(prev_note))
 end
 
+function M.folgezettel(outline, note, seqnum)
+    local tmpl = [[
+    {
+        "type": "folgezettel",
+        "data": {
+            "outline": @outline@,
+            "note": @note@,
+            "seqnum": @seqnum@
+        }
+    }
+    ]]
+    return tmpl:gsub("@seqnum@", json_string(seqnum))
+        :gsub("@note@", json_string(note))
+        :gsub("@outline@", json_string(outline))
+end
+
 return M

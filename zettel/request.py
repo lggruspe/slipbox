@@ -9,6 +9,9 @@ def delete_note_links():
 def delete_note_sequences():
     return "DELETE FROM sequences WHERE outline = :outline"
 
+def delete_note_folgezettels():
+    return "DELETE FROM folgezettels WHERE outline = :outline"
+
 def add_note():
     return """
         INSERT INTO notes (filename, title) VALUES (:filename, :title)
@@ -33,6 +36,12 @@ def add_sequence():
     return """
         INSERT OR IGNORE INTO sequences (prev, next, outline)
             VALUES (:prev, :next, :outline)
+    """
+
+def add_folgezettel():
+    return """
+        INSERT OR IGNORE INTO folgezettels (outline, note, seqnum)
+            VALUES (:outline, :note, :seqnum)
     """
 
 def transform_link_params(params):

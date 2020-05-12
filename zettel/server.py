@@ -31,6 +31,9 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 elif req_t == "sequence":
                     if params:
                         self.server.sequences_queue.append(params)
+                elif req_t == "folgezettel":
+                    if params:
+                        self.server.folgezettels_queue.append(params)
             except json.decoder.JSONDecodeError:
                 pass
 
@@ -39,6 +42,7 @@ class Server(socketserver.TCPServer):
     links_queue = []
     keywords_queue = []
     sequences_queue = []
+    folgezettels_queue = []
 
 def process(server):
     conn = sqlite3.connect(UserConfig().database)
@@ -58,6 +62,10 @@ def process(server):
         cur.execute(delete_note_sequences(), {
             "outline": params.get("outline")
         })
+        # delete folgezettel entries taken from outline note
+        cur.execute(delete_note_folgezettels(), {
+            "outline": params.get("outline")
+        })
         cur.execute(add_note(), params)
     for params in server.keywords_queue:
         cur.execute(add_keyword(), params)
@@ -69,6 +77,8 @@ def process(server):
         fixed_params = transform_sequence_params(params)
         if fixed_params:
             cur.execute(add_sequence(), fixed_params)
+    for params in server.folgezettels_queue:
+        cur.execute(add_folgezettel(), params)
     conn.commit()
     conn.close()
 
