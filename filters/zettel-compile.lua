@@ -75,18 +75,43 @@ end
 local function get_folgezettels(db)
     -- get neighbor notes based on folgezettel-type outlines
     local folgezettels = {}
+    -- folgezettels table structure:
+    -- folgezettels = {
+    --     [<outline paths>] = {
+    --         title = [<outline title>],
+    --         seqnums = {
+    --             [<seqnums of current note in outline>] = true,
+    --         },
+    --         parents = {
+    --             [<parent seqnums>] = {
+    --                 title = [<title of parent note>],
+    --                 filename = [<filename of parent note>],
+    --             }
+    --         },
+    --         children = {
+    --             [<children seqnums>] = {
+    --                 title = [<title of child note>],
+    --                 filename = [<filename of child note>],
+    --             }
+    --         },
+    --     }
+    -- }
 
     -- first get fz-outlines that contain current note
     local sql = db:prepare [[
-        SELECT outline, seqnum FROM folgezettels WHERE note = ?
+        SELECT outline, title, seqnum
+            FROM folgezettels JOIN notes ON outline = filename
+                WHERE note = ?
     ]]
     sql:bind_values(relpath)
     for row in sql:nrows() do
         if not folgezettels[row.outline] then
-            folgezettels[row.outline] = {}
-            folgezettels[row.outline].seqnums = {}
-            folgezettels[row.outline].parents = {}
-            folgezettels[row.outline].children = {}
+            folgezettels[row.outline] = {
+                title = row.title,
+                seqnums = {},
+                parents = {},
+                children = {},
+            }
         end
         folgezettels[row.outline].seqnums[row.seqnum] = true
 
@@ -163,10 +188,10 @@ local function get_sequences(db)
 end
 
 local function sequences_section()
-    local block = {}
     local sequences = get_sequences(db)
     if not next(sequences) then return nil end
 
+    local block = {}
     local current_start = pl.path.join(basedir, pl.path.dirname(relpath))
     for outline, links in pairs(sequences) do
         local content = pandoc.Str(string.format("%s (%s)", links.title, outline))
@@ -206,8 +231,18 @@ end
 
 local function folgezettels_section()
     local folgezettels = get_folgezettels(db)
-    -- TODO
-    return nil
+    if not next(folgezettels) then return nil end
+    local block = {}
+    for path, outline in pairs(folgezettels) do
+        table.insert(block, pandoc.Para{
+            pandoc.Link(
+                pandoc.Str(string.format("%s (%s)", outline.title, path)),
+                pl.path.relpath(pl.path.join(basedir, path), pl.path.join(basedir, pl.path.dirname(relpath)))
+            )
+        })
+        -- TODO
+    end
+    return pandoc.Div(block)
 end
 
 local function generate_extra_sections(doc)
@@ -221,15 +256,16 @@ local function generate_extra_sections(doc)
             table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Sequences"))
             table.insert(doc.blocks, sequences)
         end
+        if folgezettels then
+            table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Folgezettels"))
+            table.insert(doc.blocks, folgezettels)
+        end
         if backlinks then
             table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
             table.insert(doc.blocks, backlinks)
         end
         if references then
             table.insert(doc.blocks, references)
-        end
-        if folgezettels then
-            table.insert(doc.blocks, folgezettels)
         end
         return doc
     end
