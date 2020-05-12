@@ -79,6 +79,7 @@ def process(server):
             cur.execute(add_sequence(), fixed_params)
     for params in server.folgezettels_queue:
         cur.execute(add_folgezettel(), params)
+        # TODO handle constraint violations
     conn.commit()
     conn.close()
 

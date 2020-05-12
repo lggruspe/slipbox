@@ -65,7 +65,7 @@ local function Link(elem)
     if folgezettel then
         local seqnum = pandoc.utils.stringify(elem.content or "")
         local target = elem.target or ""
-        if seqnum ~= "" and target ~= "" then
+        if target ~= "" and seqnum:match("^[%d%a]+$") then
             folgezettels[seqnum] = target
         end
     end
