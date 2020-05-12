@@ -129,12 +129,12 @@ local function get_folgezettels(db)
             if neighbor.seqnum == parent then
                 folgezettels[row.outline].parents[neighbor.seqnum] = {
                     title = neighbor.title,
-                    filename = neighbor.filename
+                    filename = neighbor.filename,
                 }
             elseif fz_parent(neighbor.seqnum) == row.seqnum then
                 folgezettels[row.outline].children[neighbor.seqnum] = {
                     title = neighbor.title,
-                    filename = neighbor.title
+                    filename = neighbor.filename,
                 }
             end
         end
@@ -251,13 +251,19 @@ local function folgezettels_section()
         for seqnum, parent in pairs(outline.parents) do
             table.insert(block, pandoc.Para{
                 pandoc.Str(parent.title .. ": "),
-                pandoc.Link(pandoc.Str(seqnum), parent.filename),
+                pandoc.Link(
+                    pandoc.Str(seqnum),
+                    pl.path.relpath(pl.path.join(basedir, parent.filename), pl.path.join(basedir, pl.path.dirname(relpath)))
+                ),
             })
         end
         for seqnum, child in pairs(outline.children) do
             table.insert(block, pandoc.Para{
                 pandoc.Str(child.title .. ": "),
-                pandoc.Link(pandoc.Str(seqnum), child.filename),
+                pandoc.Link(
+                    pandoc.Str(seqnum),
+                    pl.path.relpath(pl.path.join(basedir, child.filename), pl.path.join(basedir, pl.path.dirname(relpath)))
+                ),
             })
         end
     end
