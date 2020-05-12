@@ -54,6 +54,13 @@ def initialize_db(db):
             outline TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             PRIMARY KEY (prev, next, outline)
         );
+
+        CREATE TABLE folgezettels (
+            outline TEXT REFERENCES notes(filename) ON DELETE CASCADE,
+            note TEXT REFERENCES notes(filename) ON DELETE CASCADE,
+            seqnum TEXT NOT NULL,
+            PRIMARY KEY (outline, seqnum)
+        );
     """)
     conn.commit()
     conn.close()
