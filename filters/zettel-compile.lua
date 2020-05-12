@@ -9,6 +9,12 @@ local relpath
 local basedir
 local db
 
+local function fz_parent(id)
+    local id, ok = id:gsub("^(.-)%d+$", "%1")
+    if ok ~= 0 then return id, ok end
+    return id:gsub("^(.-)%a+$", "%1")
+end
+
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     database = m.database
@@ -66,11 +72,16 @@ local function backlinks_section()
     end
 end
 
+local function get_folgezettels(db)
+    -- TODO
+    return {}
+end
+
 local function get_sequences(db)
     local seqs = {}
     local prevs = db:prepare [[
         SELECT prev, outline, P.title as prev_title, O.title as outline_title
-            FROM (sequences JOIN notes P on prev = P.filename)
+            FROM (sequences JOIN notes P ON prev = P.filename)
                 JOIN notes O on outline = O.filename
                     WHERE next = ?
     ]]
@@ -153,11 +164,18 @@ local function references_section()
     end
 end
 
+local function folgezettels_section()
+    local folgezettels = get_folgezettels(db)
+    -- TODO
+    return nil
+end
+
 local function generate_extra_sections(doc)
     local backlinks = backlinks_section()
     local references = references_section()
     local sequences = sequences_section()
-    if backlinks or references or sequences then
+    local folgezettels = folgezettels_section()
+    if backlinks or references or sequences or folgezettels then
         table.insert(doc.blocks, pandoc.HorizontalRule())
         if sequences then
             table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Sequences"))
@@ -169,6 +187,9 @@ local function generate_extra_sections(doc)
         end
         if references then
             table.insert(doc.blocks, references)
+        end
+        if folgezettels then
+            table.insert(doc.blocks, folgezettels)
         end
         return doc
     end
