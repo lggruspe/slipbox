@@ -240,7 +240,14 @@ local function folgezettels_section()
                 pl.path.relpath(pl.path.join(basedir, path), pl.path.join(basedir, pl.path.dirname(relpath)))
             )
         })
-        -- TODO
+
+        local self_links = {pandoc.Str "Current note: "}
+        for seqnum in pairs(outline.seqnums) do
+            table.insert(self_links, pandoc.Link(pandoc.Str(seqnum), "#"))
+            table.insert(self_links, pandoc.Str " ")
+        end
+        table.insert(block, pandoc.Para(self_links))
+
     end
     return pandoc.Div(block)
 end
