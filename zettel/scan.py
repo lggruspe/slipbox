@@ -19,6 +19,14 @@ def touch_with_backlinks(notes, conn):
         for row in cur.execute(sql, {"src": note}):
             utime(row[0])
 
+def touch_from_outlines(notes, conn):
+    """Touch notes with modified sequence/folgezettel sections."""
+    sql = "SELECT note FROM folgezettels WHERE outline = :outline"
+    cur = conn.cursor()
+    for note in notes:
+        for row in cur.execute(sql, {"outline": note}):
+            utime(row[0])
+
 def initialize_db(db):
     """Initialize sqlite file (db)."""
     try:
@@ -110,4 +118,5 @@ def scan_zettels(config=Config()):
         scan_modified(modified_notes, config.host, config.port)
         with sqlite3.connect(config.user.database) as conn:
             touch_with_backlinks(modified_notes, conn)
+            touch_from_outlines(modified_notes, conn)
         utime(config.user.database)
