@@ -60,11 +60,11 @@ def process(server):
         # delete outline entries before inserting to remove deleted and duplicate
         # sequence links
         cur.execute(delete_note_sequences(), {
-            "outline": params.get("outline")
+            "outline": params.get("filename")
         })
         # delete folgezettel entries taken from outline note
         cur.execute(delete_note_folgezettels(), {
-            "outline": params.get("outline")
+            "outline": params.get("filename")
         })
         cur.execute(add_note(), params)
     for params in server.keywords_queue:
