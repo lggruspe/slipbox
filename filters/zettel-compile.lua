@@ -8,6 +8,7 @@ local database
 local relpath
 local basedir
 local db
+local folgezettel
 
 local function fz_parent(id)
     local id, ok = id:gsub("^(.-)%d+$", "%1")
@@ -15,11 +16,17 @@ local function fz_parent(id)
     return id:gsub("^(.-)%a+$", "%1")
 end
 
+local function next_seqnum(seqnum)
+    local c = seqnum:sub(#seqnum, #seqnum)
+    return seqnum .. (c:match('%d') and 'a' or c:match('%a') and '1' or "")
+end
+
 local function get_some_metadata(m)
     title = pandoc.utils.stringify(m.title or "")
     database = m.database
     basedir = m.basedir
     relpath = m.relpath
+    folgezettel = m.folgezettel == true
     db = sqlite3.open(database) -- closed in log_warnings
 end
 
@@ -297,10 +304,20 @@ end
 
 local warnings = {}
 
+local current_seqnum = "1"
 local function fix_links(elem)
     -- converts markdown to html links
+    local content = pandoc.utils.stringify(elem.content)
+    if folgezettel then
+        -- add seqnum to textless links
+        if content == "" then
+            elem.content = {pandoc.Str(current_seqnum)}
+            current_seqnum = next_seqnum(current_seqnum)
+        end
+    end
+
     if elem.target == "" then
-        warnings["Empty link"] = pandoc.utils.stringify(elem.content)
+        warnings["Empty link"] = content
         elem = elem.content
     else
         elem.target = elem.target:gsub("(.*).md$", "%1.html")

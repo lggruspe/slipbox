@@ -53,6 +53,12 @@ local function Str(elem)
     end
 end
 
+local function next_seqnum(seqnum)
+    local c = seqnum:sub(#seqnum, #seqnum)
+    return seqnum .. (c:match('%d') and 'a' or c:match('%a') and '1' or "")
+end
+
+local current_seqnum = "1"
 local function Link(elem)
     -- even if elem.target == "", Meta sets links[""] to nil
     links[elem.target] = elem.title
@@ -65,8 +71,14 @@ local function Link(elem)
     if folgezettel then
         local seqnum = pandoc.utils.stringify(elem.content or "")
         local target = elem.target or ""
-        if target ~= "" and seqnum:match("^%d+[%d%a]*$") then
-            folgezettels[seqnum] = target
+        if target ~= "" then
+            if seqnum:match("^%d+[%d%a]*$") then
+                folgezettels[seqnum] = target
+            elseif seqnum == "" then
+                -- generate seqnum if link has no text
+                folgezettels[current_seqnum] = target
+                current_seqnum = next_seqnum(current_seqnum)
+            end
         end
     end
 end
