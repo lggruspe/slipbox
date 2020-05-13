@@ -28,9 +28,6 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 elif req_t == "keyword":
                     if params:
                         self.server.keywords_queue.append(params)
-                elif req_t == "sequence":
-                    if params:
-                        self.server.sequences_queue.append(params)
                 elif req_t == "folgezettel":
                     if params:
                         self.server.folgezettels_queue.append(params)
@@ -41,7 +38,6 @@ class Server(socketserver.TCPServer):
     notes_queue = []
     links_queue = []
     keywords_queue = []
-    sequences_queue = []
     folgezettels_queue = []
 
 def process(server):
@@ -57,12 +53,8 @@ def process(server):
         cur.execute(delete_note_links(), {
             "src": params.get("filename")
         })
-        # delete outline entries before inserting to remove deleted and duplicate
-        # sequence links
-        cur.execute(delete_note_sequences(), {
-            "outline": params.get("filename")
-        })
-        # delete folgezettel entries taken from outline note
+        # delete folgezettel entries taken from outline note before inserting
+        # to remove deleted and duplicate entries
         cur.execute(delete_note_folgezettels(), {
             "outline": params.get("filename")
         })
@@ -73,10 +65,6 @@ def process(server):
         fixed_params = transform_link_params(params)
         if fixed_params:
             cur.execute(add_link(), fixed_params)
-    for params in server.sequences_queue:
-        fixed_params = transform_sequence_params(params)
-        if fixed_params:
-            cur.execute(add_sequence(), fixed_params)
     for params in server.folgezettels_queue:
         cur.execute(add_folgezettel(), params)
         # TODO handle constraint violations

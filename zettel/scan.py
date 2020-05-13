@@ -20,7 +20,7 @@ def touch_with_backlinks(notes, conn):
             utime(row[0])
 
 def touch_from_outlines(notes, conn):
-    """Touch notes with modified sequence/folgezettel sections."""
+    """Touch notes with modified folgezettel sections."""
     sql = "SELECT note FROM folgezettels WHERE outline = :outline"
     cur = conn.cursor()
     for note in notes:
@@ -54,13 +54,6 @@ def initialize_db(db):
             note TEXT REFERENCES notes(filename) ON DELETE CASCADE,
             keyword TEXT,
             PRIMARY KEY (note, keyword)
-        );
-
-        CREATE TABLE sequences (
-            prev TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            next TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            outline TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            PRIMARY KEY (prev, next, outline)
         );
 
         CREATE TABLE folgezettels (

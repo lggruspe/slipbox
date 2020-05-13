@@ -6,9 +6,6 @@ def delete_note_keywords():
 def delete_note_links():
     return "DELETE FROM links WHERE src = :src"
 
-def delete_note_sequences():
-    return "DELETE FROM sequences WHERE outline = :outline"
-
 def delete_note_folgezettels():
     return "DELETE FROM folgezettels WHERE outline = :outline"
 
@@ -32,12 +29,6 @@ def add_keyword():
             VALUES (:note, :keyword)
     """
 
-def add_sequence():
-    return """
-        INSERT OR IGNORE INTO sequences (prev, next, outline)
-            VALUES (:prev, :next, :outline)
-    """
-
 def add_folgezettel():
     return """
         INSERT OR IGNORE INTO folgezettels (outline, note, seqnum)
@@ -53,18 +44,6 @@ def transform_link_params(params):
         "src": src,
         "dest": dest,
         "description": params.get("description"),
-    }
-
-def transform_sequence_params(params):
-    outline = params.get("outline")
-    prev_note = fix_path(params.get("prev"), outline)
-    next_note = fix_path(params.get("next"), outline)
-    if not prev_note or not next_note:
-        return None
-    return {
-        "prev": prev_note,
-        "next": next_note,
-        "outline": outline,
     }
 
 def to_sql(req):

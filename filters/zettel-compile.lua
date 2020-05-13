@@ -149,85 +149,6 @@ local function get_folgezettels(db)
     return folgezettels
 end
 
-local function get_sequences(db)
-    local seqs = {}
-    local prevs = db:prepare [[
-        SELECT prev, outline, P.title as prev_title, O.title as outline_title
-            FROM (sequences JOIN notes P ON prev = P.filename)
-                JOIN notes O on outline = O.filename
-                    WHERE next = ?
-    ]]
-    prevs:bind_values(relpath)
-    for row in prevs:nrows() do
-        if not seqs[row.outline] then
-            seqs[row.outline] = {
-                title = row.outline_title,
-                prevs = {},
-                nexts = {},
-            }
-        end
-        table.insert(seqs[row.outline].prevs, {
-            title = row.prev_title,
-            path = row.prev,
-        })
-    end
-    local nexts = db:prepare [[
-        SELECT next, outline, N.title as next_title, O.title as outline_title
-            FROM (sequences JOIN notes N on next = N.filename)
-                JOIN notes O on outline = O.filename
-                    WHERE prev = ?
-    ]]
-    nexts:bind_values(relpath)
-    for row in nexts:nrows() do
-        if not seqs[row.outline] then
-            seqs[row.outline] = {
-                title = row.outline_title,
-                prevs = {},
-                nexts = {},
-            }
-        end
-        table.insert(seqs[row.outline].nexts, {
-            title = row.next_title,
-            path = row.next,
-        })
-    end
-    return seqs
-end
-
-local function sequences_section()
-    local sequences = get_sequences(db)
-    if not next(sequences) then return nil end
-
-    local block = {}
-    local current_start = pl.path.join(basedir, pl.path.dirname(relpath))
-    for outline, links in pairs(sequences) do
-        local content = pandoc.Str(string.format("%s (%s)", links.title, outline))
-        local target = pl.path.relpath(pl.path.join(basedir, outline), current_start)
-        table.insert(block, pandoc.Para{
-            pandoc.Link(content, target)
-        })
-        local list = {}
-        for _, note in ipairs(links.prevs) do
-            local content = pandoc.Str(string.format("%s (%s)", note.title, note.path))
-            local target = pl.path.relpath(pl.path.join(basedir, note.path), current_start)
-            table.insert(list, pandoc.Para{
-                pandoc.Str "Prev: ",
-                pandoc.Link(content, target),
-            })
-        end
-        for _, note in ipairs(links.nexts) do
-            local content = pandoc.Str(string.format("%s (%s)", note.title, note.path))
-            local target = pl.path.relpath(pl.path.join(basedir, note.path), current_start)
-            table.insert(list, pandoc.Para{
-                pandoc.Str "Next: ",
-                pandoc.Link(content, target),
-            })
-        end
-        table.insert(block, pandoc.Div(list))
-    end
-    return pandoc.Div(block)
-end
-
 local function references_section()
     if citations > 0 then
         return pandoc.Header(3, pandoc.Str "References")
@@ -279,14 +200,9 @@ end
 local function generate_extra_sections(doc)
     local backlinks = backlinks_section()
     local references = references_section()
-    local sequences = sequences_section()
     local folgezettels = folgezettels_section()
-    if backlinks or references or sequences or folgezettels then
+    if backlinks or references or folgezettels then
         table.insert(doc.blocks, pandoc.HorizontalRule())
-        if sequences then
-            table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Sequences"))
-            table.insert(doc.blocks, sequences)
-        end
         if folgezettels then
             table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Folgezettels"))
             table.insert(doc.blocks, folgezettels)
