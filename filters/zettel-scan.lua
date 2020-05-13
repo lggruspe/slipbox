@@ -55,7 +55,7 @@ local function next_seqnum(seqnum)
     return seqnum .. (c:match('%d') and 'a' or c:match('%a') and '1' or "")
 end
 
-local current_seqnum = "1"
+local current_seqnum = "0"
 local function Link(elem)
     -- even if elem.target == "", Meta sets links[""] to nil
     links[elem.target] = elem.title

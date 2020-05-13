@@ -220,7 +220,7 @@ end
 
 local warnings = {}
 
-local current_seqnum = "1"
+local current_seqnum = "0"
 local function fix_links(elem)
     -- converts markdown to html links
     local content = pandoc.utils.stringify(elem.content)
