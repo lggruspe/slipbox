@@ -59,20 +59,38 @@ local current_seqnum = "0"
 local function Link(elem)
     -- even if elem.target == "", Meta sets links[""] to nil
     links[elem.target] = elem.title
-    if elem.target ~= "" and elem.title == "" then
-        warnings["Unannotated link"] = pandoc.utils.stringify(elem.content)
-    end
     if folgezettel then
         local seqnum = pandoc.utils.stringify(elem.content or "")
         local target = elem.target or ""
         if target ~= "" then
             if seqnum:match("^%d+[%d%a]*$") then
+                if folgezettels[seqnum] then
+                    if not warnings["Duplicate sequence number"] then
+                        warnings["Duplicate sequence number"] = {}
+                    end
+                    table.insert(warnings["Duplicate sequence number"], seqnum)
+                end
                 folgezettels[seqnum] = target
             elseif seqnum == "" then
                 -- generate seqnum if link has no text
+                if folgezettels[current_seqnum] then
+                    if not warnings["Duplicate sequence number"] then
+                        warnings["Duplicate sequence number"] = {}
+                    end
+                    table.insert(warnings["Duplicate sequence number"], current_seqnum)
+                end
                 folgezettels[current_seqnum] = target
                 current_seqnum = next_seqnum(current_seqnum)
             end
+        end
+    else
+        -- show warnings for unannotated links
+        -- TODO don't show warnings for unannotated external links
+        if elem.target ~= "" and elem.title == "" then
+            if not warnings["Unannotated link"] then
+                warnings["Unannotated link"] = {}
+            end
+            table.insert(warnings["Unannotated link"], pandoc.utils.stringify(elem.content))
         end
     end
 end
@@ -103,7 +121,9 @@ local function Meta(m)
     end
 
     for warning, context in pairs(warnings) do
-        io.stderr:write(string.format("[WARNING] %s in %s (%s)\n", warning, relpath, context))
+        for _, data in ipairs(context) do
+            io.stderr:write(string.format("[WARNING] %s in %s (%s)\n", warning, relpath, data))
+        end
     end
 
     --- edit metadata if not set already
