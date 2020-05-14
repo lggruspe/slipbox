@@ -45,13 +45,3 @@ def transform_link_params(params):
         "dest": dest,
         "description": params.get("description"),
     }
-
-def to_sql(req):
-    t = req.get("type", "")
-    if t == "note":
-        return note(req)
-    elif t == "link":
-        return link(req)
-    elif t == "keyword":
-        return keyword(req)
-    return ("",)
