@@ -1,6 +1,6 @@
 from glob import iglob
 from os.path import dirname, exists, getmtime, isfile, join, pardir
-from os import remove, utime
+from os import remove
 import sqlite3
 import subprocess as sp
 import sys
@@ -10,22 +10,6 @@ import time
 from zettel import client, server
 from zettel.config import Config
 from zettel.pandoc.commands import scan_metadata
-
-def touch_with_backlinks(notes, conn):
-    """Touch files with backlink to notes."""
-    sql = "SELECT dest FROM links WHERE src = :src AND description != ''"
-    cur = conn.cursor()
-    for note in notes:
-        for row in cur.execute(sql, {"src": note}):
-            utime(row[0])
-
-def touch_from_outlines(notes, conn):
-    """Touch notes with modified folgezettel sections."""
-    sql = "SELECT note FROM folgezettels WHERE outline = :outline"
-    cur = conn.cursor()
-    for note in notes:
-        for row in cur.execute(sql, {"outline": note}):
-            utime(row[0])
 
 def initialize_db(db):
     """Initialize sqlite file (db)."""
@@ -109,7 +93,3 @@ def scan_zettels(config=Config()):
     modified_notes = list(filter(modified_recently, all_notes))
     if modified_notes:
         scan_modified(modified_notes, config.host, config.port)
-        with sqlite3.connect(config.user.database) as conn:
-            touch_with_backlinks(modified_notes, conn)
-            touch_from_outlines(modified_notes, conn)
-        utime(config.user.database)
