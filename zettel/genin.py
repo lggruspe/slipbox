@@ -8,19 +8,15 @@ import ninja_syntax as ns
 
 from zettel.config import Config
 
-def get_backlinks(note, conn):
-    sql = "SELECT src FROM links WHERE dest = :note AND description != ''"
-    cur = conn.cursor()
-    return (row[0] for row in cur.execute(sql, {"note": note}))
-
-def get_outlines(note, conn):
-    sql = "SELECT outline FROM folgezettels WHERE note = :note"
-    cur = conn.cursor()
-    return (row[0] for row in cur.execute(sql, {"note": note}))
-
 def get_implicit_dependencies(note, conn):
-    deps = set(get_backlinks(note, conn)).union(get_outlines(note, conn))
-    return list(deps)
+    sql = """
+        SELECT src AS dep FROM links WHERE dest = :note AND description != ''
+            UNION
+                SELECT outline AS dep FROM folgezettels WHERE note = :note
+                    ORDER BY dep
+    """
+    cur = conn.cursor()
+    return [row[0] for row in cur.execute(sql, {"note": note})]
 
 def generate_ninja(config=Config()):
     w = ns.Writer(StringIO())
