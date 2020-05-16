@@ -79,6 +79,7 @@ def sqlite_string(s):
 
 def delete_missing_notes_from_db(conn):
     cur = conn.cursor()
+    cur.executescript("PRAGMA foreign_keys = ON;")
     notes = (note[0] for note in cur.execute("SELECT filename FROM notes"))
     missing = filter(lambda note: not exists(note), notes)
     args = ", ".join(map(sqlite_string, missing))
