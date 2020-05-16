@@ -66,8 +66,10 @@ def process(server):
         if fixed_params:
             cur.execute(add_link(), fixed_params)
     for params in server.folgezettels_queue:
-        cur.execute(add_folgezettel(), params)
-        # TODO handle constraint violations
+        try:
+            cur.execute(add_folgezettel(), params)
+        except sqlite3.IntegrityError:
+            print(f"[ERROR] Integrity error in request {params}.", file=sys.stderr)
     conn.commit()
     conn.close()
 
