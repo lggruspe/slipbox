@@ -6,22 +6,19 @@ pl.path = require "pl.path"
 local queue = require "zettel.queue"
 local request = require "zettel.request"
 
-local title
-local relpath
-local basedir
-local folgezettel
+local metadata = {}
 
 local function get_some_metadata(m)
-    title = pandoc.utils.stringify(m.title or "")
-    basedir = m.basedir
-    relpath = m.relpath
-    folgezettel = m.folgezettel == true
+    metadata.title = pandoc.utils.stringify(m.title or "")
+    metadata.basedir = m.basedir
+    metadata.relpath = m.relpath
+    metadata.folgezettel = m.folgezettel == true
 end
 
 local function get_alternative_title_from_header(elem)
-    assert(title)
-    if title == "" and elem.level == 1 then
-        title = pandoc.utils.stringify(elem.content)
+    assert(metadata.title)
+    if metadata.title == "" and elem.level == 1 then
+        metadata.title = pandoc.utils.stringify(elem.content)
         return {}
     end
 end
@@ -29,7 +26,7 @@ end
 local function extract_code(block)
     local save_as = block.attributes["save-as"]
     if save_as and save_as ~= "" then
-        local code = pl.path.join(basedir, pl.path.dirname(relpath), save_as)
+        local code = pl.path.join(metadata.basedir, pl.path.dirname(metadata.relpath), save_as)
         local f = io.open(code, "w")
         if f then
             f:write(block.text)
@@ -59,7 +56,7 @@ local current_seqnum = "0"
 local function Link(elem)
     -- even if elem.target == "", Meta sets links[""] to nil
     links[elem.target] = elem.title
-    if folgezettel then
+    if metadata.folgezettel then
         local seqnum = pandoc.utils.stringify(elem.content or "")
         local target = elem.target or ""
         if target ~= "" then
@@ -98,7 +95,8 @@ end
 local function Meta(m)
     local host = "localhost"
     local port = m.port or 5000
-    local title = title
+    local title = metadata.title
+    local relpath = metadata.relpath
     local note_req = request.note(title, relpath)
     queue.message(host, port, note_req)
     links[""] = nil

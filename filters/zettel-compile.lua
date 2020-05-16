@@ -3,15 +3,11 @@ local pl = {}
 pl.path = require "pl.path"
 local sqlite3 = require "lsqlite3"
 
-local title
-local database
-local relpath
-local basedir
-local db
-local folgezettel
+local metadata = {}
 
 local function fz_parent(id)
-    local id, ok = id:gsub("^(.-)%d+$", "%1")
+    local ok
+    id, ok = id:gsub("^(.-)%d+$", "%1")
     if ok ~= 0 then return id, ok end
     return id:gsub("^(.-)%a+$", "%1")
 end
@@ -22,24 +18,23 @@ local function next_seqnum(seqnum)
 end
 
 local function get_some_metadata(m)
-    title = pandoc.utils.stringify(m.title or "")
-    database = m.database
-    basedir = m.basedir
-    relpath = m.relpath
-    folgezettel = m.folgezettel == true
-    db = sqlite3.open(database) -- closed in log_warnings
+    metadata.title = pandoc.utils.stringify(m.title or "")
+    metadata.basedir = m.basedir
+    metadata.relpath = m.relpath
+    metadata.folgezettel = m.folgezettel == true
+    metadata.database = sqlite3.open(m.database) -- closed in log_warnings
 end
 
 local function get_alternative_title_from_header(elem)
-    assert(title)
-    if title == "" and elem.level == 1 then
-        title = pandoc.utils.stringify(elem.content)
+    assert(metadata.title)
+    if metadata.title == "" and elem.level == 1 then
+        metadata.title = pandoc.utils.stringify(elem.content)
         return {}
     end
 end
 
 local citations = 0
-local function count_citations(elem)
+local function count_citations()
     citations = citations + 1
 end
 
@@ -53,15 +48,18 @@ local function get_backlinks(db, filename)
 end
 
 local function set_missing_metadata(m)
-    m.title = m.title or pandoc.MetaString(title or "")
+    m.title = m.title or pandoc.MetaString(metadata.title or "")
     m.subtitle = m.subtitle or pandoc.MetaString(m.relpath or "")
     return m
 end
 
 local function backlinks_section()
     local blocklists = {}
+    local basedir = metadata.basedir
+    local relpath = metadata.relpath
+    local database = metadata.database
     local start = pl.path.join(basedir, pl.path.dirname(relpath))
-    for backlink in get_backlinks(db, relpath) do
+    for backlink in get_backlinks(database, relpath) do
         local filename = backlink.filename
         local link = pl.path.relpath(pl.path.join(basedir, backlink.src), start)
         local content = string.format("%s (%s)", backlink.title or "", filename)
@@ -110,7 +108,7 @@ local function get_folgezettels(db)
             FROM folgezettels JOIN notes ON outline = filename
                 WHERE note = ?
     ]]
-    sql:bind_values(relpath)
+    sql:bind_values(metadata.relpath)
     for row in sql:nrows() do
         if not folgezettels[row.outline] then
             folgezettels[row.outline] = {
@@ -158,15 +156,18 @@ local function references_section()
 end
 
 local function folgezettels_section()
-    local folgezettels = get_folgezettels(db)
+    local basedir = metadata.basedir
+    local relpath = metadata.relpath
+    local database = metadata.database
+    local folgezettels = get_folgezettels(database)
     if not next(folgezettels) then return nil end
     local block = {}
+    local pardir = pl.path.join(basedir, pl.path.dirname(relpath))
     for path, outline in pairs(folgezettels) do
         table.insert(block, pandoc.Para{
             pandoc.Link(
                 pandoc.Str(string.format("%s (%s)", outline.title, path)),
-                pl.path.relpath(pl.path.join(basedir, path), pl.path.join(basedir, pl.path.dirname(relpath)))
-            )
+                pl.path.relpath(pl.path.join(basedir, path), pardir))
         })
 
         local self_links = {pandoc.Str "Current note: "}
@@ -180,8 +181,7 @@ local function folgezettels_section()
                 pandoc.Str(string.format("[%s]: ", seqnum)),
                 pandoc.Link(
                     pandoc.Str(string.format("%s (%s)", parent.title, parent.filename)),
-                    pl.path.relpath(pl.path.join(basedir, parent.filename), pl.path.join(basedir, pl.path.dirname(relpath)))
-                ),
+                    pl.path.relpath(pl.path.join(basedir, parent.filename), pardir)),
             })
         end
         for seqnum, child in pairs(outline.children) do
@@ -189,8 +189,7 @@ local function folgezettels_section()
                 pandoc.Str(string.format("[%s]: ", seqnum)),
                 pandoc.Link(
                     pandoc.Str(string.format("%s (%s)", child.title, child.filename)),
-                    pl.path.relpath(pl.path.join(basedir, child.filename), pl.path.join(basedir, pl.path.dirname(relpath)))
-                ),
+                    pl.path.relpath(pl.path.join(basedir, child.filename), pardir)),
             })
         end
     end
@@ -224,7 +223,7 @@ local current_seqnum = "0"
 local function fix_links(elem)
     -- converts markdown to html links
     local content = pandoc.utils.stringify(elem.content)
-    if folgezettel then
+    if metadata.folgezettel then
         -- add seqnum to textless links
         if content == "" then
             elem.content = {pandoc.Str(current_seqnum)}
@@ -245,7 +244,7 @@ local function log_warnings(m)
     for warning, context in pairs(warnings) do
         io.stderr:write(string.format("[WARNING] %s in %s (%s)\n", warning, m.relpath, context))
     end
-    db:close()
+    metadata.database:close()
 end
 
 return {
