@@ -213,7 +213,7 @@ local function generate_extra_sections(doc)
             table.insert(doc.blocks, folgezettels)
         end
         if backlinks then
-            table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "See also"))
+            table.insert(doc.blocks, pandoc.Header(3, pandoc.Str "Backlinks"))
             table.insert(doc.blocks, backlinks)
         end
         if references then
