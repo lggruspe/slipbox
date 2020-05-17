@@ -89,16 +89,10 @@ local function get_folgezettels(db)
     --         seqnums = {
     --             [<seqnums of current note in outline>] = true,
     --         },
-    --         parents = {
-    --             [<parent seqnums>] = {
-    --                 title = [<title of parent note>],
-    --                 filename = [<filename of parent note>],
-    --             }
-    --         },
-    --         children = {
-    --             [<children seqnums>] = {
-    --                 title = [<title of child note>],
-    --                 filename = [<filename of child note>],
+    --         neighbors = {
+    --             [<seqnum>] = {
+    --                 title = [<title>],
+    --                 filename = [<filename>],
     --             }
     --         },
     --     }
@@ -116,8 +110,7 @@ local function get_folgezettels(db)
             folgezettels[row.outline] = {
                 title = row.title,
                 seqnums = {},
-                parents = {},
-                children = {},
+                neighbors = {},
             }
         end
         folgezettels[row.outline].seqnums[row.seqnum] = true
@@ -133,13 +126,8 @@ local function get_folgezettels(db)
         fz_sql:bind_values(row.outline, parent, children)
         for neighbor in fz_sql:nrows() do
             -- check if really parent or child
-            if neighbor.seqnum == parent then
-                folgezettels[row.outline].parents[neighbor.seqnum] = {
-                    title = neighbor.title,
-                    filename = neighbor.filename,
-                }
-            elseif fz_parent(neighbor.seqnum) == row.seqnum then
-                folgezettels[row.outline].children[neighbor.seqnum] = {
+            if neighbor.seqnum == parent or fz_parent(neighbor.seqnum) == row.seqnum then
+                folgezettels[row.outline].neighbors[neighbor.seqnum] = {
                     title = neighbor.title,
                     filename = neighbor.filename,
                 }
@@ -184,20 +172,12 @@ local function folgezettels_section()
         end
         table.insert(block, pandoc.Para(self_links))
 
-        for seqnum, parent in pairs(outline.parents) do
+        for seqnum, neighbor in pairs(outline.neighbors) do
             table.insert(block, pandoc.Para{
                 pandoc.Str(string.format("[%s]: ", seqnum)),
                 pandoc.Link(
-                    pandoc.Str(string.format("%s (%s)", parent.title, parent.filename)),
-                    pl.path.relpath(pl.path.join(basedir, parent.filename), pardir)),
-            })
-        end
-        for seqnum, child in pairs(outline.children) do
-            table.insert(block, pandoc.Para{
-                pandoc.Str(string.format("[%s]: ", seqnum)),
-                pandoc.Link(
-                    pandoc.Str(string.format("%s (%s)", child.title, child.filename)),
-                    pl.path.relpath(pl.path.join(basedir, child.filename), pardir)),
+                    pandoc.Str(string.format("%s (%s)", neighbor.title, neighbor.filename)),
+                    pl.path.relpath(pl.path.join(basedir, neighbor.filename), pardir)),
             })
         end
     end
