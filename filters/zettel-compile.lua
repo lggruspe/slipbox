@@ -54,27 +54,29 @@ local function set_missing_metadata(m)
 end
 
 local function backlinks_section()
-    local blocklists = {}
     local basedir = metadata.basedir
     local relpath = metadata.relpath
     local database = metadata.database
+
+    local items = {}
     local start = pl.path.join(basedir, pl.path.dirname(relpath))
     for backlink in get_backlinks(database, relpath) do
-        local filename = backlink.filename
-        local link = pl.path.relpath(pl.path.join(basedir, backlink.src), start)
-        local content = string.format("%s (%s)", backlink.title or "", filename)
-        local description = string.format(" - %s", backlink.description)
-        local block = pandoc.Plain {
-            pandoc.Link(pandoc.Str(content), link),
-            pandoc.Str(description),
-        }
-        table.insert(blocklists, {block})
+        local term = {}
+        local description = {}
+        local item = {term, description}
+        table.insert(items, item)
+        table.insert(term, pandoc.Link(
+            pandoc.Str(string.format("%s (%s)",
+                backlink.title or "",
+                backlink.filename)
+            ),
+            pl.path.relpath(pl.path.join(basedir, backlink.src), start)
+        ))
+        table.insert(description, {
+            pandoc.Plain(pandoc.Str(backlink.description))
+        })
     end
-    if next(blocklists) then
-        return pandoc.BulletList(blocklists)
-    else
-        return nil
-    end
+    if next(items) then return pandoc.DefinitionList(items) else return nil end
 end
 
 local function get_folgezettels(db)
