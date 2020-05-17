@@ -94,3 +94,13 @@ def scan_zettels(config=Config()):
     modified_notes = list(filter(modified_recently, all_notes))
     if modified_notes:
         scan_modified(modified_notes, config.host, config.port)
+
+def show_missing(config=Config()):
+    with sqlite3.connect(config.user.database) as conn:
+        cur = conn.cursor()
+        sql = """
+            SELECT filename FROM notes WHERE filename NOT IN
+                (SELECT note FROM folgezettels)
+        """
+        for row in cur.execute(sql):
+            print(row[0])

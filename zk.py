@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from zettel.caps import CmdTree
 from zettel.config import Config, UserConfig
 from zettel.genin import generate_ninja
-from zettel.scan import scan_zettels
+from zettel.scan import scan_zettels, show_missing
 
 def scan_cli(config=Config()):
     description = "Scan zettels that have been modified."
@@ -24,12 +24,18 @@ def genin_cli(config=Config()):
                         default=config.user.database, help=help_msg)
     return parser
 
+def missing_cli(config=Config()):
+    description = "Show list of notes with no outline."
+    parser = ArgumentParser(prog="missing", description=description)
+    return parser
+
 def main(config=Config()):
     cmd = CmdTree(
         "zk",
         "Manage zettelkasten notes",
         scan_cli(config),
-        genin_cli(config)
+        genin_cli(config),
+        missing_cli(config)
     )
     parser, args = cmd.get_subcommand()
     if parser.prog == "scan":
@@ -38,6 +44,9 @@ def main(config=Config()):
     elif parser.prog == "genin":
         parser.parse_args(args=args, namespace=config.user)
         generate_ninja(config)
+    elif parser.prog == "missing":
+        parser.parse_args(args=args, namespace=config)
+        show_missing(config)
 
 if __name__ == "__main__":
     main()
