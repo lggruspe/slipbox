@@ -90,10 +90,11 @@ local function get_folgezettels(db)
     --             [<seqnums of current note in outline>] = true,
     --         },
     --         neighbors = {
-    --             [<seqnum>] = {
+    --             {
+    --                 seqnum = [<seqnum>],
     --                 title = [<title>],
     --                 filename = [<filename>],
-    --             }
+    --             }, ...
     --         },
     --     }
     -- }
@@ -120,6 +121,7 @@ local function get_folgezettels(db)
             SELECT title, filename, seqnum
                 FROM notes JOIN folgezettels ON note = filename
                     WHERE outline = ? AND (seqnum = ? OR seqnum LIKE ?)
+                        ORDER BY seqnum
         ]]
         local parent = fz_parent(row.seqnum)
         local children = string.format("%s_", row.seqnum)
@@ -127,10 +129,11 @@ local function get_folgezettels(db)
         for neighbor in fz_sql:nrows() do
             -- check if really parent or child
             if neighbor.seqnum == parent or fz_parent(neighbor.seqnum) == row.seqnum then
-                folgezettels[row.outline].neighbors[neighbor.seqnum] = {
+                table.insert(folgezettels[row.outline].neighbors, {
+                    seqnum = neighbor.seqnum,
                     title = neighbor.title,
                     filename = neighbor.filename,
-                }
+                })
             end
         end
     end
@@ -172,9 +175,9 @@ local function folgezettels_section()
         end
         table.insert(block, pandoc.Para(self_links))
 
-        for seqnum, neighbor in pairs(outline.neighbors) do
+        for _, neighbor in ipairs(outline.neighbors) do
             table.insert(block, pandoc.Para{
-                pandoc.Str(string.format("[%s]: ", seqnum)),
+                pandoc.Str(string.format("[%s]: ", neighbor.seqnum)),
                 pandoc.Link(
                     pandoc.Str(string.format("%s (%s)", neighbor.title, neighbor.filename)),
                     pl.path.relpath(pl.path.join(basedir, neighbor.filename), pardir)),
