@@ -171,8 +171,14 @@ local function folgezettels_section()
         })
 
         local self_links = {pandoc.Str "Current note: "}
+        local current_seqnums = {}
         for seqnum in pairs(outline.seqnums) do
-            table.insert(self_links, pandoc.Str(seqnum .. ' '))
+            table.insert(current_seqnums, seqnum)
+        end
+        table.sort(current_seqnums)
+        for i, seqnum in ipairs(current_seqnums) do
+            if i > 1 then table.insert(self_links, pandoc.Str ", ") end
+            table.insert(self_links, pandoc.Str(seqnum))
         end
         table.insert(block, pandoc.Para(self_links))
 
