@@ -8,7 +8,6 @@ import threading
 import time
 
 from zettel import client, server
-from zettel.config import Config
 from zettel.pandoc.commands import scan_metadata
 
 def initialize_db(db):
@@ -85,18 +84,18 @@ def delete_missing_notes_from_db(conn):
     args = ", ".join(map(sqlite_string, missing))
     cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
 
-def scan_zettels(config=Config()):
-    last_scan = check_database(config.user.database)
-    with sqlite3.connect(config.user.database) as conn:
+def scan_zettels(database, host, port):
+    last_scan = check_database(database)
+    with sqlite3.connect(database) as conn:
         delete_missing_notes_from_db(conn)
     all_notes = iglob("**/*.md", recursive=True)
     modified_recently = lambda note: getmtime(note) >= last_scan
     modified_notes = list(filter(modified_recently, all_notes))
     if modified_notes:
-        scan_modified(modified_notes, config.host, config.port)
+        scan_modified(modified_notes, host, port)
 
-def show_missing(config=Config()):
-    with sqlite3.connect(config.user.database) as conn:
+def show_missing(database):
+    with sqlite3.connect(database) as conn:
         cur = conn.cursor()
         sql = """
             SELECT filename FROM notes WHERE filename NOT IN
