@@ -85,6 +85,7 @@ def delete_missing_notes_from_db(conn):
     cur.execute(f"DELETE FROM notes WHERE filename IN ({args})")
 
 def scan_zettels(database, host, port):
+    """Scan zettels that have been modified."""
     last_scan = check_database(database)
     with sqlite3.connect(database) as conn:
         delete_missing_notes_from_db(conn)
@@ -95,6 +96,7 @@ def scan_zettels(database, host, port):
         scan_modified(modified_notes, host, port)
 
 def show_missing(database):
+    """Show list of notes with no outline."""
     with sqlite3.connect(database) as conn:
         cur = conn.cursor()
         sql = """

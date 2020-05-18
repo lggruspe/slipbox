@@ -53,8 +53,6 @@ class Cmd:
 
     def create(self, parent=None):
         """Create argparse.ArgumentParser."""
-        prog = self.func.__name__
-        description = self.func.__doc__
         if parent:
             parser = parent.add_parser(self.kwargs.get("prog"), **self.kwargs)
         else:

@@ -19,6 +19,7 @@ def get_implicit_dependencies(note, conn):
     return [row[0] for row in cur.execute(sql, {"note": note})]
 
 def generate_ninja(database):
+    """Generate ninja file for generating HTML from notes."""
     w = ns.Writer(StringIO())
     user_config = UserConfig()
     for k, v in asdict(user_config).items():
