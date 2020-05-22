@@ -64,7 +64,10 @@ def process(server):
     for params in server.links_queue:
         fixed_params = transform_link_params(params)
         if fixed_params:
-            cur.execute(add_link(), fixed_params)
+            try:
+                cur.execute(add_link(), fixed_params)
+            except sqlite3.IntegrityError:
+                print(f"[ERROR] Integrity error in request {params}.", file=sys.stderr)
     for params in server.folgezettels_queue:
         try:
             cur.execute(add_folgezettel(), params)
