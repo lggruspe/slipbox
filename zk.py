@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from zettel.build import build
 from zettel.caps import *
 from zettel.config import Config
 from zettel.genin import generate_ninja
@@ -17,7 +17,8 @@ def main(config=Config()):
     cmd = Cmd(desc("zk", "Manage zettelkasten notes."),
               Cmd(scan_zettels, db, host, port, prog="scan"),
               Cmd(generate_ninja, db, output, prog="genin"),
-              Cmd(show_missing, db, prog="missing"))
+              Cmd(show_missing, db, prog="missing"),
+              Cmd(build, db, host, port, output))
     cmd.run()
 
 if __name__ == "__main__":
