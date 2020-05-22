@@ -18,7 +18,7 @@ def get_implicit_dependencies(note, conn):
     cur = conn.cursor()
     return [row[0] for row in cur.execute(sql, {"note": note})]
 
-def generate_ninja(database):
+def generate_ninja(database, output="build.ninja"):
     """Generate ninja file for generating HTML from notes."""
     w = ns.Writer(StringIO())
     user_config = UserConfig()
@@ -42,5 +42,6 @@ def generate_ninja(database):
                     order_only=["$database"], variables=shadow)
             w.newline()
 
-    print(w.output.getvalue())
+    with open(output, "w") as f:
+        print(w.output.getvalue(), file=f)
     w.output.close()

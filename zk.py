@@ -12,9 +12,11 @@ def main(config=Config()):
                help=f"host address (default={config.host!r})")
     port = arg("-p", "--port", type=int, default=config.port,
                help=f"port number (default={config.port!r})")
+    output = arg("-o", "--output", type=str, default="build.ninja",
+                 help="output ninja file (default='build.ninja')")
     cmd = Cmd(desc("zk", "Manage zettelkasten notes."),
               Cmd(scan_zettels, db, host, port, prog="scan"),
-              Cmd(generate_ninja, db, prog="genin"),
+              Cmd(generate_ninja, db, output, prog="genin"),
               Cmd(show_missing, db, prog="missing"))
     cmd.run()
 
