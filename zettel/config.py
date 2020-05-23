@@ -8,7 +8,7 @@ class UserConfig:
     bib: str = "zettel.bib"
     css: str = "zettel.css"
     database: str = "zettel.db.sqlite3"
-    options: str = "--mathjax --strip-comments"
+    options: str = "--mathml --reference-links"
     basedir: str = abspath(curdir)
     filters: str = "--lua-filter={} -Fpandoc-citeproc".format(
         abspath(join(dirname(__file__), pardir, "filters", "zettel-compile.lua"))
