@@ -49,7 +49,6 @@ end
 
 local function set_missing_metadata(m)
     m.title = m.title or pandoc.MetaString(metadata.title or "")
-    m.subtitle = m.subtitle or pandoc.MetaString(m.relpath or "")
     return m
 end
 
@@ -66,10 +65,7 @@ local function backlinks_section()
         local item = {term, description}
         table.insert(items, item)
         table.insert(term, pandoc.Link(
-            pandoc.Str(string.format("%s (%s)",
-                backlink.title or "",
-                backlink.filename)
-            ),
+            pandoc.Str(backlink.title or ""),
             pl.path.relpath(pl.path.join(basedir, backlink.src), start)
         ))
         table.insert(description, {
@@ -159,7 +155,7 @@ local function folgezettels_section()
     for path, outline in pairs(folgezettels) do
         table.insert(block, pandoc.Para{
             pandoc.Link(
-                pandoc.Str(string.format("%s (%s)", outline.title, path)),
+                pandoc.Str(outline.title),
                 pl.path.relpath(pl.path.join(basedir, path), pardir))
         })
 
@@ -179,7 +175,7 @@ local function folgezettels_section()
             table.insert(block, pandoc.Para{
                 pandoc.Str(string.format("[%s]: ", neighbor.seqnum)),
                 pandoc.Link(
-                    pandoc.Str(string.format("%s (%s)", neighbor.title, neighbor.filename)),
+                    pandoc.Str(neighbor.title),
                     pl.path.relpath(pl.path.join(basedir, neighbor.filename), pardir)),
             })
         end
@@ -236,6 +232,12 @@ local function log_warnings(m)
         io.stderr:write(string.format("[WARNING] %s in %s (%s)\n", warning, m.relpath, context))
     end
     metadata.database:close()
+
+    -- and delete unneeded metadata
+    m.basedir = nil
+    m.database = nil
+    m.relpath = nil
+    return m
 end
 
 return {
