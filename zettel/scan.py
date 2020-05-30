@@ -1,6 +1,5 @@
 from glob import iglob
 from os.path import dirname, exists, getmtime, isfile, join, pardir
-from os import remove
 import sqlite3
 import subprocess as sp
 import sys
@@ -8,56 +7,19 @@ import threading
 import time
 
 from . import client, server
+from .database import initialize
 from .pandoc import scan_metadata
 
-def initialize_db(db):
-    """Initialize sqlite file (db)."""
-    try:
-        remove(db)
-    except FileNotFoundError:
-        pass
-    conn = sqlite3.connect(db)
-    cur = conn.cursor()
-    cur.executescript("""
-        PRAGMA foreign_keys = ON;
+def create_database_once(filename):
+    """Create database if it does not exist.
 
-        CREATE TABLE notes (
-            filename TEXT PRIMARY KEY,
-            title TEXT
-        );
-
-        CREATE TABLE links (
-            src TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            dest TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            description TEXT,
-            PRIMARY KEY (src, dest)
-        );
-
-        CREATE TABLE keywords (
-            note TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            keyword TEXT,
-            PRIMARY KEY (note, keyword)
-        );
-
-        CREATE TABLE folgezettels (
-            outline TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            note TEXT REFERENCES notes(filename) ON DELETE CASCADE,
-            seqnum TEXT NOT NULL,
-            PRIMARY KEY (outline, seqnum)
-        );
-    """)
-    conn.commit()
-    conn.close()
-
-def check_database(db):
-    """Initialize database if it does not exist.
-
-    Return modification time (or 0 if it has never been modified).
-    """
-    if isfile(db):
-        return getmtime(db)
+    Return modification time (or 0 if file did not exist)."""
     # TODO what if path exists but is a directory?
-    initialize_db(db)
+    timestamp = getmtime(filename) if isfile(filename) else 0
+    if timestamp:
+        return timestamp
+    with sqlite3.connect(filename) as conn:
+        initialize(conn)
     return 0
 
 def scan_modified(notes, host, port):
@@ -86,7 +48,7 @@ def delete_missing_notes_from_db(conn):
 
 def scan_zettels(database, host, port):
     """Scan zettels that have been modified."""
-    last_scan = check_database(database)
+    last_scan = create_database_once(database)
     with sqlite3.connect(database) as conn:
         delete_missing_notes_from_db(conn)
     all_notes = iglob("**/*.md", recursive=True)
