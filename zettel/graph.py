@@ -32,14 +32,15 @@ def graph_folgezettels(pattern, output=sys.stdout):
     """Create dot graph of sequence notes."""
     config = Config()
     sql = """
-        SELECT note, outline, seqnum FROM folgezettels
-            WHERE outline LIKE :pattern
+        SELECT note, outline, seqnum, title
+            FROM folgezettels JOIN notes ON note = filename
+                WHERE outline LIKE :pattern
     """
     notes = {}
     with sqlite3.connect(config.user.database) as conn:
         cur = conn.cursor()
-        for note, outline, seqnum in cur.execute(sql, {"pattern": pattern}):
-            notes[(outline, seqnum)] = note
+        for note, outline, seqnum, title in cur.execute(sql, {"pattern": pattern}):
+            notes[(outline, seqnum)] = f'"{note}"\n{title}'
 
     G = nx.DiGraph()
     for (outline, seqnum), note in notes.items():
