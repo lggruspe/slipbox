@@ -3,8 +3,7 @@
 pandoc.utils = require "pandoc.utils"
 local pl = {}
 pl.path = require "pl.path"
-local queue = require "zettel.queue"
-local request = require "zettel.request"
+local request = require "filters.request"
 
 local metadata = {}
 
@@ -98,24 +97,24 @@ local function Meta(m)
     local title = metadata.title
     local relpath = metadata.relpath
     local note_req = request.note(title, relpath)
-    queue.message(host, port, note_req)
+    request.message(host, port, note_req)
     links[""] = nil
     for link, description in pairs(links) do
         local link_req = request.link(relpath, link, description)
-        queue.message(host, port, link_req)
+        request.message(host, port, link_req)
     end
 
     keywords[""] = nil
     for kw in pairs(keywords) do
         local kw_req = request.keyword(relpath, kw)
-        queue.message(host, port, kw_req)
+        request.message(host, port, kw_req)
     end
 
     folgezettels[""] = nil
     for seqnum, v in pairs(folgezettels) do
         local target = pl.path.normpath(pl.path.join(pl.path.dirname(relpath), v))
         local fz_req = request.folgezettel(relpath, target, seqnum)
-        queue.message(host, port, fz_req)
+        request.message(host, port, fz_req)
     end
 
     for warning, context in pairs(warnings) do

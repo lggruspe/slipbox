@@ -1,5 +1,7 @@
 -- construct request data for zettel sqlite3
 
+local socket = require "socket"
+
 local M = {}
 
 local function json_string(s)
@@ -65,6 +67,13 @@ function M.folgezettel(outline, note, seqnum)
     return tmpl:gsub("@seqnum@", json_string(seqnum))
         :gsub("@note@", json_string(note))
         :gsub("@outline@", json_string(outline))
+end
+
+function M.message(host, port, msg)
+    local client = assert(socket.tcp())
+    client:connect(host, port)
+    client:send(msg)
+    client:close()
 end
 
 return M
