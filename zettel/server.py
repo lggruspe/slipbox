@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import json
 import socketserver
 import sqlite3
@@ -12,7 +13,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
         data = self.request.recv(1024).decode().strip()
         self.request.sendall(b"ok")
         if data == "shutdown":
-            process(self.server)
+            process(self.server.queue)
             threading.Thread(target=self.server.shutdown).start()
         else:
             try:
@@ -21,30 +22,34 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 params = req.get("data")
                 if req_t == "note":
                     if params:
-                        self.server.notes_queue.append(params)
+                        self.server.queue.notes.append(params)
                 elif req_t == "link":
                     if params:
-                        self.server.links_queue.append(params)
+                        self.server.queue.links.append(params)
                 elif req_t == "keyword":
                     if params:
-                        self.server.keywords_queue.append(params)
+                        self.server.queue.keywords.append(params)
                 elif req_t == "folgezettel":
                     if params:
-                        self.server.folgezettels_queue.append(params)
+                        self.server.queue.folgezettels.append(params)
             except json.decoder.JSONDecodeError:
                 pass
 
-class Server(socketserver.TCPServer):
-    notes_queue = []
-    links_queue = []
-    keywords_queue = []
-    folgezettels_queue = []
+@dataclass
+class ParamQueue:
+    notes = []
+    links = []
+    keywords = []
+    folgezettels = []
 
-def process(server):
+class Server(socketserver.TCPServer):
+    queue = ParamQueue()
+
+def process(queue):
     conn = sqlite3.connect(UserConfig().database)
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys = ON;")
-    for params in server.notes_queue:
+    for params in queue.notes:
         # delete existing keywords and links in note but don't delete the note
         # itself to keep backlinks
         cur.execute(delete_note_keywords(), {
@@ -59,16 +64,16 @@ def process(server):
             "outline": params.get("filename")
         })
         cur.execute(add_note(), params)
-    for params in server.keywords_queue:
+    for params in queue.keywords:
         cur.execute(add_keyword(), params)
-    for params in server.links_queue:
+    for params in queue.links:
         fixed_params = transform_link_params(params)
         if fixed_params:
             try:
                 cur.execute(add_link(), fixed_params)
             except sqlite3.IntegrityError:
                 print(f"[ERROR] Integrity error in request {params}.", file=sys.stderr)
-    for params in server.folgezettels_queue:
+    for params in queue.folgezettels:
         try:
             cur.execute(add_folgezettel(), params)
         except sqlite3.IntegrityError:
