@@ -20,12 +20,20 @@ class Folgezettel:
 def graph_links(pattern, output=sys.stdout):
     """Create dot graph of notes."""
     config = Config()
-    sql = "SELECT src, dest FROM links WHERE src LIKE :pattern"
+    sql = """
+        SELECT src, dest, S.title AS src_title, D.title AS dest_title
+            FROM links JOIN notes AS S on src = S.filename
+                JOIN notes AS D on dest = D.filename
+                    WHERE src LIKE :pattern
+    """
     G = nx.DiGraph()
+    params = {"pattern": pattern}
     with sqlite3.connect(config.user.database) as conn:
         cur = conn.cursor()
-        for src, dest in cur.execute(sql, {"pattern": pattern}):
-            G.add_edge(src, dest)
+        for src, dest, src_title, dest_title in cur.execute(sql, params):
+            s = f'"{src}"\n{src_title}'
+            t = f'"{dest}"\n{dest_title}'
+            G.add_edge(s, t)
     write_dot(G, output)
 
 def graph_folgezettels(pattern, output=sys.stdout):
