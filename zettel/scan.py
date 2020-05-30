@@ -7,8 +7,8 @@ import sys
 import threading
 import time
 
-from zettel import client, server
-from zettel.pandoc.commands import scan_metadata
+from . import client, server
+from .pandoc import scan_metadata
 
 def initialize_db(db):
     """Initialize sqlite file (db)."""
