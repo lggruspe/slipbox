@@ -46,5 +46,5 @@ def graph_folgezettels(pattern, output=sys.stdout):
         par_id = Folgezettel.parent(seqnum)
         parent = notes.get((outline, par_id))
         if parent:
-            G.add_edge(f"{par_id} - {parent}", f"{seqnum} - {note}")
+            G.add_edge(parent, note)
     write_dot(G, output)
