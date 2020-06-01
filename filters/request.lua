@@ -8,6 +8,10 @@ local function json_string(s)
     return string.format('"%s"', s:gsub('"', [[\"]]))
 end
 
+local function escape_percent(s)
+    return s:gsub('%%', '%%%%')
+end
+
 function M.note(title, filename)
     local tmpl = [[
     {
@@ -18,8 +22,8 @@ function M.note(title, filename)
         }
     }
     ]]
-    return tmpl:gsub("@filename@", json_string(filename))
-        :gsub("@title@", json_string(title))
+    return tmpl:gsub("@filename@", escape_percent(json_string(filename)))
+        :gsub("@title@", escape_percent(json_string(title)))
 end
 
 function M.link(src, dest, description)
@@ -33,9 +37,9 @@ function M.link(src, dest, description)
         }
     }
     ]]
-    return tmpl:gsub("@description@", json_string(description))
-        :gsub("@dest@", json_string(dest))
-        :gsub("@src@", json_string(src))
+    return tmpl:gsub("@description@", escape_percent(json_string(description)))
+        :gsub("@dest@", escape_percent(json_string(dest)))
+        :gsub("@src@", escape_percent(json_string(src)))
 end
 
 function M.keyword(note, keyword)
@@ -49,8 +53,8 @@ function M.keyword(note, keyword)
         }
     }
     ]]
-    return tmpl:gsub("@keyword@", json_string(keyword))
-        :gsub("@note@", json_string(note))
+    return tmpl:gsub("@keyword@", escape_percent(json_string(keyword)))
+        :gsub("@note@", escape_percent(json_string(note)))
 end
 
 function M.folgezettel(outline, note, seqnum)
@@ -64,9 +68,9 @@ function M.folgezettel(outline, note, seqnum)
         }
     }
     ]]
-    return tmpl:gsub("@seqnum@", json_string(seqnum))
-        :gsub("@note@", json_string(note))
-        :gsub("@outline@", json_string(outline))
+    return tmpl:gsub("@seqnum@", escape_percent(json_string(seqnum)))
+        :gsub("@note@", escape_percent(json_string(note)))
+        :gsub("@outline@", escape_percent(json_string(outline)))
 end
 
 function M.message(host, port, msg)
