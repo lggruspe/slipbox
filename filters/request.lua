@@ -9,7 +9,8 @@ local function json_string(s)
 end
 
 local function escape_percent(s)
-    return s:gsub('%%', '%%%%')
+    local t = s:gsub('%%', '%%%%')
+    return t
 end
 
 function M.note(title, filename)
