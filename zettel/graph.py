@@ -56,4 +56,5 @@ def graph_folgezettels(pattern, output=sys.stdout):
         parent = notes.get((outline, par_id))
         if parent:
             G.add_edge(parent, note)
+    G.graph.setdefault("graph", {})["rankdir"] = "LR"
     write_dot(G, output)
