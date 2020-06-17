@@ -33,6 +33,12 @@ def test_is_file_in_db():
         assert scan.is_file_in_db(present, conn)
         assert not scan.is_file_in_db(absent, conn)
 
+def test_has_valid_pattern():
+    patterns = ("*.md", "*.rst")
+    assert scan.has_valid_pattern("a.md", patterns)
+    assert scan.has_valid_pattern("a.rst", patterns)
+    assert not scan.has_valid_pattern("a.tex", patterns)
+
 def test_has_valid_extension():
     assert not scan.has_valid_extension(".md", [".md"])
     assert not scan.has_valid_extension("file.txt", [".html"])

@@ -1,6 +1,7 @@
 """Look for files that must be compiled."""
 
 from itertools import chain, groupby
+import fnmatch
 import glob
 import os
 import shlex
@@ -31,6 +32,12 @@ def is_file_in_db(filename, conn):
     sql = "SELECT filename FROM Files WHERE filename = ?"
     for _ in cur.execute(sql, (filename,)):
         return True
+    return False
+
+def has_valid_pattern(filename, patterns):
+    for pattern in patterns:
+        if fnmatch.fnmatch(filename, pattern):
+            return True
     return False
 
 def has_valid_extension(filename, extensions):
