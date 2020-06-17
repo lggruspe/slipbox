@@ -16,10 +16,8 @@ def main(args):
         initialize_database(conn)
         remove_outdated_files_from_database(conn, timestamp)
         inputs = list(input_files(conn, timestamp, args.paths, args.patterns))
-        scan(conn, inputs, "--bibliography=zettel.bib --mathjax")
-        html_options = " -o test.html -c basic.css --mathjax "\
-                "--bibliography=zettel.bib"
-        generate_complete_html(conn, html_options)
+        scan(conn, inputs, args.content_options)
+        generate_complete_html(conn, args.document_options)
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
@@ -27,4 +25,6 @@ if __name__ == "__main__":
     parser.add_argument("database")
     parser.add_argument("paths", nargs='+')
     parser.add_argument("-p", "--patterns", nargs='*', default=["*.md"])
+    parser.add_argument("-c", "--content-options", default="")
+    parser.add_argument("-d", "--document-options", default="")
     main(parser.parse_args())
