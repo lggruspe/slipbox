@@ -15,7 +15,7 @@ def main(args):
     with sqlite3.connect(args.database) as conn:
         initialize_database(conn)
         remove_outdated_files_from_database(conn, timestamp)
-        inputs = list(input_files(conn, timestamp, args.paths, args.extensions))
+        inputs = list(input_files(conn, timestamp, args.paths, args.patterns))
         scan_options = " --bibliography=zettel.bib --mathjax "\
                 "-Mlink-citations:true -Msuppress-bibliography:true"
         scan(conn, inputs, scan_options)
@@ -28,5 +28,5 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("database")
     parser.add_argument("paths", nargs='+')
-    parser.add_argument("-e", "--extensions", nargs='*', default=[".md"])
+    parser.add_argument("-p", "--patterns", nargs='*', default=["*.md"])
     main(parser.parse_args())

@@ -39,11 +39,6 @@ def test_has_valid_pattern():
     assert scan.has_valid_pattern("a.rst", patterns)
     assert not scan.has_valid_pattern("a.tex", patterns)
 
-def test_has_valid_extension():
-    assert not scan.has_valid_extension(".md", [".md"])
-    assert not scan.has_valid_extension("file.txt", [".html"])
-    assert scan.has_valid_extension("index.html", [".html", ".md"])
-
 def test_files_in_path():
     basedir = os.path.curdir
     with tempfile.TemporaryDirectory(dir=basedir) as tempdir,\

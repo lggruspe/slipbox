@@ -35,15 +35,11 @@ def is_file_in_db(filename, conn):
     return False
 
 def has_valid_pattern(filename, patterns):
+    """Check if filename matches one of the patterns."""
     for pattern in patterns:
         if fnmatch.fnmatch(filename, pattern):
             return True
     return False
-
-def has_valid_extension(filename, extensions):
-    """Check if filename has a valid extension."""
-    _, ext = os.path.splitext(filename)
-    return ext in extensions
 
 def files_in_path(path):
     """Recursively glob files in path."""
@@ -60,13 +56,13 @@ def files_in_paths(paths):
         new_files = new_files.union(files_in_path(path))
     return new_files
 
-def find_new_files(conn, paths, extensions=(".md",)):
+def find_new_files(conn, paths, patterns=("*.md",)):
     """Look for files that are not yet in the database."""
     condition = lambda x: os.path.isfile(x) and not is_file_in_db(x, conn) and \
-            has_valid_extension(x, extensions)
+            has_valid_pattern(x, patterns)
     return filter(condition, map(os.path.normpath, files_in_paths(paths)))
 
-def input_files(conn, timestamp, paths, extensions=(".md",)):
+def input_files(conn, timestamp, paths, patterns=("*.md",)):
     """Generate files that must be rescanned/processed by pandoc.
 
     Neighbor notes of deleted/modified files don't have to be rescanned,
@@ -75,7 +71,7 @@ def input_files(conn, timestamp, paths, extensions=(".md",)):
     """
     modified = map(os.path.normpath, filter(is_recently_modified(timestamp),
                                             fetch_files(conn)))
-    new = find_new_files(conn, paths, extensions)
+    new = find_new_files(conn, paths, patterns)
     yield from filter(os.path.isfile, set(modified).union(new))
 
 def delete_files_from_database(conn, files):
