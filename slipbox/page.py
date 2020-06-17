@@ -91,5 +91,7 @@ def generate_complete_html(conn, options):
         write_text(dummy, [dummy_markdown()])
         write_text(script, generate_javascript(conn))
         write_text(html, generate_active_htmls(conn))
-        cmd = f"pandoc {dummy} -H {script} -B {html} --section-divs {options}"
+        cmd = "pandoc {dummy} -H {script} -B {html} --section-divs {options}".format(
+            dummy=shlex.quote(dummy), script=shlex.quote(script),
+            html=shlex.quote(html), options=options)
         subprocess.run(shlex.split(cmd))

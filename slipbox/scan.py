@@ -109,11 +109,11 @@ def build_command(files, output, options=""):
     datadir = shlex.quote(os.path.abspath(os.path.dirname(__file__)))
     cmd = f"pandoc -Lzk.lua --section-divs --data-dir {datadir} "\
             f"-Mlink-citations:true -Msuppress-bibliography:true {options} "\
-            f"-o {output} "
+            "-o {} ".format(shlex.quote(output))
     empty = True
     for filename in files:
         empty = False
-        cmd += f" {filename}"
+        cmd += " {}".format(shlex.quote(filename))
     return cmd if not empty else ""
 
 def grouped_build_commands(files, options=""):
