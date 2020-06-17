@@ -40,6 +40,17 @@ function changeSection() {
   }
 }
 
+function addNotFoundSection() {
+  let section = document.createElement("section")
+  section.id = "0"
+  section.classList.add("level1")
+  let h1 = document.createElement("h1")
+  h1.innerText = "Note not found"
+  section.appendChild(h1)
+  document.body.appendChild(section)
+}
+
+window.addEventListener("load", addNotFoundSection)
 window.addEventListener("load", hideSections)
 window.addEventListener("load", changeSection)
 window.addEventListener("hashchange", changeSection)
