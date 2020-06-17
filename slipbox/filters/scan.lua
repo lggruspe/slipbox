@@ -1,7 +1,7 @@
 local header = require "filters/header"
 
 local function grep_headers()
-  local command = [[grep -r -I "^#\+\s\+[0-9]\+\s\+.\+$"]]
+  local command = [[grep -r -I "[0-9]\+\s\+.\+"]]
   return io.popen(command):lines()
 end
 
@@ -21,7 +21,7 @@ local function parse_grep_line_output(line)
   -- Parse an output line of grep and return filename and matched string.
   -- Return nil on failure.
   -- Extra spaces and markers are removed from the matched string.
-  local pattern = '^(.+):#+%s+(%d+)%s+(.+)$'
+  local pattern = '^(.+):.-(%d+)%s+(.+)$'
   local matched = gsubs{s = line, pattern = pattern, '%1', '%2', '%3'}
   if matched then
     return matched[1], string.format("# %s %s", matched[2], matched[3])
@@ -45,13 +45,18 @@ local function parse_grep_output(slipbox, iter)
     local filename, matched = parse_grep_line_output(line)
     assert(matched)
     local h = normalize_header(matched)
-    assert(h)
-    if filename and h.id and h.title then
-      local k = tonumber(h.id)
-      assert(k)
-      local note = slipbox.notes[k]
-      if note and note.title == h.title then
-        filenames[k] = {filename = filename, title = h.title}
+    if h then
+      if filename and h.id and h.title then
+        local k = tonumber(h.id)
+        assert(k)
+        local note = slipbox.notes[k]
+        if note and h.title:sub(1, #note.title) == note.title then
+          -- check prefix instead of comparing directly because grepped string
+          -- might contain trailing symbols
+          -- ex: \chapter{10 Note title} would cause the title to have a
+          -- trailing }
+          filenames[k] = {filename = filename, title = h.title}
+        end
       end
     end
   end
