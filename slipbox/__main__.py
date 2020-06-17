@@ -17,8 +17,8 @@ def main(args):
         remove_outdated_files_from_database(conn, timestamp)
         inputs = list(input_files(conn, timestamp, args.paths, args.patterns))
         scan(conn, inputs, "--bibliography=zettel.bib --mathjax")
-        html_options = " -o test.html -s -c basic.css --mathjax "\
-                "--bibliography=zettel.bib --section-divs"
+        html_options = " -o test.html -c basic.css --mathjax "\
+                "--bibliography=zettel.bib"
         generate_complete_html(conn, html_options)
 
 if __name__ == "__main__":
