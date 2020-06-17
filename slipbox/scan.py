@@ -107,7 +107,9 @@ def build_command(files, output, options=""):
     Return an empty string if there are no input files.
     """
     datadir = shlex.quote(os.path.abspath(os.path.dirname(__file__)))
-    cmd = f"pandoc -Lzk.lua --section-divs --data-dir {datadir} {options} -o {output} "
+    cmd = f"pandoc -Lzk.lua --section-divs --data-dir {datadir} "\
+            f"-Mlink-citations:true -Msuppress-bibliography:true {options} "\
+            f"-o {output} "
     empty = True
     for filename in files:
         empty = False
