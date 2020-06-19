@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tmpshh7db2b</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="basic.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <script type="text/javascript">
+
+      let slipbox = {
+          aliases: {},
+          notes: {},
+          tags: {},
+      }
+      
+  slipbox.notes[1] = {title: 'Every note has an ID and a title', aliases: [], backlinks: []}
+  slipbox.notes[2] = {title: 'A file can contain multiple notes', aliases: [], backlinks: []}
+  slipbox.notes[3] = {title: 'You can use hashtags anywhere in the note', aliases: [], backlinks: []}
+  slipbox.notes[4] = {title: 'Types of links', aliases: [], backlinks: []}
+  slipbox.notes[5] = {title: 'Backlinks are generated from annotated direct links', aliases: [], backlinks: []}
+  slipbox.notes[6] = {title: 'Notes in a sequence have aliases', aliases: [], backlinks: []}
+  slipbox.notes[7] = {title: 'Specify a bibliography file to use citations', aliases: [], backlinks: []}
+  slipbox.notes[8] = {title: 'See also section: backlinks and sequence links', aliases: [], backlinks: []}
+  slipbox.notes[9] = {title: 'How to derive note aliases', aliases: [], backlinks: []}
+  slipbox.notes[10] = {title: 'How to write a structure note with sequence links', aliases: [], backlinks: []}
+  slipbox.notes[11] = {title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: []}
+  slipbox.notes[0] = {title: 'Tutorial: Note 0 is the entry point', aliases: [], backlinks: []}
+  slipbox.notes[8].aliases.push('0a2')
+  slipbox.aliases['0a2'] = {id: 8, children: []}
+  slipbox.notes[10].aliases.push('0a1b2')
+  slipbox.aliases['0a1b2'] = {id: 10, children: []}
+  slipbox.notes[5].aliases.push('0a1a')
+  slipbox.aliases['0a1a'] = {id: 5, children: []}
+  slipbox.notes[4].aliases.push('0a1')
+  slipbox.aliases['0a1'] = {id: 4, children: []}
+  slipbox.notes[9].aliases.push('0a1b1')
+  slipbox.aliases['0a1b1'] = {id: 9, children: []}
+  slipbox.notes[6].aliases.push('0a1b')
+  slipbox.aliases['0a1b'] = {id: 6, children: []}
+  slipbox.notes[11].aliases.push('0e')
+  slipbox.aliases['0e'] = {id: 11, children: []}
+  slipbox.notes[3].aliases.push('0c')
+  slipbox.aliases['0c'] = {id: 3, children: []}
+  slipbox.notes[7].aliases.push('0d')
+  slipbox.aliases['0d'] = {id: 7, children: []}
+  slipbox.notes[1].aliases.push('0a')
+  slipbox.aliases['0a'] = {id: 1, children: []}
+  slipbox.notes[2].aliases.push('0b')
+  slipbox.aliases['0b'] = {id: 2, children: []}
+  slipbox.notes[5].backlinks.push({src: 4, annotation: 'An annotated direct link generates a backlink.'})
+  slipbox.aliases['0a1b1'].parent = '0a1b'
+  slipbox.aliases['0a1b'].children.push('0a1b1')
+  slipbox.aliases['0a1b2'].parent = '0a1b'
+  slipbox.aliases['0a1b'].children.push('0a1b2')
+  slipbox.aliases['0a1'].parent = '0a'
+  slipbox.aliases['0a'].children.push('0a1')
+  slipbox.aliases['0a2'].parent = '0a'
+  slipbox.aliases['0a'].children.push('0a2')
+  slipbox.aliases['0a1a'].parent = '0a1'
+  slipbox.aliases['0a1'].children.push('0a1a')
+  slipbox.aliases['0a1b'].parent = '0a1'
+  slipbox.aliases['0a1'].children.push('0a1b')
+  slipbox.tags['#like'] = []
+  slipbox.tags['#can'] = []
+  slipbox.tags['#You'] = []
+  slipbox.tags['#add'] = []
+  slipbox.tags['#this.'] = []
+  slipbox.tags['#tags'] = []
+  slipbox.tags['#like'].push(3)
+  slipbox.tags['#can'].push(3)
+  slipbox.tags['#You'].push(3)
+  slipbox.tags['#add'].push(3)
+  slipbox.tags['#this.'].push(3)
+  slipbox.tags['#tags'].push(3)
+  function createTagListSection() {
+
+    let section = document.createElement("section")
+
+    section.id = "tags"
+
+    section.classList.add("level1")
+
+    let h1 = document.createElement("h1")
+
+    h1.innerText = "Tags"
+
+    section.appendChild(h1)
+
+    let ul = document.createElement("ul")
+
+    section.appendChild(ul)
+
+    for (let tag of Object.keys(slipbox.tags).sort()) {
+
+      ul.appendChild(Li([
+
+        A(tag, "#"+tag)
+
+      ]))
+
+    }
+
+    return section
+
+  }
+
+
+
+  function createTagSection(tag) {
+
+    let section = document.createElement("section")
+
+    section.id = tag
+
+    section.classList.add("level1")
+
+    let h1 = document.createElement("h1")
+
+    section.appendChild(h1)
+
+    let ul = document.createElement("ul")
+
+    section.appendChild(ul)
+
+    h1.appendChild(A(tag, "#tags", "List of tags"))
+
+    for (let id of slipbox.tags[tag]) {
+
+      let li = document.createElement("li")
+
+      ul.appendChild(li)
+
+      let a = document.createElement("a")
+
+      li.appendChild(document.createTextNode("["+id+"] "))
+
+      li.appendChild(a)
+
+      a.href = '#' + id
+
+      a.innerText = slipbox.notes[id].title
+
+    }
+
+    return section
+
+  }
+
+  window.addEventListener("load", function() {
+
+    for (let tag of Object.keys(slipbox.tags)) {
+
+      let section = createTagSection(tag)
+
+      document.body.appendChild(section)
+
+    }
+
+    document.body.appendChild(createTagListSection())
+
+  })
+
+  function A(innerText, href, title) {
+
+    let a = document.createElement("a")
+
+    a.innerText = innerText
+
+    a.href = href
+
+    a.title = title
+
+    return a
+
+  }
+
+
+
+  function Li(children) {
+
+    let li = document.createElement("li")
+
+    for (let child of children) {
+
+      li.appendChild(child)
+
+    }
+
+    return li
+
+  }
+
+
+
+  function* generateBacklinkLis(slipbox, id) {
+
+    console.assert(slipbox)
+
+    console.assert(slipbox.notes)
+
+    console.assert(typeof(id) === "number")
+
+    let notes = slipbox.notes
+
+    let note = notes[id] || {backlinks: []}
+
+    for (let link of note.backlinks) {
+
+      console.assert(typeof(link.src) === "number")
+
+      console.assert(notes[link.src])
+
+      console.assert(typeof(notes[link.src].title) === "string")
+
+      console.assert(notes[link.src].title)
+
+      yield Li([
+
+        document.createTextNode("[" + link.src + "] "),
+
+        A(notes[link.src].title, "#" + link.src, link.annotation)
+
+        ])
+
+    }
+
+  }
+
+
+
+  function* generateParentLis(slipbox, id) {
+
+    console.assert(slipbox)
+
+    console.assert(slipbox.notes)
+
+    console.assert(typeof(id) === "number")
+
+    let notes = slipbox.notes
+
+    let note = notes[id] || {aliases: []}
+
+    for (let alias of note.aliases) {
+
+      console.assert(slipbox.aliases[alias])
+
+      let parentAlias = slipbox.aliases[alias].parent
+
+      if (parentAlias) {
+
+        let parentId = slipbox.aliases[parentAlias].id
+
+        console.assert(typeof(parentId) === "number")
+
+        yield Li([
+
+          document.createTextNode("[" + parentAlias + "] "),
+
+          A(slipbox.notes[parentId].title, "#" + parentId)
+
+          ])
+
+      }
+
+    }
+
+  }
+
+
+
+  function* generateChildLis(slipbox, id) {
+
+    console.assert(slipbox)
+
+    console.assert(slipbox.notes)
+
+    console.assert(typeof(id) === "number")
+
+    let notes = slipbox.notes
+
+    let note = notes[id] || {aliases: []}
+
+    for (let alias of note.aliases) {
+
+      console.assert(slipbox.aliases[alias])
+
+      for (let child of slipbox.aliases[alias].children) {
+
+        let childId = slipbox.aliases[child].id
+
+        yield Li([
+
+          document.createTextNode("[" + child + "] "),
+
+          A(slipbox.notes[childId].title, "#" + childId)
+
+          ])
+
+      }
+
+    }
+
+  }
+
+
+
+  function createRelatedUl(slipbox, id) {
+
+    let ul = document.createElement("ul")
+
+    for (let li of generateBacklinkLis(slipbox, id)) {
+
+      ul.appendChild(li)
+
+    }
+
+    for (let li of generateParentLis(slipbox, id)) {
+
+      ul.appendChild(li)
+
+    }
+
+    for (let li of generateChildLis(slipbox, id)) {
+
+      ul.appendChild(li)
+
+    }
+
+    return ul
+
+  }
+
+
+
+  function createSeeAlsoDiv(slipbox, id) {
+
+    let div = document.createElement("div")
+
+    div.id = "slipbox-see-also"
+
+    let ul = createRelatedUl(slipbox, id)
+
+    if (ul.children.length > 0) {
+
+      let h3 = document.createElement("h3")
+
+      h3.innerText = "See also"
+
+      div.appendChild(h3)
+
+      div.appendChild(ul)
+
+    }
+
+    return div
+
+  }
+
+
+
+  function createAliasesP(slipbox, id) {
+
+    console.assert(slipbox)
+
+    console.assert(slipbox.notes)
+
+    console.assert(typeof(id) == "number")
+
+    let note = slipbox.notes[id] || {aliases: []}
+
+    let p = document.createElement("p")
+
+    p.id = "slipbox-aliases"
+
+    let aliases = note.aliases.map(alias => document.createTextNode(" ["+alias+"]"))
+
+    if (aliases.length > 0) {
+
+      let text = document.createElement("strong")
+
+      text.innerText = "Aliases:"
+
+      p.appendChild(text)
+
+      aliases.forEach(alias => p.appendChild(alias))
+
+    }
+
+    return p
+
+  }
+
+
+
+  function setAliasesP(slipbox, id) {
+
+    let p = document.getElementById("slipbox-aliases")
+
+    if (p) {
+
+      p.remove()
+
+    }
+
+    document.body.appendChild(createAliasesP(slipbox, id))
+
+  }
+
+
+
+  function setSeeAlsoDiv(slipbox, id) {
+
+    let div = document.getElementById("slipbox-see-also")
+
+    if (div) {
+
+      div.remove()
+
+    }
+
+    document.body.appendChild(createSeeAlsoDiv(slipbox, id))
+
+  }
+
+
+
+  function seeAlso(slipbox, hash) {
+
+    let section = getSectionFromHash(hash)  // closest level1 ancestor
+
+    let id = section ? Number(section.id) : 0
+
+    setAliasesP(slipbox, id)
+
+    setSeeAlsoDiv(slipbox, id)
+
+  }
+
+
+
+  window.addEventListener("hashchange", function() {
+
+    seeAlso(slipbox, window.location.hash)
+
+  })
+
+
+
+  window.addEventListener("load", function() {
+
+    seeAlso(slipbox, window.location.hash)
+
+  })
+
+  function hideSections() {
+
+    let sections = document.getElementsByTagName("section")
+
+    for (let i = 0; i < sections.length; i++) {
+
+      let section = sections[i]
+
+      if (section.classList.contains("level1")) {
+
+        if (Number.isInteger(Number(section.id))) {
+
+          section.style.display = "none"
+
+        } else if (section.id.charAt(0) == '#') {
+
+          section.style.display = "none"
+
+        } else if (section.id == "references") {
+
+          section.style.display = "none"
+
+        } else if (section.id == "tags") {
+
+          section.style.display = "none"
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+  function getSectionFromHash(hash) {
+
+    let id = hash.substring(1)
+
+    if (!id) { return null }
+
+    let elem = document.getElementById(id)
+
+    if (elem) {
+
+      return elem.closest("section.level1")
+
+    }
+
+  }
+
+
+
+  let _previousHash = window.location.hash
+
+  function changeSection() {
+
+    let oldSection = getSectionFromHash(_previousHash)
+
+    if (oldSection) {
+
+      oldSection.style.display = "none"
+
+    }
+
+    _previousHash = window.location.hash
+
+    let newSection = getSectionFromHash(_previousHash)
+
+    if (newSection) {
+
+      newSection.style.display = ""
+
+    } else {
+
+      window.location.hash = "#0"
+
+    }
+
+  }
+
+
+
+  function addNotFoundSection() {
+
+    let section = document.createElement("section")
+
+    section.id = "0"
+
+    section.classList.add("level1")
+
+    let h1 = document.createElement("h1")
+
+    h1.innerText = "Note not found"
+
+    section.appendChild(h1)
+
+    document.body.appendChild(section)
+
+  }
+
+
+
+  window.addEventListener("load", addNotFoundSection)
+
+  window.addEventListener("load", hideSections)
+
+  window.addEventListener("load", changeSection)
+
+  window.addEventListener("hashchange", changeSection)
+
+  </script>
+</head>
+<body>
+<section id="0" class="level1" title="Tutorial: Note 0 is the entry point">
+<h1 title="Tutorial: Note 0 is the entry point">0 Tutorial: Note 0 is the entry point</h1>
+<p><code>slipbox</code> assumes that note 0 is the first page. You can use it as an entry point to your notes.</p>
+<ul>
+<li>You can organize your notes in files in many ways  [<a href="#2" title="0b">0b</a>].</li>
+<li>Just remember to put the note ID and the title in a level 1 header.  [<a href="#1" title="0a">0a</a>].</li>
+<li>You can make connections between notes using tags  [<a href="#3" title="0c">0c</a>].</li>
+<li>But it’s better if you make more specific types of connections  [<a href="#4" title="0a1">0a1</a>].</li>
+<li><code>slipbox</code> supports direct links, backlinks  [<a href="#5" title="0a1a">0a1a</a>] and sequence links  [<a href="#6" title="0a1b">0a1b</a>].
+<ul>
+<li>To create note sequences, you need to understand note aliases  [<a href="#9" title="0a1b1">0a1b1</a>]</li>
+<li>and the syntax  [<a href="#10" title="0a1b2">0a1b2</a>].</li>
+</ul></li>
+<li>Backlinks and sequence links appear in the ‘See also’ section of each note  [<a href="#8" title="0a2">0a2</a>].</li>
+<li>You can add citations by specifying a bibliography file  [<a href="#7" title="0d">0d</a>].</li>
+<li>You can visualize notes using <code>slipbox.graph</code>  [<a href="#11" title="0e">0e</a>].</li>
+</ul>
+<p><img src="tutorial.png" style="width:100.0%" /></p>
+</section>
+<section id="1" class="level1" title="Every note has an ID and a title">
+<h1 title="Every note has an ID and a title">1 Every note has an ID and a title</h1>
+<p>Each note must have a unique ID and a title. The ID has to be an integer. To add a new note just create a level 1 header containing an ID followed by a space and a title.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu"># 1 Every note has an ID and a title</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>This belongs to note 1.</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="fu"># 2 This is a different note</span></span></code></pre></div>
+<p>Everything before the next level 1 header is part of the note. (Or if you want, you can write <a href="#2">one note per file</a> [2].)</p>
+</section>
+<section id="2" class="level1" title="A file can contain multiple notes">
+<h1 title="A file can contain multiple notes">2 A file can contain multiple notes</h1>
+<p>You can place any number of notes in a file, but notes can’t be split into multiple files. So the entirety of this note (1) should only appear in this file.</p>
+<p>You could also write one note per file.</p>
+</section>
+<section id="3" class="level1" title="You can use hashtags anywhere in the note">
+<h1 title="You can use hashtags anywhere in the note">3 You can use hashtags anywhere in the note</h1>
+<p><a href="##You">#You</a> <a href="##can">#can</a> <a href="##add">#add</a> <a href="##tags">#tags</a> <a href="##like">#like</a> <a href="##this.">#this.</a></p>
+<p>Click on the tags to see a list of notes with the same tag.</p>
+</section>
+<section id="4" class="level1" title="Types of links">
+<h1 title="Types of links">4 Types of links</h1>
+<p><code>slipbox</code> supports several types of links.</p>
+<dl>
+<dt>Direct links</dt>
+<dd>You can link to other notes by specifying the note ID as the target. This works even when the note section is in <a href="#2">another file</a> [2].
+</dd>
+<dt><a href="#5" title="An annotated direct link generates a backlink.">Backlinks</a> [5]</dt>
+<dd>An annotated direct link generates a backlink. It’s sometimes nicer to put the annotation in a reference link. But you have to make sure that the label is unique across all your note files. One way to do this is to use IDs of the source and target notes, like this <a href="#5" title="This creates another backlink.">[4-5]</a> [5].
+</dd>
+<dt>Sequence links</dt>
+<dd>A <a href="#6">sequence link</a> [6] is a special type of link that indicates the order to read a sequence of notes in.
+</dd>
+</dl>
+</section>
+<section id="5" class="level1" title="Backlinks are generated from annotated direct links">
+<h1 title="Backlinks are generated from annotated direct links">5 Backlinks are generated from annotated direct links</h1>
+<p>This note has backlinks generated from note  [<a href="#4">4</a>]. If you hover over the backlink, you’ll see the description from the forward link.</p>
+</section>
+<section id="6" class="level1" title="Notes in a sequence have aliases">
+<h1 title="Notes in a sequence have aliases">6 Notes in a sequence have aliases</h1>
+<p>While note IDs are meant to uniquely identify notes, aliases are meant to show which notes belong in a sequence. For example,</p>
+<pre><code>0a -&gt; 0a1 -&gt; 0a1b</code></pre>
+<p>Each of these aliases correspond to a real ID. These aliases are defined in an outline note using sequence links.</p>
+</section>
+<section id="7" class="level1" title="Specify a bibliography file to use citations">
+<h1 title="Specify a bibliography file to use citations">7 Specify a bibliography file to use citations</h1>
+<p>If you specify a bibliography in the options, <code>slipbox</code> generates a bibliography page containing every reference in the bibliography. You can access this page by replacing the URL hash with <a href="#refs">refs</a>, or by clicking on a citation <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
+<p>You have to specify the bibliography file twice. Take note of the quotes and the spaces in the options.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -c <span class="st">&#39; --bibliography notes.bib&#39;</span> -d <span class="st">&#39; -o notes.html --bibliography notes.bib&#39;</span></span></code></pre></div>
+</section>
+<section id="8" class="level1" title="See also section: backlinks and sequence links">
+<h1 title="See also section: backlinks and sequence links">8 See also section: backlinks and sequence links</h1>
+<p>The ‘See also’ section lists <a href="#5">backlinks</a> [5] and <a href="#6">sequence links</a> [6]. The sequence links include ‘previous notes’ and ‘next notes’ as defined by some outline note. You can distinguish between backlinks and sequence links by looking at the ID that appears next to the title of the linked note.</p>
+<ul>
+<li>Backlinks are shown with <a href="#1">real IDs</a> [1].</li>
+<li>Sequence links are shown with <a href="#6">aliases</a> [6].</li>
+</ul>
+</section>
+<section id="9" class="level1" title="How to derive note aliases">
+<h1 title="How to derive note aliases">9 How to derive note aliases</h1>
+<p>A note alias is a string of numbers and letters. It always starts with a number.</p>
+<p>Example: <a href="#6">0a1b</a> [6]. The first number (0) indicates the owner or the outline note of the sequence. Often it is the ID of the note that contains the sequence link for the alias.</p>
+<p>In this example, <a href="#4">0a1</a> [4] is preceded by <a href="#1">0a</a> [1] and followed by <a href="#6">0a1b</a> [6]. Presumably, there’s another note <a href="#5">0a1a</a> [5] that follows note <a href="#4">0a1</a> [4]. So to follow a note alias, just append a number [letter] if the last symbol is a letter [number]. The sequence links for these note aliases are defined in note  [<a href="#0">0</a>].</p>
+</section>
+<section id="10" class="level1" title="How to write a structure note with sequence links">
+<h1 title="How to write a structure note with sequence links">10 How to write a structure note with sequence links</h1>
+<p>A sequence link looks just like a direct link, but there’s one difference: it contains an alias description.</p>
+<p>A sequence link has three parts.</p>
+<ol type="1">
+<li>Some (optional) text</li>
+<li>The real ID of the target note</li>
+<li>The note alias</li>
+</ol>
+<pre><code>[Text](#11 &#39;10a1b3&#39;)</code></pre>
+<p>Note  [<a href="#0">0</a>] contains sequence links for these notes.</p>
+</section>
+<section id="11" class="level1" title="Visualize notes using slipbox.graph">
+<h1 title="Visualize notes using slipbox.graph">11 Visualize notes using <code>slipbox.graph</code></h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -d <span class="st">&#39; -o notes.html&#39;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">python</span> -m slipbox.graph notes.db -d -s -o notes.dot</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">dot</span> notes.dot -Tpng -o notes.png</span></code></pre></div>
+<p>The output would look something like this.</p>
+<p><img src="tutorial.png" style="width:100.0%" /></p>
+<p>Black lines represent direct links and red lines represent sequence links.</p>
+</section>
+
+<p><span class="math inline"> </span></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references hanging-indent" role="doc-bibliography">
+<div id="ref-cite2020">
+<p>Author. 2020. <em>Title</em>.</p>
+</div>
+</div>
+</section>
+</body>
+</html>
