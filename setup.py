@@ -5,7 +5,7 @@ with open("README.md") as fp:
 
 setuptools.setup(
     name="slipbox",
-    version="0.1.0",
+    version="0.2.0",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
     description="Tools for managing notes",

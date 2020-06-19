@@ -4,7 +4,7 @@ all:	index.html tutorial.png
 index.html:
 	PYTHONPATH=.. python -m slipbox docs.db tutorial.md \
 		   -c ' --bibliography tutorial.bib' \
-		   -d ' -o index.html -c basic.css --bibliography tutorial.bib'
+		   -d ' -o index.html -c basic.css'
 
 .PHONY:	tutorial.png
 tutorial.png:	index.html

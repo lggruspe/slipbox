@@ -92,14 +92,18 @@ These aliases are defined in an outline note using sequence links.
 
 If you specify a bibliography in the options, `slipbox` generates a
 bibliography page containing every reference in the bibliography.
-You can access this page by replacing the URL hash with [refs](#refs),
-or by clicking on a citation [@cite2020].
+You can access this page by replacing the URL hash with
+[references](#references).
 
-You have to specify the bibliography file twice.
+It also generates a section for each cited reference, which contains a
+list of all notes that cite the reference [@cite2020].
+
+You have to specify the bibliography file using the `-c` option.
 Take note of the quotes and the spaces in the options.
 
+
 ```bash
-python -m slipbox notes.db notes -c ' --bibliography notes.bib' -d ' -o notes.html --bibliography notes.bib'
+python -m slipbox notes.db notes -c ' --bibliography notes.bib' -d ' -o notes.html'
 ```
 
 # 8 See also section: backlinks and sequence links
@@ -162,3 +166,4 @@ The output would look something like this.
 
 Black lines represent direct links and red lines represent sequence
 links.
+Dashed lines represent backlinks.
