@@ -44,6 +44,12 @@ CREATE TABLE IF NOT EXISTS Sections (
     html NOT NULL REFERENCES Html ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS Citations (
+    note NOT NULL REFERENCES Notes ON DELETE CASCADE,
+    reference NOT NULL,
+    PRIMARY KEY(note, reference)
+);
+
 -- respects foreign key constraints
 CREATE VIEW IF NOT EXISTS ValidAliases AS
 SELECT * FROM Aliases WHERE id IN (SELECT id FROM Notes);

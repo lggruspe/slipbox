@@ -1,4 +1,5 @@
 pandoc.utils = require "pandoc.utils"
+local cites = require "filters/cites"
 local header = require "filters/header"
 local links = require "filters/links"
 local post = require "filters/post"
@@ -12,6 +13,8 @@ local function Div(elem)
   local filter = tags.make_tag_filter(elem, current_slipbox)
   elem = pandoc.walk_block(elem, filter)
   filter = links.make_link_filter(elem, current_slipbox)
+  elem = pandoc.walk_block(elem, filter)
+  filter = cites.make_cite_filter(elem, current_slipbox)
   return pandoc.walk_block(elem, filter)
 end
 

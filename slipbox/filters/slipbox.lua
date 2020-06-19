@@ -8,7 +8,17 @@ function SlipBox:new()
     aliases = {},
     children = {},
     tags = {},
+    citations = {},
   }, self)
+end
+
+function SlipBox:save_citation(id, citation)
+  id = tonumber(id)
+  if id then
+    local citations = self.citations[id] or {}
+    citations[citation] = true
+    self.citations[id] = citations
+  end
 end
 
 function SlipBox:save_note(note)
@@ -227,13 +237,33 @@ local function files_to_sql(filenames)
   return ""
 end
 
+local function citations_to_sql(citations)
+  local values = ""
+  for id, cites in pairs(citations) do
+    for cite in pairs(cites) do
+      local value = string.format("(%d, %s)", id, sqlite_string(cite))
+      if values == "" then
+        values = values .. ' ' .. value
+      else
+        values = values .. ", " .. value
+      end
+    end
+  end
+  if values ~= "" then
+    return "INSERT OR IGNORE INTO Citations (note, reference) VALUES " .. values
+      ..";\n"
+  end
+  return ""
+end
+
 function SlipBox:to_sql(filenames)
   -- Create sql statements from slipbox contents.
   -- filenames
   -- : Table that maps note ids to filenames (see scan.parse_grep_output).
   return files_to_sql(filenames) .. notes_to_sql(self.notes, filenames) ..
     tags_to_sql(self.tags) .. links_to_sql(self.links) ..
-    aliases_to_sql(self.aliases) .. sequences_to_sql(self.children)
+    aliases_to_sql(self.aliases) .. sequences_to_sql(self.children) ..
+    citations_to_sql(self.citations)
 end
 
 return {
