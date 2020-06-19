@@ -70,10 +70,13 @@ def write_dot_graph(database, direct=False, sequence=False, out=sys.stdout):
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
-    parser = ArgumentParser()
-    parser.add_argument("database")
-    parser.add_argument("-d", "--direct", action="store_true")
-    parser.add_argument("-s", "--sequence", action="store_true")
-    parser.add_argument("-o", dest="out", default=sys.stdout)
+    parser = ArgumentParser(
+        description="Generate a dot file to visualize your slipbox notes.")
+    parser.add_argument("database", help="filename of sqlite3 database")
+    parser.add_argument("-d", "--direct", action="store_true",
+                        help="show direct links")
+    parser.add_argument("-s", "--sequence", action="store_true",
+                        help="show sequence links")
+    parser.add_argument("-o", "--out", default=sys.stdout, help="output file")
     args = parser.parse_args()
     write_dot_graph(args.database, args.direct, args.sequence, args.out)

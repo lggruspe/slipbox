@@ -21,10 +21,15 @@ def main(args):
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
-    parser = ArgumentParser()
-    parser.add_argument("database")
-    parser.add_argument("paths", nargs='+')
-    parser.add_argument("-p", "--patterns", nargs='*', default=["*.md"])
-    parser.add_argument("-c", "--content-options", default="")
-    parser.add_argument("-d", "--document-options", default="")
+    parser = ArgumentParser(
+        description="Generate a single-page HTML from your notes.")
+    parser.add_argument("database", help="filename of sqlite3 database")
+    parser.add_argument("paths", nargs='+',
+                        help="list of files or directories that contain notes")
+    parser.add_argument("-p", "--patterns", nargs='*', default=["*.md"],
+                        help="list of glob patterns")
+    parser.add_argument("-c", "--content-options", default="",
+                        help="pandoc options for the content")
+    parser.add_argument("-d", "--document-options", default="",
+                        help="pandoc options for the final HTML output")
     main(parser.parse_args())
