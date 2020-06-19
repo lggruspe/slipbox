@@ -11,7 +11,6 @@ def dummy_markdown():
     return r"""$\,$
 ``` {.c style="display:none"}
 ```
-# References
 """
 
 def generate_active_htmls(conn):
@@ -88,6 +87,8 @@ def generate_javascript(conn):
     yield from generate_data(conn)
     basedir = os.path.dirname(__file__)
     with open(os.path.join(basedir, "data/tags.js")) as file:
+        yield from file
+    with open(os.path.join(basedir, "data/refs.js")) as file:
         yield from file
     with open(os.path.join(basedir, "data/seealso.js")) as file:
         yield from file
