@@ -13,7 +13,7 @@ nocite: |
     @*
 ---
 $\,$
-```c
+``` {.c style="display:none"}
 ```
 # References
 """

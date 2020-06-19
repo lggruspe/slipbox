@@ -142,7 +142,7 @@ A sequence link has three parts.
 2. The real ID of the target note
 3. The note alias
 
-```
+```markdown
 [Text](#11 '10a1b3')
 ```
 
