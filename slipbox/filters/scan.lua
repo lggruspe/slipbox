@@ -21,7 +21,7 @@ local function parse_grep_line_output(line)
   -- Parse an output line of grep and return filename and matched string.
   -- Return nil on failure.
   -- Extra spaces and markers are removed from the matched string.
-  local pattern = '^(.+):.-(%d+)%s+(.+)$'
+  local pattern = '^(.-):.-(%d+)%s+(.+)$'
   local matched = gsubs{s = line, pattern = pattern, '%1', '%2', '%3'}
   if matched then
     return matched[1], string.format("# %s %s", matched[2], matched[3])
