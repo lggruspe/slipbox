@@ -42,6 +42,8 @@ This command create an HTML out of your markdown notes in the `notes` directory.
 - ` -o notes.html` can be replaced with any pandoc option.
     + Take note of the quotes and the leading space.
 
+See [docs/](https://lggruspe.github.io/slipbox) and `examples/`.
+
 License
 -------
 
