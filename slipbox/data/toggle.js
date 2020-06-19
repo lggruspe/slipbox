@@ -35,6 +35,7 @@ function changeSection() {
   let newSection = getSectionFromHash(_previousHash)
   if (newSection) {
     newSection.style.display = ""
+    document.title = newSection.title || "Slipbox"
   } else {
     window.location.hash = "#0"
   }

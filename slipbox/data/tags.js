@@ -1,6 +1,7 @@
 function createTagListSection() {
   let section = document.createElement("section")
   section.id = "tags"
+  section.title = "Tags"
   section.classList.add("level1")
   let h1 = document.createElement("h1")
   h1.innerText = "Tags"
@@ -18,6 +19,7 @@ function createTagListSection() {
 function createTagSection(tag) {
   let section = document.createElement("section")
   section.id = tag
+  section.title = tag
   section.classList.add("level1")
   let h1 = document.createElement("h1")
   section.appendChild(h1)
