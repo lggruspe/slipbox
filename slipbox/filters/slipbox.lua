@@ -238,10 +238,13 @@ local function files_to_sql(filenames)
 end
 
 local function citations_to_sql(citations)
+  local references = {}
   local values = ""
   for id, cites in pairs(citations) do
     for cite in pairs(cites) do
-      local value = string.format("(%d, %s)", id, sqlite_string(cite))
+      local ref = sqlite_string("ref-"..cite)
+      references[ref] = true
+      local value = string.format("(%d, %s)", id, ref)
       if values == "" then
         values = values .. ' ' .. value
       else
@@ -249,9 +252,21 @@ local function citations_to_sql(citations)
       end
     end
   end
+  local sql = ""
   if values ~= "" then
-    return "INSERT OR IGNORE INTO Citations (note, reference) VALUES " .. values
-      ..";\n"
+    local ref_sql = ""
+    for ref in pairs(references) do
+      if ref_sql == "" then
+        ref_sql = ref_sql .. string.format("(%s)", ref)
+      else
+        ref_sql = ref_sql .. string.format(", (%s)", ref)
+      end
+    end
+    sql = sql .. "INSERT OR IGNORE INTO Bibliography (key) VALUES " .. ref_sql ..
+      ";\n"
+    sql = sql .. "INSERT OR IGNORE INTO Citations (note, reference) VALUES " ..
+      values ..";\n"
+    return sql
   end
   return ""
 end

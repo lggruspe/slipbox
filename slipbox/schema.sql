@@ -44,9 +44,14 @@ CREATE TABLE IF NOT EXISTS Sections (
     html NOT NULL REFERENCES Html ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS Bibliography (
+    key PRIMARY KEY,
+    text
+);
+
 CREATE TABLE IF NOT EXISTS Citations (
     note NOT NULL REFERENCES Notes ON DELETE CASCADE,
-    reference NOT NULL,
+    reference NOT NULL REFERENCES Bibliography ON DELETE RESTRICT,
     PRIMARY KEY(note, reference)
 );
 
