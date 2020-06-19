@@ -6,8 +6,9 @@ index.html:
 		   -c ' --bibliography tutorial.bib' \
 		   -d ' -o index.html -c basic.css --bibliography tutorial.bib'
 
-tutorial.png:	| docs.db
-	PYTHONPATH=.. python -m slipbox.graph docs.db -d -s -o tutorial.dot
+.PHONY:	tutorial.png
+tutorial.png:	index.html
+	PYTHONPATH=.. python -m slipbox.graph docs.db -d -s -b -o tutorial.dot
 	dot tutorial.dot -Tpng -o tutorial.png
 
 .PHONY:	clean

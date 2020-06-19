@@ -152,7 +152,7 @@ Note [](#0) contains sequence links for these notes.
 
 ```bash
 python -m slipbox notes.db notes -d ' -o notes.html'
-python -m slipbox.graph notes.db -d -s -o notes.dot
+python -m slipbox.graph notes.db -d -s -b -o notes.dot
 dot notes.dot -Tpng -o notes.png
 ```
 

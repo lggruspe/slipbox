@@ -1,6 +1,7 @@
 """Test graph.py."""
 
 from .graph import DiGraph, fetch_link_graph, fetch_sequence_graph
+from .graph import fetch_backlinks
 from .mock import mock_database
 
 def sample_script():
@@ -68,6 +69,14 @@ def test_fetch_sequence_graph():
     assert sample_sequence_edge(6, 7) in graph.edges
     assert sample_sequence_edge(6, 8) in graph.edges
     assert sample_sequence_edge(6, 9) in graph.edges
+
+def test_fetch_backlinks():
+    """Backlinks are reversed links with annotations."""
+    with mock_database(sample_script()) as conn:
+        graph = fetch_backlinks(conn)
+    assert len(graph.edges) == 2
+    assert sample_sequence_edge(2, 1) in graph.edges
+    assert sample_sequence_edge(4, 2) in graph.edges
 
 def test_digraph_add_edge():
     """DiGraph.add_edge must insert endpoints and attributes."""

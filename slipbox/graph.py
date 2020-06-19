@@ -52,7 +52,20 @@ def fetch_sequence_graph(conn):
         graph.add_edge(f'"[{parent}] {ptitle}"', f'"[{child}] {ctitle}"')
     return graph
 
-def write_dot_graph(database, direct=False, sequence=False, out=sys.stdout):
+def fetch_backlinks(conn):
+    """Get backlinks from database and return a DiGraph."""
+    sql = """
+        SELECT dest, D.title, src, S.title FROM StrongLinks
+            JOIN Notes AS D ON D.id = dest
+                JOIN Notes AS S ON S.id = src
+    """
+    graph = DiGraph()
+    for dest, dtitle, src, stitle in conn.execute(sql):
+        graph.add_edge(f'"[{dest}] {dtitle}"', f'"[{src}] {stitle}"')
+    return graph
+
+def write_dot_graph(database, direct=False, sequence=False, backlinks=False,
+                    out=sys.stdout):
     """Generate dot graph from database."""
     graph = DiGraph()
     with sqlite3.connect(database) as conn:
@@ -62,6 +75,9 @@ def write_dot_graph(database, direct=False, sequence=False, out=sys.stdout):
         if sequence:
             for src, dest in fetch_sequence_graph(conn).edges:
                 graph.add_edge(src, dest, color="red")
+        if backlinks:
+            for src, dest in fetch_backlinks(conn).edges:
+                graph.add_edge(src, dest, style="dashed")
     if isinstance(out, str):
         out = open(out, "w")
     with out:
@@ -77,6 +93,9 @@ if __name__ == "__main__":
                         help="show direct links")
     parser.add_argument("-s", "--sequence", action="store_true",
                         help="show sequence links")
+    parser.add_argument("-b", "--backlink", action="store_true",
+                        help="show backlinks")
     parser.add_argument("-o", "--out", default=sys.stdout, help="output file")
     args = parser.parse_args()
-    write_dot_graph(args.database, args.direct, args.sequence, args.out)
+    write_dot_graph(args.database, args.direct, args.sequence, args.backlink,
+                    args.out)
