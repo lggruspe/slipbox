@@ -2,7 +2,9 @@ function A(innerText, href, title) {
   let a = document.createElement("a")
   a.innerText = innerText
   a.href = href
-  a.title = title
+  if (title != null) {
+    a.title = title
+  }
   return a
 }
 
