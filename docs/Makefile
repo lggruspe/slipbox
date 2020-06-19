@@ -12,4 +12,4 @@ tutorial.png:	| docs.db
 
 .PHONY:	clean
 clean:
-	rm -rf index.html tutorial.png
+	rm -rf index.html tutorial.png tutorial.dot

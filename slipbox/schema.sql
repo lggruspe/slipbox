@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Links (
     dest NOT NULL,  -- not an fk to keep backlink when dest gets deleted
                     -- and to allow notes to get scanned incrementally
     annotation,
-    PRIMARY KEY(src, dest)
+    PRIMARY KEY(src, dest, annotation)
 );
 
 CREATE TABLE IF NOT EXISTS Aliases (
