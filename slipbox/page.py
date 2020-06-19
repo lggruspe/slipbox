@@ -8,11 +8,7 @@ from .utils import make_temporary_file, write_text
 
 def dummy_markdown():
     """Dummy markdown to use as pandoc input."""
-    return r"""---
-nocite: |
-    @*
----
-$\,$
+    return r"""$\,$
 ``` {.c style="display:none"}
 ```
 # References
@@ -56,6 +52,19 @@ def generate_tag_data(conn):
     for nid, tag in conn.execute("SELECT id, tag FROM Tags"):
         yield "slipbox.tags[{}].push({})".format(repr(tag), nid)
 
+def generate_bibliography_data(conn):
+    """Generate slipbox bibliography data in javascript."""
+    for key, text in conn.execute("SELECT key, text FROM Bibliography"):
+        yield "slipbox.bibliography[{}] = {{text: {}, citations: []}}".format(
+            repr(key), repr(text))
+
+def generate_citation_data(conn):
+    """Generate slipbox citation data in javascript."""
+    sql = "SELECT note, reference FROM Citations"
+    for note, reference in conn.execute(sql):
+        yield "slipbox.bibliography[{}].citations.push({})".format(
+            repr(reference), note)
+
 def generate_data(conn):
     """Generate slipbox data in javascript."""
     yield from """
@@ -63,12 +72,15 @@ def generate_data(conn):
         aliases: {},
         notes: {},
         tags: {},
+        bibliography: {},
     }
     """.split('\n')
     yield from generate_note_data(conn)
     yield from generate_link_data(conn)
     yield from generate_sequence_data(conn)
     yield from generate_tag_data(conn)
+    yield from generate_bibliography_data(conn)
+    yield from generate_citation_data(conn)
 
 def generate_javascript(conn):
     """Generate slipbox javascript code."""
