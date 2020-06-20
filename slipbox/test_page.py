@@ -28,14 +28,16 @@ def test_create_bibliography():
   <h1>
     References
   </h1>
-  <ul>
-    <li>
+  <dl>
+    <dt>
       <a href='#ref-test'>
         [@test]
       </a>
-       Reference text.
-    </li>
-  </ul>
+    </dt>
+    <dd>
+      Reference text.
+    </dd>
+  </dl>
 </section>"""
 
 def test_create_tags():

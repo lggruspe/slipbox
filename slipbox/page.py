@@ -72,12 +72,11 @@ def create_bibliography(conn):
     sql = "SELECT key, text FROM Bibliography ORDER BY key"
     items = []
     for key, text in conn.execute(sql):
-        items.append(Elem("li",
-                          Elem("a", f"[@{key[4:]}]", href='#' + key),
-                          ' ' + text))
+        items.append(Elem("dt", Elem("a", f"[@{key[4:]}]", href='#' + key)))
+        items.append(Elem("dd", text))
     section = Elem("section",
                    Elem("h1", "References"),
-                   Elem("ul", *items),
+                   Elem("dl", *items),
                    id="references",
                    title="References",
                    **{"class": "level1"})
