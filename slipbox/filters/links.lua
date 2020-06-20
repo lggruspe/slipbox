@@ -12,7 +12,8 @@ local function get_sequence_link(div, link)
   local seqnum = link.title or ""   -- NOTE why isn't this in link.attributes.title?
   local prefix, count = seqnum:gsub(pattern, '%1')
   if count == 0 then return nil end
-  local suffix, count = seqnum:gsub(pattern, '%2')
+  local _
+  _, count = seqnum:gsub(pattern, '%2')
   if count == 0 then return nil end
   local src = tonumber(div.identifier)
   local dest = parse_number_target(link.target)
@@ -55,7 +56,6 @@ local function create_pandoc_link(link, elem)
   -- : Either a direct or a sequence link.
   -- elem
   -- : A pandoc Link object.
-  
   assert(elem.tag == "Link")
   assert(link.tag == "direct" or link.tag == "sequence")
   local content = link.alias or link.dest

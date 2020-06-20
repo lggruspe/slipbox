@@ -1,15 +1,4 @@
-local pretty = require "pl.pretty"
 local slipbox = require "filters/slipbox"
-
---[[
-local current_slipbox = slipbox.SlipBox:new()
-pretty.dump(current_slipbox)
-current_slipbox:save_note({
-  id = 1,
-  title = "Title",
-})
-pretty.dump(current_slipbox)
-]]
 
 local function test_parent_sequence_prefix()
   local cases = {

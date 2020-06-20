@@ -117,7 +117,6 @@ local function notes_to_sql(notes, filenames)
       else
         values = values .. ", " .. value
       end
-    else
       -- result might be nil if scan.lua couldn't find its filename.
       -- This occurs when the title in the header contains other symbols
       -- (ex: links, references, equations, etc.).

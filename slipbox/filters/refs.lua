@@ -16,15 +16,6 @@ local function make_cite_filter(references)
   return {Div = Div}
 end
 
-local function make_ref_block(refs)
-  -- Turn key-value pairs (ref and text) into a pandoc.Para of references.
-  local items = {}
-  for _, text in pairs(refs) do
-    table.insert(items, pandoc.Str(text))
-  end
-  return pandoc.Para(items)
-end
-
 local function sqlite_string(s)
   return string.format("'%s'", s:gsub("'", "''"))
 end

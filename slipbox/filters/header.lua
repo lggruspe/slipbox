@@ -4,7 +4,8 @@ local function parse_id_and_title(s)
   local pattern = '^(%d+)%s+(.+)$'
   local id, count = s:gsub(pattern, '%1')
   if count == 0 then return nil end
-  local title, count = s:gsub(pattern, '%2')
+  local title
+  title, count = s:gsub(pattern, '%2')
   if count ~= 0 then
     local _id = tonumber(id)
     assert(_id)
