@@ -45,70 +45,28 @@ def generate_sequence_data(conn):
         yield f"slipbox.aliases[{next_!r}].parent = {prev!r}"
         yield f"slipbox.aliases[{prev!r}].children.push({next_!r})"
 
-def generate_tag_data(conn):
-    """Generate slipbox tag data in javascript."""
-    for row in conn.execute("SELECT DISTINCT tag FROM Tags"):
-        yield "slipbox.tags[{}] = []".format(repr(row[0]))
-    for nid, tag in conn.execute("SELECT id, tag FROM Tags"):
-        yield "slipbox.tags[{}].push({})".format(repr(tag), nid)
-
-def generate_bibliography_data(conn):
-    """Generate slipbox bibliography data in javascript."""
-    for key, text in conn.execute("SELECT key, text FROM Bibliography"):
-        yield "slipbox.bibliography[{}] = {{text: {}, citations: []}}".format(
-            repr(key), repr(text))
-
-def generate_citation_data(conn):
-    """Generate slipbox citation data in javascript."""
-    sql = "SELECT note, reference FROM Citations"
-    for note, reference in conn.execute(sql):
-        yield "slipbox.bibliography[{}].citations.push({})".format(
-            repr(reference), note)
-
 def generate_data(conn):
     """Generate slipbox data in javascript."""
     yield from """
     let slipbox = {
         aliases: {},
         notes: {},
-        tags: {},
-        bibliography: {},
     }
     """.split('\n')
     yield from generate_note_data(conn)
     yield from generate_link_data(conn)
     yield from generate_sequence_data(conn)
-    yield from generate_tag_data(conn)
-    yield from generate_bibliography_data(conn)
-    yield from generate_citation_data(conn)
 
 def generate_javascript(conn):
     """Generate slipbox javascript code."""
     yield '<script type="text/javascript">'
     yield from generate_data(conn)
     basedir = os.path.dirname(__file__)
-    with open(os.path.join(basedir, "data/tags.js")) as file:
-        yield from file
-    with open(os.path.join(basedir, "data/refs.js")) as file:
-        yield from file
     with open(os.path.join(basedir, "data/seealso.js")) as file:
         yield from file
     with open(os.path.join(basedir, "data/toggle.js")) as file:
         yield from file
     yield "</script>"
-
-def generate_complete_html(conn, options):
-    """Create final HTML file with javascript."""
-    with make_temporary_file(suffix=".md", text=True) as dummy,\
-            make_temporary_file() as script,\
-            make_temporary_file(suffix=".html", text=True) as html:
-        write_text(dummy, [dummy_markdown()])
-        write_text(script, generate_javascript(conn))
-        write_text(html, generate_active_htmls(conn))
-        cmd = "pandoc {dummy} -H {script} -B {html} --section-divs {options}".format(
-            dummy=shlex.quote(dummy), script=shlex.quote(script),
-            html=shlex.quote(html), options=options)
-        subprocess.run(shlex.split(cmd))
 
 def create_bibliography(conn):
     """Create bibliography HTML section from database entries."""
@@ -153,6 +111,12 @@ def create_tag_page(conn, tag):
                    **{"class": "level1"})
     return render(section)
 
+def create_tag_pages(conn):
+    """Create all tag pages."""
+    rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
+    tags = (row[0] for row in rows)
+    return '\n'.join(create_tag_page(conn, tag) for tag in tags)
+
 def create_reference_page(conn, reference):
     """Create HTML section that lists all notes that cite the reference."""
     sql = """
@@ -174,3 +138,28 @@ def create_reference_page(conn, reference):
                    title=reference,
                    **{"class": "level1"})
     return render(section)
+
+def create_reference_pages(conn):
+    """Create all reference pages."""
+    rows = conn.execute("SELECT key FROM Bibliography ORDER BY key")
+    references = (row[0] for row in rows)
+    return '\n'.join(create_reference_page(conn, ref) for ref in references)
+
+def generate_complete_html(conn, options):
+    """Create final HTML file with javascript."""
+    with make_temporary_file(suffix=".md", text=True) as dummy,\
+            make_temporary_file() as script,\
+            make_temporary_file(suffix=".html", text=True) as html,\
+            make_temporary_file(suffix=".html", text=True) as extra:
+        write_text(dummy, [dummy_markdown()])
+        write_text(script, generate_javascript(conn))
+        write_text(html, generate_active_htmls(conn))
+        with open(extra, "w") as file:
+            print(create_tag_pages(conn), file=file)
+            print(create_tags(conn), file=file)
+            print(create_reference_pages(conn), file=file)
+            print(create_bibliography(conn), file=file)
+        cmd = "pandoc {dummy} -H {script} -B {html} -B {extra} --section-divs {options}".format(
+            dummy=shlex.quote(dummy), script=shlex.quote(script),
+            html=shlex.quote(html), options=options, extra=shlex.quote(extra))
+        subprocess.run(shlex.split(cmd))

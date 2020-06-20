@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpl2eognr3</title>
+  <title>tmpyevau1eu</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -84,8 +84,6 @@
       let slipbox = {
           aliases: {},
           notes: {},
-          tags: {},
-          bibliography: {},
       }
       
   slipbox.notes[1] = {title: 'Every note has an ID and a title', aliases: [], backlinks: []}
@@ -136,208 +134,6 @@
   slipbox.aliases['0a1b'].children.push('0a1b1')
   slipbox.aliases['0a1b2'].parent = '0a1b'
   slipbox.aliases['0a1b'].children.push('0a1b2')
-  slipbox.tags['#tags'] = []
-  slipbox.tags['#add'] = []
-  slipbox.tags['#like'] = []
-  slipbox.tags['#this.'] = []
-  slipbox.tags['#You'] = []
-  slipbox.tags['#can'] = []
-  slipbox.tags['#tags'].push(3)
-  slipbox.tags['#add'].push(3)
-  slipbox.tags['#like'].push(3)
-  slipbox.tags['#this.'].push(3)
-  slipbox.tags['#You'].push(3)
-  slipbox.tags['#can'].push(3)
-  slipbox.bibliography['ref-cite2020'] = {text: 'Author. 2020. Title.', citations: []}
-  slipbox.bibliography['ref-cite2020'].citations.push(7)
-  function createTagListSection() {
-
-    let section = document.createElement("section")
-
-    section.id = "tags"
-
-    section.title = "Tags"
-
-    section.classList.add("level1")
-
-    let h1 = document.createElement("h1")
-
-    h1.innerText = "Tags"
-
-    section.appendChild(h1)
-
-    let ul = document.createElement("ul")
-
-    section.appendChild(ul)
-
-    for (let tag of Object.keys(slipbox.tags).sort()) {
-
-      ul.appendChild(Li([
-
-        A(tag, "#"+tag)
-
-      ]))
-
-    }
-
-    return section
-
-  }
-
-
-
-  function createTagSection(tag) {
-
-    let section = document.createElement("section")
-
-    section.id = tag
-
-    section.title = tag
-
-    section.classList.add("level1")
-
-    let h1 = document.createElement("h1")
-
-    section.appendChild(h1)
-
-    let ul = document.createElement("ul")
-
-    section.appendChild(ul)
-
-    h1.appendChild(A(tag, "#tags", "List of tags"))
-
-    for (let id of slipbox.tags[tag]) {
-
-      let li = document.createElement("li")
-
-      ul.appendChild(li)
-
-      let a = document.createElement("a")
-
-      li.appendChild(document.createTextNode("["+id+"] "))
-
-      li.appendChild(a)
-
-      a.href = '#' + id
-
-      a.innerText = slipbox.notes[id].title
-
-    }
-
-    return section
-
-  }
-
-  window.addEventListener("load", function() {
-
-    for (let tag of Object.keys(slipbox.tags)) {
-
-      let section = createTagSection(tag)
-
-      document.body.appendChild(section)
-
-    }
-
-    document.body.appendChild(createTagListSection())
-
-  })
-
-  function createBibliographySection() {
-
-    let section = document.createElement("section")
-
-    section.id = "references"
-
-    section.title = "References"
-
-    section.classList.add("level1")
-
-    let h1 = document.createElement("h1")
-
-    h1.innerText = "References"
-
-    section.appendChild(h1)
-
-    let ul = document.createElement("ul")
-
-    section.appendChild(ul)
-
-    for (let ref of Object.keys(slipbox.bibliography).sort()) {
-
-      ul.appendChild(Li([
-
-        A("[@"+ref.slice(4)+"]", "#"+ref),
-
-        document.createTextNode(" "+slipbox.bibliography[ref].text)
-
-      ]))
-
-    }
-
-    return section
-
-  }
-
-
-
-  function createCitationSection(ref) {
-
-    let section = document.createElement("section")
-
-    section.id = ref
-
-    section.title = ref
-
-    section.classList.add("level1")
-
-    let h1 = document.createElement("h1")
-
-    section.appendChild(h1)
-
-    let ul = document.createElement("ul")
-
-    section.appendChild(ul)
-
-    h1.appendChild(A(slipbox.bibliography[ref].text, "#references", "Bibliography"))
-
-    for (let id of slipbox.bibliography[ref].citations) {
-
-      let li = document.createElement("li")
-
-      ul.appendChild(li)
-
-      let a = document.createElement("a")
-
-      li.appendChild(document.createTextNode("["+id+"] "))
-
-      li.appendChild(a)
-
-      a.href = '#' + id
-
-      a.innerText = slipbox.notes[id].title
-
-    }
-
-    return section
-
-  }
-
-
-
-  window.addEventListener("load", function() {
-
-    for (let ref of Object.keys(slipbox.bibliography)) {
-
-      let section = createCitationSection(ref)
-
-      document.body.appendChild(section)
-
-    }
-
-    document.body.appendChild(createBibliographySection())
-
-  })
-
   function A(innerText, href, title) {
 
     let a = document.createElement("a")
@@ -862,6 +658,161 @@
 <p>Black lines represent direct links and red lines represent sequence links. Dashed lines represent backlinks.</p>
 </section>
 
+<section id='#You' title='#You' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #You
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [3] 
+      <a href='#3'>
+        You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#add' title='#add' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #add
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [3] 
+      <a href='#3'>
+        You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#can' title='#can' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #can
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [3] 
+      <a href='#3'>
+        You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#like' title='#like' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #like
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [3] 
+      <a href='#3'>
+        You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#tags' title='#tags' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #tags
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [3] 
+      <a href='#3'>
+        You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#this.' title='#this.' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #this.
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [3] 
+      <a href='#3'>
+        You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='tags' title='Tags' class='level1'>
+  <h1>
+    Tags
+  </h1>
+  <ul>
+    <li>
+      <a href='##You'>
+        #You
+      </a>
+    </li>
+    <li>
+      <a href='##add'>
+        #add
+      </a>
+    </li>
+    <li>
+      <a href='##can'>
+        #can
+      </a>
+    </li>
+    <li>
+      <a href='##like'>
+        #like
+      </a>
+    </li>
+    <li>
+      <a href='##tags'>
+        #tags
+      </a>
+    </li>
+    <li>
+      <a href='##this.'>
+        #this.
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='ref-cite2020' title='ref-cite2020' class='level1'>
+  <h1>
+    <a href='#references'>
+      Author. 2020. Title.
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [7] 
+      <a href='#7'>
+        Specify a bibliography file to use citations
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='references' title='References' class='level1'>
+  <h1>
+    References
+  </h1>
+  <ul>
+    <li>
+      <a href='#ref-cite2020'>
+        [@cite2020]
+      </a>
+       Author. 2020. Title.
+    </li>
+  </ul>
+</section>
 <p><span class="math inline"> </span></p>
 <div class="sourceCode" id="cb1" style="display:none"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
 </body>
