@@ -131,7 +131,8 @@ def create_reference_page(conn, reference):
         item = Elem("li", f"[{note}] ", Elem("a", title, href=f"#{note}"))
         items.append(item)
     section = Elem("section",
-                   Elem("h1", Elem("a", text, href="#references")),
+                   Elem("h1", Elem("a", '@' + reference[4:], href="#references")),
+                   Elem("p", text),
                    Elem("ul", *items),
                    id=reference,
                    title=reference,

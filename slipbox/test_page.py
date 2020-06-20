@@ -93,9 +93,12 @@ def test_create_reference_page():
     assert html == """<section id='ref-test' title='ref-test' class='level1'>
   <h1>
     <a href='#references'>
-      Reference text.
+      @test
     </a>
   </h1>
+  <p>
+    Reference text.
+  </p>
   <ul>
     <li>
       [0] 
