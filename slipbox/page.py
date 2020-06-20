@@ -4,6 +4,7 @@ import os
 import shlex
 import subprocess
 
+from .templates import Elem, render
 from .utils import make_temporary_file, write_text
 
 def dummy_markdown():
@@ -108,3 +109,68 @@ def generate_complete_html(conn, options):
             dummy=shlex.quote(dummy), script=shlex.quote(script),
             html=shlex.quote(html), options=options)
         subprocess.run(shlex.split(cmd))
+
+def create_bibliography(conn):
+    """Create bibliography HTML section from database entries."""
+    items = []
+    for key, text in conn.execute("SELECT key, text FROM Bibliography"):
+        items.append(Elem("li",
+                          Elem("a", f"[@{key[4:]}]", href='#' + key),
+                          ' ' + text))
+    section = Elem("section",
+                   Elem("h1", "References"),
+                   Elem("ul", *items),
+                   id="references",
+                   title="References",
+                   **{"class": "level1"})
+    return render(section)
+
+def create_tags(conn):
+    """Create HTML section that lists all tags."""
+    rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
+    tags = (row[0] for row in rows)
+    items = (Elem("li", Elem("a", tag, href=f"#{tag}")) for tag in tags)
+    section = Elem("section",
+                   Elem("h1", "Tags"),
+                   Elem("ul", *items),
+                   id="tags",
+                   title="Tags",
+                   **{"class": "level1"})
+    return render(section)
+
+def create_tag_page(conn, tag):
+    """Create HTML section that lists all notes with the tag."""
+    sql = "SELECT id, title FROM Tags NATURAL JOIN Notes WHERE tag = ?"
+    items = []
+    for nid, title in conn.execute(sql, (tag,)):
+        item = Elem("li", f"[{nid}] ", Elem("a", title, href=f"#{nid}"))
+        items.append(item)
+    section = Elem("section",
+                   Elem("h1", Elem("a", tag, href="#tags", title="List of tags")),
+                   Elem("ul", *items),
+                   id=tag,
+                   title=tag,
+                   **{"class": "level1"})
+    return render(section)
+
+def create_reference_page(conn, reference):
+    """Create HTML section that lists all notes that cite the reference."""
+    sql = """
+        SELECT note, title, text FROM Citations
+            JOIN Notes ON Citations.note = Notes.id
+                JOIN Bibliography ON Bibliography.key = Citations.reference
+                    WHERE reference = ?
+    """
+    items = []
+    text = ""
+    for note, title, _text in conn.execute(sql, (reference,)):
+        text = _text
+        item = Elem("li", f"[{note}] ", Elem("a", title, href=f"#{note}"))
+        items.append(item)
+    section = Elem("section",
+                   Elem("h1", Elem("a", text, href="#references")),
+                   Elem("ul", *items),
+                   id=reference,
+                   title=reference,
+                   **{"class": "level1"})
+    return render(section)
