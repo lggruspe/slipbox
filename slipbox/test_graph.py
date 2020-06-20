@@ -1,7 +1,7 @@
 """Test graph.py."""
 
 from .graph import DiGraph, fetch_link_graph, fetch_sequence_graph
-from .graph import fetch_backlinks
+from .graph import fetch_backlinks, MultiDiGraph
 from .mock import mock_database
 
 def sample_script():
@@ -88,6 +88,23 @@ def test_digraph_add_edge():
     assert (2, 3) in graph.edges
     assert graph.edges[(1, 2)]["color"] == "red"
     assert not graph.edges[(2, 3)]
+
+def test_multidigraph_add_parallel_edges():
+    """MultiDiGraph must be able to store parallel edges between two nodes."""
+    graph = MultiDiGraph()
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 2, color="red")
+    graph.add_edge(1, 2, style="dashed")
+    edges = list(graph.edges)
+    assert len(edges) == 3
+    attrs = []
+    for src, dest, attr in edges:
+        assert (src, dest) == (1, 2)
+        attrs.append(attr)
+    assert len(attrs) == 3
+    assert attrs[0] == {}
+    assert attrs[1] == {"color": "red"}
+    assert attrs[2] == {"style": "dashed"}
 
 def test_digraph_to_dot():
     """Test dot output."""

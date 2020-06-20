@@ -3,6 +3,24 @@
 import sqlite3
 import sys
 
+class MultiDiGraph:
+    """Represents directed graph with parallel edges."""
+    def __init__(self):
+        self.attributes = {}
+
+    @property
+    def edges(self):
+        """Generate edges with attributes."""
+        for edge, attrs in self.attributes.items():
+            src, dest = edge
+            for attr in attrs:
+                yield src, dest, attr
+
+    def add_edge(self, src, dest, **kwargs):
+        """Insert edge from src to dest with attributes in kwargs."""
+        self.attributes.setdefault((src, dest), [])
+        self.attributes[(src, dest)].append(kwargs.copy())
+
 class DiGraph:
     """Represents directed graph."""
     def __init__(self):
