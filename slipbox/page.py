@@ -69,8 +69,9 @@ def generate_javascript(conn):
 
 def create_bibliography(conn):
     """Create bibliography HTML section from database entries."""
+    sql = "SELECT key, text FROM Bibliography ORDER BY key"
     items = []
-    for key, text in conn.execute("SELECT key, text FROM Bibliography"):
+    for key, text in conn.execute(sql):
         items.append(Elem("li",
                           Elem("a", f"[@{key[4:]}]", href='#' + key),
                           ' ' + text))
@@ -97,7 +98,9 @@ def create_tags(conn):
 
 def create_tag_page(conn, tag):
     """Create HTML section that lists all notes with the tag."""
-    sql = "SELECT id, title FROM Tags NATURAL JOIN Notes WHERE tag = ?"
+    sql = """
+        SELECT id, title FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
+    """
     items = []
     for nid, title in conn.execute(sql, (tag,)):
         item = Elem("li", f"[{nid}] ", Elem("a", title, href=f"#{nid}"))
