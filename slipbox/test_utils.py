@@ -5,14 +5,14 @@ import os
 from . import utils
 
 def test_get_contents():
-    """get_contents must read the entire file, while write_text must each item
+    """get_contents must read the entire file, while write_lines must each item
     on a new line.
     """
     with utils.make_temporary_file() as temp:
         assert utils.get_contents(temp) == ""
-        utils.write_text(temp, ["hello", "world"])
+        utils.write_lines(temp, ["hello", "world"])
         assert utils.get_contents(temp) == "hello\nworld\n"
-        utils.write_text(temp, ["bye", "bye"])
+        utils.write_lines(temp, ["bye", "bye"])
         assert utils.get_contents(temp) == "bye\nbye\n"
 
 def test_sqlite_string():

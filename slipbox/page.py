@@ -5,14 +5,13 @@ import shlex
 import subprocess
 
 from .templates import Elem, render
-from .utils import make_temporary_file, write_text
+from .utils import make_temporary_file, write_lines
 
 def dummy_markdown():
     """Dummy markdown to use as pandoc input."""
     return r"""$\,$
 ``` {.c style="display:none"}
-```
-"""
+```"""
 
 def generate_active_htmls(conn):
     """Get HTML stored in the database for active sections."""
@@ -63,9 +62,9 @@ def generate_javascript(conn):
     yield from generate_data(conn)
     basedir = os.path.dirname(__file__)
     with open(os.path.join(basedir, "data/seealso.js")) as file:
-        yield from file
+        yield file.read()
     with open(os.path.join(basedir, "data/toggle.js")) as file:
-        yield from file
+        yield file.read()
     yield "</script>"
 
 def create_bibliography(conn):
@@ -151,9 +150,9 @@ def generate_complete_html(conn, options):
             make_temporary_file() as script,\
             make_temporary_file(suffix=".html", text=True) as html,\
             make_temporary_file(suffix=".html", text=True) as extra:
-        write_text(dummy, [dummy_markdown()])
-        write_text(script, generate_javascript(conn))
-        write_text(html, generate_active_htmls(conn))
+        write_lines(dummy, [dummy_markdown()])
+        write_lines(script, generate_javascript(conn))
+        write_lines(html, generate_active_htmls(conn))
         with open(extra, "w") as file:
             print(create_tag_pages(conn), file=file)
             print(create_tags(conn), file=file)

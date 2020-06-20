@@ -15,7 +15,7 @@ def sqlite_string(text):
     """Encode python string into sqlite string."""
     return "'{}'".format(text.replace("'", "''"))
 
-def write_text(filename, text):
+def write_lines(filename, text):
     """Write text (iterable) to file."""
     with open(filename, "w") as file:
         for line in text:
