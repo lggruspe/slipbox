@@ -1,8 +1,25 @@
 """Test graph.py."""
 
-from .graph import DiGraph, fetch_link_graph, fetch_sequence_graph
-from .graph import fetch_backlinks, MultiDiGraph
+from .graph import fetch_link_graph, fetch_sequence_graph
+from .graph import fetch_backlinks, MultiDiGraph, write_dot_graph
 from .mock import mock_database
+from .utils import make_temporary_file
+
+SAMPLE_SCRIPT_WITH_PARALLEL_EDGES = """
+    PRAGMA foreign_keys=ON;
+    INSERT INTO Files (filename) VALUES ('test.md');
+    INSERT INTO Notes (id, title, filename) VALUES
+        (0, 'root', 'test.md'),
+        (1, 'src', 'test.md'),
+        (2, 'dest', 'test.md');
+    INSERT INTO Links (src, dest, annotation) VALUES
+        (1, 2, 'annotation');
+    INSERT INTO Aliases (id, owner, alias) VALUES
+        (1, 0, '0a'),
+        (2, 0, '0a1');
+    INSERT INTO Sequences (prev, next) VALUES
+        ('0a', '0a1');
+"""
 
 def sample_script():
     """Sample script to initialize mock database."""
@@ -52,10 +69,13 @@ def test_fetch_link_graph():
     """
     with mock_database(sample_script()) as conn:
         graph = fetch_link_graph(conn)
-    assert len(graph.edges) == 4
+    edges = list(graph.edges)
+    assert len(edges) == 4
+
+    pairs = [(a, b) for a, b, _ in edges]
     for i in range(1, 5):
-        assert sample_sequence_edge(i, 2*i) in graph.edges
-    assert sample_sequence_edge(1, 3) not in graph.edges
+        assert sample_sequence_edge(i, 2*i) in pairs
+    assert sample_sequence_edge(1, 3) not in pairs
 
 def test_fetch_sequence_graph():
     """Sequence graph must contain exactly the edges that appear in the
@@ -63,31 +83,55 @@ def test_fetch_sequence_graph():
     """
     with mock_database(sample_script()) as conn:
         graph = fetch_sequence_graph(conn)
-    assert len(graph.edges) == 5
-    assert sample_sequence_edge(2, 3) in graph.edges
-    assert sample_sequence_edge(2, 4) in graph.edges
-    assert sample_sequence_edge(6, 7) in graph.edges
-    assert sample_sequence_edge(6, 8) in graph.edges
-    assert sample_sequence_edge(6, 9) in graph.edges
+    edges = list(graph.edges)
+    assert len(edges) == 5
+
+    pairs = [(a, b) for a, b, _ in edges]
+    assert sample_sequence_edge(2, 3) in pairs
+    assert sample_sequence_edge(2, 4) in pairs
+    assert sample_sequence_edge(6, 7) in pairs
+    assert sample_sequence_edge(6, 8) in pairs
+    assert sample_sequence_edge(6, 9) in pairs
 
 def test_fetch_backlinks():
     """Backlinks are reversed links with annotations."""
     with mock_database(sample_script()) as conn:
         graph = fetch_backlinks(conn)
-    assert len(graph.edges) == 2
-    assert sample_sequence_edge(2, 1) in graph.edges
-    assert sample_sequence_edge(4, 2) in graph.edges
+    edges = list(graph.edges)
+    assert len(edges) == 2
 
-def test_digraph_add_edge():
-    """DiGraph.add_edge must insert endpoints and attributes."""
-    graph = DiGraph()
-    assert not graph.edges
+    pairs = [(a, b) for a, b, _ in edges]
+    assert sample_sequence_edge(2, 1) in pairs
+    assert sample_sequence_edge(4, 2) in pairs
+
+def test_multidigraph_edd_edge():
+    """MultiDiGraph.add_edge must insert endpoints and attributes."""
+    graph = MultiDiGraph()
+    assert not list(graph.edges)
     graph.add_edge(1, 2, color="red")
     graph.add_edge(2, 3)
-    assert (1, 2) in graph.edges
-    assert (2, 3) in graph.edges
-    assert graph.edges[(1, 2)]["color"] == "red"
-    assert not graph.edges[(2, 3)]
+
+    edges = list(graph.edges)
+    pairs = [(a, b) for a, b, _ in edges]
+    assert (1, 2) in pairs
+    assert (2, 3) in pairs
+    assert (1, 2, {"color": "red"}) in edges
+    assert (2, 3, {}) in edges
+
+def test_multidigraph_edges():
+    """It must be possible to iterate through edges multiple times."""
+    graph = MultiDiGraph()
+    graph.add_edge(0, 0)
+    graph.add_edge(0, 0)
+
+    count = 0
+    for _ in graph.edges:
+        count += 1
+    assert count == 2
+    count = 0
+    for _ in graph.edges:
+        count += 1
+    assert count == 2
 
 def test_multidigraph_add_parallel_edges():
     """MultiDiGraph must be able to store parallel edges between two nodes."""
@@ -106,9 +150,9 @@ def test_multidigraph_add_parallel_edges():
     assert attrs[1] == {"color": "red"}
     assert attrs[2] == {"style": "dashed"}
 
-def test_digraph_to_dot():
+def test_multidigraph_to_dot():
     """Test dot output."""
-    graph = DiGraph()
+    graph = MultiDiGraph()
     graph.add_edge(1, 1, color="red")
     dot = graph.to_dot()
     assert "digraph {" in next(dot)
@@ -117,3 +161,23 @@ def test_digraph_to_dot():
     assert "1 -> 1" in line
     assert "color=red" in line
     assert "}" in next(dot)
+
+def test_write_dot_graph():
+    """Output dot graph must work with parallel edges."""
+    with make_temporary_file() as temp,\
+            mock_database(SAMPLE_SCRIPT_WITH_PARALLEL_EDGES) as conn:
+        write_dot_graph(conn, True, True, True, temp)
+        with open(temp) as file:
+            lines = file.read().splitlines()
+
+    dot = (line for line in lines)
+    assert "digraph {" in next(dot)
+    assert "rankdir=LR;" in next(dot)
+    queue = sorted([next(dot), next(dot), next(dot)])
+    assert "}" in next(dot)
+
+    assert '"[1] src" -> "[2] dest";' in queue[0]
+    assert '"[1] src" -> "[2] dest"' in queue[1]
+    assert "color=red" in queue[1]
+    assert '"[2] dest" -> "[1] src"' in queue[2]
+    assert "style=dashed" in queue[2]
