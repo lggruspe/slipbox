@@ -17,9 +17,8 @@ Requirements
 
 - `pandoc`
 - `python3`
-- GNU `grep`
+- `grep`
 - `graphviz`
-- `sqlite3`
 
 Installation
 ------------
