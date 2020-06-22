@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmppr7o68kt</title>
+  <title>tmpjtu1rkmy</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -95,33 +95,43 @@
   slipbox.notes[7] = {title: 'Specify a bibliography file to use citations', aliases: [], backlinks: []}
   slipbox.notes[8] = {title: 'See also section: backlinks and sequence links', aliases: [], backlinks: []}
   slipbox.notes[9] = {title: 'How to derive note aliases', aliases: [], backlinks: []}
-  slipbox.notes[10] = {title: 'How to write a structure note with sequence links', aliases: [], backlinks: []}
+  slipbox.notes[10] = {title: 'How to create a sequence link', aliases: [], backlinks: []}
   slipbox.notes[11] = {title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: []}
   slipbox.notes[0] = {title: 'Tutorial: Note 0 is the entry point', aliases: [], backlinks: []}
-  slipbox.notes[5].aliases.push('0a1a')
-  slipbox.aliases['0a1a'] = {id: 5, children: []}
-  slipbox.notes[1].aliases.push('0a')
-  slipbox.aliases['0a'] = {id: 1, children: []}
-  slipbox.notes[2].aliases.push('0b')
-  slipbox.aliases['0b'] = {id: 2, children: []}
-  slipbox.notes[3].aliases.push('0c')
-  slipbox.aliases['0c'] = {id: 3, children: []}
   slipbox.notes[4].aliases.push('0a1')
   slipbox.aliases['0a1'] = {id: 4, children: []}
-  slipbox.notes[9].aliases.push('0a1b1')
-  slipbox.aliases['0a1b1'] = {id: 9, children: []}
-  slipbox.notes[6].aliases.push('0a1b')
-  slipbox.aliases['0a1b'] = {id: 6, children: []}
-  slipbox.notes[8].aliases.push('0a2')
-  slipbox.aliases['0a2'] = {id: 8, children: []}
+  slipbox.notes[3].aliases.push('0c')
+  slipbox.aliases['0c'] = {id: 3, children: []}
+  slipbox.notes[2].aliases.push('0b')
+  slipbox.aliases['0b'] = {id: 2, children: []}
+  slipbox.notes[1].aliases.push('0a')
+  slipbox.aliases['0a'] = {id: 1, children: []}
+  slipbox.notes[5].aliases.push('0a1a')
+  slipbox.aliases['0a1a'] = {id: 5, children: []}
   slipbox.notes[7].aliases.push('0d')
   slipbox.aliases['0d'] = {id: 7, children: []}
   slipbox.notes[11].aliases.push('0e')
   slipbox.aliases['0e'] = {id: 11, children: []}
+  slipbox.notes[8].aliases.push('0a2')
+  slipbox.aliases['0a2'] = {id: 8, children: []}
+  slipbox.notes[6].aliases.push('0a1b')
+  slipbox.aliases['0a1b'] = {id: 6, children: []}
   slipbox.notes[10].aliases.push('0a1b2')
   slipbox.aliases['0a1b2'] = {id: 10, children: []}
+  slipbox.notes[9].aliases.push('0a1b1')
+  slipbox.aliases['0a1b1'] = {id: 9, children: []}
+  slipbox.notes[1].backlinks.push({src: 2, annotation: 'Notes in a single file are separated by headers.'})
   slipbox.notes[5].backlinks.push({src: 4, annotation: 'An annotated direct link generates a backlink.'})
   slipbox.notes[5].backlinks.push({src: 4, annotation: 'This creates another backlink.'})
+  slipbox.notes[8].backlinks.push({src: 5, annotation: 'The See also section contains generated backlinks.'})
+  slipbox.notes[1].backlinks.push({src: 6, annotation: 'Notes can have alias IDs.'})
+  slipbox.notes[8].backlinks.push({src: 6, annotation: 'The aliases of the sequence neighbors of a note appear in the See also section.'})
+  slipbox.notes[5].backlinks.push({src: 8, annotation: 'Backlinks appear in the See also section.'})
+  slipbox.notes[6].backlinks.push({src: 8, annotation: 'Immediate neighbors appear in the See also section.'})
+  slipbox.notes[6].backlinks.push({src: 10, annotation: 'The note alias is used to annotate a sequence link.'})
+  slipbox.notes[4].backlinks.push({src: 11, annotation: 'Direct links can be visualized using slipbox.graph.'})
+  slipbox.notes[10].backlinks.push({src: 11, annotation: 'Sequence links can be visualized using slipbox.graph.'})
+  slipbox.notes[5].backlinks.push({src: 11, annotation: 'Backlinks can be visualized using slipbox.graph.'})
   slipbox.aliases['0a1a'].parent = '0a1'
   slipbox.aliases['0a1'].children.push('0a1a')
   slipbox.aliases['0a1b'].parent = '0a1'
@@ -373,12 +383,10 @@
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>This belongs to note 1.</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="fu"># 2 This is a different note</span></span></code></pre></div>
-<p>Everything before the next level 1 header is part of the note. (Or if you want, you can write <a href="#2">one note per file</a> [2].)</p>
 </section>
 <section id="2" class="level1" title="A file can contain multiple notes">
 <h1 title="A file can contain multiple notes">2 A file can contain multiple notes</h1>
-<p>You can place any number of notes in a file, but notes can’t be split into multiple files. So the entirety of this note (1) should only appear in this file.</p>
-<p>You could also write one note per file.</p>
+<p>You can place any number of notes in a file, but notes can’t be split into multiple files. In this case, a note contains everything until the <a href="#1" title="Notes in a single file are separated by headers.">header</a> [1] of the next note.</p>
 </section>
 <section id="3" class="level1" title="You can use hashtags anywhere in the note">
 <h1 title="You can use hashtags anywhere in the note">3 You can use hashtags anywhere in the note</h1>
@@ -387,10 +395,11 @@
 </section>
 <section id="4" class="level1" title="Types of links">
 <h1 title="Types of links">4 Types of links</h1>
+<p><a href="##links">#links</a> <a href="##backlinks">#backlinks</a> <a href="##sequence-links">#sequence-links</a></p>
 <p><code>slipbox</code> supports several types of links.</p>
 <dl>
 <dt>Direct links</dt>
-<dd>You can link to other notes by specifying the note ID as the target. This works even when the note section is in <a href="#2">another file</a> [2].
+<dd>You can link to other notes by specifying the note ID as the target. This works even when the note section is in <a href="#2">another file</a> [2]. Even if you move the linked note to another file, the link will still be valid.
 </dd>
 <dt><a href="#5" title="An annotated direct link generates a backlink.">Backlinks</a> [5]</dt>
 <dd>An annotated direct link generates a backlink. It’s sometimes nicer to put the annotation in a reference link. But you have to make sure that the label is unique across all your note files. One way to do this is to use IDs of the source and target notes, like this <a href="#5" title="This creates another backlink.">[4-5]</a> [5].
@@ -402,55 +411,63 @@
 </section>
 <section id="5" class="level1" title="Backlinks are generated from annotated direct links">
 <h1 title="Backlinks are generated from annotated direct links">5 Backlinks are generated from annotated direct links</h1>
-<p>This note has backlinks generated from note  [<a href="#4">4</a>]. If you hover over the backlink, you’ll see the description from the forward link.</p>
+<p><a href="##links">#links</a> <a href="##backlinks">#backlinks</a></p>
+<p>This note has backlinks generated from note 4 in the ‘See also’ section  [<a href="#8" title="The See also section contains generated backlinks.">8</a>]. If you hover over the backlink, you’ll see the description from the <a href="#4">forward link</a> [4].</p>
 </section>
 <section id="6" class="level1" title="Notes in a sequence have aliases">
 <h1 title="Notes in a sequence have aliases">6 Notes in a sequence have aliases</h1>
-<p>While note IDs are meant to uniquely identify notes, aliases are meant to show which notes belong in a sequence. For example,</p>
+<p><a href="##sequence-links">#sequence-links</a> <a href="##aliases">#aliases</a></p>
+<p>While <a href="#1" title="Notes can have alias IDs.">note IDs</a> [1] are meant to uniquely identify notes, aliases are meant to show which notes belong in a sequence. For example,</p>
 <pre><code>0a -&gt; 0a1 -&gt; 0a1b</code></pre>
-<p>Each of these aliases correspond to a real ID. These aliases are defined in an outline note using sequence links.</p>
+<p>Just by looking at the aliases of a note, you’ll know which notes come before and after it. Each of these aliases correspond to a real ID. These aliases are defined in an outline note using <a href="#10">sequence links</a> [10].</p>
+<p>You can see the immediate neighbors of this note in the ‘See also’ section  [<a href="#8" title="The aliases of the sequence neighbors of a note appear in the See also section.">8</a>].</p>
 </section>
 <section id="7" class="level1" title="Specify a bibliography file to use citations">
 <h1 title="Specify a bibliography file to use citations">7 Specify a bibliography file to use citations</h1>
-<p>If you specify a bibliography in the options, <code>slipbox</code> generates a bibliography page containing every reference in the bibliography. You can access this page by replacing the URL hash with <a href="#references">references</a>.</p>
+<p><a href="##tools">#tools</a></p>
+<p>If you specify a bibliography in the options, <code>slipbox</code> generates a bibliography page containing every reference in the bibliography. You can access this page by replacing the URL hash with #<a href="#references">references</a>.</p>
 <p>It also generates a section for each cited reference, which contains a list of all notes that cite the reference <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
 <p>You have to specify the bibliography file using the <code>-c</code> option. Take note of the quotes and the spaces in the options.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -c <span class="st">&#39; --bibliography notes.bib&#39;</span> -d <span class="st">&#39; -o notes.html&#39;</span></span></code></pre></div>
 </section>
 <section id="8" class="level1" title="See also section: backlinks and sequence links">
 <h1 title="See also section: backlinks and sequence links">8 See also section: backlinks and sequence links</h1>
-<p>The ‘See also’ section lists <a href="#5">backlinks</a> [5] and <a href="#6">sequence links</a> [6]. The sequence links include ‘previous notes’ and ‘next notes’ as defined by some outline note. You can distinguish between backlinks and sequence links by looking at the ID that appears next to the title of the linked note.</p>
+<p><a href="##backlinks">#backlinks</a> <a href="##sequence-links">#sequence-links</a> <a href="##aliases">#aliases</a></p>
+<p>The ‘See also’ section lists <a href="#5" title="Backlinks appear in the See also section.">backlinks</a> [5] and <a href="#6" title="Immediate neighbors appear in the See also section.">sequence links</a> [6]. The sequence links include ‘previous notes’ and ‘next notes’ as defined by some outline note. You can distinguish between backlinks and sequence links by looking at the ID that appears next to the title of the linked note.</p>
 <ul>
-<li>Backlinks are shown with <a href="#1">real IDs</a> [1].</li>
-<li>Sequence links are shown with <a href="#6">aliases</a> [6].</li>
+<li>Backlinks are shown with <a href="#1">real IDs</a> [1] (only contain numbers).</li>
+<li>Sequence links are shown with <a href="#6">aliases</a> [6] (contain a mix of numbers and letters  [<a href="#9">9</a>]).</li>
 </ul>
 </section>
 <section id="9" class="level1" title="How to derive note aliases">
 <h1 title="How to derive note aliases">9 How to derive note aliases</h1>
+<p><a href="##aliases">#aliases</a> <a href="##sequence-links">#sequence-links</a></p>
 <p>A note alias is a string of numbers and letters. It always starts with a number.</p>
 <p>Example: <a href="#6">0a1b</a> [6]. The first number (0) indicates the owner or the outline note of the sequence. Often it is the ID of the note that contains the sequence link for the alias.</p>
 <p>In this example, <a href="#4">0a1</a> [4] is preceded by <a href="#1">0a</a> [1] and followed by <a href="#6">0a1b</a> [6]. Presumably, there’s another note <a href="#5">0a1a</a> [5] that follows note <a href="#4">0a1</a> [4]. So to follow a note alias, just append a number [letter] if the last symbol is a letter [number]. The sequence links for these note aliases are defined in note  [<a href="#0">0</a>].</p>
 </section>
-<section id="10" class="level1" title="How to write a structure note with sequence links">
-<h1 title="How to write a structure note with sequence links">10 How to write a structure note with sequence links</h1>
-<p>A sequence link looks just like a direct link, but there’s one difference: it contains an alias description.</p>
+<section id="10" class="level1" title="How to create a sequence link">
+<h1 title="How to create a sequence link">10 How to create a sequence link</h1>
+<p><a href="##sequence-links">#sequence-links</a> <a href="##aliases">#aliases</a></p>
+<p>A sequence link looks just like a <a href="#4">direct link</a> [4], but there’s one difference: it contains an alias description.</p>
 <p>A sequence link has three parts.</p>
 <ol type="1">
 <li>Some (optional) text</li>
-<li>The real ID of the target note</li>
-<li>The note alias</li>
+<li>The <a href="#1">real ID</a> [1] of the target note</li>
+<li>The note <a href="#6" title="The note alias is used to annotate a sequence link.">alias</a> [6]</li>
 </ol>
 <div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">[</span><span class="ot">Text</span><span class="co">](#11 &#39;10a1b3&#39;)</span></span></code></pre></div>
-<p>Note  [<a href="#0">0</a>] contains sequence links for these notes.</p>
+<p>Note 0 contains sequence links for these notes  [<a href="#0">0</a>].</p>
 </section>
 <section id="11" class="level1" title="Visualize notes using slipbox.graph">
 <h1 title="Visualize notes using slipbox.graph">11 Visualize notes using <code>slipbox.graph</code></h1>
+<p><a href="##tools">#tools</a> <a href="##links">#links</a> <a href="##sequence-links">#sequence-links</a> <a href="##backlinks">#backlinks</a> <a href="##visualization">#visualization</a></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -d <span class="st">&#39; -o notes.html&#39;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">python</span> -m slipbox.graph notes.db -d -s -b -o notes.dot</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">dot</span> notes.dot -Tpng -o notes.png</span></code></pre></div>
 <p>The output would look something like this.</p>
 <p><img src="tutorial.png" style="width:100.0%" /></p>
-<p>Black lines represent direct links and red lines represent sequence links. Dashed lines represent backlinks.</p>
+<p>Black lines represent <a href="#4" title="Direct links can be visualized using slipbox.graph.">direct links</a> [4] and red lines represent <a href="#10" title="Sequence links can be visualized using slipbox.graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks can be visualized using slipbox.graph.">backlinks</a> [5].</p>
 </section>
 
 <section id='#You' title='#You' class='level1'>
@@ -479,6 +496,72 @@
       [3] 
       <a href='#3'>
         You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#aliases' title='#aliases' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #aliases
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [6] 
+      <a href='#6'>
+        Notes in a sequence have aliases
+      </a>
+    </li>
+    <li>
+      [8] 
+      <a href='#8'>
+        See also section: backlinks and sequence links
+      </a>
+    </li>
+    <li>
+      [9] 
+      <a href='#9'>
+        How to derive note aliases
+      </a>
+    </li>
+    <li>
+      [10] 
+      <a href='#10'>
+        How to create a sequence link
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#backlinks' title='#backlinks' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #backlinks
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [4] 
+      <a href='#4'>
+        Types of links
+      </a>
+    </li>
+    <li>
+      [5] 
+      <a href='#5'>
+        Backlinks are generated from annotated direct links
+      </a>
+    </li>
+    <li>
+      [8] 
+      <a href='#8'>
+        See also section: backlinks and sequence links
+      </a>
+    </li>
+    <li>
+      [11] 
+      <a href='#11'>
+        Visualize notes using slipbox.graph
       </a>
     </li>
   </ul>
@@ -513,6 +596,78 @@
     </li>
   </ul>
 </section>
+<section id='#links' title='#links' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #links
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [4] 
+      <a href='#4'>
+        Types of links
+      </a>
+    </li>
+    <li>
+      [5] 
+      <a href='#5'>
+        Backlinks are generated from annotated direct links
+      </a>
+    </li>
+    <li>
+      [11] 
+      <a href='#11'>
+        Visualize notes using slipbox.graph
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#sequence-links' title='#sequence-links' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #sequence-links
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [4] 
+      <a href='#4'>
+        Types of links
+      </a>
+    </li>
+    <li>
+      [6] 
+      <a href='#6'>
+        Notes in a sequence have aliases
+      </a>
+    </li>
+    <li>
+      [8] 
+      <a href='#8'>
+        See also section: backlinks and sequence links
+      </a>
+    </li>
+    <li>
+      [9] 
+      <a href='#9'>
+        How to derive note aliases
+      </a>
+    </li>
+    <li>
+      [10] 
+      <a href='#10'>
+        How to create a sequence link
+      </a>
+    </li>
+    <li>
+      [11] 
+      <a href='#11'>
+        Visualize notes using slipbox.graph
+      </a>
+    </li>
+  </ul>
+</section>
 <section id='#tags' title='#tags' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
@@ -543,6 +698,42 @@
     </li>
   </ul>
 </section>
+<section id='#tools' title='#tools' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #tools
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [7] 
+      <a href='#7'>
+        Specify a bibliography file to use citations
+      </a>
+    </li>
+    <li>
+      [11] 
+      <a href='#11'>
+        Visualize notes using slipbox.graph
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#visualization' title='#visualization' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #visualization
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [11] 
+      <a href='#11'>
+        Visualize notes using slipbox.graph
+      </a>
+    </li>
+  </ul>
+</section>
 <section id='tags' title='Tags' class='level1'>
   <h1>
     Tags
@@ -559,6 +750,16 @@
       </a>
     </li>
     <li>
+      <a href='##aliases'>
+        #aliases
+      </a>
+    </li>
+    <li>
+      <a href='##backlinks'>
+        #backlinks
+      </a>
+    </li>
+    <li>
       <a href='##can'>
         #can
       </a>
@@ -569,6 +770,16 @@
       </a>
     </li>
     <li>
+      <a href='##links'>
+        #links
+      </a>
+    </li>
+    <li>
+      <a href='##sequence-links'>
+        #sequence-links
+      </a>
+    </li>
+    <li>
       <a href='##tags'>
         #tags
       </a>
@@ -576,6 +787,16 @@
     <li>
       <a href='##this.'>
         #this.
+      </a>
+    </li>
+    <li>
+      <a href='##tools'>
+        #tools
+      </a>
+    </li>
+    <li>
+      <a href='##visualization'>
+        #visualization
       </a>
     </li>
   </ul>
@@ -602,14 +823,16 @@
   <h1>
     References
   </h1>
-  <ul>
-    <li>
+  <dl>
+    <dt>
       <a href='#ref-cite2020'>
         [@cite2020]
       </a>
-       Author. 2020. Title.
-    </li>
-  </ul>
+    </dt>
+    <dd>
+      Author. 2020. Title.
+    </dd>
+  </dl>
 </section>
 <p><span class="math inline"> </span></p>
 <div class="sourceCode" id="cb1" style="display:none"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>

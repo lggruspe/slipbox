@@ -31,16 +31,14 @@ This belongs to note 1.
 # 2 This is a different note
 ```
 
-Everything before the next level 1 header is part of the note.
-(Or if you want, you can write [one note per file](#2).)
-
 # 2 A file can contain multiple notes
 
 You can place any number of notes in a file, but notes can't be split
 into multiple files.
-So the entirety of this note (1) should only appear in this file.
+In this case, a note contains everything until the [header][2-1] of the
+next note.
 
-You could also write one note per file.
+[2-1]: #1 "Notes in a single file are separated by headers."
 
 # 3 You can use hashtags anywhere in the note
 
@@ -49,12 +47,15 @@ You could also write one note per file.
 Click on the tags to see a list of notes with the same tag.
 
 # 4 Types of links
+#links #backlinks #sequence-links
 
 `slipbox` supports several types of links.
 
 Direct links
 :   You can link to other notes by specifying the note ID as the target.
     This works even when the note section is in [another file](#2).
+    Even if you move the linked note to another file, the link will
+    still be valid.
 
 [Backlinks](#5 "An annotated direct link generates a backlink.")
 :   An annotated direct link generates a backlink.
@@ -71,29 +72,46 @@ Sequence links
 [4-5]: #5 "This creates another backlink."
 
 # 5 Backlinks are generated from annotated direct links
+#links #backlinks
 
-This note has backlinks generated from note [](#4).
+This note has backlinks generated from note 4 in the 'See also' section
+[][5-8].
 If you hover over the backlink, you'll see the description from the
-forward link.
+[forward link](#4).
+
+[5-8]: #8 "The See also section contains generated backlinks."
 
 # 6 Notes in a sequence have aliases
+#sequence-links #aliases
 
-While note IDs are meant to uniquely identify notes, aliases are meant
-to show which notes belong in a sequence.
+While [note IDs][6-1] are meant to uniquely identify notes,
+aliases are meant to show which notes belong in a sequence.
 For example,
 ```
 0a -> 0a1 -> 0a1b
 ```
 
+Just by looking at the aliases of a note, you'll know which notes come
+before and after it.
 Each of these aliases correspond to a real ID.
-These aliases are defined in an outline note using sequence links.
+These aliases are defined in an outline note using
+[sequence links](#10).
+
+You can see the immediate neighbors of this note in the 'See also'
+section [][6-8].
+
+[6-1]: #1 "Notes can have alias IDs."
+[6-8]: #8
+    "The aliases of the sequence neighbors of a note appear in the
+    See also section."
 
 # 7 Specify a bibliography file to use citations
+#tools
 
 If you specify a bibliography in the options, `slipbox` generates a
 bibliography page containing every reference in the bibliography.
 You can access this page by replacing the URL hash with
-[references](#references).
+\#[references](#references).
 
 It also generates a section for each cited reference, which contains a
 list of all notes that cite the reference [@cite2020].
@@ -101,23 +119,28 @@ list of all notes that cite the reference [@cite2020].
 You have to specify the bibliography file using the `-c` option.
 Take note of the quotes and the spaces in the options.
 
-
 ```bash
 python -m slipbox notes.db notes -c ' --bibliography notes.bib' -d ' -o notes.html'
 ```
 
 # 8 See also section: backlinks and sequence links
+#backlinks #sequence-links #aliases
 
-The 'See also' section lists [backlinks](#5) and [sequence links](#6).
+The 'See also' section lists [backlinks][8-5] and [sequence links][8-6].
 The sequence links include 'previous notes' and 'next notes' as defined
 by some outline note.
 You can distinguish between backlinks and sequence links by looking at
 the ID that appears next to the title of the linked note.
 
-- Backlinks are shown with [real IDs](#1).
-- Sequence links are shown with [aliases](#6).
+-   Backlinks are shown with [real IDs](#1) (only contain numbers).
+-   Sequence links are shown with [aliases](#6) (contain a mix of
+    numbers and letters [](#9)).
+
+[8-5]: #5 "Backlinks appear in the See also section."
+[8-6]: #6 "Immediate neighbors appear in the See also section."
 
 # 9 How to derive note aliases
+#aliases #sequence-links
 
 A note alias is a string of numbers and letters.
 It always starts with a number.
@@ -135,24 +158,28 @@ So to follow a note alias, just append a number \[letter\] if the last
 symbol is a letter \[number\].
 The sequence links for these note aliases are defined in note [](#0).
 
-# 10 How to write a structure note with sequence links
+# 10 How to create a sequence link
+#sequence-links #aliases
 
-A sequence link looks just like a direct link,
+A sequence link looks just like a [direct link](#4),
 but there's one difference: it contains an alias description.
 
 A sequence link has three parts.
 
 1. Some (optional) text
-2. The real ID of the target note
-3. The note alias
+2. The [real ID](#1) of the target note
+3. The note [alias][10-6]
 
 ```markdown
 [Text](#11 '10a1b3')
 ```
 
-Note [](#0) contains sequence links for these notes.
+Note 0 contains sequence links for these notes [](#0).
+
+[10-6]: #6 "The note alias is used to annotate a sequence link."
 
 # 11 Visualize notes using `slipbox.graph`
+#tools #links #sequence-links #backlinks #visualization
 
 ```bash
 python -m slipbox notes.db notes -d ' -o notes.html'
@@ -164,6 +191,10 @@ The output would look something like this.
 
 ![](tutorial.png){ width=100% }
 
-Black lines represent direct links and red lines represent sequence
-links.
-Dashed lines represent backlinks.
+Black lines represent [direct links][11-4] and red lines represent
+[sequence links][11-10].
+Dashed lines represent [backlinks][11-5].
+
+[11-4]: #4 "Direct links can be visualized using slipbox.graph."
+[11-5]: #5 "Backlinks can be visualized using slipbox.graph."
+[11-10]: #10 "Sequence links can be visualized using slipbox.graph."
