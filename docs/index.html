@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpjtu1rkmy</title>
+  <title>tmp3heaif8z</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -162,6 +162,11 @@
     return li
   }
 
+  function aliasOwner (alias) {
+    const found = alias.match(/^\d+/)
+    return found ? found[0] : ""
+  }
+
   function * generateBacklinkLis (slipbox, id) {
     console.assert(slipbox)
     console.assert(slipbox.notes)
@@ -252,7 +257,13 @@
     const note = slipbox.notes[id] || { aliases: [] }
     const p = document.createElement('p')
     p.id = 'slipbox-aliases'
-    const aliases = note.aliases.map(alias => document.createTextNode(' [' + alias + ']'))
+    const aliases = note.aliases.map(alias => {
+      const span = document.createElement('span')
+      span.appendChild(document.createTextNode(' ['))
+      span.appendChild(A(alias, '#' + aliasOwner(alias)))
+      span.appendChild(document.createTextNode(']'))
+      return span
+    })
     if (aliases.length > 0) {
       const text = document.createElement('strong')
       text.innerText = 'Aliases:'

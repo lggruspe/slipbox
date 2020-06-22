@@ -16,6 +16,11 @@ function Li (children) {
   return li
 }
 
+function aliasOwner (alias) {
+  const found = alias.match(/^\d+/)
+  return found ? found[0] : ""
+}
+
 function * generateBacklinkLis (slipbox, id) {
   console.assert(slipbox)
   console.assert(slipbox.notes)
@@ -106,7 +111,13 @@ function createAliasesP (slipbox, id) {
   const note = slipbox.notes[id] || { aliases: [] }
   const p = document.createElement('p')
   p.id = 'slipbox-aliases'
-  const aliases = note.aliases.map(alias => document.createTextNode(' [' + alias + ']'))
+  const aliases = note.aliases.map(alias => {
+    const span = document.createElement('span')
+    span.appendChild(document.createTextNode(' ['))
+    span.appendChild(A(alias, '#' + aliasOwner(alias)))
+    span.appendChild(document.createTextNode(']'))
+    return span
+  })
   if (aliases.length > 0) {
     const text = document.createElement('strong')
     text.innerText = 'Aliases:'
