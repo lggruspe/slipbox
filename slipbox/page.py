@@ -24,10 +24,11 @@ def generate_active_htmls(conn):
 
 def generate_note_data(conn):
     """Generate slipbox note data in javascript."""
-    for nid, title in conn.execute("SELECT id, title FROM Notes"):
+    for nid, title in conn.execute("SELECT id, title FROM Notes ORDER BY id"):
         yield ("slipbox.notes[{}] = {{title: {}, aliases: [], backlinks: []}}"
                .format(nid, repr(title)))
-    for nid, alias in conn.execute("SELECT id, alias FROM ValidAliases"):
+    sql = "SELECT id, alias FROM ValidAliases ORDER BY id, alias"
+    for nid, alias in conn.execute(sql):
         yield "slipbox.notes[{}].aliases.push({})".format(nid, repr(alias))
         yield "slipbox.aliases[{}] = {{id: {}, children: []}}".format(
             repr(alias), nid)
