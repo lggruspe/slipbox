@@ -25,18 +25,18 @@ def generate_active_htmls(conn):
 def generate_note_data(conn):
     """Generate slipbox note data in javascript."""
     for nid, title in conn.execute("SELECT id, title FROM Notes ORDER BY id"):
-        yield ("slipbox.notes[{}] = {{title: {}, aliases: [], backlinks: []}}"
+        yield ("slipbox.notes[{}] = {{ title: {}, aliases: [], backlinks: [] }}"
                .format(nid, repr(title)))
     sql = "SELECT id, alias FROM ValidAliases ORDER BY id, alias"
     for nid, alias in conn.execute(sql):
         yield "slipbox.notes[{}].aliases.push({})".format(nid, repr(alias))
-        yield "slipbox.aliases[{}] = {{id: {}, children: []}}".format(
+        yield "slipbox.aliases[{}] = {{ id: {}, children: [] }}".format(
             repr(alias), nid)
 
 def generate_link_data(conn):
     """Generate slipbox link data in javascript."""
     for row in conn.execute("SELECT src, dest, annotation FROM StrongLinks"):
-        yield ("slipbox.notes[{}].backlinks.push({{src: {}, annotation: {}}})"
+        yield ("slipbox.notes[{}].backlinks.push({{ src: {}, annotation: {} }})"
                .format(row[1], row[0], repr(row[2])))
 
 def generate_sequence_data(conn):
@@ -48,12 +48,10 @@ def generate_sequence_data(conn):
 
 def generate_data(conn):
     """Generate slipbox data in javascript."""
-    yield from """
-    let slipbox = {
-        aliases: {},
-        notes: {},
-    }
-    """.split('\n')
+    yield """const slipbox = {
+  aliases: {},
+  notes: {}
+}"""
     yield from generate_note_data(conn)
     yield from generate_link_data(conn)
     yield from generate_sequence_data(conn)

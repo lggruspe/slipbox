@@ -18,7 +18,7 @@ function Li (children) {
 
 function aliasOwner (alias) {
   const found = alias.match(/^\d+/)
-  return found ? found[0] : ""
+  return found ? found[0] : ''
 }
 
 function * generateBacklinkLis (slipbox, id) {

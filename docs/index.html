@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp0vuvkple</title>
+  <title>tmpeg1rzhzh</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -80,58 +80,56 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
   <script type="text/javascript">
-
-      let slipbox = {
-          aliases: {},
-          notes: {},
-      }
-      
-  slipbox.notes[0] = {title: 'Tutorial: Note 0 is the entry point', aliases: [], backlinks: []}
-  slipbox.notes[1] = {title: 'Every note has an ID and a title', aliases: [], backlinks: []}
-  slipbox.notes[2] = {title: 'A file can contain multiple notes', aliases: [], backlinks: []}
-  slipbox.notes[3] = {title: 'You can use hashtags anywhere in the note', aliases: [], backlinks: []}
-  slipbox.notes[4] = {title: 'Types of links', aliases: [], backlinks: []}
-  slipbox.notes[5] = {title: 'Backlinks are generated from annotated direct links', aliases: [], backlinks: []}
-  slipbox.notes[6] = {title: 'Notes in a sequence have aliases', aliases: [], backlinks: []}
-  slipbox.notes[7] = {title: 'Specify a bibliography file to use citations', aliases: [], backlinks: []}
-  slipbox.notes[8] = {title: 'See also section: backlinks and sequence links', aliases: [], backlinks: []}
-  slipbox.notes[9] = {title: 'How to derive note aliases', aliases: [], backlinks: []}
-  slipbox.notes[10] = {title: 'How to create a sequence link', aliases: [], backlinks: []}
-  slipbox.notes[11] = {title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: []}
+  const slipbox = {
+    aliases: {},
+    notes: {}
+  }
+  slipbox.notes[0] = { title: 'Tutorial: Note 0 is the entry point', aliases: [], backlinks: [] }
+  slipbox.notes[1] = { title: 'Every note has an ID and a title', aliases: [], backlinks: [] }
+  slipbox.notes[2] = { title: 'A file can contain multiple notes', aliases: [], backlinks: [] }
+  slipbox.notes[3] = { title: 'You can use hashtags anywhere in the note', aliases: [], backlinks: [] }
+  slipbox.notes[4] = { title: 'Types of links', aliases: [], backlinks: [] }
+  slipbox.notes[5] = { title: 'Backlinks are generated from annotated direct links', aliases: [], backlinks: [] }
+  slipbox.notes[6] = { title: 'Notes in a sequence have aliases', aliases: [], backlinks: [] }
+  slipbox.notes[7] = { title: 'Specify a bibliography file to use citations', aliases: [], backlinks: [] }
+  slipbox.notes[8] = { title: 'See also section: backlinks and sequence links', aliases: [], backlinks: [] }
+  slipbox.notes[9] = { title: 'How to derive note aliases', aliases: [], backlinks: [] }
+  slipbox.notes[10] = { title: 'How to create a sequence link', aliases: [], backlinks: [] }
+  slipbox.notes[11] = { title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: [] }
   slipbox.notes[1].aliases.push('0a')
-  slipbox.aliases['0a'] = {id: 1, children: []}
+  slipbox.aliases['0a'] = { id: 1, children: [] }
   slipbox.notes[2].aliases.push('0b')
-  slipbox.aliases['0b'] = {id: 2, children: []}
+  slipbox.aliases['0b'] = { id: 2, children: [] }
   slipbox.notes[3].aliases.push('0c')
-  slipbox.aliases['0c'] = {id: 3, children: []}
+  slipbox.aliases['0c'] = { id: 3, children: [] }
   slipbox.notes[4].aliases.push('0a1')
-  slipbox.aliases['0a1'] = {id: 4, children: []}
+  slipbox.aliases['0a1'] = { id: 4, children: [] }
   slipbox.notes[5].aliases.push('0a1a')
-  slipbox.aliases['0a1a'] = {id: 5, children: []}
+  slipbox.aliases['0a1a'] = { id: 5, children: [] }
   slipbox.notes[6].aliases.push('0a1b')
-  slipbox.aliases['0a1b'] = {id: 6, children: []}
+  slipbox.aliases['0a1b'] = { id: 6, children: [] }
   slipbox.notes[7].aliases.push('0d')
-  slipbox.aliases['0d'] = {id: 7, children: []}
+  slipbox.aliases['0d'] = { id: 7, children: [] }
   slipbox.notes[8].aliases.push('0a2')
-  slipbox.aliases['0a2'] = {id: 8, children: []}
+  slipbox.aliases['0a2'] = { id: 8, children: [] }
   slipbox.notes[9].aliases.push('0a1b1')
-  slipbox.aliases['0a1b1'] = {id: 9, children: []}
+  slipbox.aliases['0a1b1'] = { id: 9, children: [] }
   slipbox.notes[10].aliases.push('0a1b2')
-  slipbox.aliases['0a1b2'] = {id: 10, children: []}
+  slipbox.aliases['0a1b2'] = { id: 10, children: [] }
   slipbox.notes[11].aliases.push('0e')
-  slipbox.aliases['0e'] = {id: 11, children: []}
-  slipbox.notes[1].backlinks.push({src: 2, annotation: 'Notes in a single file are separated by headers.'})
-  slipbox.notes[5].backlinks.push({src: 4, annotation: 'An annotated direct link generates a backlink.'})
-  slipbox.notes[5].backlinks.push({src: 4, annotation: 'This creates another backlink.'})
-  slipbox.notes[8].backlinks.push({src: 5, annotation: 'The See also section contains generated backlinks.'})
-  slipbox.notes[1].backlinks.push({src: 6, annotation: 'Notes can have alias IDs.'})
-  slipbox.notes[8].backlinks.push({src: 6, annotation: 'The aliases of the sequence neighbors of a note appear in the See also section.'})
-  slipbox.notes[5].backlinks.push({src: 8, annotation: 'Backlinks appear in the See also section.'})
-  slipbox.notes[6].backlinks.push({src: 8, annotation: 'Immediate neighbors appear in the See also section.'})
-  slipbox.notes[6].backlinks.push({src: 10, annotation: 'The note alias is used to annotate a sequence link.'})
-  slipbox.notes[4].backlinks.push({src: 11, annotation: 'Direct links can be visualized using slipbox.graph.'})
-  slipbox.notes[10].backlinks.push({src: 11, annotation: 'Sequence links can be visualized using slipbox.graph.'})
-  slipbox.notes[5].backlinks.push({src: 11, annotation: 'Backlinks can be visualized using slipbox.graph.'})
+  slipbox.aliases['0e'] = { id: 11, children: [] }
+  slipbox.notes[1].backlinks.push({ src: 2, annotation: 'Notes in a single file are separated by headers.' })
+  slipbox.notes[5].backlinks.push({ src: 4, annotation: 'An annotated direct link generates a backlink.' })
+  slipbox.notes[5].backlinks.push({ src: 4, annotation: 'This creates another backlink.' })
+  slipbox.notes[8].backlinks.push({ src: 5, annotation: 'The See also section contains generated backlinks.' })
+  slipbox.notes[1].backlinks.push({ src: 6, annotation: 'Notes can have alias IDs.' })
+  slipbox.notes[8].backlinks.push({ src: 6, annotation: 'The aliases of the sequence neighbors of a note appear in the See also section.' })
+  slipbox.notes[5].backlinks.push({ src: 8, annotation: 'Backlinks appear in the See also section.' })
+  slipbox.notes[6].backlinks.push({ src: 8, annotation: 'Immediate neighbors appear in the See also section.' })
+  slipbox.notes[6].backlinks.push({ src: 10, annotation: 'The note alias is used to annotate a sequence link.' })
+  slipbox.notes[4].backlinks.push({ src: 11, annotation: 'Direct links can be visualized using slipbox.graph.' })
+  slipbox.notes[10].backlinks.push({ src: 11, annotation: 'Sequence links can be visualized using slipbox.graph.' })
+  slipbox.notes[5].backlinks.push({ src: 11, annotation: 'Backlinks can be visualized using slipbox.graph.' })
   slipbox.aliases['0a1'].parent = '0a'
   slipbox.aliases['0a'].children.push('0a1')
   slipbox.aliases['0a2'].parent = '0a'
@@ -164,7 +162,7 @@
 
   function aliasOwner (alias) {
     const found = alias.match(/^\d+/)
-    return found ? found[0] : ""
+    return found ? found[0] : ''
   }
 
   function * generateBacklinkLis (slipbox, id) {
