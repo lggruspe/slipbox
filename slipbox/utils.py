@@ -32,4 +32,4 @@ def run_command(cmd, **kwargs):
     """Run command with environment variables in kwargs."""
     env = os.environ.copy()
     env.update(**kwargs)
-    subprocess.run(shlex.split(cmd), env=env)
+    subprocess.run(shlex.split(cmd), env=env, check=False)

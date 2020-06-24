@@ -165,4 +165,4 @@ def generate_complete_html(conn, options):
         cmd = "pandoc {dummy} -H {script} -B {html} -B {extra} --section-divs {options}".format(
             dummy=shlex.quote(dummy), script=shlex.quote(script),
             html=shlex.quote(html), options=options, extra=shlex.quote(extra))
-        subprocess.run(shlex.split(cmd))
+        subprocess.run(shlex.split(cmd), check=False)
