@@ -41,7 +41,8 @@ def generate_link_data(conn):
 
 def generate_sequence_data(conn):
     """Generate slipbox sequence data in javascript."""
-    for prev, next_ in conn.execute("SELECT prev, next FROM Sequences"):
+    sql = "SELECT prev, next FROM Sequences ORDER BY prev, next"
+    for prev, next_ in conn.execute(sql):
         yield f"slipbox.aliases[{next_!r}].parent = {prev!r}"
         yield f"slipbox.aliases[{prev!r}].children.push({next_!r})"
 
