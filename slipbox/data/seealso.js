@@ -154,6 +154,6 @@ window.addEventListener('hashchange', function () {
   seeAlso(slipbox, window.location.hash)
 })
 
-window.addEventListener('load', function () {
+window.addEventListener('DOMContentLoaded', function () {
   seeAlso(slipbox, window.location.hash)
 })
