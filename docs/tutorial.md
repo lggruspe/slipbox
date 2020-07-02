@@ -13,6 +13,7 @@ You can use it as an entry point to your notes.
 - Backlinks and sequence links appear in the 'See also' section of each note [](#8 '0a2').
 - You can add citations by specifying a bibliography file [](#7 '0d').
 - You can visualize notes using `slipbox.graph` [](#11 '0e').
+    + How to link to images? [](#12 '0e1').
 
 ![](tutorial.png){ width=100% }
 
@@ -198,3 +199,24 @@ Dashed lines represent [backlinks][11-5].
 [11-4]: #4 "Direct links can be visualized using slipbox.graph."
 [11-5]: #5 "Backlinks can be visualized using slipbox.graph."
 [11-10]: #10 "Sequence links can be visualized using slipbox.graph."
+
+# 12 How to link to images
+#images #links
+
+You can [link](#4) to images using absolute paths, relative paths and
+URLs.
+Relative paths are interpreted to be relative to the output HTML.
+
+Suppose you have the following directory structure.
+
+```bash
+notes/input.md
+output.html
+images/image.png
+```
+
+You could link to `image.png` from `notes/input.md` as:
+
+```markdown
+![description](images/image.png)
+```

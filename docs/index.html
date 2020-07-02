@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp3rhe2bm_</title>
+  <title>tmpn7i9c7i4</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -96,6 +96,7 @@
   slipbox.notes[9] = { title: 'How to derive note aliases', aliases: [], backlinks: [] }
   slipbox.notes[10] = { title: 'How to create a sequence link', aliases: [], backlinks: [] }
   slipbox.notes[11] = { title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: [] }
+  slipbox.notes[12] = { title: 'How to link to images', aliases: [], backlinks: [] }
   slipbox.notes[1].aliases.push('0a')
   slipbox.aliases['0a'] = { id: 1, children: [] }
   slipbox.notes[2].aliases.push('0b')
@@ -118,6 +119,8 @@
   slipbox.aliases['0a1b2'] = { id: 10, children: [] }
   slipbox.notes[11].aliases.push('0e')
   slipbox.aliases['0e'] = { id: 11, children: [] }
+  slipbox.notes[12].aliases.push('0e1')
+  slipbox.aliases['0e1'] = { id: 12, children: [] }
   slipbox.notes[1].backlinks.push({ src: 2, annotation: 'Notes in a single file are separated by headers.' })
   slipbox.notes[5].backlinks.push({ src: 4, annotation: 'An annotated direct link generates a backlink.' })
   slipbox.notes[5].backlinks.push({ src: 4, annotation: 'This creates another backlink.' })
@@ -142,6 +145,8 @@
   slipbox.aliases['0a1b'].children.push('0a1b1')
   slipbox.aliases['0a1b2'].parent = '0a1b'
   slipbox.aliases['0a1b'].children.push('0a1b2')
+  slipbox.aliases['0e1'].parent = '0e'
+  slipbox.aliases['0e'].children.push('0e1')
   function A (innerText, href, title) {
     const a = document.createElement('a')
     a.innerText = innerText
@@ -380,7 +385,10 @@
 </ul></li>
 <li>Backlinks and sequence links appear in the ‘See also’ section of each note  [<a href="#8" title="0a2">0a2</a>].</li>
 <li>You can add citations by specifying a bibliography file  [<a href="#7" title="0d">0d</a>].</li>
-<li>You can visualize notes using <code>slipbox.graph</code>  [<a href="#11" title="0e">0e</a>].</li>
+<li>You can visualize notes using <code>slipbox.graph</code>  [<a href="#11" title="0e">0e</a>].
+<ul>
+<li>How to link to images?  [<a href="#12" title="0e1">0e1</a>].</li>
+</ul></li>
 </ul>
 <p><img src="tutorial.png" style="width:100.0%" /></p>
 </section>
@@ -477,6 +485,17 @@
 <p>The output would look something like this.</p>
 <p><img src="tutorial.png" style="width:100.0%" /></p>
 <p>Black lines represent <a href="#4" title="Direct links can be visualized using slipbox.graph.">direct links</a> [4] and red lines represent <a href="#10" title="Sequence links can be visualized using slipbox.graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks can be visualized using slipbox.graph.">backlinks</a> [5].</p>
+</section>
+<section id="12" class="level1" title="How to link to images">
+<h1 title="How to link to images">12 How to link to images</h1>
+<p><a href="##images">#images</a> <a href="##links">#links</a></p>
+<p>You can <a href="#4">link</a> [4] to images using absolute paths, relative paths and URLs. Relative paths are interpreted to be relative to the output HTML.</p>
+<p>Suppose you have the following directory structure.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="ex">notes/input.md</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="ex">output.html</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
+<p>You could link to <code>image.png</code> from <code>notes/input.md</code> as:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="al">![description](images/image.png)</span></span></code></pre></div>
 </section>
 
 <section id='#You' title='#You' class='level1'>
@@ -590,6 +609,21 @@
     </li>
   </ul>
 </section>
+<section id='#images' title='#images' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #images
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [12] 
+      <a href='#12'>
+        How to link to images
+      </a>
+    </li>
+  </ul>
+</section>
 <section id='#like' title='#like' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
@@ -628,6 +662,12 @@
       [11] 
       <a href='#11'>
         Visualize notes using slipbox.graph
+      </a>
+    </li>
+    <li>
+      [12] 
+      <a href='#12'>
+        How to link to images
       </a>
     </li>
   </ul>
@@ -771,6 +811,11 @@
     <li>
       <a href='##can'>
         #can
+      </a>
+    </li>
+    <li>
+      <a href='##images'>
+        #images
       </a>
     </li>
     <li>
