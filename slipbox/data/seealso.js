@@ -21,6 +21,12 @@ function aliasOwner (alias) {
   return found ? found[0] : ''
 }
 
+function compareSeeAlsoItems(a, b) {
+  const atext = a.innerText
+  const btext = b.innerText
+  return atext < btext ? -1 : atext == btext ? 0 : 1
+}
+
 function * generateBacklinkLis (slipbox, id) {
   console.assert(slipbox)
   console.assert(slipbox.notes)
@@ -78,14 +84,19 @@ function * generateChildLis (slipbox, id) {
 }
 
 function createRelatedUl (slipbox, id) {
-  const ul = document.createElement('ul')
+  const lis = []
   for (const li of generateBacklinkLis(slipbox, id)) {
-    ul.appendChild(li)
+    lis.push(li)
   }
   for (const li of generateParentLis(slipbox, id)) {
-    ul.appendChild(li)
+    lis.push(li)
   }
   for (const li of generateChildLis(slipbox, id)) {
+    lis.push(li)
+  }
+  lis.sort(compareSeeAlsoItems)
+  const ul = document.createElement('ul')
+  for (const li of lis) {
     ul.appendChild(li)
   }
   return ul
