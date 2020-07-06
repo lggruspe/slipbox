@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.3.5",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
-    description="Tools for managing notes",
+    description="Static-site generator for Zettelkasten notes",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/lggruspe/slipbox",
