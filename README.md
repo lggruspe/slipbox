@@ -11,6 +11,7 @@ Features
 - Single-page HTML output with backlinks and folgezettel links
 - Generates dot graphs of note connections
 - Incremental compilation
+- Fuzzy text search
 
 Requirements
 ------------
