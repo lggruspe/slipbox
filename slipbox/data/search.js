@@ -3,7 +3,8 @@ function createFuse () {
     includeMatches: true,
     includeScore: true,
     ignoreLocation: true,
-    keys: ['textContent']
+    keys: ['textContent'],
+    threshold: 0.4
   }
   const nodes = document.body.querySelectorAll('section.level1')
   const sections = Array.prototype.filter.call(nodes, function (node) {
@@ -12,37 +13,41 @@ function createFuse () {
   return new Fuse(sections, options)
 }
 
-const results = []
-
-function pushSearchResult () {
+function getSearchResults (fuse) {
   const div = document.querySelector('input.search-bar')
-  results.push(div.value)
-  updateResultsDiv()
+  return fuse.search(div.value)
 }
 
-function updateResultsDiv () {
+function displayResults (results) {
   const div = document.querySelector('div.search-results')
   div.textContent = ''
   for (const result of results) {
     const p = document.createElement('p')
-    p.textContent = result
+    p.textContent = result.item.title
     div.appendChild(p)
   }
 }
 
-function searchNotes () {
-  pushSearchResult()
-  updateResultsDiv()
+function searchNotes (fuse) {
+  const results = getSearchResults(fuse)
+  displayResults(results)
 }
 
 function createSearchBar () {
   const form = document.createElement('form')
   form.action = 'javascript:void(0)'
   form.style.textAlign = 'center'
-  form.innerHTML = `
-    <input type="text" placeholder="Search notes..." class="search-bar"
-      onchange="searchNotes()" size="50">
-  `
+
+  const fuse = createFuse()
+
+  const input = document.createElement('input')
+  input.type = 'text'
+  input.placeholder = 'Search notes...'
+  input.classList.add('search-bar')
+  input.size = '50'
+  input.addEventListener('change', () => searchNotes(fuse))
+
+  form.appendChild(input)
   return form
 }
 
