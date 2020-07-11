@@ -8,46 +8,59 @@ function createGraphArea () {
   return div
 }
 
+function getNoteElement (slipbox, id) {
+  const note = slipbox.notes[id]
+  return {
+    data: {
+      id: id,
+      color: 'black',
+      label: note.title
+    }
+  }
+}
+
+function * getNeighborElements (slipbox, id) {
+  yield getNoteElement(slipbox, id)
+
+  const note = slipbox.notes[id]
+  for (const backlink of note.backlinks) {
+    yield getNoteElement(slipbox, backlink.src)
+    yield {
+      data: {
+        id: `${backlink.src}-${id}`,
+        source: backlink.src,
+        target: id,
+        style: 'dashed',
+        color: 'black'
+      }
+    }
+  }
+
+  for (const alias of note.aliases) {
+    const parent = slipbox.aliases[alias].parent
+    let pid = -1
+    if (parent) {
+      pid = slipbox.aliases[parent].id
+    }
+    if (pid == -1) continue
+    yield getNoteElement(slipbox, pid)
+    yield {
+      data: {
+        id: `${pid}-${id}`,
+        source: pid,
+        target: id,
+        style: 'solid',
+        color: 'red'
+      }
+    }
+  }
+}
+
 function getElementsFromSlipbox (slipbox) {
   const elements = []
-  for (let [id, note] of Object.entries(slipbox.notes)) {
-    id = Number(id)
-    elements.push({
-      data: {
-        id: id,
-        color: 'black',
-        label: note.title
-      }
-    })
-
-    for (const backlink of note.backlinks) {
-      elements.push({
-        data: {
-          id: `${backlink.src}-${id}`,
-          source: backlink.src,
-          target: id,
-          style: 'dashed',
-          color: 'black'
-        }
-      })
-    }
-
-    for (const alias of note.aliases) {
-      const parent = slipbox.aliases[alias].parent
-      let pid = -1
-      if (parent) {
-        pid = slipbox.aliases[parent].id
-      }
-      if (pid == -1) continue;
-      elements.push({
-        data: {
-          id: `${pid}-${id}`,
-          source: pid,
-          target: id,
-          style: 'solid',
-          color: 'red'
-        }
-      })
+  for (const id of Object.keys(slipbox.notes)) {
+    for (const elem of getNeighborElements(slipbox, id)) {
+      elements.push(elem)
     }
   }
   return elements
@@ -91,11 +104,23 @@ function createCytoscape (container, elements) {
   })
 }
 
-var cy = {}
-window.addEventListener('DOMContentLoaded', function () {
-  const container = createGraphArea()
-  document.body.append(container)
-  const elements = getElementsFromSlipbox(slipbox)
-  cy = createCytoscape(container, elements)
-  cy.layout({ name: 'cose' }).run()
-})
+function initGraph () {
+  let container = createGraphArea()
+
+  function resetGraph () {
+    container.remove()
+    const id = Number(window.location.hash.slice(1))
+    if (Number.isInteger(id)) {
+      container = createGraphArea()
+      document.body.append(container)
+      const elements = getNeighborElements(slipbox, id)
+      const cy = createCytoscape(container, Array.from(elements))
+      cy.layout({ name: 'cose' }).run()
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', resetGraph)
+  window.addEventListener('hashchange', resetGraph)
+}
+
+initGraph()
