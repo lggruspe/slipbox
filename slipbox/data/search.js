@@ -1,7 +1,6 @@
 function createFuse () {
   const options = {
     includeMatches: true,
-    includeScore: true,
     ignoreLocation: true,
     keys: ['textContent'],
     threshold: 0.4
@@ -23,7 +22,10 @@ function displayResults (results) {
   div.textContent = ''
   for (const result of results) {
     const p = document.createElement('p')
-    p.textContent = result.item.title
+    const a = document.createElement('a')
+    a.href = `#${result.item.id}`
+    a.textContent = result.item.title
+    p.appendChild(a)
     div.appendChild(p)
   }
 }
@@ -63,6 +65,7 @@ function createSearchPage () {
   page.title = 'Search'
   page.classList.add('level1')
   page.appendChild(createSearchBar())
+  page.appendChild(document.createElement('br'))
   page.appendChild(createSearchResults())
   return page
 }
