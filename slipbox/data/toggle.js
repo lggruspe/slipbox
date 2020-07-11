@@ -43,6 +43,7 @@ function changeSection () {
   } else {
     window.location.hash = '#0'
   }
+  window.scrollTo(0, 0)
 }
 
 function addNotFoundSection () {
