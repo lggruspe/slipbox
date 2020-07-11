@@ -10,6 +10,7 @@ You can use it as an entry point to your notes.
 - `slipbox` supports direct links, backlinks [](#5 '0a1a') and sequence links [](#6 '0a1b').
     + To create note sequences, you need to understand note aliases [](#9 '0a1b1')
     + and the syntax [](#10 '0a1b2').
+- Another way to look for notes is by using text search [](#13 '0f').
 - Backlinks and sequence links appear in the 'See also' section of each note [](#8 '0a2').
 - You can add citations by specifying a bibliography file [](#7 '0d').
 - You can visualize notes using `slipbox.graph` [](#11 '0e').
@@ -220,3 +221,8 @@ You could link to `image.png` from `notes/input.md` as:
 ```markdown
 ![description](images/image.png)
 ```
+
+# 13 Text search
+#text #search
+
+You can search your notes by going to #[search](#search).

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp6jyppx94</title>
+  <title>tmp34d7nnmc</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -79,6 +79,7 @@
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
   <script type="text/javascript">
   const slipbox = {
     aliases: {},
@@ -97,6 +98,7 @@
   slipbox.notes[10] = { title: 'How to create a sequence link', aliases: [], backlinks: [] }
   slipbox.notes[11] = { title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: [] }
   slipbox.notes[12] = { title: 'How to link to images', aliases: [], backlinks: [] }
+  slipbox.notes[13] = { title: 'Text search', aliases: [], backlinks: [] }
   slipbox.notes[1].aliases.push('0a')
   slipbox.aliases['0a'] = { id: 1, children: [] }
   slipbox.notes[2].aliases.push('0b')
@@ -121,6 +123,8 @@
   slipbox.aliases['0e'] = { id: 11, children: [] }
   slipbox.notes[12].aliases.push('0e1')
   slipbox.aliases['0e1'] = { id: 12, children: [] }
+  slipbox.notes[13].aliases.push('0f')
+  slipbox.aliases['0f'] = { id: 13, children: [] }
   slipbox.notes[1].backlinks.push({ src: 2, annotation: 'Notes in a single file are separated by headers.' })
   slipbox.notes[5].backlinks.push({ src: 4, annotation: 'An annotated direct link generates a backlink.' })
   slipbox.notes[5].backlinks.push({ src: 4, annotation: 'This creates another backlink.' })
@@ -147,6 +151,93 @@
   slipbox.aliases['0a1b'].children.push('0a1b2')
   slipbox.aliases['0e1'].parent = '0e'
   slipbox.aliases['0e'].children.push('0e1')
+  function createFuse () {
+    const options = {
+      includeMatches: true,
+      ignoreLocation: true,
+      keys: ['textContent'],
+      threshold: 0.4
+    }
+    const nodes = document.body.querySelectorAll('section.level1')
+    const sections = Array.prototype.filter.call(nodes, function (node) {
+      return Number.isInteger(Number(node.id))
+    })
+    return new Fuse(sections, options)
+  }
+
+  function getSearchResults (fuse) {
+    const div = document.querySelector('input.search-bar')
+    return fuse.search(div.value)
+  }
+
+  function displayResults (results) {
+    const div = document.querySelector('div.search-results')
+    div.textContent = ''
+    for (const result of results) {
+      const p = document.createElement('p')
+      const h3 = document.createElement('h3')
+      h3.innerHTML = `<a href="#${result.item.id}">${result.item.title}</a>`
+      p.appendChild(h3)
+
+      let count = 3
+      for (const child of result.item.children) {
+        const clone = child.cloneNode(true)
+        if (count-- <= 0) break
+        if (clone.tagName == 'H1' && clone.title === result.item.title) {
+          continue
+        }
+        p.appendChild(clone)
+      }
+
+      div.appendChild(p)
+      div.appendChild(document.createElement('hr'))
+    }
+  }
+
+  function searchNotes (fuse) {
+    const results = getSearchResults(fuse)
+    displayResults(results)
+  }
+
+  function createSearchBar () {
+    const form = document.createElement('form')
+    form.action = 'javascript:void(0)'
+    form.style.textAlign = 'center'
+
+    const fuse = createFuse()
+
+    const input = document.createElement('input')
+    input.type = 'text'
+    input.placeholder = 'Search notes...'
+    input.classList.add('search-bar')
+    input.style.width = '80%'
+    input.addEventListener('change', () => searchNotes(fuse))
+
+    form.appendChild(input)
+    return form
+  }
+
+  function createSearchResults () {
+    const div = document.createElement('div')
+    div.classList.add('search-results')
+    return div
+  }
+
+  function createSearchPage () {
+    const page = document.createElement('section')
+    page.id = 'search'
+    page.title = 'Search'
+    page.classList.add('level1')
+    page.appendChild(createSearchBar())
+    page.appendChild(document.createElement('br'))
+    page.appendChild(createSearchResults())
+    return page
+  }
+
+  window.addEventListener('DOMContentLoaded', function () {
+    document.body.appendChild(createSearchPage())
+  })
+
   function A (innerText, href, title) {
     const a = document.createElement('a')
     a.innerText = innerText
@@ -331,6 +422,8 @@
           section.style.display = 'none'
         } else if (section.id.slice(0, 4) === 'ref-') {
           section.style.display = 'none'
+        } else if (section.id === 'search') {
+          section.style.display = 'none'
         } else if (section.id === 'tags') {
           section.style.display = 'none'
         }
@@ -361,6 +454,7 @@
     } else {
       window.location.hash = '#0'
     }
+    window.scrollTo(0, 0)
   }
 
   function addNotFoundSection () {
@@ -394,6 +488,7 @@
 <li>To create note sequences, you need to understand note aliases  [<a href="#9" title="0a1b1">0a1b1</a>]</li>
 <li>and the syntax  [<a href="#10" title="0a1b2">0a1b2</a>].</li>
 </ul></li>
+<li>Another way to look for notes is by using text search  [<a href="#13" title="0f">0f</a>].</li>
 <li>Backlinks and sequence links appear in the ‘See also’ section of each note  [<a href="#8" title="0a2">0a2</a>].</li>
 <li>You can add citations by specifying a bibliography file  [<a href="#7" title="0d">0d</a>].</li>
 <li>You can visualize notes using <code>slipbox.graph</code>  [<a href="#11" title="0e">0e</a>].
@@ -507,6 +602,11 @@
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
 <p>You could link to <code>image.png</code> from <code>notes/input.md</code> as:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="al">![description](images/image.png)</span></span></code></pre></div>
+</section>
+<section id="13" class="level1" title="Text search">
+<h1 title="Text search">13 Text search</h1>
+<p><a href="##text">#text</a> <a href="##search">#search</a></p>
+<p>You can search your notes by going to #<a href="#search">search</a>.</p>
 </section>
 
 <section id='#You' title='#You' class='level1'>
@@ -683,6 +783,21 @@
     </li>
   </ul>
 </section>
+<section id='#search' title='#search' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #search
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [13] 
+      <a href='#13'>
+        Text search
+      </a>
+    </li>
+  </ul>
+</section>
 <section id='#sequence-links' title='#sequence-links' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
@@ -739,6 +854,21 @@
       [3] 
       <a href='#3'>
         You can use hashtags anywhere in the note
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#text' title='#text' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #text
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [13] 
+      <a href='#13'>
+        Text search
       </a>
     </li>
   </ul>
@@ -840,6 +970,11 @@
       </a>
     </li>
     <li>
+      <a href='##search'>
+        #search
+      </a>
+    </li>
+    <li>
       <a href='##sequence-links'>
         #sequence-links
       </a>
@@ -847,6 +982,11 @@
     <li>
       <a href='##tags'>
         #tags
+      </a>
+    </li>
+    <li>
+      <a href='##text'>
+        #text
       </a>
     </li>
     <li>
