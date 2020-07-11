@@ -30,7 +30,7 @@ function displayResults (results) {
     for (const child of result.item.children) {
       const clone = child.cloneNode(true)
       if (count-- <= 0) break
-      if (clone.tagName == 'H1' && clone.title === result.item.title) {
+      if (clone.tagName === 'H1' && clone.title === result.item.title) {
         continue
       }
       p.appendChild(clone)

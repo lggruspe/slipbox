@@ -21,10 +21,10 @@ function aliasOwner (alias) {
   return found ? found[0] : ''
 }
 
-function compareSeeAlsoItems(a, b) {
+function compareSeeAlsoItems (a, b) {
   const atext = a.innerText
   const btext = b.innerText
-  return atext < btext ? -1 : atext == btext ? 0 : 1
+  return atext < btext ? -1 : atext === btext ? 0 : 1
 }
 
 function * generateBacklinkLis (slipbox, id) {
