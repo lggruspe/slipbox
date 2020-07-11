@@ -22,11 +22,22 @@ function displayResults (results) {
   div.textContent = ''
   for (const result of results) {
     const p = document.createElement('p')
-    const a = document.createElement('a')
-    a.href = `#${result.item.id}`
-    a.textContent = result.item.title
-    p.appendChild(a)
+    const h3 = document.createElement('h3')
+    h3.innerHTML = `<a href="#${result.item.id}">${result.item.title}</a>`
+    p.appendChild(h3)
+
+    let count = 3
+    for (const child of result.item.children) {
+      const clone = child.cloneNode(true)
+      if (count-- <= 0) break
+      if (clone.tagName == 'H1' && clone.title === result.item.title) {
+        continue
+      }
+      p.appendChild(clone)
+    }
+
     div.appendChild(p)
+    div.appendChild(document.createElement('hr'))
   }
 }
 
@@ -46,7 +57,7 @@ function createSearchBar () {
   input.type = 'text'
   input.placeholder = 'Search notes...'
   input.classList.add('search-bar')
-  input.size = '50'
+  input.style.width = '80%'
   input.addEventListener('change', () => searchNotes(fuse))
 
   form.appendChild(input)
