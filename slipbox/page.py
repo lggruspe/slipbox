@@ -62,11 +62,11 @@ def generate_javascript(conn):
     yield '<script type="text/javascript">'
     yield from generate_data(conn)
     basedir = os.path.dirname(__file__)
+    with open(os.path.join(basedir, "data/search.js")) as file:
+        yield file.read()
     with open(os.path.join(basedir, "data/seealso.js")) as file:
         yield file.read()
     with open(os.path.join(basedir, "data/toggle.js")) as file:
-        yield file.read()
-    with open(os.path.join(basedir, "data/search.js")) as file:
         yield file.read()
     yield "</script>"
 

@@ -11,6 +11,8 @@ function hideSections () {
         section.style.display = 'none'
       } else if (section.id.slice(0, 4) === 'ref-') {
         section.style.display = 'none'
+      } else if (section.id === 'search') {
+        section.style.display = 'none'
       } else if (section.id === 'tags') {
         section.style.display = 'none'
       }
