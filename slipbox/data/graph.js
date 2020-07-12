@@ -43,16 +43,17 @@ function * getNeighborElements (slipbox, id) {
     if (parent) {
       pid = slipbox.aliases[parent].id
     }
-    if (pid == -1) continue
-    yield getNoteElement(slipbox, pid)
-    yield {
-      data: {
-        id: `p${pid}-${id}`,
-        source: pid,
-        target: id,
-        arrow: 'triangle',
-        style: 'solid',
-        color: 'red'
+    if (pid !== -1) {
+      yield getNoteElement(slipbox, pid)
+      yield {
+        data: {
+          id: `p${pid}-${id}`,
+          source: pid,
+          target: id,
+          arrow: 'triangle',
+          style: 'solid',
+          color: 'red'
+        }
       }
     }
 
@@ -74,16 +75,6 @@ function * getNeighborElements (slipbox, id) {
       }
     }
   }
-}
-
-function getElementsFromSlipbox (slipbox) {
-  const elements = []
-  for (const id of Object.keys(slipbox.notes)) {
-    for (const elem of getNeighborElements(slipbox, id)) {
-      elements.push(elem)
-    }
-  }
-  return elements
 }
 
 function createCytoscape (container, elements) {
