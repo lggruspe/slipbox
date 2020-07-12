@@ -8,18 +8,22 @@ function createGraphArea () {
   return div
 }
 
-function getNoteElement (slipbox, id) {
+function getNoteElement (slipbox, id, currentNote = false) {
   const note = slipbox.notes[id]
-  return {
+  const element = {
     data: {
       id: id,
       label: id
     }
   }
+  if (currentNote) {
+    element.data.color = 'white'
+  }
+  return element
 }
 
 function * getNeighborElements (slipbox, id) {
-  yield getNoteElement(slipbox, id)
+  yield getNoteElement(slipbox, id, true)
 
   const note = slipbox.notes[id]
   for (const backlink of note.backlinks) {
@@ -86,7 +90,19 @@ function createCytoscape (container, elements) {
       {
         selector: 'node',
         style: {
-          'background-color': 'data(color)',
+          label: 'data(label)',
+          height: 'label',
+          width: 'label',
+          padding: '8px',
+          'text-halign': 'center',
+          'text-valign': 'center'
+        }
+      },
+      {
+        selector: 'node[color]',
+        style: {
+          'background-color': 'black',
+          color: 'data(color)',
           label: 'data(label)',
           height: 'label',
           width: 'label',
