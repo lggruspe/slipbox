@@ -14,7 +14,7 @@ function getNoteElement (slipbox, id) {
     data: {
       id: id,
       color: 'black',
-      label: note.title
+      label: id
     }
   }
 }
@@ -96,14 +96,9 @@ function createCytoscape (container, elements) {
       {
         selector: 'node',
         style: {
-          'background-color': 'data(color)'
+          'background-color': 'data(color)',
+          label: 'data(label)'
         }
-      },
-      {
-        selector: 'node[type]',
-          style: {
-            label: 'data(label)'
-          }
       },
       {
         selector: 'edge',
@@ -146,6 +141,7 @@ function initGraph () {
 
     btn = createResetButton()
     btn.onclick = function () {
+      cy.reset()
       cy.center()
     }
     container = createGraphArea()
@@ -153,6 +149,7 @@ function initGraph () {
     document.body.append(container)
     const cy = createCytoscape(container, elements)
     cy.layout({ name: 'cose' }).run()
+    cy.reset()
     cy.center()
   }
 
