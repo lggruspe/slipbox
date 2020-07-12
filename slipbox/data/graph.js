@@ -13,7 +13,6 @@ function getNoteElement (slipbox, id) {
   return {
     data: {
       id: id,
-      color: 'black',
       label: id
     }
   }
@@ -88,7 +87,12 @@ function createCytoscape (container, elements) {
         selector: 'node',
         style: {
           'background-color': 'data(color)',
-          label: 'data(label)'
+          label: 'data(label)',
+          height: 'label',
+          width: 'label',
+          padding: '8px',
+          'text-halign': 'center',
+          'text-valign': 'center'
         }
       },
       {
