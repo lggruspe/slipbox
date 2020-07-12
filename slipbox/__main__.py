@@ -16,7 +16,7 @@ def main(args):
         initialize_database(conn)
         remove_outdated_files_from_database(conn, timestamp)
         inputs = list(input_files(conn, timestamp, args.paths, args.patterns))
-        scan(conn, inputs, args.content_options)
+        scan(conn, inputs, args.content_options, args.convert_to_data_url)
         generate_complete_html(conn, args.document_options)
 
 if __name__ == "__main__":
@@ -32,4 +32,6 @@ if __name__ == "__main__":
                         help="pandoc options for the content")
     parser.add_argument("-d", "--document-options", default="",
                         help="pandoc options for the final HTML output")
+    parser.add_argument("--convert-to-data-url", action="store_true",
+                        help="convert local image links to data URL")
     main(parser.parse_args())
