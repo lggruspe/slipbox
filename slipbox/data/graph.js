@@ -27,7 +27,7 @@ function * getNeighborElements (slipbox, id) {
     yield getNoteElement(slipbox, backlink.src)
     yield {
       data: {
-        id: `${backlink.src}-${id}`,
+        id: `b${backlink.src}-${id}`,
         source: backlink.src,
         target: id,
         arrow: 'triangle',
@@ -47,12 +47,30 @@ function * getNeighborElements (slipbox, id) {
     yield getNoteElement(slipbox, pid)
     yield {
       data: {
-        id: `${pid}-${id}`,
+        id: `p${pid}-${id}`,
         source: pid,
         target: id,
         arrow: 'triangle',
         style: 'solid',
         color: 'red'
+      }
+    }
+
+    // children
+    for (const child of slipbox.aliases[alias].children) {
+      console.assert(id === slipbox.aliases[alias].id)
+      const cid = slipbox.aliases[child].id
+      if (!Number.isInteger(cid)) continue
+      yield getNoteElement(slipbox, cid)
+      yield {
+        data: {
+          id: `c${id}-${cid}`,
+          source: id,
+          target: cid,
+          arrow: 'triangle',
+          style: 'solid',
+          color: 'red'
+        }
       }
     }
   }
