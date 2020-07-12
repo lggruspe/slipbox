@@ -58,7 +58,7 @@ function * generateParentLis (slipbox, id) {
       const parentId = slipbox.aliases[parentAlias].id
       console.assert(typeof (parentId) === 'number')
       yield Li([
-        document.createTextNode('[' + parentAlias + '] '),
+        document.createTextNode(`[${parentId}/${parentAlias}] `),
         A(slipbox.notes[parentId].title, '#' + parentId)
       ])
     }
@@ -76,7 +76,7 @@ function * generateChildLis (slipbox, id) {
     for (const child of slipbox.aliases[alias].children) {
       const childId = slipbox.aliases[child].id
       yield Li([
-        document.createTextNode('[' + child + '] '),
+        document.createTextNode(`[${childId}/${child}] `),
         A(slipbox.notes[childId].title, '#' + childId)
       ])
     }

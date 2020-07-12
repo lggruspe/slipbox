@@ -12,6 +12,7 @@ Features
 - Generates dot graphs of note connections
 - Incremental compilation
 - Fuzzy text search
+- Interactive visualization of Folgezettels
 
 Requirements
 ------------

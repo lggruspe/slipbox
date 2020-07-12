@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp34d7nnmc</title>
+  <title>tmpfl1x6ycd</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -79,6 +79,7 @@
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.1/cytoscape.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
   <script type="text/javascript">
   const slipbox = {
@@ -183,7 +184,7 @@
       for (const child of result.item.children) {
         const clone = child.cloneNode(true)
         if (count-- <= 0) break
-        if (clone.tagName == 'H1' && clone.title === result.item.title) {
+        if (clone.tagName === 'H1' && clone.title === result.item.title) {
           continue
         }
         p.appendChild(clone)
@@ -261,10 +262,10 @@
     return found ? found[0] : ''
   }
 
-  function compareSeeAlsoItems(a, b) {
+  function compareSeeAlsoItems (a, b) {
     const atext = a.innerText
     const btext = b.innerText
-    return atext < btext ? -1 : atext == btext ? 0 : 1
+    return atext < btext ? -1 : atext === btext ? 0 : 1
   }
 
   function * generateBacklinkLis (slipbox, id) {
@@ -298,7 +299,7 @@
         const parentId = slipbox.aliases[parentAlias].id
         console.assert(typeof (parentId) === 'number')
         yield Li([
-          document.createTextNode('[' + parentAlias + '] '),
+          document.createTextNode(`[${parentId}/${parentAlias}] `),
           A(slipbox.notes[parentId].title, '#' + parentId)
         ])
       }
@@ -316,7 +317,7 @@
       for (const child of slipbox.aliases[alias].children) {
         const childId = slipbox.aliases[child].id
         yield Li([
-          document.createTextNode('[' + child + '] '),
+          document.createTextNode(`[${childId}/${child}] `),
           A(slipbox.notes[childId].title, '#' + childId)
         ])
       }
@@ -471,6 +472,178 @@
   window.addEventListener('DOMContentLoaded', hideSections)
   window.addEventListener('DOMContentLoaded', changeSection)
   window.addEventListener('hashchange', changeSection)
+
+  function createGraphArea () {
+    const div = document.createElement('div')
+    div.style.width = '100%'
+    div.style.height = '500px'
+    div.style.position = 'relative'
+    div.style.top = '0px'
+    div.style.left = '0px'
+    return div
+  }
+
+  function getNoteElement (slipbox, id, currentNote = false) {
+    const note = slipbox.notes[id]
+    const element = {
+      data: {
+        id: id,
+        label: id
+      }
+    }
+    if (currentNote) {
+      element.data.color = 'white'
+    }
+    return element
+  }
+
+  function * getNeighborElements (slipbox, id) {
+    yield getNoteElement(slipbox, id, true)
+
+    const note = slipbox.notes[id]
+    for (const backlink of note.backlinks) {
+      yield getNoteElement(slipbox, backlink.src)
+      yield {
+        data: {
+          id: `b${backlink.src}-${id}`,
+          source: backlink.src,
+          target: id,
+          arrow: 'triangle',
+          style: 'dashed',
+          color: 'black'
+        }
+      }
+    }
+
+    for (const alias of note.aliases) {
+      const parent = slipbox.aliases[alias].parent
+      let pid = -1
+      if (parent) {
+        pid = slipbox.aliases[parent].id
+      }
+      if (pid !== -1) {
+        yield getNoteElement(slipbox, pid)
+        yield {
+          data: {
+            id: `p${pid}-${id}`,
+            source: pid,
+            target: id,
+            arrow: 'triangle',
+            style: 'solid',
+            color: 'red'
+          }
+        }
+      }
+
+      // children
+      for (const child of slipbox.aliases[alias].children) {
+        console.assert(id === slipbox.aliases[alias].id)
+        const cid = slipbox.aliases[child].id
+        if (!Number.isInteger(cid)) continue
+        yield getNoteElement(slipbox, cid)
+        yield {
+          data: {
+            id: `c${id}-${cid}`,
+            source: id,
+            target: cid,
+            arrow: 'triangle',
+            style: 'solid',
+            color: 'red'
+          }
+        }
+      }
+    }
+  }
+
+  function createCytoscape (container, elements) {
+    return cytoscape({
+      directed: true,
+      multigraph: true,
+      container: container,
+      elements: elements,
+      style: [
+        {
+          selector: 'node',
+          style: {
+            label: 'data(label)',
+            height: 'label',
+            width: 'label',
+            padding: '8px',
+            'text-halign': 'center',
+            'text-valign': 'center'
+          }
+        },
+        {
+          selector: 'node[color]',
+          style: {
+            'background-color': 'black',
+            color: 'data(color)',
+            label: 'data(label)',
+            height: 'label',
+            width: 'label',
+            padding: '8px',
+            'text-halign': 'center',
+            'text-valign': 'center'
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            width: 2,
+            'curve-style': 'bezier',
+            'line-color': 'data(color)',
+            'line-style': 'data(style)'
+          }
+        },
+        {
+          selector: 'edge[arrow]',
+          style: {
+            'target-arrow-color': 'data(color)',
+            'target-arrow-shape': 'data(arrow)'
+          }
+        }
+      ]
+    })
+  }
+
+  function createResetButton() {
+    const btn = document.createElement('button')
+    btn.textContent = 'Reset graph'
+    return btn
+  }
+
+  function initGraph () {
+    let container = createGraphArea()
+    let btn = createResetButton()
+
+    function resetGraph () {
+      container.remove()
+      btn.remove()
+      const id = Number(window.location.hash.slice(1))
+      if (!Number.isInteger(id)) return
+
+      const elements = Array.from(getNeighborElements(slipbox, id))
+      if (elements.length < 2) return
+
+      btn = createResetButton()
+      btn.onclick = function () {
+        cy.reset()
+        cy.center()
+      }
+      container = createGraphArea()
+      document.body.append(btn)
+      document.body.append(container)
+      const cy = createCytoscape(container, elements)
+      cy.layout({ name: 'cose' }).run()
+      cy.reset()
+      cy.center()
+    }
+
+    window.addEventListener('DOMContentLoaded', resetGraph)
+    window.addEventListener('hashchange', resetGraph)
+  }
+
+  initGraph()
 
   </script>
 </head>
