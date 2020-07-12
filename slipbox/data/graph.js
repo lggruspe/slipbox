@@ -110,13 +110,15 @@ function initGraph () {
   function resetGraph () {
     container.remove()
     const id = Number(window.location.hash.slice(1))
-    if (Number.isInteger(id)) {
-      container = createGraphArea()
-      document.body.append(container)
-      const elements = getNeighborElements(slipbox, id)
-      const cy = createCytoscape(container, Array.from(elements))
-      cy.layout({ name: 'cose' }).run()
-    }
+    if (!Number.isInteger(id)) return
+
+    const elements = Array.from(getNeighborElements(slipbox, id))
+    if (elements.length < 2) return
+
+    container = createGraphArea()
+    document.body.append(container)
+    const cy = createCytoscape(container, elements)
+    cy.layout({ name: 'cose' }).run()
   }
 
   window.addEventListener('DOMContentLoaded', resetGraph)
