@@ -30,6 +30,7 @@ function * getNeighborElements (slipbox, id) {
         id: `${backlink.src}-${id}`,
         source: backlink.src,
         target: id,
+        arrow: 'triangle',
         style: 'dashed',
         color: 'black'
       }
@@ -49,6 +50,7 @@ function * getNeighborElements (slipbox, id) {
         id: `${pid}-${id}`,
         source: pid,
         target: id,
+        arrow: 'triangle',
         style: 'solid',
         color: 'red'
       }
@@ -97,7 +99,8 @@ function createCytoscape (container, elements) {
       {
         selector: 'edge[arrow]',
         style: {
-          'target-arrow-shape': 'triangle'
+          'target-arrow-color': 'data(color)',
+          'target-arrow-shape': 'data(arrow)'
         }
       }
     ]
