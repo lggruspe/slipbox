@@ -61,13 +61,12 @@ function SlipBox:save_sequence(link)
       local aliases = assert(self.notes[link.dest]).aliases or {}
       table.insert(aliases, link.alias)
       self.notes[link.dest].aliases = aliases
-
-      local parent = parent_sequence(link.alias)
-      if parent then
-        local children = self.children[parent] or {}
-        table.insert(children, link.alias)
-        self.children[parent] = children
-      end
+    end
+    local parent = parent_sequence(link.alias)
+    if parent then
+      local children = self.children[parent] or {}
+      table.insert(children, link.alias)
+      self.children[parent] = children
     end
   end
 end
