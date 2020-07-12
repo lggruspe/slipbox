@@ -1,6 +1,7 @@
 pandoc.utils = require "pandoc.utils"
 local cites = require "filters/cites"
 local header = require "filters/header"
+local images = require "filters/images"
 local links = require "filters/links"
 local post = require "filters/post"
 local slipbox = require "filters/slipbox"
@@ -27,5 +28,6 @@ return {
     end
   },
   {Div = Div},
+  images.make_image_filter(),
   post.make_sql_dump_filter(current_slipbox),
 }
