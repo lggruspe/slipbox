@@ -45,6 +45,23 @@ function * generateBacklinkLis (slipbox, id) {
   }
 }
 
+function * generateDirectLinkLis (slipbox, id) {
+  console.assert(slipbox)
+  console.assert(slipbox.notes)
+  console.assert(typeof (id) === 'number')
+  const notes = slipbox.notes
+  const note = notes[id] || { backlinks: [] }
+  for (const link of note.links) {
+    console.assert(typeof (link.dest) === 'number')
+    console.assert(notes[link.dest])
+    console.assert(typeof (notes[link.dest].title) === 'string')
+    console.assert(notes[link.dest].title)
+    const b = document.createElement('b')
+    b.appendChild(document.createTextNode(`[${link.dest}] `))
+    yield Li([ b, A(notes[link.dest].title, '#' + link.dest, link.annotation)])
+  }
+}
+
 function * generateParentLis (slipbox, id) {
   console.assert(slipbox)
   console.assert(slipbox.notes)
@@ -84,8 +101,8 @@ function * generateChildLis (slipbox, id) {
 }
 
 function createRelatedUl (slipbox, id) {
-  const lis = []
-  for (const li of generateBacklinkLis(slipbox, id)) {
+  const lis = Array.from(generateBacklinkLis(slipbox, id))
+  for (const li of generateDirectLinkLis(slipbox, id)) {
     lis.push(li)
   }
   for (const li of generateParentLis(slipbox, id)) {
