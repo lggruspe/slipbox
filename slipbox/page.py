@@ -62,10 +62,10 @@ def generate_data(conn):
 
 def generate_javascript(conn):
     """Generate slipbox javascript code."""
-    link = "https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.1/cytoscape.min.js"
-    yield f'<script src="{link}"></script>'
-    yield '<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>'
-    yield '<script type="text/javascript">'
+    yield '<script type="module">'
+    link = "https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.2/cytoscape.esm.min.js"
+    yield f"import cytoscape from '{link}'"
+    yield "import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.0/dist/fuse.esm.js'"
     yield from generate_data(conn)
     basedir = os.path.dirname(__file__)
     with open(os.path.join(basedir, "data/search.js")) as file:
@@ -75,7 +75,7 @@ def generate_javascript(conn):
     with open(os.path.join(basedir, "data/toggle.js")) as file:
         yield file.read()
     with open(os.path.join(basedir, "data/graph.js")) as file:
-        yield file.read()
+        yield file.read().strip()
     yield "</script>"
 
 def create_bibliography(conn):
