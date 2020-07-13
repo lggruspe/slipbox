@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpwl75gxpg</title>
+  <title>tmp7mnpxfnf</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -265,7 +265,7 @@
 
   function createSearchButton () {
     const a = document.createElement('a')
-    a.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>`
+    a.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>'
     a.href = '#search'
     a.title = 'Search notes'
     return a
@@ -336,7 +336,7 @@
       console.assert(notes[link.dest].title)
       const b = document.createElement('b')
       b.appendChild(document.createTextNode(`[${link.dest}] `))
-      yield Li([ b, A(notes[link.dest].title, '#' + link.dest, link.annotation)])
+      yield Li([b, A(notes[link.dest].title, '#' + link.dest, link.annotation)])
     }
   }
 
@@ -538,7 +538,6 @@
   }
 
   function getNoteElement (slipbox, id, currentNote = false) {
-    const note = slipbox.notes[id]
     const element = {
       data: {
         id: id,

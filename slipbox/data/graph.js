@@ -9,7 +9,6 @@ function createGraphArea () {
 }
 
 function getNoteElement (slipbox, id, currentNote = false) {
-  const note = slipbox.notes[id]
   const element = {
     data: {
       id: id,

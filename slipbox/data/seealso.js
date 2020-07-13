@@ -58,7 +58,7 @@ function * generateDirectLinkLis (slipbox, id) {
     console.assert(notes[link.dest].title)
     const b = document.createElement('b')
     b.appendChild(document.createTextNode(`[${link.dest}] `))
-    yield Li([ b, A(notes[link.dest].title, '#' + link.dest, link.annotation)])
+    yield Li([b, A(notes[link.dest].title, '#' + link.dest, link.annotation)])
   }
 }
 

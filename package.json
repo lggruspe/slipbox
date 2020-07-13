@@ -1,0 +1,32 @@
+{
+  "name": "slipbox",
+  "version": "0.0.0",
+  "description": "slipbox js",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lggruspe/slipbox.git"
+  },
+  "author": "Levi Gruspe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lggruspe/slipbox/issues"
+  },
+  "homepage": "https://github.com/lggruspe/slipbox#readme",
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-html": "^6.0.2",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
