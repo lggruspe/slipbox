@@ -138,3 +138,56 @@ def test_scan(mock_db, tmp_path):
     assert not list(mock_db.execute("SELECT * FROM Html"))
     scan.scan(mock_db, [str(input_file)], "", False)
     assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
+
+def test_input_files_that_match_pattern(mock_db, tmp_path):
+    """input_files must only return files that match the input pattern."""
+    directory = tmp_path/"directory"
+    markdown = tmp_path/"input.md"
+    txt = tmp_path/"input.txt"
+    tex = tmp_path/"ignore.tex"
+    directory.mkdir()
+    markdown.touch()
+    txt.touch()
+    tex.touch()
+
+    conn = mock_db
+    timestamp = time.time()
+    patterns = ("*.md", "*.txt")
+    inputs = scan.input_files(conn, timestamp, [str(tmp_path)], patterns)
+    assert sorted(inputs) == [str(markdown), str(txt)]
+
+def test_input_files_not_in_db(mock_db, tmp_path):
+    """input_files must not include files already in the database."""
+    new = tmp_path/"new.md"
+    skip = tmp_path/"skip.md"
+    new.touch()
+    skip.touch()
+
+    conn = mock_db
+    conn.executescript(insert_file_script(str(skip)))
+
+    timestamp = time.time()
+    inputs = scan.input_files(conn, timestamp, [str(tmp_path)])
+    assert list(inputs) == [str(new)]
+
+def test_input_files_recursive(mock_db, tmp_path):
+    """input_files must find files recursively."""
+    directory = tmp_path/"directory"
+    new = directory/"new.md"
+    directory.mkdir()
+    new.touch()
+
+    conn = mock_db
+    timestamp = time.time()
+    inputs = scan.input_files(conn, timestamp, [str(tmp_path)])
+    assert sorted(inputs) == [str(new)]
+
+def test_input_files_single_input(mock_db, tmp_path):
+    """input_files must work with a single input file."""
+    new = tmp_path/"new.md"
+    new.touch()
+
+    conn = mock_db
+    timestamp = time.time()
+    inputs = scan.input_files(conn, timestamp, [str(new)])
+    assert sorted(inputs) == [str(new)]
