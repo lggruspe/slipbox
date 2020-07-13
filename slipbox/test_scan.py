@@ -89,19 +89,6 @@ def test_build_command():
     assert f"-o {output}" in cmd
     assert options in cmd
 
-def test_grouped_build_commands():
-    """grouped_build_commands must output one command per file extension.
-
-    Files with no extension are run with their own command.
-    """
-    files = ["a.md", "b.md", ".md", "c.tex", ".tex"]
-    commands = scan.grouped_build_commands(files)
-    assert len(commands) == 4
-    assert ".md" in commands[0][0]
-    assert ".tex" in commands[1][0]
-    assert "a.md b.md" in commands[2][0]
-    assert "c.tex" in commands[3][0]
-
 def test_remove_outdated_files_from_database():
     _, missing = tempfile.mkstemp()
     with make_temporary_file() as modified,\

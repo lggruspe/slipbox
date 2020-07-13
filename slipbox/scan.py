@@ -5,7 +5,6 @@ import fnmatch
 import glob
 import os
 import shlex
-import tempfile
 
 from . import utils
 
@@ -116,19 +115,6 @@ def build_command(files, output, options=""):
         cmd += " {}".format(shlex.quote(filename))
     return cmd if not empty else ""
 
-def grouped_build_commands(files, options=""):
-    """Construct pandoc commands to run on input files."""
-    assert "" not in files
-    commands = []
-    for group in group_by_file_extension(files):
-        _, output = tempfile.mkstemp(suffix=".html", text=True)
-        cmd = build_command(group, output, options)
-        if cmd:
-            commands.append((cmd, output))
-        else:
-            os.remove(output)
-    return commands
-
 def remove_outdated_files_from_database(conn, timestamp):
     """Remove outdated files from the database.
 
@@ -164,13 +150,17 @@ def store_html_sections(conn, html: str, sources: [str]):
     conn.commit()
 
 def scan(conn, inputs, scan_options, convert_to_data_url):
-    """Process inputs and store results in database."""
+    """Process inputs and store results in database.
+
+    inputs shouldn't be an iterator, because it is used multiple times.
+    """
     convert_to_data_url = "1" if convert_to_data_url else ""
-    for cmd, temp in grouped_build_commands(inputs, scan_options):
-        with utils.make_temporary_file() as slipbox_sql:
+    for batch in group_by_file_extension(inputs):
+        with utils.make_temporary_file() as slipbox_sql,\
+                utils.make_temporary_file(suffix=".html", text=True) as html:
+            cmd = build_command(batch, html, scan_options)
             utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
                               CONVERT_TO_DATA_URL=convert_to_data_url)
             run_script_on_database(conn, slipbox_sql)
-            contents = utils.get_contents(temp)
+            contents = utils.get_contents(html)
         store_html_sections(conn, contents, inputs)
-        os.remove(temp)
