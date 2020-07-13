@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpxofvgzsw</title>
+  <title>tmpwl75gxpg</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -159,6 +159,8 @@
   slipbox.notes[6].backlinks.push({ src: 10, annotation: 'The note alias is used to annotate a sequence link.' })
   slipbox.notes[10].links.push({ dest: 6, annotation: 'The note alias is used to annotate a sequence link.' })
   slipbox.notes[10].links.push({ dest: 0, annotation: '' })
+  slipbox.notes[4].backlinks.push({ src: 11, annotation: 'Direct links appear as black lines in the interactive graph.' })
+  slipbox.notes[11].links.push({ dest: 4, annotation: 'Direct links appear as black lines in the interactive graph.' })
   slipbox.notes[10].backlinks.push({ src: 11, annotation: 'Sequence links appear as red lines in the interactive graph.' })
   slipbox.notes[11].links.push({ dest: 10, annotation: 'Sequence links appear as red lines in the interactive graph.' })
   slipbox.notes[5].backlinks.push({ src: 11, annotation: 'Backlinks appear as dashed lines in the interactive graph.' })
@@ -549,60 +551,43 @@
     return element
   }
 
+  function getLinkElement (slipbox, type, source, target) {
+    console.assert(['backlink', 'direct', 'sequence'].includes(type))
+    const id = type.slice(0, 1) + `${source}-${target}`
+    const style = type === 'backlink' ? 'dashed' : 'solid'
+    const color = type === 'sequence' ? 'red' : 'black'
+    return {
+      data: { id, source, target, arrow: 'triangle', style, color }
+    }
+  }
+
   function * getNeighborElements (slipbox, id) {
     yield getNoteElement(slipbox, id, true)
 
     const note = slipbox.notes[id]
     for (const backlink of note.backlinks) {
       yield getNoteElement(slipbox, backlink.src)
-      yield {
-        data: {
-          id: `b${backlink.src}-${id}`,
-          source: backlink.src,
-          target: id,
-          arrow: 'triangle',
-          style: 'dashed',
-          color: 'black'
-        }
-      }
+      yield getLinkElement(slipbox, 'backlink', backlink.src, id)
+    }
+    for (const link of note.links) {
+      yield getNoteElement(slipbox, link.dest)
+      yield getLinkElement(slipbox, 'direct', id, link.dest)
     }
 
     for (const alias of note.aliases) {
       const parent = slipbox.aliases[alias].parent
-      let pid = -1
-      if (parent) {
-        pid = slipbox.aliases[parent].id
-      }
+      const pid = parent ? slipbox.aliases[parent].id : -1
       if (pid !== -1) {
         yield getNoteElement(slipbox, pid)
-        yield {
-          data: {
-            id: `p${pid}-${id}`,
-            source: pid,
-            target: id,
-            arrow: 'triangle',
-            style: 'solid',
-            color: 'red'
-          }
-        }
+        yield getLinkElement(slipbox, 'sequence', pid, id)
       }
-
       // children
       for (const child of slipbox.aliases[alias].children) {
         console.assert(id === slipbox.aliases[alias].id)
         const cid = slipbox.aliases[child].id
         if (!Number.isInteger(cid)) continue
         yield getNoteElement(slipbox, cid)
-        yield {
-          data: {
-            id: `c${id}-${cid}`,
-            source: id,
-            target: cid,
-            arrow: 'triangle',
-            style: 'solid',
-            color: 'red'
-          }
-        }
+        yield getLinkElement(slipbox, 'sequence', id, cid)
       }
     }
   }
@@ -795,8 +780,7 @@
 <section id="11" class="level1" title="Visualize notes using Cytoscape">
 <h1 title="Visualize notes using Cytoscape">11 Visualize notes using Cytoscape</h1>
 <p><a href="##links">#links</a> <a href="##sequence-links">#sequence-links</a> <a href="##backlinks">#backlinks</a> <a href="##visualization">#visualization</a> <a href="##interactive">#interactive</a></p>
-<p>An interactive visualization of your notes will appear below the See also section if the active note is connected to other notes. <!--Black lines represent [direct links][11-4].--> The red lines represent <a href="#10" title="Sequence links appear as red lines in the interactive graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks appear as dashed lines in the interactive graph.">backlinks</a> [5].</p>
-<!--[11-4]: #4 "Direct links appear as black lines in the interactive graph."-->
+<p>An interactive visualization of your notes will appear below the See also section if the active note is connected to other notes. Black lines represent <a href="#4" title="Direct links appear as black lines in the interactive graph.">direct links</a> [4], red lines represent <a href="#10" title="Sequence links appear as red lines in the interactive graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks appear as dashed lines in the interactive graph.">backlinks</a> [5].</p>
 </section>
 <section id="12" class="level1" title="How to link to images">
 <h1 title="How to link to images">12 How to link to images</h1>

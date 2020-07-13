@@ -22,60 +22,43 @@ function getNoteElement (slipbox, id, currentNote = false) {
   return element
 }
 
+function getLinkElement (slipbox, type, source, target) {
+  console.assert(['backlink', 'direct', 'sequence'].includes(type))
+  const id = type.slice(0, 1) + `${source}-${target}`
+  const style = type === 'backlink' ? 'dashed' : 'solid'
+  const color = type === 'sequence' ? 'red' : 'black'
+  return {
+    data: { id, source, target, arrow: 'triangle', style, color }
+  }
+}
+
 function * getNeighborElements (slipbox, id) {
   yield getNoteElement(slipbox, id, true)
 
   const note = slipbox.notes[id]
   for (const backlink of note.backlinks) {
     yield getNoteElement(slipbox, backlink.src)
-    yield {
-      data: {
-        id: `b${backlink.src}-${id}`,
-        source: backlink.src,
-        target: id,
-        arrow: 'triangle',
-        style: 'dashed',
-        color: 'black'
-      }
-    }
+    yield getLinkElement(slipbox, 'backlink', backlink.src, id)
+  }
+  for (const link of note.links) {
+    yield getNoteElement(slipbox, link.dest)
+    yield getLinkElement(slipbox, 'direct', id, link.dest)
   }
 
   for (const alias of note.aliases) {
     const parent = slipbox.aliases[alias].parent
-    let pid = -1
-    if (parent) {
-      pid = slipbox.aliases[parent].id
-    }
+    const pid = parent ? slipbox.aliases[parent].id : -1
     if (pid !== -1) {
       yield getNoteElement(slipbox, pid)
-      yield {
-        data: {
-          id: `p${pid}-${id}`,
-          source: pid,
-          target: id,
-          arrow: 'triangle',
-          style: 'solid',
-          color: 'red'
-        }
-      }
+      yield getLinkElement(slipbox, 'sequence', pid, id)
     }
-
     // children
     for (const child of slipbox.aliases[alias].children) {
       console.assert(id === slipbox.aliases[alias].id)
       const cid = slipbox.aliases[child].id
       if (!Number.isInteger(cid)) continue
       yield getNoteElement(slipbox, cid)
-      yield {
-        data: {
-          id: `c${id}-${cid}`,
-          source: id,
-          target: cid,
-          arrow: 'triangle',
-          style: 'solid',
-          color: 'red'
-        }
-      }
+      yield getLinkElement(slipbox, 'sequence', id, cid)
     }
   }
 }

@@ -183,11 +183,11 @@ Note 0 contains sequence links for these notes [](#0).
 
 An interactive visualization of your notes will appear below the See
 also section if the active note is connected to other notes.
-<!--Black lines represent [direct links][11-4].-->
-The red lines represent [sequence links][11-10].
+Black lines represent [direct links][11-4], red lines represent
+[sequence links][11-10].
 Dashed lines represent [backlinks][11-5].
 
-<!--[11-4]: #4 "Direct links appear as black lines in the interactive graph."-->
+[11-4]: #4 "Direct links appear as black lines in the interactive graph."
 [11-5]: #5 "Backlinks appear as dashed lines in the interactive graph."
 [11-10]: #10 "Sequence links appear as red lines in the interactive graph."
 
