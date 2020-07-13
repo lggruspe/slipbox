@@ -12,26 +12,28 @@ def insert_file_script(*files):
     sql = "INSERT INTO Files (filename) VALUES ({})"
     return sql.format("), (".join(map(sqlite_string, files)))
 
-def test_is_recently_modified():
+def test_is_recently_modified(tmp_path):
     before = time.time()
-    with make_temporary_file() as temp:
-        os.utime(temp, ns=(time.time_ns(), time.time_ns()))
-        after = time.time()
-        modified_before = scan.is_recently_modified(before)
-        modified_after = scan.is_recently_modified(after)
-        assert modified_before(temp)
-        assert not modified_after(temp)
+    path = tmp_path/"file"
+    path.touch()
+    os.utime(path, ns=(time.time_ns(), time.time_ns()))
+    after = time.time()
+    modified_before = scan.is_recently_modified(before)
+    modified_after = scan.is_recently_modified(after)
 
-        os.utime(temp, ns=(time.time_ns(), time.time_ns()))
-        assert modified_after(temp)
+    assert modified_before(path)
+    assert not modified_after(path)
 
-def test_is_file_in_db(mock_db):
+    os.utime(path, ns=(time.time_ns(), time.time_ns()))
+    assert modified_after(path)
+
+def test_is_file_in_db(mock_db, tmp_path):
     conn = mock_db
-    with make_temporary_file() as present,\
-            make_temporary_file() as absent:
-        conn.executescript(insert_file_script(present))
-        assert scan.is_file_in_db(present, conn)
-        assert not scan.is_file_in_db(absent, conn)
+    present = tmp_path/"present"
+    absent = tmp_path/"absent"
+    conn.executescript(insert_file_script(present.name))
+    assert scan.is_file_in_db(present.name, conn)
+    assert not scan.is_file_in_db(absent.name, conn)
 
 def test_has_valid_pattern():
     patterns = ("*.md", "*.rst")
@@ -39,17 +41,18 @@ def test_has_valid_pattern():
     assert scan.has_valid_pattern("a.rst", patterns)
     assert not scan.has_valid_pattern("a.tex", patterns)
 
-def test_files_in_path():
-    basedir = os.path.curdir
-    with tempfile.TemporaryDirectory(dir=basedir) as tempdir,\
-            make_temporary_file(dir=tempdir) as inside,\
-            make_temporary_file(dir=basedir) as outside,\
-            tempfile.TemporaryDirectory(dir=tempdir) as nested:
-        files = list(map(os.path.abspath, scan.files_in_path(tempdir)))
-        assert inside in files
-        assert outside not in files
-        assert tempdir not in files
-        assert nested not in files
+def test_files_in_path(tmp_path):
+    subdir = tmp_path/"subdir"
+    inside = subdir/"inside.md"
+    outside = tmp_path/"outside.md"
+    nested = subdir/"nested"
+    subdir.mkdir(); inside.touch(); outside.touch(); nested.mkdir()
+
+    files = list(map(os.path.abspath, scan.files_in_path(subdir)))
+    assert str(inside) in files
+    assert str(outside) not in files
+    assert str(subdir) not in files
+    assert str(nested) not in files
 
 def test_find_new_files(mock_db):
     conn = mock_db
