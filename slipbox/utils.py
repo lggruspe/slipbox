@@ -35,6 +35,6 @@ def run_command(cmd, **kwargs):
     """
     env = os.environ.copy()
     env.update(**kwargs)
-    proc = subprocess.run(shlex.split(cmd), env=env, check=False,
+    proc = subprocess.run(shlex.split(cmd), env=env, check=True,
                           capture_output=True)
     return proc.stdout, proc.stderr

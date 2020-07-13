@@ -1,8 +1,11 @@
 """Test scan.py."""
 
 import os
+import shutil
 import tempfile
 import time
+
+import pytest
 
 from . import scan
 from .utils import make_temporary_file, sqlite_string
@@ -46,7 +49,10 @@ def test_files_in_path(tmp_path):
     inside = subdir/"inside.md"
     outside = tmp_path/"outside.md"
     nested = subdir/"nested"
-    subdir.mkdir(); inside.touch(); outside.touch(); nested.mkdir()
+    subdir.mkdir()
+    inside.touch()
+    outside.touch()
+    nested.mkdir()
 
     files = list(map(os.path.abspath, scan.files_in_path(subdir)))
     assert str(inside) in files
@@ -111,3 +117,12 @@ def test_remove_outdated_files_from_database(mock_db):
         assert not scan.is_file_in_db(missing, conn)
         assert not scan.is_file_in_db(modified, conn)
         assert scan.is_file_in_db(temp, conn)
+
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+def test_scan(mock_db, tmp_path):
+    """Smoke test for scan."""
+    input_file = tmp_path/"input.md"
+    input_file.write_text("# 1 Test note\n\nHello, world!\n")
+    assert not list(mock_db.execute("SELECT * FROM Html"))
+    scan.scan(mock_db, [str(input_file)], "", False)
+    assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
