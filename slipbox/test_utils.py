@@ -35,24 +35,25 @@ def test_make_temporary_file():
     assert ext == ".txt"
 
 @pytest.mark.skipif(not shutil.which("grep"), reason="requires grep")
-def test_run_command():
+def test_run_command(tmp_path):
     """run_command must return stdout and stderr output."""
-    with utils.make_temporary_file(suffix=".txt", text=True) as foo,\
-            utils.make_temporary_file(suffix=".txt", text=True) as bar:
-        utils.write_lines(foo, ["foo"])
-        utils.write_lines(bar, ["bar"])
-        out, err = utils.run_command("grep foo {} {}".format(
-            shlex.quote(foo), shlex.quote(bar)
-        ))
-        assert not err
-        assert foo in out.decode()
-        assert bar not in out.decode()
-        out, err = utils.run_command("grep bar {} {}".format(
-            shlex.quote(foo), shlex.quote(bar)
-        ))
-        assert not err
-        assert foo not in out.decode()
-        assert bar in out.decode()
+    first = tmp_path/"first.txt"
+    second = tmp_path/"second.txt"
+    first.write_text("first")
+    second.write_text("second")
+
+    out, err = utils.run_command("grep first {} {}".format(
+        shlex.quote(str(first)), shlex.quote(str(second))
+    ))
+    assert not err
+    assert str(first) in out.decode()
+    assert str(second) not in out.decode()
+    out, err = utils.run_command("grep second {} {}".format(
+        shlex.quote(str(first)), shlex.quote(str(second))
+    ))
+    assert not err
+    assert str(first) not in out.decode()
+    assert str(second) in out.decode()
 
 @pytest.mark.skipif(not shutil.which("env"), reason="requires env")
 def test_run_command_with_kwargs():
