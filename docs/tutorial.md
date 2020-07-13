@@ -1,4 +1,4 @@
-# 0 Tutorial: Note 0 is the entry point
+# 0 Note 0 is the entry point
 
 `slipbox` assumes that note 0 is the first page.
 You can use it as an entry point to your notes.
@@ -13,10 +13,8 @@ You can use it as an entry point to your notes.
 - Another way to look for notes is by using text search [](#13 '0f').
 - Backlinks and sequence links appear in the 'See also' section of each note [](#8 '0a2').
 - You can add citations by specifying a bibliography file [](#7 '0d').
-- You can visualize notes using `slipbox.graph` [](#11 '0e').
+- Cytoscape.js provides an interactive visualization of your notes [](#11 '0e').
     + How to link to images? [](#12 '0e1').
-
-![](tutorial.png){ width=100% }
 
 # 1 Every note has an ID and a title
 
@@ -180,26 +178,18 @@ Note 0 contains sequence links for these notes [](#0).
 
 [10-6]: #6 "The note alias is used to annotate a sequence link."
 
-# 11 Visualize notes using `slipbox.graph`
-#tools #links #sequence-links #backlinks #visualization
+# 11 Visualize notes using Cytoscape
+#links #sequence-links #backlinks #visualization #interactive
 
-```bash
-python -m slipbox notes.db notes -d ' -o notes.html'
-python -m slipbox.graph notes.db -d -s -b -o notes.dot
-dot notes.dot -Tpng -o notes.png
-```
-
-The output would look something like this.
-
-![](tutorial.png){ width=100% }
-
-Black lines represent [direct links][11-4] and red lines represent
-[sequence links][11-10].
+An interactive visualization of your notes will appear below the See
+also section if the active note is connected to other notes.
+<!--Black lines represent [direct links][11-4].-->
+The red lines represent [sequence links][11-10].
 Dashed lines represent [backlinks][11-5].
 
-[11-4]: #4 "Direct links can be visualized using slipbox.graph."
-[11-5]: #5 "Backlinks can be visualized using slipbox.graph."
-[11-10]: #10 "Sequence links can be visualized using slipbox.graph."
+<!--[11-4]: #4 "Direct links appear as black lines in the interactive graph."-->
+[11-5]: #5 "Backlinks appear as dashed lines in the interactive graph."
+[11-10]: #10 "Sequence links appear as red lines in the interactive graph."
 
 # 12 How to link to images
 #images #links

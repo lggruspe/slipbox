@@ -8,8 +8,7 @@ Features
 
 - Citations via `pandoc-citeproc`
 - Stores notes data in an sqlite database
-- Single-page HTML output with backlinks and folgezettel links
-- Generates dot graphs of note connections
+- Single-page HTML output with backlinks and Folgezettel links
 - Incremental compilation
 - Fuzzy text search
 - Interactive visualization of Folgezettels
@@ -20,7 +19,6 @@ Requirements
 - `pandoc`
 - `python3`
 - `grep`
-- `graphviz`
 
 Installation
 ------------

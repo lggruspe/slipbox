@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp3ngwtt5o</title>
+  <title>tmp06pvxqri</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -86,7 +86,7 @@
     aliases: {},
     notes: {}
   }
-  slipbox.notes[0] = { title: 'Tutorial: Note 0 is the entry point', aliases: [], backlinks: [] }
+  slipbox.notes[0] = { title: 'Note 0 is the entry point', aliases: [], backlinks: [] }
   slipbox.notes[1] = { title: 'Every note has an ID and a title', aliases: [], backlinks: [] }
   slipbox.notes[2] = { title: 'A file can contain multiple notes', aliases: [], backlinks: [] }
   slipbox.notes[3] = { title: 'You can use hashtags anywhere in the note', aliases: [], backlinks: [] }
@@ -97,7 +97,7 @@
   slipbox.notes[8] = { title: 'See also section: backlinks and sequence links', aliases: [], backlinks: [] }
   slipbox.notes[9] = { title: 'How to derive note aliases', aliases: [], backlinks: [] }
   slipbox.notes[10] = { title: 'How to create a sequence link', aliases: [], backlinks: [] }
-  slipbox.notes[11] = { title: 'Visualize notes using slipbox.graph', aliases: [], backlinks: [] }
+  slipbox.notes[11] = { title: 'Visualize notes using Cytoscape', aliases: [], backlinks: [] }
   slipbox.notes[12] = { title: 'How to link to images', aliases: [], backlinks: [] }
   slipbox.notes[13] = { title: 'Text search', aliases: [], backlinks: [] }
   slipbox.notes[1].aliases.push('0a')
@@ -135,9 +135,8 @@
   slipbox.notes[5].backlinks.push({ src: 8, annotation: 'Backlinks appear in the See also section.' })
   slipbox.notes[6].backlinks.push({ src: 8, annotation: 'Immediate neighbors appear in the See also section.' })
   slipbox.notes[6].backlinks.push({ src: 10, annotation: 'The note alias is used to annotate a sequence link.' })
-  slipbox.notes[4].backlinks.push({ src: 11, annotation: 'Direct links can be visualized using slipbox.graph.' })
-  slipbox.notes[10].backlinks.push({ src: 11, annotation: 'Sequence links can be visualized using slipbox.graph.' })
-  slipbox.notes[5].backlinks.push({ src: 11, annotation: 'Backlinks can be visualized using slipbox.graph.' })
+  slipbox.notes[10].backlinks.push({ src: 11, annotation: 'Sequence links appear as red lines in the interactive graph.' })
+  slipbox.notes[5].backlinks.push({ src: 11, annotation: 'Backlinks appear as dashed lines in the interactive graph.' })
   slipbox.aliases['0a1'].parent = '0a'
   slipbox.aliases['0a'].children.push('0a1')
   slipbox.aliases['0a2'].parent = '0a'
@@ -643,8 +642,8 @@
   </script>
 </head>
 <body>
-<section id="0" class="level1" title="Tutorial: Note 0 is the entry point">
-<h1 title="Tutorial: Note 0 is the entry point">0 Tutorial: Note 0 is the entry point</h1>
+<section id="0" class="level1" title="Note 0 is the entry point">
+<h1 title="Note 0 is the entry point">0 Note 0 is the entry point</h1>
 <p><code>slipbox</code> assumes that note 0 is the first page. You can use it as an entry point to your notes.</p>
 <ul>
 <li>You can organize your notes in files in many ways  [<a href="#2" title="0b">0b</a>].</li>
@@ -659,12 +658,11 @@
 <li>Another way to look for notes is by using text search  [<a href="#13" title="0f">0f</a>].</li>
 <li>Backlinks and sequence links appear in the ‘See also’ section of each note  [<a href="#8" title="0a2">0a2</a>].</li>
 <li>You can add citations by specifying a bibliography file  [<a href="#7" title="0d">0d</a>].</li>
-<li>You can visualize notes using <code>slipbox.graph</code>  [<a href="#11" title="0e">0e</a>].
+<li>Cytoscape.js provides an interactive visualization of your notes  [<a href="#11" title="0e">0e</a>].
 <ul>
 <li>How to link to images?  [<a href="#12" title="0e1">0e1</a>].</li>
 </ul></li>
 </ul>
-<p><img src="tutorial.png" style="width:100.0%" /></p>
 </section>
 <section id="1" class="level1" title="Every note has an ID and a title">
 <h1 title="Every note has an ID and a title">1 Every note has an ID and a title</h1>
@@ -750,26 +748,22 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">[</span><span class="ot">Text</span><span class="co">](#11 &#39;10a1b3&#39;)</span></span></code></pre></div>
 <p>Note 0 contains sequence links for these notes  [<a href="#0">0</a>].</p>
 </section>
-<section id="11" class="level1" title="Visualize notes using slipbox.graph">
-<h1 title="Visualize notes using slipbox.graph">11 Visualize notes using <code>slipbox.graph</code></h1>
-<p><a href="##tools">#tools</a> <a href="##links">#links</a> <a href="##sequence-links">#sequence-links</a> <a href="##backlinks">#backlinks</a> <a href="##visualization">#visualization</a></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -d <span class="st">&#39; -o notes.html&#39;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">python</span> -m slipbox.graph notes.db -d -s -b -o notes.dot</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">dot</span> notes.dot -Tpng -o notes.png</span></code></pre></div>
-<p>The output would look something like this.</p>
-<p><img src="tutorial.png" style="width:100.0%" /></p>
-<p>Black lines represent <a href="#4" title="Direct links can be visualized using slipbox.graph.">direct links</a> [4] and red lines represent <a href="#10" title="Sequence links can be visualized using slipbox.graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks can be visualized using slipbox.graph.">backlinks</a> [5].</p>
+<section id="11" class="level1" title="Visualize notes using Cytoscape">
+<h1 title="Visualize notes using Cytoscape">11 Visualize notes using Cytoscape</h1>
+<p><a href="##links">#links</a> <a href="##sequence-links">#sequence-links</a> <a href="##backlinks">#backlinks</a> <a href="##visualization">#visualization</a> <a href="##interactive">#interactive</a></p>
+<p>An interactive visualization of your notes will appear below the See also section if the active note is connected to other notes. <!--Black lines represent [direct links][11-4].--> The red lines represent <a href="#10" title="Sequence links appear as red lines in the interactive graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks appear as dashed lines in the interactive graph.">backlinks</a> [5].</p>
+<!--[11-4]: #4 "Direct links appear as black lines in the interactive graph."-->
 </section>
 <section id="12" class="level1" title="How to link to images">
 <h1 title="How to link to images">12 How to link to images</h1>
 <p><a href="##images">#images</a> <a href="##links">#links</a></p>
 <p>You can <a href="#4">link</a> [4] to images using absolute paths, relative paths and URLs. Relative paths are interpreted to be relative to the output HTML.</p>
 <p>Suppose you have the following directory structure.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="ex">notes/input.md</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="ex">output.html</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">notes/input.md</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">output.html</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
 <p>You could link to <code>image.png</code> from <code>notes/input.md</code> as:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="al">![description](images/image.png)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="al">![description](images/image.png)</span></span></code></pre></div>
 </section>
 <section id="13" class="level1" title="Text search">
 <h1 title="Text search">13 Text search</h1>
@@ -868,7 +862,7 @@
     <li>
       [11] 
       <a href='#11'>
-        Visualize notes using slipbox.graph
+        Visualize notes using Cytoscape
       </a>
     </li>
   </ul>
@@ -899,6 +893,21 @@
       [12] 
       <a href='#12'>
         How to link to images
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#interactive' title='#interactive' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #interactive
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [11] 
+      <a href='#11'>
+        Visualize notes using Cytoscape
       </a>
     </li>
   </ul>
@@ -940,7 +949,7 @@
     <li>
       [11] 
       <a href='#11'>
-        Visualize notes using slipbox.graph
+        Visualize notes using Cytoscape
       </a>
     </li>
     <li>
@@ -1006,7 +1015,7 @@
     <li>
       [11] 
       <a href='#11'>
-        Visualize notes using slipbox.graph
+        Visualize notes using Cytoscape
       </a>
     </li>
   </ul>
@@ -1069,12 +1078,6 @@
         Specify a bibliography file to use citations
       </a>
     </li>
-    <li>
-      [11] 
-      <a href='#11'>
-        Visualize notes using slipbox.graph
-      </a>
-    </li>
   </ul>
 </section>
 <section id='#visualization' title='#visualization' class='level1'>
@@ -1087,7 +1090,7 @@
     <li>
       [11] 
       <a href='#11'>
-        Visualize notes using slipbox.graph
+        Visualize notes using Cytoscape
       </a>
     </li>
   </ul>
@@ -1125,6 +1128,11 @@
     <li>
       <a href='##images'>
         #images
+      </a>
+    </li>
+    <li>
+      <a href='##interactive'>
+        #interactive
       </a>
     </li>
     <li>
