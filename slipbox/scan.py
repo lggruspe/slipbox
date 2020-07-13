@@ -156,11 +156,14 @@ def scan(conn, inputs, scan_options, convert_to_data_url):
     """
     convert_to_data_url = "1" if convert_to_data_url else ""
     for batch in group_by_file_extension(inputs):
+        files = list(batch)
+        scan_input_list = " ".join(map(shlex.quote, files))
         with utils.make_temporary_file() as slipbox_sql,\
                 utils.make_temporary_file(suffix=".html", text=True) as html:
-            cmd = build_command(batch, html, scan_options)
+            cmd = build_command(files, html, scan_options)
             utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
-                              CONVERT_TO_DATA_URL=convert_to_data_url)
+                              CONVERT_TO_DATA_URL=convert_to_data_url,
+                              SCAN_INPUT_LIST=scan_input_list)
             run_script_on_database(conn, slipbox_sql)
             contents = utils.get_contents(html)
         store_html_sections(conn, contents, inputs)
