@@ -29,7 +29,12 @@ def make_temporary_file(*args, **kwargs):
     os.remove(filename)
 
 def run_command(cmd, **kwargs):
-    """Run command with environment variables in kwargs."""
+    """Run command with environment variables in kwargs.
+
+    Returns stdout and stderr output.
+    """
     env = os.environ.copy()
     env.update(**kwargs)
-    subprocess.run(shlex.split(cmd), env=env, check=False)
+    proc = subprocess.run(shlex.split(cmd), env=env, check=False,
+                          capture_output=True)
+    return proc.stdout, proc.stderr

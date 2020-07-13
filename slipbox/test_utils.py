@@ -1,6 +1,9 @@
 """Test utils.py."""
 
 import os
+import shlex
+import shutil
+import pytest
 
 from . import utils
 
@@ -30,3 +33,31 @@ def test_make_temporary_file():
     assert not os.path.exists(filename)
     _, ext = os.path.splitext(filename)
     assert ext == ".txt"
+
+@pytest.mark.skipif(not shutil.which("grep"), reason="requires grep")
+def test_run_command():
+    """run_command must return stdout and stderr output."""
+    with utils.make_temporary_file(suffix=".txt", text=True) as foo,\
+            utils.make_temporary_file(suffix=".txt", text=True) as bar:
+        utils.write_lines(foo, ["foo"])
+        utils.write_lines(bar, ["bar"])
+        out, err = utils.run_command("grep foo {} {}".format(
+            shlex.quote(foo), shlex.quote(bar)
+        ))
+        assert not err
+        assert foo in out.decode()
+        assert bar not in out.decode()
+        out, err = utils.run_command("grep bar {} {}".format(
+            shlex.quote(foo), shlex.quote(bar)
+        ))
+        assert not err
+        assert foo not in out.decode()
+        assert bar in out.decode()
+
+@pytest.mark.skipif(not shutil.which("env"), reason="requires env")
+def test_run_command_with_kwargs():
+    """Keyword arguments to run_command must be used as environment variables.
+    """
+    out, err = utils.run_command("env", ZZZZZZZZZZ="ZZZZZZZZZZ")
+    assert not err
+    assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in out.decode()
