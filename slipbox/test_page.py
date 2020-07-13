@@ -1,7 +1,6 @@
 """Test page.py."""
 
 from . import page
-from .mock import mock_database
 
 SQL = """
     PRAGMA foreign_keys=ON;
@@ -20,10 +19,11 @@ SQL = """
         (0, 'ref-test');
 """
 
-def test_create_bibliography():
+def test_create_bibliography(mock_db):
     """Check create_bibliography output."""
-    with mock_database(SQL) as conn:
-        html = page.create_bibliography(conn)
+    conn = mock_db
+    conn.executescript(SQL)
+    html = page.create_bibliography(conn)
     assert html == """<section id='references' title='References' class='level1'>
   <h1>
     References
@@ -40,10 +40,11 @@ def test_create_bibliography():
   </dl>
 </section>"""
 
-def test_create_tags():
+def test_create_tags(mock_db):
     """Check create_tags output."""
-    with mock_database(SQL) as conn:
-        html = page.create_tags(conn)
+    conn = mock_db
+    conn.executescript(SQL)
+    html = page.create_tags(conn)
     assert html == """<section id='tags' title='Tags' class='level1'>
   <h1>
     Tags
@@ -62,10 +63,11 @@ def test_create_tags():
   </ul>
 </section>"""
 
-def test_create_tag_page():
+def test_create_tag_page(mock_db):
     """Check create_tag_page output."""
-    with mock_database(SQL) as conn:
-        html = page.create_tag_page(conn, "#test")
+    conn = mock_db
+    conn.executescript(SQL)
+    html = page.create_tag_page(conn, "#test")
     assert html == """<section id='#test' title='#test' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
@@ -88,10 +90,11 @@ def test_create_tag_page():
   </ul>
 </section>"""
 
-def test_create_reference_page():
+def test_create_reference_page(mock_db):
     """Check create_reference_page output."""
-    with mock_database(SQL) as conn:
-        html = page.create_reference_page(conn, "ref-test")
+    conn = mock_db
+    conn.executescript(SQL)
+    html = page.create_reference_page(conn, "ref-test")
     assert html == """<section id='ref-test' title='ref-test' class='level1'>
   <h1>
     <a href='#references'>

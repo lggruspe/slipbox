@@ -5,7 +5,6 @@ import tempfile
 import time
 
 from . import scan
-from .mock import mock_database
 from .utils import make_temporary_file, sqlite_string
 
 def insert_file_script(*files):
@@ -26,10 +25,11 @@ def test_is_recently_modified():
         os.utime(temp, ns=(time.time_ns(), time.time_ns()))
         assert modified_after(temp)
 
-def test_is_file_in_db():
+def test_is_file_in_db(mock_db):
+    conn = mock_db
     with make_temporary_file() as present,\
-            make_temporary_file() as absent,\
-            mock_database(insert_file_script(present)) as conn:
+            make_temporary_file() as absent:
+        conn.executescript(insert_file_script(present))
         assert scan.is_file_in_db(present, conn)
         assert not scan.is_file_in_db(absent, conn)
 
@@ -51,12 +51,13 @@ def test_files_in_path():
         assert tempdir not in files
         assert nested not in files
 
-def test_find_new_files():
+def test_find_new_files(mock_db):
+    conn = mock_db
     with make_temporary_file(suffix=".md") as present,\
             make_temporary_file(suffix=".md") as absent,\
             tempfile.TemporaryDirectory() as tempdir,\
-            make_temporary_file(suffix=".txt") as txt,\
-            mock_database(insert_file_script(present)) as conn:
+            make_temporary_file(suffix=".txt") as txt:
+        conn.executescript(insert_file_script(present))
         paths = [present, absent, tempdir, txt]
         new_files = list(scan.find_new_files(conn, paths))
         assert present not in new_files
@@ -89,11 +90,12 @@ def test_build_command():
     assert f"-o {output}" in cmd
     assert options in cmd
 
-def test_remove_outdated_files_from_database():
+def test_remove_outdated_files_from_database(mock_db):
+    conn = mock_db
     _, missing = tempfile.mkstemp()
     with make_temporary_file() as modified,\
-            make_temporary_file() as temp,\
-            mock_database(insert_file_script(missing, modified, temp)) as conn:
+            make_temporary_file() as temp:
+        conn.executescript(insert_file_script(missing, modified, temp))
         assert scan.is_file_in_db(missing, conn)
         assert scan.is_file_in_db(modified, conn)
         assert scan.is_file_in_db(temp, conn)
