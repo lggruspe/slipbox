@@ -1,14 +1,12 @@
 """Test scan.py."""
-
 import os
 import shutil
-import tempfile
 import time
 
 import pytest
 
 from . import scan
-from .utils import make_temporary_file, sqlite_string
+from .utils import sqlite_string
 
 def insert_file_script(*files):
     """Create SQL query string to insert into the Files table."""
@@ -60,19 +58,23 @@ def test_files_in_path(tmp_path):
     assert str(subdir) not in files
     assert str(nested) not in files
 
-def test_find_new_files(mock_db):
+def test_find_new_files(mock_db, tmp_path):
+    """find_new_files must only return existing files that aren't yet in the
+    database and match the input patterns (*.md by default).
+    """
     conn = mock_db
-    with make_temporary_file(suffix=".md") as present,\
-            make_temporary_file(suffix=".md") as absent,\
-            tempfile.TemporaryDirectory() as tempdir,\
-            make_temporary_file(suffix=".txt") as txt:
-        conn.executescript(insert_file_script(present))
-        paths = [present, absent, tempdir, txt]
-        new_files = list(scan.find_new_files(conn, paths))
-        assert present not in new_files
-        assert absent in new_files
-        assert tempdir not in new_files
-        assert txt not in new_files
+    present = tmp_path/"present.md"
+    absent = tmp_path/"absent.md"
+    directory = tmp_path/"directory"
+    txt = tmp_path/"ignore.txt"
+    present.touch()
+    absent.touch()
+    directory.mkdir()
+    txt.touch()
+
+    conn.executescript(insert_file_script(str(present)))
+    new_files = list(scan.find_new_files(conn, [str(tmp_path)]))
+    assert new_files == [str(absent)]
 
 def test_group_by_file_extension():
     files = ["a.md", "b.md", ".md", "c.tex", ".tex", ""]
@@ -99,24 +101,34 @@ def test_build_command():
     assert f"-o {output}" in cmd
     assert options in cmd
 
-def test_remove_outdated_files_from_database(mock_db):
+def test_remove_outdated_files_from_database(mock_db, tmp_path):
+    """remove_outdated_files_from_database must remove:
+
+    - Files that have been deleted from the file system.
+    - Files that have been modified since the most recent scan.
+    """
     conn = mock_db
-    _, missing = tempfile.mkstemp()
-    with make_temporary_file() as modified,\
-            make_temporary_file() as temp:
-        conn.executescript(insert_file_script(missing, modified, temp))
-        assert scan.is_file_in_db(missing, conn)
-        assert scan.is_file_in_db(modified, conn)
-        assert scan.is_file_in_db(temp, conn)
+    missing = tmp_path/"missing.md"
+    modified = tmp_path/"modified.md"
+    temp = tmp_path/"temp.md"
+    missing.touch()
+    modified.touch()
+    temp.touch()
 
-        timestamp = time.time()
-        os.remove(missing)
-        os.utime(modified, ns=(time.time_ns(), time.time_ns()))
-        scan.remove_outdated_files_from_database(conn, timestamp)
+    conn.executescript(insert_file_script(str(missing), str(modified), str(temp)))
+    assert scan.is_file_in_db(str(missing), conn)
+    assert scan.is_file_in_db(str(modified), conn)
+    assert scan.is_file_in_db(str(temp), conn)
 
-        assert not scan.is_file_in_db(missing, conn)
-        assert not scan.is_file_in_db(modified, conn)
-        assert scan.is_file_in_db(temp, conn)
+    timestamp = time.time()
+    missing.unlink()
+    os.utime(modified, ns=(time.time_ns(), time.time_ns()))
+
+    scan.remove_outdated_files_from_database(conn, timestamp)
+
+    assert not scan.is_file_in_db(str(missing), conn)
+    assert not scan.is_file_in_db(str(modified), conn)
+    assert scan.is_file_in_db(str(temp), conn)
 
 @pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_scan(mock_db, tmp_path):
