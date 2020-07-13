@@ -1,7 +1,8 @@
 local header = require "filters/header"
 
-local function grep_headers()
-  local command = [[grep -rIoZ "[0-9]\+\s\+.\+"]]
+local function grep_headers(options)
+  local command = [[grep -rIoZ "[0-9]\+\s\+.\+" ]]
+  if options and options ~= "" then command = command .. options end
   return io.popen(command):lines()
 end
 
