@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpmg4npdh0</title>
+  <title>tmpjtjh53zh</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -450,21 +450,23 @@
     }
   }
 
-  let _previousHash = window.location.hash;
-  function changeSection () {
-    const oldSection = getSectionFromHash(_previousHash);
-    if (oldSection) {
-      oldSection.style.display = 'none';
+  function createSectionChanger () {
+    let _previousHash = window.location.hash;
+    return function () {
+      const oldSection = getSectionFromHash(_previousHash);
+      if (oldSection) {
+        oldSection.style.display = 'none';
+      }
+      _previousHash = window.location.hash;
+      const newSection = getSectionFromHash(_previousHash);
+      if (newSection) {
+        newSection.style.display = '';
+        document.title = newSection.title || 'Slipbox';
+      } else {
+        window.location.hash = '#0';
+      }
+      window.scrollTo(0, 0);
     }
-    _previousHash = window.location.hash;
-    const newSection = getSectionFromHash(_previousHash);
-    if (newSection) {
-      newSection.style.display = '';
-      document.title = newSection.title || 'Slipbox';
-    } else {
-      window.location.hash = '#0';
-    }
-    window.scrollTo(0, 0);
   }
 
   function addNotFoundSection () {
@@ -480,6 +482,8 @@
   function init$2 () {
     window.addEventListener('DOMContentLoaded', addNotFoundSection);
     window.addEventListener('DOMContentLoaded', hideSections);
+
+    const changeSection = createSectionChanger();
     window.addEventListener('DOMContentLoaded', changeSection);
     window.addEventListener('hashchange', changeSection);
   }
@@ -536,7 +540,7 @@
     console.assert(slipbox.notes);
     console.assert(typeof (id) === 'number');
     const notes = slipbox.notes;
-    const note = notes[id] || { backlinks: [] };
+    const note = notes[id] || { links: [] };
     for (const link of note.links) {
       console.assert(typeof (link.dest) === 'number');
       console.assert(notes[link.dest]);

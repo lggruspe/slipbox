@@ -29,21 +29,23 @@ function getSectionFromHash (hash) {
   }
 }
 
-let _previousHash = window.location.hash
-function changeSection () {
-  const oldSection = getSectionFromHash(_previousHash)
-  if (oldSection) {
-    oldSection.style.display = 'none'
+function createSectionChanger () {
+  let _previousHash = window.location.hash
+  return function () {
+    const oldSection = getSectionFromHash(_previousHash)
+    if (oldSection) {
+      oldSection.style.display = 'none'
+    }
+    _previousHash = window.location.hash
+    const newSection = getSectionFromHash(_previousHash)
+    if (newSection) {
+      newSection.style.display = ''
+      document.title = newSection.title || 'Slipbox'
+    } else {
+      window.location.hash = '#0'
+    }
+    window.scrollTo(0, 0)
   }
-  _previousHash = window.location.hash
-  const newSection = getSectionFromHash(_previousHash)
-  if (newSection) {
-    newSection.style.display = ''
-    document.title = newSection.title || 'Slipbox'
-  } else {
-    window.location.hash = '#0'
-  }
-  window.scrollTo(0, 0)
 }
 
 function addNotFoundSection () {
@@ -59,6 +61,8 @@ function addNotFoundSection () {
 function init () {
   window.addEventListener('DOMContentLoaded', addNotFoundSection)
   window.addEventListener('DOMContentLoaded', hideSections)
+
+  const changeSection = createSectionChanger()
   window.addEventListener('DOMContentLoaded', changeSection)
   window.addEventListener('hashchange', changeSection)
 }
