@@ -15,7 +15,7 @@ check: bundle
 	@echo "Yay!"
 
 .PHONY:	docs
-docs:
+docs:	bundle
 	python -m slipbox docs/docs.db docs/tutorial.md \
 		-c ' --bibliography docs/tutorial.bib' \
 		-d ' -o docs/index.html -c basic.css'

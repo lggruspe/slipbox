@@ -10,7 +10,7 @@ function createGraphArea () {
   return div
 }
 
-function getNoteElement (slipbox, id, currentNote = false) {
+function getNoteElement (id, currentNote = false) {
   const element = {
     data: {
       id: id,
@@ -23,7 +23,7 @@ function getNoteElement (slipbox, id, currentNote = false) {
   return element
 }
 
-function getLinkElement (slipbox, type, source, target) {
+function getLinkElement (type, source, target) {
   console.assert(['backlink', 'direct', 'sequence'].includes(type))
   const id = type.slice(0, 1) + `${source}-${target}`
   const style = type === 'backlink' ? 'dashed' : 'solid'
@@ -34,32 +34,32 @@ function getLinkElement (slipbox, type, source, target) {
 }
 
 function * getNeighborElements (slipbox, id) {
-  yield getNoteElement(slipbox, id, true)
+  yield getNoteElement(id, true)
 
   const note = slipbox.notes[id]
   for (const backlink of note.backlinks) {
-    yield getNoteElement(slipbox, backlink.src)
-    yield getLinkElement(slipbox, 'backlink', backlink.src, id)
+    yield getNoteElement(backlink.src)
+    yield getLinkElement('backlink', backlink.src, id)
   }
   for (const link of note.links) {
-    yield getNoteElement(slipbox, link.dest)
-    yield getLinkElement(slipbox, 'direct', id, link.dest)
+    yield getNoteElement(link.dest)
+    yield getLinkElement('direct', id, link.dest)
   }
 
   for (const alias of note.aliases) {
     const parent = slipbox.aliases[alias].parent
     const pid = parent ? slipbox.aliases[parent].id : -1
     if (pid !== -1) {
-      yield getNoteElement(slipbox, pid)
-      yield getLinkElement(slipbox, 'sequence', pid, id)
+      yield getNoteElement(pid)
+      yield getLinkElement('sequence', pid, id)
     }
     // children
     for (const child of slipbox.aliases[alias].children) {
       console.assert(id === slipbox.aliases[alias].id)
       const cid = slipbox.aliases[child].id
       if (!Number.isInteger(cid)) continue
-      yield getNoteElement(slipbox, cid)
-      yield getLinkElement(slipbox, 'sequence', id, cid)
+      yield getNoteElement(cid)
+      yield getLinkElement('sequence', id, cid)
     }
   }
 }
