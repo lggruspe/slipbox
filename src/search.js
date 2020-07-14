@@ -1,4 +1,4 @@
-import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.0/dist/fuse.esm.js'
+import Fuse from 'fuse.js'
 
 function createFuse () {
   const options = {

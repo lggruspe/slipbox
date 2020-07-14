@@ -1,4 +1,4 @@
-import cytoscape from 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.2/cytoscape.esm.min.js'
+import cytoscape from 'cytoscape'
 
 function createGraphArea () {
   const div = document.createElement('div')
