@@ -12,6 +12,12 @@ check: bundle
 	pylint slipbox --fail-under=9
 	@echo "Yay!"
 
+.PHONY:	docs
+docs:
+	python -m slipbox docs/docs.db docs/tutorial.md \
+		-c ' --bibliography docs/tutorial.bib' \
+		-d ' -o docs/index.html -c basic.css'
+
 .PHONY:	dist
 dist:	bundle check
 	python setup.py sdist bdist_wheel
