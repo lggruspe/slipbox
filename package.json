@@ -8,6 +8,7 @@
     "example": "examples"
   },
   "scripts": {
+    "lint": "eslint src --global slipbox",
     "test": "mocha"
   },
   "type": "module",
@@ -25,7 +26,6 @@
     "cytoscape": "^3.15.2",
     "eslint": "^7.4.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-html": "^6.0.2",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",

@@ -10,7 +10,6 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: 'module'
   },
-  plugins: ['html'],
   rules: {
   }
 }
