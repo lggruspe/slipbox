@@ -52,7 +52,7 @@ function * generateDirectLinkLis (slipbox, id) {
   console.assert(slipbox.notes)
   console.assert(typeof (id) === 'number')
   const notes = slipbox.notes
-  const note = notes[id] || { backlinks: [] }
+  const note = notes[id] || { links: [] }
   for (const link of note.links) {
     console.assert(typeof (link.dest) === 'number')
     console.assert(notes[link.dest])
