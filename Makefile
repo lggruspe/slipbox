@@ -11,3 +11,8 @@ check:
 .PHONY:	bundle
 bundle:
 	npx rollup -c
+
+.PHONY:	dist
+dist:	bundle check
+	python setup.py sdist bdist_wheel
+	twine upload dist/*
