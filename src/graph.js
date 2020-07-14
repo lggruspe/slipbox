@@ -115,7 +115,7 @@ function createCytoscape (container, elements) {
   })
 }
 
-function init () {
+function init (slipbox) {
   let container = createGraphArea()
 
   function resetGraph () {
@@ -123,7 +123,7 @@ function init () {
     const id = Number(window.location.hash.slice(1))
     if (!Number.isInteger(id)) return
 
-    const elements = Array.from(getNeighborElements(window.slipbox, id))
+    const elements = Array.from(getNeighborElements(slipbox, id))
     if (elements.length < 2) return
 
     container = createGraphArea()

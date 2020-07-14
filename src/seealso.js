@@ -180,13 +180,13 @@ function seeAlso (slipbox, hash) {
   setSeeAlsoDiv(slipbox, id)
 }
 
-function init () {
+function init (slipbox) {
   window.addEventListener('hashchange', function () {
-    seeAlso(window.slipbox, window.location.hash)
+    seeAlso(slipbox, window.location.hash)
   })
 
   window.addEventListener('DOMContentLoaded', function () {
-    seeAlso(window.slipbox, window.location.hash)
+    seeAlso(slipbox, window.location.hash)
   })
 }
 

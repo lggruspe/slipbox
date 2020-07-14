@@ -4,6 +4,6 @@ import * as SeeAlso from './seealso.js'
 import * as Toggle from './toggle.js'
 
 Search.init()
-SeeAlso.init()
+SeeAlso.init(slipbox)
 Toggle.init()
-Graph.init()
+Graph.init(slipbox)
