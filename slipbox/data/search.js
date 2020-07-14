@@ -1,3 +1,5 @@
+import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.0/dist/fuse.esm.js'
+
 function createFuse () {
   const options = {
     includeMatches: true,
@@ -89,7 +91,11 @@ function createSearchButton () {
   return a
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-  document.body.appendChild(createSearchPage())
-  document.body.insertBefore(createSearchButton(), document.body.firstChild)
-})
+function init () {
+  window.addEventListener('DOMContentLoaded', function () {
+    document.body.appendChild(createSearchPage())
+    document.body.insertBefore(createSearchButton(), document.body.firstChild)
+  })
+}
+
+export { init }

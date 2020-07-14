@@ -56,7 +56,11 @@ function addNotFoundSection () {
   document.body.appendChild(section)
 }
 
-window.addEventListener('DOMContentLoaded', addNotFoundSection)
-window.addEventListener('DOMContentLoaded', hideSections)
-window.addEventListener('DOMContentLoaded', changeSection)
-window.addEventListener('hashchange', changeSection)
+function init () {
+  window.addEventListener('DOMContentLoaded', addNotFoundSection)
+  window.addEventListener('DOMContentLoaded', hideSections)
+  window.addEventListener('DOMContentLoaded', changeSection)
+  window.addEventListener('hashchange', changeSection)
+}
+
+export { init, getSectionFromHash }

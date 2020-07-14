@@ -1,3 +1,5 @@
+import cytoscape from 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.2/cytoscape.esm.min.js'
+
 function createGraphArea () {
   const div = document.createElement('div')
   div.style.width = '100%'
@@ -113,7 +115,7 @@ function createCytoscape (container, elements) {
   })
 }
 
-function initGraph () {
+function init () {
   let container = createGraphArea()
 
   function resetGraph () {
@@ -121,7 +123,7 @@ function initGraph () {
     const id = Number(window.location.hash.slice(1))
     if (!Number.isInteger(id)) return
 
-    const elements = Array.from(getNeighborElements(slipbox, id))
+    const elements = Array.from(getNeighborElements(window.slipbox, id))
     if (elements.length < 2) return
 
     container = createGraphArea()
@@ -136,4 +138,4 @@ function initGraph () {
   window.addEventListener('hashchange', resetGraph)
 }
 
-initGraph()
+export { init }

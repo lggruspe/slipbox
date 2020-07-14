@@ -1,3 +1,5 @@
+import { getSectionFromHash } from './toggle.js'
+
 function A (innerText, href, title) {
   const a = document.createElement('a')
   a.innerText = innerText
@@ -178,10 +180,14 @@ function seeAlso (slipbox, hash) {
   setSeeAlsoDiv(slipbox, id)
 }
 
-window.addEventListener('hashchange', function () {
-  seeAlso(slipbox, window.location.hash)
-})
+function init () {
+  window.addEventListener('hashchange', function () {
+    seeAlso(window.slipbox, window.location.hash)
+  })
 
-window.addEventListener('DOMContentLoaded', function () {
-  seeAlso(slipbox, window.location.hash)
-})
+  window.addEventListener('DOMContentLoaded', function () {
+    seeAlso(window.slipbox, window.location.hash)
+  })
+}
+
+export { init }
