@@ -141,8 +141,8 @@ class Sequence {
 
 class Link {
   constructor (src, dest, annotation) {
-    check(Number.isInteger(src), 'non-integer Link.src')
-    check(Number.isInteger(dest), 'non-integer Link.dest')
+    check(src instanceof Note, 'invalid src Note')
+    check(dest instanceof Note, 'invalid dest Note')
     check(typeof annotation === 'string', 'non-string Link.annotation')
 
     this.src = src
@@ -151,12 +151,12 @@ class Link {
   }
 
   addTo (db) {
-    // src and dest notes must exist.
-    // Existing entries get overwritten.
-    const src = db.data.notes[this.src]
-    const dest = db.data.notes[this.dest]
-    if (!src || !dest) return
+    const src = db.data.notes[this.src.id]
+    const dest = db.data.notes[this.dest.id]
+    if (!src) return new ReferenceError('Link.src')
+    if (!dest) return new ReferenceError('Link.dest')
 
+    // Existing entries get overwritten.
     const link = {
       src: this.src,
       dest: this.dest,
@@ -206,23 +206,17 @@ class Query {
     return note
   }
 
-  * links (id) {
-    const src = this.db.data.notes[id] || { links: [] }
-    for (const link of src.links) {
-      const dest = this.note(link.dest)
-      if (dest) {
-        yield { note: dest, annotation: link.annotation }
-      }
+  * links (note) {
+    const src = this.db.data.notes[note.id]
+    if (src && src.links) {
+      yield * src.links
     }
   }
 
-  * backlinks (id) {
-    const dest = this.db.data.notes[id] || { backlinks: [] }
-    for (const backlink of dest.backlinks) {
-      const src = this.note(backlink.src)
-      if (src) {
-        yield { note: src, annotation: backlink.annotation }
-      }
+  * backlinks (note) {
+    const dest = this.db.data.notes[note.id]
+    if (dest && dest.backlinks) {
+      yield * dest.backlinks
     }
   }
 

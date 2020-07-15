@@ -220,9 +220,11 @@ describe('Database', function () {
 
     describe('between nonexistent notes', function () {
       it('should be ignored', function () {
-        db.add(new Note(0, 'note'))
-        db.add(new Link(0, 1, 'oops'))
-        db.add(new Link(1, 0, 'oops'))
+        const n0 = db.add(new Note(0, 'note 0'))
+        const n1 = new Note(1, 'note 1')
+
+        db.add(new Link(n0, n1, 'oops'))
+        db.add(new Link(n1, n0, 'oops'))
 
         assert(db.data.notes[0].links.length === 0)
         assert(db.data.notes[0].backlinks.length === 0)
@@ -231,12 +233,12 @@ describe('Database', function () {
 
     describe('without annotation', function () {
       it('should not generate backlink', function () {
-        db.add(new Note(0, 'src'))
-        db.add(new Note(1, 'dest'))
-        db.add(new Link(0, 1, ''))
+        const n0 = db.add(new Note(0, 'src'))
+        const n1 = db.add(new Note(1, 'dest'))
+        db.add(new Link(n0, n1, ''))
 
         assert(db.data.notes[0].links.length === 1)
-        assert(db.data.notes[0].links[0].dest === 1)
+        assert(db.data.notes[0].links[0].dest === n1)
         assert(db.data.notes[0].links[0].annotation === '')
 
         assert(db.data.notes[0].backlinks.length === 0)
@@ -246,12 +248,12 @@ describe('Database', function () {
 
     describe('with annotation', function () {
       it('should generate backlink', function () {
-        db.add(new Note(0, 'src'))
-        db.add(new Note(1, 'dest'))
-        db.add(new Link(0, 1, 'annotation'))
+        const n0 = db.add(new Note(0, 'src'))
+        const n1 = db.add(new Note(1, 'dest'))
+        db.add(new Link(n0, n1, 'annotation'))
 
         assert(db.data.notes[0].links.length === 1)
-        assert(db.data.notes[0].links[0].dest === 1)
+        assert(db.data.notes[0].links[0].dest === n1)
         assert(db.data.notes[0].links[0].annotation === 'annotation')
 
         assert(db.data.notes[1].links.length === 0)
@@ -269,11 +271,11 @@ describe('Database', function () {
 
 describe('Query', function () {
   const query = new Query(new Database())
-  query.db.add(new Note(0, 'Note 0'))
-  query.db.add(new Note(1, 'Note 1'))
-  query.db.add(new Note(2, 'Note 2'))
-  query.db.add(new Link(0, 1, '0->1'))
-  query.db.add(new Link(1, 2, ''))
+  const n0 = query.db.add(new Note(0, 'Note 0'))
+  const n1 = query.db.add(new Note(1, 'Note 1'))
+  const n2 = query.db.add(new Note(2, 'Note 2'))
+  query.db.add(new Link(n0, n1, '0->1'))
+  query.db.add(new Link(n1, n2, ''))
 
   describe('note', function () {
     describe('non-integer ID', function () {
@@ -303,43 +305,37 @@ describe('Query', function () {
   })
 
   describe('links', function () {
-    describe('non-integer ID', function () {
+    describe('from non-existent note', function () {
       it("shouldn't yield anything", function () {
-        const result = Array.from(query.links('invalid'))
+        const result = Array.from(query.links(new Note(1000, 'title')))
         assert(result.length === 0)
       })
     })
 
     describe('valid note ID', function () {
       it('should return direct links from the note', function () {
-        const result = Array.from(query.links('0'))
+        const result = Array.from(query.links(n0))
         assert.strictEqual(result.length, 1)
-        assert.strictEqual(result[0].note.id, 1)
-        assert.strictEqual(result[0].note.title, 'Note 1')
-        assert.strictEqual(result[0].annotation, '0->1')
+        assert.strictEqual(result[0].dest, n1)
       })
     })
   })
 
   describe('backlinks', function () {
     it('should yield annotated links', function () {
-      const result = Array.from(query.backlinks(1))
+      const result = Array.from(query.backlinks(n1))
       assert.strictEqual(result.length, 1)
-      assert.strictEqual(result[0].note.id, 0)
-      assert.strictEqual(result[0].note.title, 'Note 0')
-      assert.strictEqual(result[0].annotation, '0->1')
+      assert.strictEqual(result[0].src, n0)
     })
 
     it("shouldn't yield unannotated links", function () {
-      const backlinks = Array.from(query.backlinks(2))
+      const backlinks = Array.from(query.backlinks(n2))
       assert.strictEqual(backlinks.length, 0)
 
       // even if there are forward links
-      const links = Array.from(query.links(1))
+      const links = Array.from(query.links(n1))
       assert.strictEqual(links.length, 1)
-      assert.strictEqual(links[0].note.id, 2)
-      assert.strictEqual(links[0].note.title, 'Note 2')
-      assert.strictEqual(links[0].annotation, '')
+      assert.strictEqual(links[0].dest, n2)
     })
   })
 
