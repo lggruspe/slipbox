@@ -33,34 +33,25 @@ function getLinkElement (type, source, target) {
   }
 }
 
-function * getNeighborElements (slipbox, id) {
+function * neighborElements (query, id) {
   yield getNoteElement(id, true)
+  const note = query.note(id)
 
-  const note = slipbox.notes[id]
-  for (const backlink of note.backlinks) {
-    yield getNoteElement(backlink.src)
-    yield getLinkElement('backlink', backlink.src, id)
+  for (const backlink of note.backlinks()) {
+    yield getNoteElement(backlink.src.id)
+    yield getLinkElement('backlink', backlink.src.id, id)
   }
-  for (const link of note.links) {
-    yield getNoteElement(link.dest)
-    yield getLinkElement('direct', id, link.dest)
+  for (const link of note.links()) {
+    yield getNoteElement(link.dest.id)
+    yield getLinkElement('direct', id, link.dest.id)
   }
-
-  for (const alias of note.aliases) {
-    const parent = slipbox.aliases[alias].parent
-    const pid = parent ? slipbox.aliases[parent].id : -1
-    if (pid !== -1) {
-      yield getNoteElement(pid)
-      yield getLinkElement('sequence', pid, id)
-    }
-    // children
-    for (const child of slipbox.aliases[alias].children) {
-      console.assert(id === slipbox.aliases[alias].id)
-      const cid = slipbox.aliases[child].id
-      if (!Number.isInteger(cid)) continue
-      yield getNoteElement(cid)
-      yield getLinkElement('sequence', id, cid)
-    }
+  for (const parent of note.parents()) {
+    yield getNoteElement(parent.note.id)
+    yield getLinkElement('sequence', parent.note.id, id)
+  }
+  for (const child of note.children()) {
+    yield getNoteElement(child.note.id)
+    yield getLinkElement('sequence', id, child.note.id)
   }
 }
 
@@ -115,7 +106,7 @@ function createCytoscape (container, elements) {
   })
 }
 
-function init (slipbox) {
+function init (query) {
   let container = createGraphArea()
 
   function resetGraph () {
@@ -123,7 +114,7 @@ function init (slipbox) {
     const id = Number(window.location.hash.slice(1))
     if (!Number.isInteger(id)) return
 
-    const elements = Array.from(getNeighborElements(slipbox, id))
+    const elements = Array.from(neighborElements(query, id))
     if (elements.length < 2) return
 
     container = createGraphArea()
