@@ -200,10 +200,18 @@ describe('Database', function () {
       it('should be ignored', function () {
         db.add(new Note(0, 'src'))
         db.add(new Note(1, 'dest'))
-        db.add(new Link(0, 1, null))
 
-        db.add(new Link(0, null, 'oops'))
-        db.add(new Link(null, 1, 'oops'))
+        assert.throws(
+          () => db.add(new Link(0, 1, null)),
+          InvalidAttributeError)
+
+        assert.throws(
+          () => db.add(new Link(0, null, 'oops')),
+          InvalidAttributeError)
+
+        assert.throws(
+          () => db.add(new Link(null, 1, 'oops')),
+          InvalidAttributeError)
 
         assert(db.data.notes[0].links.length === 0)
         assert(db.data.notes[0].backlinks.length === 0)

@@ -139,9 +139,9 @@ class Sequence {
 
 class Link {
   constructor (src, dest, annotation) {
-    console.assert(Number.isInteger(src))
-    console.assert(Number.isInteger(dest))
-    console.assert(typeof annotation === 'string')
+    check(Number.isInteger(src), 'non-integer Link.src')
+    check(Number.isInteger(dest), 'non-integer Link.dest')
+    check(typeof annotation === 'string', 'non-string Link.annotation')
 
     this.src = src
     this.dest = dest
@@ -149,10 +149,6 @@ class Link {
   }
 
   addTo (db) {
-    if (!Number.isInteger(this.src)) return
-    if (!Number.isInteger(this.dest)) return
-    if (typeof this.annotation !== 'string') return
-
     // src and dest notes must exist.
     // Existing entries get overwritten.
 
