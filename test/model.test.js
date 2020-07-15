@@ -325,13 +325,10 @@ describe('Query', function () {
   describe('backlinks', function () {
     it('should yield annotated links', function () {
       const result = Array.from(query.backlinks(1))
-      /*
-       * TODO
       assert.strictEqual(result.length, 1)
       assert.strictEqual(result[0].note.id, 0)
       assert.strictEqual(result[0].note.title, 'Note 0')
       assert.strictEqual(result[0].annotation, '0->1')
-      */
     })
 
     it("shouldn't yield unannotated links", function () {
