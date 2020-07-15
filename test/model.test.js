@@ -2,11 +2,12 @@ import {
   Alias,
   aliasParent,
   Database,
-  InvalidAttributeError,
+  DomainError,
   isSequence,
   Link,
   Note,
   Query,
+  ReferenceError,
   Sequence
 } from '../src/model.js'
 
@@ -43,16 +44,16 @@ describe('Database', function () {
 
   describe('add Note', function () {
     describe('with invalid note attributes', function () {
-      it('should raise InvalidAttributeError', function () {
+      it('should raise DomainError', function () {
         db.add(new Note(0, 'title'))
 
         assert.throws(
           () => db.add(new Note('1', null)),
-          InvalidAttributeError)
+          DomainError)
 
         assert.throws(
           () => db.add(new Note(2, '')),
-          InvalidAttributeError)
+          DomainError)
 
         assert.strictEqual(db.data.notes.length, 1)
       })
@@ -72,7 +73,7 @@ describe('Database', function () {
 
   describe('add Alias', function () {
     describe('with malformed alias', function () {
-      it('should raise InvalidAttributeError', function () {
+      it('should raise DomainError', function () {
         db.add(new Note(0, 'foo'))
         db.add(new Note(1, 'bar'))
         db.add(new Note(2, 'baz'))
@@ -81,7 +82,7 @@ describe('Database', function () {
 
         assert.throws(
           () => db.add(new Alias(1, 'a1')),
-          InvalidAttributeError)
+          DomainError)
 
         assert(db.data.notes.length === 3)
         assert(db.data.notes[0].aliases.length === 1)
@@ -94,10 +95,8 @@ describe('Database', function () {
     })
 
     describe('for nonexistent note', function () {
-      it('should raise InvalidAttributeError', function () {
-        assert.throws(
-          () => db.add(new Alias(0, '1a')),
-          InvalidAttributeError)
+      it('should return ReferenceError', function () {
+        assert(db.add(new Alias(0, '1a')) instanceof ReferenceError)
         assert(db.data.notes.length === 0)
         assert(!db.data.aliases['1a'])
       })
@@ -106,7 +105,7 @@ describe('Database', function () {
 
   describe('add Sequence', function () {
     describe('with malformed aliases', function () {
-      it('should raise InvalidAttributeError', function () {
+      it('should raise DomainError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
         db.add(new Alias(0, '2'))
@@ -115,11 +114,11 @@ describe('Database', function () {
 
         assert.throws(
           () => db.add(new Sequence('2', 'b')),
-          InvalidAttributeError)
+          DomainError)
 
         assert.throws(
           () => db.add(new Sequence(null, null)),
-          InvalidAttributeError)
+          DomainError)
 
         assert(!db.data.aliases['b'])
         assert.equal(db.data.aliases['2'].children.length, 1)
@@ -128,19 +127,19 @@ describe('Database', function () {
     })
 
     describe('with null aliases', function () {
-      it('should raise InvalidAttributeError', function () {
+      it('should raise DomainError', function () {
         db.add(new Note(0, 'note'))
         db.add(new Alias(0, '2'))
 
         assert.throws(
           () => db.add(new Sequence(null, '2')),
-          InvalidAttributeError)
+          DomainError)
 
         assert(db.data.aliases['2'].parent === null)
 
         assert.throws(
           () => db.add(new Sequence('', '2')),
-          InvalidAttributeError)
+          DomainError)
 
         assert(db.data.aliases['2'].parent === null)
       })
@@ -155,7 +154,7 @@ describe('Database', function () {
     })
 
     describe('with non-sequential aliases', function () {
-      it('should raise InvalidAttributeError', function () {
+      it('should raise DomainError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
         db.add(new Alias(0, '2'))
@@ -163,11 +162,11 @@ describe('Database', function () {
 
         assert.throws(
           () => db.add(new Sequence('2a', '2')),
-          InvalidAttributeError)
+          DomainError)
 
         assert.throws(
           () => db.add(new Sequence('2', '3')),
-          InvalidAttributeError)
+          DomainError)
 
         assert(db.data.aliases['2'].children.length === 0)
         assert(db.data.aliases['2a'].children.length === 0)
@@ -196,21 +195,21 @@ describe('Database', function () {
 
   describe('add Link', function () {
     describe('with malformed attributes', function () {
-      it('should raise InvalidAttributeError', function () {
+      it('should raise DomainError', function () {
         db.add(new Note(0, 'src'))
         db.add(new Note(1, 'dest'))
 
         assert.throws(
           () => db.add(new Link(0, 1, null)),
-          InvalidAttributeError)
+          DomainError)
 
         assert.throws(
           () => db.add(new Link(0, null, 'oops')),
-          InvalidAttributeError)
+          DomainError)
 
         assert.throws(
           () => db.add(new Link(null, 1, 'oops')),
-          InvalidAttributeError)
+          DomainError)
 
         assert(db.data.notes[0].links.length === 0)
         assert(db.data.notes[0].backlinks.length === 0)

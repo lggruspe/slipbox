@@ -52,14 +52,17 @@ class Database {
   }
 
   add (record) {
-    return record.addTo(this)
+    const error = record.addTo(this)
+    return error ? error : record
   }
 }
 
-class InvalidAttributeError extends Error {}
+class IntegrityError extends Error {}
+class DomainError extends IntegrityError {}
+class ReferenceError extends IntegrityError {}
 
 function check (condition, message) {
-  if (!condition) throw new InvalidAttributeError(message)
+  if (!condition) throw new DomainError(message)
 }
 
 class Note {
@@ -98,8 +101,7 @@ class Alias {
     // Overwrite existing entry in aliases.
     // Note with ID must exist.
     const note = db.data.notes[this.id]
-    check(note, 'invalid reference from Alias.id')
-    // should this be an exception?
+    if (!note) return new ReferenceError('Alias.id')
 
     db.data.aliases[this.alias] = {
       id: this.id,
@@ -246,10 +248,11 @@ export {
   Alias,
   aliasParent,
   Database,
-  InvalidAttributeError,
+  DomainError,
   isSequence,
   Link,
   Note,
   Query,
+  ReferenceError,
   Sequence
 }
