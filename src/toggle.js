@@ -59,11 +59,11 @@ function addNotFoundSection () {
 }
 
 function init () {
-  window.addEventListener('DOMContentLoaded', addNotFoundSection)
-  window.addEventListener('DOMContentLoaded', hideSections)
+  addNotFoundSection()
+  hideSections()
 
   const changeSection = createSectionChanger()
-  window.addEventListener('DOMContentLoaded', changeSection)
+  changeSection()
   window.addEventListener('hashchange', changeSection)
 }
 

@@ -25,51 +25,47 @@ def generate_active_htmls(conn):
 def generate_note_data(conn):
     """Generate slipbox note data in javascript."""
     for nid, title in conn.execute("SELECT id, title FROM Notes ORDER BY id"):
-        yield ("slipbox.notes[{}] = {{ title: {}, aliases: [], links: [], backlinks: [] }}"
-               .format(nid, repr(title)))
+        yield f"window.query.db.add(new Model.Note({nid}, {title!r}))"
+
+def generate_alias_data(conn):
+    """Generate slipbox alias data in javascript."""
     sql = "SELECT id, alias FROM ValidAliases ORDER BY id, alias"
     for nid, alias in conn.execute(sql):
-        yield "slipbox.notes[{}].aliases.push({})".format(nid, repr(alias))
-        yield "slipbox.aliases[{}] = {{ id: {}, children: [] }}".format(
-            repr(alias), nid)
+        yield f"window.query.db.add(new Model.Alias({nid}, {alias!r}))"
 
 def generate_link_data(conn):
     """Generate slipbox link data in javascript."""
     sql = "SELECT src, dest, annotation FROM ValidLinks"
     for src, dest, annotation in conn.execute(sql):
-        if annotation:
-            yield ("slipbox.notes[{}].backlinks.push({{ src: {}, annotation: {} }})"
-                   .format(dest, src, repr(annotation)))
-        yield ("slipbox.notes[{}].links.push({{ dest: {}, annotation: {} }})"
-               .format(src, dest, repr(annotation)))
+        yield f"""window.query.db.add(new Model.Link(
+  window.query.note({src}), window.query.note({dest}), {annotation!r}))"""
 
 def generate_sequence_data(conn):
     """Generate slipbox sequence data in javascript."""
     sql = "SELECT prev, next FROM Sequences ORDER BY prev, next"
     for prev, next_ in conn.execute(sql):
-        yield f"slipbox.aliases[{next_!r}].parent = {prev!r}"
-        yield f"slipbox.aliases[{prev!r}].children.push({next_!r})"
+        yield f"window.query.db.add(new Model.Sequence({prev!r}, {next_!r}))"
 
 def generate_data(conn):
     """Generate slipbox data in javascript."""
-    yield """const slipbox = {
-  aliases: {},
-  notes: {}
-}"""
     yield from generate_note_data(conn)
     yield from generate_link_data(conn)
+    yield from generate_alias_data(conn)
     yield from generate_sequence_data(conn)
 
 def generate_javascript(conn):
     """Generate slipbox javascript code."""
-    yield '<script type="text/javascript">'
-    yield from generate_data(conn)
-    yield "</script>"
     yield '<script type="module">'
     basedir = os.path.dirname(__file__)
     with open(os.path.join(basedir, "data/bundle.js")) as file:
         yield file.read().strip()
     yield '</script>'
+    yield '<script type="text/javascript">'
+    yield "window.addEventListener('DOMContentLoaded', () => {"
+    yield from generate_data(conn)
+    yield "window.initSlipbox()"
+    yield "})"
+    yield "</script>"
 
 def create_bibliography(conn):
     """Create bibliography HTML section from database entries."""

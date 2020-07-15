@@ -92,10 +92,8 @@ function createSearchButton () {
 }
 
 function init () {
-  window.addEventListener('DOMContentLoaded', function () {
-    document.body.appendChild(createSearchPage())
-    document.body.insertBefore(createSearchButton(), document.body.firstChild)
-  })
+  document.body.appendChild(createSearchPage())
+  document.body.insertBefore(createSearchButton(), document.body.firstChild)
 }
 
 export { init }

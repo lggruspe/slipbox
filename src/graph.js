@@ -125,7 +125,7 @@ function init (query) {
     cy.center()
   }
 
-  window.addEventListener('DOMContentLoaded', resetGraph)
+  resetGraph()
   window.addEventListener('hashchange', resetGraph)
 }
 

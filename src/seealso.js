@@ -105,9 +105,12 @@ function createSeeAlsoDiv (query, id) {
 }
 
 function createAliasesP (query, id) {
-  const note = query.note(id)
   const p = document.createElement('p')
   p.id = 'slipbox-aliases'
+
+  const note = query.note(id)
+  if (!note) return p
+
   const aliases = Array.from(note.aliases()).map(alias => {
     const span = document.createElement('span')
     span.appendChild(document.createTextNode(' ['))
@@ -148,13 +151,9 @@ function seeAlso (query, hash) {
 }
 
 function init (query) {
-  window.addEventListener('hashchange', function () {
-    seeAlso(query, window.location.hash)
-  })
-
-  window.addEventListener('DOMContentLoaded', function () {
-    seeAlso(query, window.location.hash)
-  })
+  const handler = () => seeAlso(query, window.location.hash)
+  window.addEventListener('hashchange', handler)
+  handler()
 }
 
 export { init }
