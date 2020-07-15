@@ -43,7 +43,7 @@ describe('Database', function () {
 
   describe('add Note', function () {
     describe('with invalid note attributes', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         db.add(new Note(0, 'title'))
 
         assert.throws(
@@ -72,7 +72,7 @@ describe('Database', function () {
 
   describe('add Alias', function () {
     describe('with malformed alias', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         db.add(new Note(0, 'foo'))
         db.add(new Note(1, 'bar'))
         db.add(new Note(2, 'baz'))
@@ -94,7 +94,7 @@ describe('Database', function () {
     })
 
     describe('for nonexistent note', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         assert.throws(
           () => db.add(new Alias(0, '1a')),
           InvalidAttributeError)
@@ -106,7 +106,7 @@ describe('Database', function () {
 
   describe('add Sequence', function () {
     describe('with malformed aliases', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
         db.add(new Alias(0, '2'))
@@ -128,7 +128,7 @@ describe('Database', function () {
     })
 
     describe('with null aliases', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         db.add(new Note(0, 'note'))
         db.add(new Alias(0, '2'))
 
@@ -149,14 +149,13 @@ describe('Database', function () {
     describe('with nonexistent aliases', function () {
       it('should be ignored', function () {
         db.add(new Sequence('0', '0a'))
-        assert(db.data.notes.length === 0)
         assert(!db.data.aliases['0'])
         assert(!db.data.aliases['0a'])
       })
     })
 
     describe('with non-sequential aliases', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
         db.add(new Alias(0, '2'))
@@ -197,7 +196,7 @@ describe('Database', function () {
 
   describe('add Link', function () {
     describe('with malformed attributes', function () {
-      it('should be ignored', function () {
+      it('should raise InvalidAttributeError', function () {
         db.add(new Note(0, 'src'))
         db.add(new Note(1, 'dest'))
 
@@ -223,7 +222,6 @@ describe('Database', function () {
     describe('between nonexistent notes', function () {
       it('should be ignored', function () {
         db.add(new Note(0, 'note'))
-
         db.add(new Link(0, 1, 'oops'))
         db.add(new Link(1, 0, 'oops'))
 

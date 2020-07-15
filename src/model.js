@@ -151,7 +151,6 @@ class Link {
   addTo (db) {
     // src and dest notes must exist.
     // Existing entries get overwritten.
-
     const src = db.data.notes[this.src]
     const dest = db.data.notes[this.dest]
     if (!src || !dest) return
