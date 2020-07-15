@@ -276,6 +276,9 @@ describe('Query', function () {
   const n2 = query.db.add(new Note(2, 'Note 2'))
   query.db.add(new Link(n0, n1, '0->1'))
   query.db.add(new Link(n1, n2, ''))
+  query.db.add(new Alias(1, '0a'))
+  query.db.add(new Alias(2, '0a1'))
+  const s = query.db.add(new Sequence('0a', '0a1'))
 
   describe('note', function () {
     describe('non-integer ID', function () {
@@ -340,10 +343,46 @@ describe('Query', function () {
   })
 
   describe('parent', function () {
+    describe('of non-existent alias', function () {
+      it("should be null", function () {
+        assert(query.parent('1') === null)
+      })
+    })
 
+    describe('of alias with no parent', function () {
+      it('should be null', function () {
+        assert(query.db.data.aliases['0a'])
+        assert(query.parent('0a') === null)
+      })
+    })
+
+    it('should return Note and alias', function () {
+      const parent = query.parent('0a1')
+      assert(parent.note.equals(n1))
+      assert.strictEqual(parent.alias, '0a')
+    })
   })
 
   describe('children', function () {
+    describe('of non-existent alias', function () {
+      it("shouldn't yield anything", function () {
+        const result = Array.from(query.children('1a'))
+        assert(result.length === 0)
+      })
+    })
 
+    describe('of alias with no children', function () {
+      it("shouldn't yield anything", function () {
+        const result = Array.from(query.children('0a1'))
+        assert(result.length === 0)
+      })
+    })
+
+    it('should yield Note and alias', function () {
+      const result = Array.from(query.children('0a'))
+      assert.strictEqual(result.length, 1)
+      assert(result[0].note.equals(n2))
+      assert.strictEqual(result[0].alias, '0a1')
+    })
   })
 })

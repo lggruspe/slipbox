@@ -52,8 +52,7 @@ class Database {
   }
 
   add (record) {
-    const error = record.addTo(this)
-    return error ? error : record
+    return record.addTo(this) || record
   }
 }
 
@@ -83,6 +82,10 @@ class Note {
       links: [],
       backlinks: []
     }
+  }
+
+  equals (note) {
+    return this.id === note.id && this.title === note.title
   }
 }
 
@@ -221,19 +224,28 @@ class Query {
   }
 
   parent (alias) {
-    const parentAlias = this.db.data.aliases[alias].parent
-    if (parentAlias) {
-      const parentID = this.db.data.aliases[parentAlias].id
-      return { note: this.note(parentID), annotation: parentAlias }
+    const record = this.db.data.aliases[alias]
+    if (!record || !record.parent) return null
+
+    const parentRecord = this.db.data.aliases[record.parent]
+    if (!parentRecord || !parentRecord.id) return null
+    return {
+      note: this.note(parentRecord.id),
+      alias: record.parent
     }
   }
 
   * children (alias) {
-    const children = this.db.data.aliases[alias].children || []
-    for (const childAlias of children) {
-      const childID = this.db.data.aliases[childAlias]
-      const child = this.note(childID)
-      yield { note: child, annotation: childAlias }
+    const record = this.db.data.aliases[alias]
+    if (record) {
+      const children = record.children || []
+      for (const childAlias of children) {
+        const childRecord = this.db.data.aliases[childAlias]
+        if (!childRecord) continue
+        const childID = childRecord.id
+        const child = this.note(childID)
+        if (child) yield { note: child, alias: childAlias }
+      }
     }
   }
 }
