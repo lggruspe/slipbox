@@ -285,7 +285,7 @@ describe('Query', function () {
 
     describe('integer ID', function () {
       it('should return note with integer ID', function () {
-        const note = query.note('0')
+        const note = query.note(0)
         assert.strictEqual(note.title, 'Note 0')
         assert.strictEqual(note.id, 0)
         assert.strictEqual(typeof note.links, 'function')

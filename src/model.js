@@ -173,34 +173,35 @@ class Query {
   }
 
   note (id) {
-    id = Number(id)
-    if (!Number.isInteger(Number(id))) return null
-    const note = this.db.data.notes[id]
-    if (!note) return null
+    const record = this.db.data.notes[id]
+    if (!record) return null
+
+    const note = new Note(id, record.title)
+
+    note.links = () => this.links(id)
+    note.backlinks = () => this.backlinks(id)
+
+    note.aliases = function * () {
+      yield * record.aliases
+    }
 
     const self = this
-    return {
-      id: id,
-      title: note.title,
-      links: () => this.links(id),
-      backlinks: () => this.backlinks(id),
-      aliases: function * () {
-        yield * note.aliases
-      },
-      parents: function * () {
-        for (const alias of note.aliases) {
-          const parent = self.parent(alias)
-          if (parent) {
-            yield parent
-          }
-        }
-      },
-      children: function * () {
-        for (const alias of note.aliases) {
-          yield * self.children(alias)
+    note.parents = function * () {
+      for (const alias of record.aliases) {
+        const parent = self.parent(alias)
+        if (parent) {
+          yield parent
         }
       }
     }
+
+    note.children = function * () {
+      for (const alias of record.aliases) {
+        yield * self.children(alias)
+      }
+    }
+
+    return note
   }
 
   * links (id) {
