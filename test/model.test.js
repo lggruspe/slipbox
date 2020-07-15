@@ -386,3 +386,118 @@ describe('Query', function () {
     })
   })
 })
+
+describe('Query.note', function () {
+  let query = null
+
+  beforeEach(function () {
+    query = new Query(new Database())
+    const n0 = query.db.add(new Note(0, 'note 0'))
+    const n1 = query.db.add(new Note(1, 'note 1'))
+    const n2 = query.db.add(new Note(2, 'note 2'))
+
+    query.db.add(new Link(n0, n1, '0->1'))
+    query.db.add(new Link(n1, n2, '1->2'))
+
+    query.db.add(new Alias(0, '0'))
+    query.db.add(new Alias(1, '0a'))
+    query.db.add(new Alias(1, '1'))
+    query.db.add(new Alias(2, '0a1'))
+    query.db.add(new Alias(2, '1a'))
+
+    query.db.add(new Sequence('0', '0a'))
+    query.db.add(new Sequence('0a', '0a1'))
+    query.db.add(new Sequence('1', '1a'))
+  })
+
+  describe('links', function () {
+    it('should work once', function () {
+      const n0 = query.note(0)
+      assert(n0)
+      assert(n0.links)
+
+      const result = Array.from(n0.links())
+      assert.strictEqual(result.length, 1)
+    })
+
+    it('should also work twice', function () {
+      const n0 = query.note(0)
+      assert(Array.from(n0.links()).length === 1)
+      assert(Array.from(n0.links()).length === 1)
+    })
+  })
+
+  describe('backlinks', function () {
+    it('should work once', function () {
+      const n1 = query.note(1)
+      assert(n1)
+      assert(n1.links)
+
+      const result = Array.from(n1.links())
+      assert.strictEqual(result.length, 1)
+    })
+
+    it('should also work twice', function () {
+      const n1 = query.note(1)
+      assert(Array.from(n1.links()).length === 1)
+      assert(Array.from(n1.links()).length === 1)
+    })
+  })
+
+  it('aliases', function () {
+    const n2 = query.note(2)
+    const result = Array.from(n2.aliases())
+    assert(result.length === 2)
+    assert(result.includes('0a1'))
+    assert(result.includes('1a'))
+
+    const again = Array.from(n2.aliases())
+    assert(again.length === 2)
+    assert(again.includes('0a1'))
+    assert(again.includes('1a'))
+  })
+
+  describe('parents', function () {
+    it('of every alias', function () {
+      const n1 = query.note(1)
+      const n2 = query.note(2)
+
+      const compareFn = (a, b) => a < b ? -1 : a === b ? 0 : 1
+
+      const result = Array.from(n2.parents()).sort(compareFn)
+      assert.strictEqual(result.length, 2)
+      assert(result[0].note.equals(n1))
+      assert(result[0].alias === '0a')
+      assert(result[1].note.equals(n1))
+      assert(result[1].alias === '1')
+
+      const again = Array.from(n2.parents()).sort(compareFn)
+      assert(again[0].note.equals(n1))
+      assert(again[0].alias === '0a')
+      assert(again[1].note.equals(n1))
+      assert(again[1].alias === '1')
+    })
+  })
+
+  describe('children', function () {
+    it('of every alias', function () {
+      const n1 = query.note(1)
+      const n2 = query.note(2)
+
+      const compareFn = (a, b) => a < b ? -1 : a === b ? 0 : 1
+
+      const result = Array.from(n1.children()).sort(compareFn)
+      assert.strictEqual(result.length, 2)
+      assert(result[0].note.equals(n2))
+      assert(result[0].alias === '0a1')
+      assert(result[1].note.equals(n2))
+      assert(result[1].alias === '1a')
+
+      const again = Array.from(n1.children()).sort(compareFn)
+      assert(again[0].note.equals(n2))
+      assert(again[0].alias === '0a1')
+      assert(again[1].note.equals(n2))
+      assert(again[1].alias === '1a')
+    })
+  })
+})

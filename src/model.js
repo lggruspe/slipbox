@@ -183,8 +183,8 @@ class Query {
 
     const note = new Note(id, record.title)
 
-    note.links = () => this.links(id)
-    note.backlinks = () => this.backlinks(id)
+    note.links = () => this.links(note)
+    note.backlinks = () => this.backlinks(note)
 
     note.aliases = function * () {
       yield * record.aliases
@@ -205,7 +205,6 @@ class Query {
         yield * self.children(alias)
       }
     }
-
     return note
   }
 
@@ -226,7 +225,6 @@ class Query {
   parent (alias) {
     const record = this.db.data.aliases[alias]
     if (!record || !record.parent) return null
-
     const parentRecord = this.db.data.aliases[record.parent]
     if (!parentRecord || !parentRecord.id) return null
     return {
