@@ -41,8 +41,8 @@ class Database {
   //     {
   //       title: <str>,
   //       aliases: [<str>],
-  //       links: [{ dest: <int>, annotation: <str> }],
-  //       backlinks: [<int>]
+  //       links: [{ src: <int>, dest: <int>, annotation: <str> }],
+  //       backlinks: [<link>]
   //     }
   //   ]
   // }
@@ -154,13 +154,15 @@ class Link {
     const src = db.data.notes[this.src]
     const dest = db.data.notes[this.dest]
     if (!src || !dest) return
-    src.links.push({
+
+    const link = {
+      src: this.src,
       dest: this.dest,
       annotation: this.annotation
-    })
-
-    if (this.annotation) {
-      dest.backlinks.push(this.src)
+    }
+    src.links.push(link)
+    if (link.annotation) {
+      dest.backlinks.push(link)
     }
   }
 }

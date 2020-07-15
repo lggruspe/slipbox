@@ -259,7 +259,10 @@ describe('Database', function () {
 
         assert(db.data.notes[0].backlinks.length === 0)
         assert(db.data.notes[1].backlinks.length === 1)
-        assert(db.data.notes[1].backlinks.includes(0))
+
+        assert.strictEqual(
+          db.data.notes[1].backlinks[0],
+          db.data.notes[0].links[0])
       })
     })
   })
