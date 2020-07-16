@@ -12,7 +12,7 @@ check: bundle
 	npm run lint
 	#npx eslint test --global describe --global it
 	cd slipbox; pytest --cov=. --cov-fail-under=80 --cov-report=term-missing --cov-branch
-	pylint slipbox --fail-under=9
+	pylint slipbox --fail-under=10 -d R0903
 	@echo "Yay!"
 
 .PHONY:	docs

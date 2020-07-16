@@ -7,9 +7,7 @@ import subprocess
 from .templates import Elem, render
 from .utils import make_temporary_file, write_lines
 
-def dummy_markdown():
-    """Dummy markdown to use as pandoc input."""
-    return r"""$\,$
+DUMMY_MARKDOWN = r"""$\,$
 ``` {.c style="display:none"}
 ```"""
 
@@ -22,36 +20,20 @@ def generate_active_htmls(conn):
     cur = conn.cursor()
     return map(lambda row: row[0], cur.execute(sql))
 
-def generate_note_data(conn):
-    """Generate slipbox note data in javascript."""
+def generate_data(conn):
+    """Generate slipbox data in javascript."""
     for nid, title in conn.execute("SELECT id, title FROM Notes ORDER BY id"):
         yield f"window.query.db.add(new Model.Note({nid}, {title!r}))"
-
-def generate_alias_data(conn):
-    """Generate slipbox alias data in javascript."""
-    sql = "SELECT id, alias FROM ValidAliases ORDER BY id, alias"
-    for nid, alias in conn.execute(sql):
-        yield f"window.query.db.add(new Model.Alias({nid}, {alias!r}))"
-
-def generate_link_data(conn):
-    """Generate slipbox link data in javascript."""
     sql = "SELECT src, dest, annotation FROM ValidLinks"
     for src, dest, annotation in conn.execute(sql):
         yield f"""window.query.db.add(new Model.Link(
   window.query.note({src}), window.query.note({dest}), {annotation!r}))"""
-
-def generate_sequence_data(conn):
-    """Generate slipbox sequence data in javascript."""
+    sql = "SELECT id, alias FROM ValidAliases ORDER BY id, alias"
+    for nid, alias in conn.execute(sql):
+        yield f"window.query.db.add(new Model.Alias({nid}, {alias!r}))"
     sql = "SELECT prev, next FROM Sequences ORDER BY prev, next"
     for prev, next_ in conn.execute(sql):
         yield f"window.query.db.add(new Model.Sequence({prev!r}, {next_!r}))"
-
-def generate_data(conn):
-    """Generate slipbox data in javascript."""
-    yield from generate_note_data(conn)
-    yield from generate_link_data(conn)
-    yield from generate_alias_data(conn)
-    yield from generate_sequence_data(conn)
 
 def generate_javascript(conn):
     """Generate slipbox javascript code."""
@@ -153,7 +135,7 @@ def generate_complete_html(conn, options):
             make_temporary_file() as script,\
             make_temporary_file(suffix=".html", text=True) as html,\
             make_temporary_file(suffix=".html", text=True) as extra:
-        write_lines(dummy, [dummy_markdown()])
+        write_lines(dummy, [DUMMY_MARKDOWN])
         write_lines(script, generate_javascript(conn))
         write_lines(html, generate_active_htmls(conn))
         with open(extra, "w") as file:
