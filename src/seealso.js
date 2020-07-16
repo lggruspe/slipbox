@@ -23,20 +23,17 @@ function aliasOwner (alias) {
   return found ? found[0] : ''
 }
 
-function compareSeeAlsoItems (a, b) {
-  const atext = a.innerText
-  const btext = b.innerText
-  return atext < btext ? -1 : atext === btext ? 0 : 1
-}
-
 function * backlinkLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const backlink of note.backlinks()) {
-      yield Li([
-        document.createTextNode(`[${backlink.src.id}] `),
-        A(backlink.src.title, `#${backlink.src.id}`, backlink.annotation)
-      ])
+      yield {
+        note: backlink.src,
+        li: Li([
+          document.createTextNode(`[${backlink.src.id}] `),
+          A(backlink.src.title, `#${backlink.src.id}`, backlink.annotation)
+        ])
+      }
     }
   }
 }
@@ -46,8 +43,11 @@ function * directLinkLIs (query, id) {
   if (note) {
     for (const link of note.links()) {
       const b = document.createElement('b')
-      b.appendChild(document.createTextNode(`[${link.dest.id}] `))
-      yield Li([b, A(link.dest.title, '#' + link.dest.id, link.annotation)])
+      b.textContent = `[${link.dest.id}] `
+      yield {
+        note: link.dest,
+        li: Li([b, A(link.dest.title, '#' + link.dest.id, link.annotation)])
+      }
     }
   }
 }
@@ -56,10 +56,13 @@ function * parentLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const parent of note.parents()) {
-      yield Li([
-        document.createTextNode(`[${parent.note.id}/${parent.alias}] `),
-        A(parent.note.title, '#' + parent.note.id)
-      ])
+      yield {
+        note: parent.note,
+        li: Li([
+          document.createTextNode(`[${parent.note.id}/${parent.alias}] `),
+          A(parent.note.title, '#' + parent.note.id)
+        ])
+      }
     }
   }
 }
@@ -68,25 +71,35 @@ function * childrenLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const child of note.children()) {
-      yield Li([
-        document.createTextNode(`[${child.note.id}/${child.alias}] `),
-        A(child.note.title, '#' + child.note.id)
-      ])
+      yield {
+        note: child.note,
+        li: Li([
+          document.createTextNode(`[${child.note.id}/${child.alias}] `),
+          A(child.note.title, '#' + child.note.id)
+        ])
+      }
     }
   }
 }
 
 function createRelatedUl (query, id) {
-  const lis = [
+  const related = [
     ...backlinkLIs(query, id),
     ...directLinkLIs(query, id),
     ...parentLIs(query, id),
     ...childrenLIs(query, id)
   ]
-  lis.sort(compareSeeAlsoItems)
+  related.sort((a, b) => {
+    if (a.note.id < b.note.id) return -1
+    if (a.note.id > b.note.id) return 1
+    const atext = a.li.innerText
+    const btext = b.li.innerText
+    return atext < btext ? -1 : atext === btext ? 0 : 1
+  })
+
   const ul = document.createElement('ul')
-  for (const li of lis) {
-    ul.appendChild(li)
+  for (const note of related) {
+    ul.appendChild(note.li)
   }
   return ul
 }
