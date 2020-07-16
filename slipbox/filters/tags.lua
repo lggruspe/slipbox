@@ -1,5 +1,5 @@
-local function to_hashtag(s)
-  return s:match('^#+[^%s]+$')
+local function hashtag_prefix(s)
+  return s:match('^#+[-_a-zA-Z0-9]+')
 end
 
 local function make_tag_filter(div, slipbox)
@@ -7,7 +7,7 @@ local function make_tag_filter(div, slipbox)
   local function Str(elem)
     -- save hashtag keywords
     -- run by walking from div
-    if to_hashtag(elem.text) then
+    if hashtag_prefix(elem.text) then
       local id = tonumber(div.identifier)
       if id then slipbox:save_tag(id, elem.text) end
 
@@ -20,4 +20,6 @@ end
 
 return {
   make_tag_filter = make_tag_filter,
+
+  hashtag_prefix = hashtag_prefix,
 }

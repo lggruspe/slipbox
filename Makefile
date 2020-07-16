@@ -7,6 +7,7 @@ bundle:
 
 .PHONY:	check
 check: bundle
+	luacheck slipbox/filters/*.lua --globals describe it assert pandoc
 	cd slipbox; cat filters/*.test.lua | lua
 	npx eslint test --global describe --global it --global beforeEach --rule 'no-unused-vars: 0'
 	npm run lint
