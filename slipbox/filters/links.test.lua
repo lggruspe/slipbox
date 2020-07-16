@@ -1,3 +1,5 @@
+require "busted.runner" ()
+
 local links = require "filters/links"
 
 local function mock_attr(identifier, classes, attributes)
@@ -101,30 +103,22 @@ local function make_tag_link()
   return mock_link({make_sample_str()}, "##tag")
 end
 
-local function test_get_sequence_link_non_null()
-  -- Check if get_sequence_link ever returns a non-null object.
-  local div = make_sample_div()
-  local link = make_sequence_link()
-  local result = links.get_sequence_link(div, link)
-  assert(result)
-end
+describe("get_sequence_link", function()
+  it("should be able to return a non-null object", function()
+    local div = make_sample_div()
+    local link = make_sequence_link()
+    local result = links.get_sequence_link(div, link)
+    assert.truthy(result)
+  end)
 
-local function test_get_sequence_link_alias()
-  local div = make_sample_div()
-  local link = make_sequence_link()
-  local result = links.get_sequence_link(div, link)
-  assert(result.alias)
-  assert(result.alias:match('^%d+%a[%d%a]*$'))
-end
-
-local function test_get_direct_link_description()
-  -- Check if get_direct_link ever returns a non-null description.
-  local div = make_sample_div()
-  local link = make_direct_link()
-  local result = links.get_direct_link(div, link)
-  assert(result)
-  assert(result.description and result.description ~= "")
-end
+  it("should return an object with an alias.", function()
+    local div = make_sample_div()
+    local link = make_sequence_link()
+    local result = links.get_sequence_link(div, link)
+    assert.truthy(result.alias)
+    assert.truthy(result.alias:match('^%d+%a[%d%a]*$'))
+  end)
+end)
 
 local function test_get_link_nil()
   -- Make sure get_sequence_link and get_direct_link can return nil.
@@ -136,7 +130,13 @@ local function test_get_link_nil()
   assert(not result)
 end
 
-test_get_sequence_link_non_null()
-test_get_sequence_link_alias()
-test_get_direct_link_description()
-test_get_link_nil()
+describe("get_direct_link", function()
+  it("should be able to return an object with a non-null description", function()
+    local div = make_sample_div()
+    local link = make_direct_link()
+    local result = links.get_direct_link(div, link)
+    assert.truthy(result)
+    assert.truthy(result.description)
+    assert.are_not.equal(result.description, "")
+  end)
+end)
