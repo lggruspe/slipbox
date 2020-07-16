@@ -3,18 +3,17 @@ function hideSections () {
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
     if (section.classList.contains('level1')) {
-      if (Number.isInteger(Number(section.id))) {
-        section.style.display = 'none'
-      } else if (section.id.charAt(0) === '#') {
-        section.style.display = 'none'
-      } else if (section.id === 'references') {
-        section.style.display = 'none'
-      } else if (section.id.slice(0, 4) === 'ref-') {
-        section.style.display = 'none'
-      } else if (section.id === 'search') {
-        section.style.display = 'none'
-      } else if (section.id === 'tags') {
-        section.style.display = 'none'
+      switch (true) {
+        case Number.isInteger(Number(section.id)):
+        case section.id.charAt(0) === '#':
+        case section.id === 'references':
+        case section.id.slice(0, 4) === 'ref-':
+        case section.id === 'search':
+        case section.id === 'tags':
+          section.style.display = 'none'
+          break
+        default:
+          break
       }
     }
   }
@@ -29,7 +28,7 @@ function getSectionFromHash (hash) {
   }
 }
 
-function createSectionChanger () {
+function sectionChanger () {
   let _previousHash = window.location.hash
   return function () {
     const oldSection = getSectionFromHash(_previousHash)
@@ -48,21 +47,21 @@ function createSectionChanger () {
   }
 }
 
-function addNotFoundSection () {
+function notFoundSection () {
   const section = document.createElement('section')
   section.id = '0'
   section.classList.add('level1')
   const h1 = document.createElement('h1')
   h1.innerText = 'Note not found'
   section.appendChild(h1)
-  document.body.appendChild(section)
+  return section
 }
 
 function init () {
-  addNotFoundSection()
+  document.body.appendChild(notFoundSection())
   hideSections()
 
-  const changeSection = createSectionChanger()
+  const changeSection = sectionChanger()
   changeSection()
   window.addEventListener('hashchange', changeSection)
 }

@@ -29,7 +29,7 @@ function compareSeeAlsoItems (a, b) {
   return atext < btext ? -1 : atext === btext ? 0 : 1
 }
 
-function * generateBacklinkLis (query, id) {
+function * backlinkLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const backlink of note.backlinks()) {
@@ -41,7 +41,7 @@ function * generateBacklinkLis (query, id) {
   }
 }
 
-function * generateDirectLinkLis (query, id) {
+function * directLinkLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const link of note.links()) {
@@ -52,7 +52,7 @@ function * generateDirectLinkLis (query, id) {
   }
 }
 
-function * generateParentLis (query, id) {
+function * parentLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const parent of note.parents()) {
@@ -64,7 +64,7 @@ function * generateParentLis (query, id) {
   }
 }
 
-function * generateChildLis (query, id) {
+function * childrenLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const child of note.children()) {
@@ -78,10 +78,10 @@ function * generateChildLis (query, id) {
 
 function createRelatedUl (query, id) {
   const lis = [
-    ...generateBacklinkLis(query, id),
-    ...generateDirectLinkLis(query, id),
-    ...generateParentLis(query, id),
-    ...generateChildLis(query, id)
+    ...backlinkLIs(query, id),
+    ...directLinkLIs(query, id),
+    ...parentLIs(query, id),
+    ...childrenLIs(query, id)
   ]
   lis.sort(compareSeeAlsoItems)
   const ul = document.createElement('ul')

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp06eld_kk</title>
+  <title>tmpfu4890pj</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@
   import cytoscape from 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.2/cytoscape.esm.min.js';
   import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.0/dist/fuse.esm.js';
 
-  function createGraphArea () {
+  function graphArea () {
     const div = document.createElement('div');
     div.style.width = '100%';
     div.style.height = '500px';
@@ -93,20 +93,17 @@
     return div
   }
 
-  function getNoteElement (id, currentNote = false) {
-    const element = {
+  function noteElement (id, currentNote = false) {
+    return {
       data: {
         id: id,
-        label: id
+        label: id,
+        color: currentNote ? 'white' : undefined
       }
-    };
-    if (currentNote) {
-      element.data.color = 'white';
     }
-    return element
   }
 
-  function getLinkElement (type, source, target) {
+  function linkElement (type, source, target) {
     console.assert(['backlink', 'direct', 'sequence'].includes(type));
     const id = type.slice(0, 1) + `${source}-${target}`;
     const style = type === 'backlink' ? 'dashed' : 'solid';
@@ -117,24 +114,24 @@
   }
 
   function * neighborElements (query, id) {
-    yield getNoteElement(id, true);
+    yield noteElement(id, true);
     const note = query.note(id);
 
     for (const backlink of note.backlinks()) {
-      yield getNoteElement(backlink.src.id);
-      yield getLinkElement('backlink', backlink.src.id, id);
+      yield noteElement(backlink.src.id);
+      yield linkElement('backlink', backlink.src.id, id);
     }
     for (const link of note.links()) {
-      yield getNoteElement(link.dest.id);
-      yield getLinkElement('direct', id, link.dest.id);
+      yield noteElement(link.dest.id);
+      yield linkElement('direct', id, link.dest.id);
     }
     for (const parent of note.parents()) {
-      yield getNoteElement(parent.note.id);
-      yield getLinkElement('sequence', parent.note.id, id);
+      yield noteElement(parent.note.id);
+      yield linkElement('sequence', parent.note.id, id);
     }
     for (const child of note.children()) {
-      yield getNoteElement(child.note.id);
-      yield getLinkElement('sequence', id, child.note.id);
+      yield noteElement(child.note.id);
+      yield linkElement('sequence', id, child.note.id);
     }
   }
 
@@ -190,7 +187,7 @@
   }
 
   function init (query) {
-    let container = createGraphArea();
+    let container = graphArea();
 
     function resetGraph () {
       container.remove();
@@ -200,7 +197,7 @@
       const elements = Array.from(neighborElements(query, id));
       if (elements.length < 2) return
 
-      container = createGraphArea();
+      container = graphArea();
       document.body.append(container);
       const cy = createCytoscape(container, elements);
       cy.layout({ name: 'cose' }).run();
@@ -524,7 +521,7 @@
     displayResults(results);
   }
 
-  function createSearchBar () {
+  function searchBar () {
     const form = document.createElement('form');
     form.action = 'javascript:void(0)';
     form.style.textAlign = 'center';
@@ -542,24 +539,24 @@
     return form
   }
 
-  function createSearchResults () {
+  function searchResults () {
     const div = document.createElement('div');
     div.classList.add('search-results');
     return div
   }
 
-  function createSearchPage () {
+  function searchPage () {
     const page = document.createElement('section');
     page.id = 'search';
     page.title = 'Search';
     page.classList.add('level1');
-    page.appendChild(createSearchBar());
+    page.appendChild(searchBar());
     page.appendChild(document.createElement('br'));
-    page.appendChild(createSearchResults());
+    page.appendChild(searchResults());
     return page
   }
 
-  function createSearchButton () {
+  function searchButton () {
     const a = document.createElement('a');
     a.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>';
     a.href = '#search';
@@ -568,8 +565,8 @@
   }
 
   function init$1 () {
-    document.body.appendChild(createSearchPage());
-    document.body.insertBefore(createSearchButton(), document.body.firstChild);
+    document.body.appendChild(searchPage());
+    document.body.insertBefore(searchButton(), document.body.firstChild);
   }
 
   function hideSections () {
@@ -577,18 +574,15 @@
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
       if (section.classList.contains('level1')) {
-        if (Number.isInteger(Number(section.id))) {
-          section.style.display = 'none';
-        } else if (section.id.charAt(0) === '#') {
-          section.style.display = 'none';
-        } else if (section.id === 'references') {
-          section.style.display = 'none';
-        } else if (section.id.slice(0, 4) === 'ref-') {
-          section.style.display = 'none';
-        } else if (section.id === 'search') {
-          section.style.display = 'none';
-        } else if (section.id === 'tags') {
-          section.style.display = 'none';
+        switch (true) {
+          case Number.isInteger(Number(section.id)):
+          case section.id.charAt(0) === '#':
+          case section.id === 'references':
+          case section.id.slice(0, 4) === 'ref-':
+          case section.id === 'search':
+          case section.id === 'tags':
+            section.style.display = 'none';
+            break
         }
       }
     }
@@ -603,7 +597,7 @@
     }
   }
 
-  function createSectionChanger () {
+  function sectionChanger () {
     let _previousHash = window.location.hash;
     return function () {
       const oldSection = getSectionFromHash(_previousHash);
@@ -622,21 +616,21 @@
     }
   }
 
-  function addNotFoundSection () {
+  function notFoundSection () {
     const section = document.createElement('section');
     section.id = '0';
     section.classList.add('level1');
     const h1 = document.createElement('h1');
     h1.innerText = 'Note not found';
     section.appendChild(h1);
-    document.body.appendChild(section);
+    return section
   }
 
   function init$2 () {
-    addNotFoundSection();
+    document.body.appendChild(notFoundSection());
     hideSections();
 
-    const changeSection = createSectionChanger();
+    const changeSection = sectionChanger();
     changeSection();
     window.addEventListener('hashchange', changeSection);
   }

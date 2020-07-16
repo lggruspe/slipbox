@@ -1,6 +1,6 @@
 import cytoscape from 'cytoscape'
 
-function createGraphArea () {
+function graphArea () {
   const div = document.createElement('div')
   div.style.width = '100%'
   div.style.height = '500px'
@@ -10,20 +10,17 @@ function createGraphArea () {
   return div
 }
 
-function getNoteElement (id, currentNote = false) {
-  const element = {
+function noteElement (id, currentNote = false) {
+  return {
     data: {
       id: id,
-      label: id
+      label: id,
+      color: currentNote ? 'white' : undefined
     }
   }
-  if (currentNote) {
-    element.data.color = 'white'
-  }
-  return element
 }
 
-function getLinkElement (type, source, target) {
+function linkElement (type, source, target) {
   console.assert(['backlink', 'direct', 'sequence'].includes(type))
   const id = type.slice(0, 1) + `${source}-${target}`
   const style = type === 'backlink' ? 'dashed' : 'solid'
@@ -34,24 +31,24 @@ function getLinkElement (type, source, target) {
 }
 
 function * neighborElements (query, id) {
-  yield getNoteElement(id, true)
+  yield noteElement(id, true)
   const note = query.note(id)
 
   for (const backlink of note.backlinks()) {
-    yield getNoteElement(backlink.src.id)
-    yield getLinkElement('backlink', backlink.src.id, id)
+    yield noteElement(backlink.src.id)
+    yield linkElement('backlink', backlink.src.id, id)
   }
   for (const link of note.links()) {
-    yield getNoteElement(link.dest.id)
-    yield getLinkElement('direct', id, link.dest.id)
+    yield noteElement(link.dest.id)
+    yield linkElement('direct', id, link.dest.id)
   }
   for (const parent of note.parents()) {
-    yield getNoteElement(parent.note.id)
-    yield getLinkElement('sequence', parent.note.id, id)
+    yield noteElement(parent.note.id)
+    yield linkElement('sequence', parent.note.id, id)
   }
   for (const child of note.children()) {
-    yield getNoteElement(child.note.id)
-    yield getLinkElement('sequence', id, child.note.id)
+    yield noteElement(child.note.id)
+    yield linkElement('sequence', id, child.note.id)
   }
 }
 
@@ -107,7 +104,7 @@ function createCytoscape (container, elements) {
 }
 
 function init (query) {
-  let container = createGraphArea()
+  let container = graphArea()
 
   function resetGraph () {
     container.remove()
@@ -117,7 +114,7 @@ function init (query) {
     const elements = Array.from(neighborElements(query, id))
     if (elements.length < 2) return
 
-    container = createGraphArea()
+    container = graphArea()
     document.body.append(container)
     const cy = createCytoscape(container, elements)
     cy.layout({ name: 'cose' }).run()
