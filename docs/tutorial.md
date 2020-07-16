@@ -1,202 +1,220 @@
-# 0 Note 0 is the entry point
+0 slipbox
+=========
 
-`slipbox` assumes that note 0 is the first page.
-You can use it as an entry point to your notes.
+`slipbox` is a static site generator for Zettelkasten notes.
 
-- You can organize your notes in files in many ways [](#2 '0b').
-- Just remember to put the note ID and the title in a level 1 header. [](#1 '0a').
-- You can make connections between notes using tags [](#3 '0c').
-- But it's better if you make more specific types of connections [](#4 '0a1').
-- `slipbox` supports direct links, backlinks [](#5 '0a1a') and sequence links [](#6 '0a1b').
-    + To create note sequences, you need to understand note aliases [](#9 '0a1b1')
-    + and the syntax [](#10 '0a1b2').
-- Another way to look for notes is by using text search [](#13 '0f').
-- Backlinks and sequence links appear in the 'See also' section of each note [](#8 '0a2').
-- You can add citations by specifying a bibliography file [](#7 '0d').
-- Cytoscape.js provides an interactive visualization of your notes [](#11 '0e').
-    + How to link to images? [](#12 '0e1').
+- [Installation](#1 '0a')
+- [Basic usage](#2 '0a1')
+- [Organizing notes](#3)
+- [Connecting notes](#4)
+- [Questions](#10 '0b')
 
-# 1 Every note has an ID and a title
+GitHub: <https://github.com/lggruspe/slipbox>
 
-Each note must have a unique ID and a title.
-The ID has to be an integer.
-To add a new note just create a level 1 header containing an ID followed
-by a space and a title.
+
+1 Installation
+==============
+
+Make sure you have `grep`, `pandoc` and `python` installed.
+
+Then
+
+```bash
+pip install slipbox
+```
+
+Next step: [run slipbox](#2 '1a')
+
+
+2 Basic usage
+=============
+#examples
+
+`slipbox` recursively looks for notes in the locations that you specify
+when you run `slipbox`.
+
+Here's a minimal example.
 
 ```markdown
-# 1 Every note has an ID and a title
+# 202001011200 Hello
 
-This belongs to note 1.
-
-# 2 This is a different note
+Hello.
 ```
 
-# 2 A file can contain multiple notes
+To run slipbox:
 
-You can place any number of notes in a file, but notes can't be split
-into multiple files.
-In this case, a note contains everything until the [header][2-1] of the
-next note.
+```bash
+# Put your notes here.
+mkdir notes
 
-[2-1]: #1 "Notes in a single file are separated by headers."
+# Replace $EDITOR with your text editor and copy the example.
+$EDITOR notes/hello.md
 
-# 3 You can use hashtags anywhere in the note
-
-#You #can #add #tags #like #this.
-
-Click on the tags to see a list of notes with the same tag.
-
-# 4 Types of links
-#links #backlinks #sequence-links
-
-`slipbox` supports several types of links.
-
-Direct links
-:   You can link to other notes by specifying the note ID as the target.
-    This works even when the note section is in [another file](#2).
-    Even if you move the linked note to another file, the link will
-    still be valid.
-
-[Backlinks](#5 "An annotated direct link generates a backlink.")
-:   An annotated direct link generates a backlink.
-    It's sometimes nicer to put the annotation in a reference link.
-    But you have to make sure that the label is unique across all your
-    note files.
-    One way to do this is to use IDs of the source and target notes,
-    like this [\[4-5\]][4-5].
-
-Sequence links
-:   A [sequence link](#6) is a special type of link that indicates the
-    order to read a sequence of notes in.
-
-[4-5]: #5 "This creates another backlink."
-
-# 5 Backlinks are generated from annotated direct links
-#links #backlinks
-
-This note has backlinks generated from note 4 in the 'See also' section
-[][5-8].
-If you hover over the backlink, you'll see the description from the
-[forward link](#4).
-
-[5-8]: #8 "The See also section contains generated backlinks."
-
-# 6 Notes in a sequence have aliases
-#sequence-links #aliases
-
-While [note IDs][6-1] are meant to uniquely identify notes,
-aliases are meant to show which notes belong in a sequence.
-For example,
-```
-0a -> 0a1 -> 0a1b
+# Take note of the quotes and spaces.
+python -m slipbox notes slipbox.db -d ' -o example.html'
 ```
 
-Just by looking at the aliases of a note, you'll know which notes come
-before and after it.
-Each of these aliases correspond to a real ID.
-These aliases are defined in an outline note using
-[sequence links](#10).
+This creates an SQLite file and an HTML file containing [all your notes](#3 '2a').
+Don't delete the database file, because `slipbox` will use it to avoid
+recompiling all notes from scratch in future invocations.
 
-You can see the immediate neighbors of this note in the 'See also'
-section [][6-8].
 
-[6-1]: #1 "Notes can have alias IDs."
-[6-8]: #8
-    "The aliases of the sequence neighbors of a note appear in the
-    See also section."
+3 How to organize notes
+=======================
+#examples
 
-# 7 Specify a bibliography file to use citations
-#tools
+You can put multiple notes in a single file,
+because a note is just a section in a markdown file.
 
-If you specify a bibliography in the options, `slipbox` generates a
-bibliography page containing every reference in the bibliography.
-You can access this page by replacing the URL hash with
-\#[references](#references).
+Notes in one file are separated by level 1 headings.
+The heading must contain a note ID and a title for `slipbox` to find the
+note.
+The ID can be any number, but it has to be unique.
 
-It also generates a section for each cited reference, which contains a
-list of all notes that cite the reference [@cite2020].
+Example:
 
-You have to specify the bibliography file using the `-c` option.
-Take note of the quotes and the spaces in the options.
+```markdown
+202003151630 The note ID must be unique
+=======================================
+
+Everything between this note's heading and the next belongs to this
+note.
+
+202006151725 Next note
+======================
+```
+
+I recommend shorter IDs instead of longer ones if you want to use
+[sequence links](#7).
+It's important to [make connections](#4 '3a') between ideas in your notes.
+
+
+4 How to find related notes
+============================
+
+`slipbox` provides multiple ways to connect notes.
+
+- [Tags](#5 '4a')
+- [Direct links](#6 '4b')
+- [Backlinks](#6 'Annotated links generates backlinks')
+- [Sequence links](#7 '4c')
+- [Text search](#8 '4d')
+- [Citations](#9 '4a1')
+
+
+5 Tags
+======
+
+Notes can be related by tags.
+You can click on a #tag to see a list of other notes that share the tag.
+
+Clicking on the header in the #tag page will show a list of all #[tags](#tags).
+
+
+6 Direct links
+==============
+#examples #links #visualization
+
+Direct links are an explicit way to [connect](#4) two notes.
+To link to a note, you only have to specify the [ID of the note](#3) as
+the link target.
+In markdown, `[link to note 3](#3)`{ .markdown }.
+This works even when the linked note is in another file.
+
+Direct links from the active note appear in the See also section with
+a boldfaced ID.
+The interactive graph displays these links with solid black lines.
+
+### Backlinks
+
+`slipbox` generates backlinks from annotated links.
+
+- Backlink IDs in the See also section have regular font.
+- Hovering over the backlink will show the link annotation.
+- Backlinks in the interactive graph appear as dashed lines.
+
+[Sequence links](#7 '6a') also use link annotations, but in a different way.
+
+### External links
+
+It's also possible to [link to files](#10 '6b') outside of the slipbox.
+
+
+7 Sequence links
+================
+#examples #links #visualization
+
+A sequence link is a special type of [link](#6) that indicates that a set of
+notes are to be read in sequence.
+
+### Note aliases
+
+You can determine which sequences a particular note belongs to by simply
+looking at its note aliases.
+A note alias is a string that alternates between numbers and letters.
+
+For example, suppose 4a2b is a note alias of note 12.
+The note alias says that note 12 belongs in a sequence containing notes
+4, 4a, 4a2, etc., in that order.
+
+We can think of notes 4a and 4a2b as neighbors of note 4a2.
+
+- Links to neighbor notes in the See also section show the note ID and the alias.
+- Neighbor links in the interactive graph are solid red.
+
+### How to create sequence links
+
+Sequence links are created using regular links,
+but the link has to have a note alias in the description.
+
+Example: `[sequence link](#12 '#4a2b')`{ .markdown }`
+assigns 4a2b as an alias to note 12.
+
+
+8 Text search
+=============
+
+Even without [tags](#5) or [links](#6), you can look for notes using text search.
+You can open the #[search](#search) page by clicking on the search button at the top.
+
+
+9 Citations
+===========
+#examples #links
+
+`slipbox` uses `pandoc-citeproc` for citations.
+You can click on a citation to see a list of all notes that cite the
+same reference.
+
+Clicking on the header of the reference page will open a list of all
+cited references.
+
+Here's how a citation looks: [@cite2020].
+
+In order to activate `citeproc`, you have to specify a bibliography file
+to `pandoc` using the `-c` option.
+Take note of the quotes and spaces in the options.
+
+Example:
 
 ```bash
 python -m slipbox notes.db notes -c ' --bibliography notes.bib' -d ' -o notes.html'
 ```
 
-# 8 See also section: backlinks and sequence links
-#backlinks #sequence-links #aliases
 
-The 'See also' section lists [backlinks][8-5] and [sequence links][8-6].
-The sequence links include 'previous notes' and 'next notes' as defined
-by some outline note.
-You can distinguish between backlinks and sequence links by looking at
-the ID that appears next to the title of the linked note.
+10 Questions
+============
 
--   Backlinks are shown with [real IDs](#1) (only contain numbers).
--   Sequence links are shown with [aliases](#6) (contain a mix of
-    numbers and letters [](#9)).
+### Support for formats other than markdown
 
-[8-5]: #5 "Backlinks appear in the See also section."
-[8-6]: #6 "Immediate neighbors appear in the See also section."
+`slipbox` should have partial support for most input formats that
+`pandoc` supports.
+However, certain features such as [backlinks](#6) and [sequence links](#7) require
+link annotations.
 
-# 9 How to derive note aliases
-#aliases #sequence-links
+### How to link to external files
 
-A note alias is a string of numbers and letters.
-It always starts with a number.
-
-Example: [0a1b](#6).
-The first number (0) indicates the owner or the outline note of the
-sequence.
-Often it is the ID of the note that contains the sequence link for the
-alias.
-
-In this example, [0a1](#4) is preceded by [0a](#1) and followed by
-[0a1b](#6).
-Presumably, there's another note [0a1a](#5) that follows note [0a1](#4).
-So to follow a note alias, just append a number \[letter\] if the last
-symbol is a letter \[number\].
-The sequence links for these note aliases are defined in note [](#0).
-
-# 10 How to create a sequence link
-#sequence-links #aliases
-
-A sequence link looks just like a [direct link](#4),
-but there's one difference: it contains an alias description.
-
-A sequence link has three parts.
-
-1. Some (optional) text
-2. The [real ID](#1) of the target note
-3. The note [alias][10-6]
-
-```markdown
-[Text](#11 '10a1b3')
-```
-
-Note 0 contains sequence links for these notes [](#0).
-
-[10-6]: #6 "The note alias is used to annotate a sequence link."
-
-# 11 Visualize notes using Cytoscape
-#links #sequence-links #backlinks #visualization #interactive
-
-An interactive visualization of your notes will appear below the See
-also section if the active note is connected to other notes.
-Black lines represent [direct links][11-4], red lines represent
-[sequence links][11-10].
-Dashed lines represent [backlinks][11-5].
-
-[11-4]: #4 "Direct links appear as black lines in the interactive graph."
-[11-5]: #5 "Backlinks appear as dashed lines in the interactive graph."
-[11-10]: #10 "Sequence links appear as red lines in the interactive graph."
-
-# 12 How to link to images
-#images #links
-
-You can [link](#4) to images using absolute paths, relative paths and
-URLs.
-Relative paths are interpreted to be relative to the output HTML.
+Links must be relative to the output HTML.
 
 Suppose you have the following directory structure.
 
@@ -206,13 +224,10 @@ output.html
 images/image.png
 ```
 
-You could link to `image.png` from `notes/input.md` as:
+To link to the image from `input.md`:
 
 ```markdown
-![description](images/image.png)
+<!--input.md-->
+
+![](images/image.png)
 ```
-
-# 13 Text search
-#text #search
-
-You can search your notes by going to #[search](#search).

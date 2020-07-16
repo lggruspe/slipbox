@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmp7iphexql</title>
+  <title>tmpskt84q2_</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -817,381 +817,256 @@
   </script>
   <script type="text/javascript">
   window.addEventListener('DOMContentLoaded', () => {
-  window.query.db.add(new Model.Note(0, 'Note 0 is the entry point'))
-  window.query.db.add(new Model.Note(1, 'Every note has an ID and a title'))
-  window.query.db.add(new Model.Note(2, 'A file can contain multiple notes'))
-  window.query.db.add(new Model.Note(3, 'You can use hashtags anywhere in the note'))
-  window.query.db.add(new Model.Note(4, 'Types of links'))
-  window.query.db.add(new Model.Note(5, 'Backlinks are generated from annotated direct links'))
-  window.query.db.add(new Model.Note(6, 'Notes in a sequence have aliases'))
-  window.query.db.add(new Model.Note(7, 'Specify a bibliography file to use citations'))
-  window.query.db.add(new Model.Note(8, 'See also section: backlinks and sequence links'))
-  window.query.db.add(new Model.Note(9, 'How to derive note aliases'))
-  window.query.db.add(new Model.Note(10, 'How to create a sequence link'))
-  window.query.db.add(new Model.Note(11, 'Visualize notes using Cytoscape'))
-  window.query.db.add(new Model.Note(12, 'How to link to images'))
-  window.query.db.add(new Model.Note(13, 'Text search'))
+  window.query.db.add(new Model.Note(0, 'slipbox'))
+  window.query.db.add(new Model.Note(1, 'Installation'))
+  window.query.db.add(new Model.Note(2, 'Basic usage'))
+  window.query.db.add(new Model.Note(3, 'How to organize notes'))
+  window.query.db.add(new Model.Note(4, 'How to find related notes'))
+  window.query.db.add(new Model.Note(5, 'Tags'))
+  window.query.db.add(new Model.Note(6, 'Direct links'))
+  window.query.db.add(new Model.Note(7, 'Sequence links'))
+  window.query.db.add(new Model.Note(8, 'Text search'))
+  window.query.db.add(new Model.Note(9, 'Citations'))
+  window.query.db.add(new Model.Note(10, 'Questions'))
   window.query.db.add(new Model.Link(
-    window.query.note(2), window.query.note(1), 'Notes in a single file are separated by headers.'))
+    window.query.note(3), window.query.note(7), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(2), ''))
+    window.query.note(4), window.query.note(6), 'Annotated links generates backlinks'))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(5), 'An annotated direct link generates a backlink.'))
+    window.query.note(6), window.query.note(4), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(5), 'This creates another backlink.'))
+    window.query.note(6), window.query.note(3), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(6), ''))
+    window.query.note(7), window.query.note(6), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(5), window.query.note(8), 'The See also section contains generated backlinks.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(5), window.query.note(4), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(6), window.query.note(1), 'Notes can have alias IDs.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(6), window.query.note(10), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(6), window.query.note(8), 'The aliases of the sequence neighbors of a note appear in the See also section.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(5), 'Backlinks appear in the See also section.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(6), 'Immediate neighbors appear in the See also section.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(1), ''))
+    window.query.note(8), window.query.note(5), ''))
   window.query.db.add(new Model.Link(
     window.query.note(8), window.query.note(6), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(9), ''))
+    window.query.note(0), window.query.note(3), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(6), ''))
+    window.query.note(0), window.query.note(4), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(4), ''))
+    window.query.note(10), window.query.note(6), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(1), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(5), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(0), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(4), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(1), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(6), 'The note alias is used to annotate a sequence link.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(0), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(4), 'Direct links appear as black lines in the interactive graph.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(10), 'Sequence links appear as red lines in the interactive graph.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(5), 'Backlinks appear as dashed lines in the interactive graph.'))
-  window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(4), ''))
+    window.query.note(10), window.query.note(7), ''))
+  window.query.db.add(new Model.Alias(0, '0'))
   window.query.db.add(new Model.Alias(1, '0a'))
-  window.query.db.add(new Model.Alias(2, '0b'))
-  window.query.db.add(new Model.Alias(3, '0c'))
-  window.query.db.add(new Model.Alias(4, '0a1'))
-  window.query.db.add(new Model.Alias(5, '0a1a'))
-  window.query.db.add(new Model.Alias(6, '0a1b'))
-  window.query.db.add(new Model.Alias(7, '0d'))
-  window.query.db.add(new Model.Alias(8, '0a2'))
-  window.query.db.add(new Model.Alias(9, '0a1b1'))
-  window.query.db.add(new Model.Alias(10, '0a1b2'))
-  window.query.db.add(new Model.Alias(11, '0e'))
-  window.query.db.add(new Model.Alias(12, '0e1'))
-  window.query.db.add(new Model.Alias(13, '0f'))
+  window.query.db.add(new Model.Alias(1, '1'))
+  window.query.db.add(new Model.Alias(2, '0a1'))
+  window.query.db.add(new Model.Alias(2, '1a'))
+  window.query.db.add(new Model.Alias(2, '2'))
+  window.query.db.add(new Model.Alias(3, '2a'))
+  window.query.db.add(new Model.Alias(3, '3'))
+  window.query.db.add(new Model.Alias(4, '3a'))
+  window.query.db.add(new Model.Alias(4, '4'))
+  window.query.db.add(new Model.Alias(5, '4a'))
+  window.query.db.add(new Model.Alias(6, '4b'))
+  window.query.db.add(new Model.Alias(6, '6'))
+  window.query.db.add(new Model.Alias(7, '4c'))
+  window.query.db.add(new Model.Alias(7, '6a'))
+  window.query.db.add(new Model.Alias(8, '4d'))
+  window.query.db.add(new Model.Alias(9, '4a1'))
+  window.query.db.add(new Model.Alias(10, '0b'))
+  window.query.db.add(new Model.Alias(10, '6b'))
+  window.query.db.add(new Model.Sequence('0', '0a'))
+  window.query.db.add(new Model.Sequence('0', '0b'))
   window.query.db.add(new Model.Sequence('0a', '0a1'))
-  window.query.db.add(new Model.Sequence('0a', '0a2'))
-  window.query.db.add(new Model.Sequence('0a1', '0a1a'))
-  window.query.db.add(new Model.Sequence('0a1', '0a1b'))
-  window.query.db.add(new Model.Sequence('0a1b', '0a1b1'))
-  window.query.db.add(new Model.Sequence('0a1b', '0a1b2'))
-  window.query.db.add(new Model.Sequence('0e', '0e1'))
+  window.query.db.add(new Model.Sequence('1', '1a'))
+  window.query.db.add(new Model.Sequence('2', '2a'))
+  window.query.db.add(new Model.Sequence('3', '3a'))
+  window.query.db.add(new Model.Sequence('4', '4a'))
+  window.query.db.add(new Model.Sequence('4', '4b'))
+  window.query.db.add(new Model.Sequence('4', '4c'))
+  window.query.db.add(new Model.Sequence('4', '4d'))
+  window.query.db.add(new Model.Sequence('4a', '4a1'))
+  window.query.db.add(new Model.Sequence('6', '6a'))
+  window.query.db.add(new Model.Sequence('6', '6b'))
   window.initSlipbox()
   })
   </script>
 </head>
 <body>
-<section id="0" class="level1" title="Note 0 is the entry point">
-<h1 title="Note 0 is the entry point">0 Note 0 is the entry point</h1>
-<p><code>slipbox</code> assumes that note 0 is the first page. You can use it as an entry point to your notes.</p>
+<section id="0" class="level1" title="slipbox">
+<h1 title="slipbox">0 slipbox</h1>
+<p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
 <ul>
-<li>You can organize your notes in files in many ways  [<a href="#2" title="0b">0b</a>].</li>
-<li>Just remember to put the note ID and the title in a level 1 header.  [<a href="#1" title="0a">0a</a>].</li>
-<li>You can make connections between notes using tags  [<a href="#3" title="0c">0c</a>].</li>
-<li>But it’s better if you make more specific types of connections  [<a href="#4" title="0a1">0a1</a>].</li>
-<li><code>slipbox</code> supports direct links, backlinks  [<a href="#5" title="0a1a">0a1a</a>] and sequence links  [<a href="#6" title="0a1b">0a1b</a>].
+<li><a href="#1" title="0a">Installation</a> [0a]</li>
+<li><a href="#2" title="0a1">Basic usage</a> [0a1]</li>
+<li><a href="#3">Organizing notes</a> [3]</li>
+<li><a href="#4">Connecting notes</a> [4]</li>
+<li><a href="#10" title="0b">Questions</a> [0b]</li>
+</ul>
+<p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
+</section>
+<section id="1" class="level1" title="Installation">
+<h1 title="Installation">1 Installation</h1>
+<p>Make sure you have <code>grep</code>, <code>pandoc</code> and <code>python</code> installed.</p>
+<p>Then</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
+<p>Next step: <a href="#2" title="1a">run slipbox</a> [1a]</p>
+</section>
+<section id="2" class="level1" title="Basic usage">
+<h1 title="Basic usage">2 Basic usage</h1>
+<p><a href="##examples">#examples</a></p>
+<p><code>slipbox</code> recursively looks for notes in the locations that you specify when you run <code>slipbox</code>.</p>
+<p>Here’s a minimal example.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu"># 202001011200 Hello</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>Hello.</span></code></pre></div>
+<p>To run slipbox:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="co"># Put your notes here.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="fu">mkdir</span> notes</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co"># Replace $EDITOR with your text editor and copy the example.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="va">$EDITOR</span> <span class="ex">notes/hello.md</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co"># Take note of the quotes and spaces.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes slipbox.db -d <span class="st">&#39; -o example.html&#39;</span></span></code></pre></div>
+<p>This creates an SQLite file and an HTML file containing <a href="#3" title="2a">all your notes</a> [2a]. Don’t delete the database file, because <code>slipbox</code> will use it to avoid recompiling all notes from scratch in future invocations.</p>
+</section>
+<section id="3" class="level1" title="How to organize notes">
+<h1 title="How to organize notes">3 How to organize notes</h1>
+<p><a href="##examples">#examples</a></p>
+<p>You can put multiple notes in a single file, because a note is just a section in a markdown file.</p>
+<p>Notes in one file are separated by level 1 headings. The heading must contain a note ID and a title for <code>slipbox</code> to find the note. The ID can be any number, but it has to be unique.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>202003151630 The note ID must be unique</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="fu">=======================================</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>Everything between this note&#39;s heading and the next belongs to this</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>note.</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>202006151725 Next note</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="fu">======================</span></span></code></pre></div>
+<p>I recommend shorter IDs instead of longer ones if you want to use <a href="#7">sequence links</a> [7]. It’s important to <a href="#4" title="3a">make connections</a> [3a] between ideas in your notes.</p>
+</section>
+<section id="4" class="level1" title="How to find related notes">
+<h1 title="How to find related notes">4 How to find related notes</h1>
+<p><code>slipbox</code> provides multiple ways to connect notes.</p>
 <ul>
-<li>To create note sequences, you need to understand note aliases  [<a href="#9" title="0a1b1">0a1b1</a>]</li>
-<li>and the syntax  [<a href="#10" title="0a1b2">0a1b2</a>].</li>
-</ul></li>
-<li>Another way to look for notes is by using text search  [<a href="#13" title="0f">0f</a>].</li>
-<li>Backlinks and sequence links appear in the ‘See also’ section of each note  [<a href="#8" title="0a2">0a2</a>].</li>
-<li>You can add citations by specifying a bibliography file  [<a href="#7" title="0d">0d</a>].</li>
-<li>Cytoscape.js provides an interactive visualization of your notes  [<a href="#11" title="0e">0e</a>].
-<ul>
-<li>How to link to images?  [<a href="#12" title="0e1">0e1</a>].</li>
-</ul></li>
+<li><a href="#5" title="4a">Tags</a> [4a]</li>
+<li><a href="#6" title="4b">Direct links</a> [4b]</li>
+<li><a href="#6" title="Annotated links generates backlinks">Backlinks</a> [6]</li>
+<li><a href="#7" title="4c">Sequence links</a> [4c]</li>
+<li><a href="#8" title="4d">Text search</a> [4d]</li>
+<li><a href="#9" title="4a1">Citations</a> [4a1]</li>
 </ul>
 </section>
-<section id="1" class="level1" title="Every note has an ID and a title">
-<h1 title="Every note has an ID and a title">1 Every note has an ID and a title</h1>
-<p>Each note must have a unique ID and a title. The ID has to be an integer. To add a new note just create a level 1 header containing an ID followed by a space and a title.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu"># 1 Every note has an ID and a title</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>This belongs to note 1.</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="fu"># 2 This is a different note</span></span></code></pre></div>
+<section id="5" class="level1" title="Tags">
+<h1 title="Tags">5 Tags</h1>
+<p>Notes can be related by tags. You can click on a <a href="##tag">#tag</a> to see a list of other notes that share the tag.</p>
+<p>Clicking on the header in the <a href="##tag">#tag</a> page will show a list of all #<a href="#tags">tags</a>.</p>
 </section>
-<section id="2" class="level1" title="A file can contain multiple notes">
-<h1 title="A file can contain multiple notes">2 A file can contain multiple notes</h1>
-<p>You can place any number of notes in a file, but notes can’t be split into multiple files. In this case, a note contains everything until the <a href="#1" title="Notes in a single file are separated by headers.">header</a> [1] of the next note.</p>
-</section>
-<section id="3" class="level1" title="You can use hashtags anywhere in the note">
-<h1 title="You can use hashtags anywhere in the note">3 You can use hashtags anywhere in the note</h1>
-<p><a href="##You">#You</a> <a href="##can">#can</a> <a href="##add">#add</a> <a href="##tags">#tags</a> <a href="##like">#like</a> <a href="##this.">#this.</a></p>
-<p>Click on the tags to see a list of notes with the same tag.</p>
-</section>
-<section id="4" class="level1" title="Types of links">
-<h1 title="Types of links">4 Types of links</h1>
-<p><a href="##links">#links</a> <a href="##backlinks">#backlinks</a> <a href="##sequence-links">#sequence-links</a></p>
-<p><code>slipbox</code> supports several types of links.</p>
-<dl>
-<dt>Direct links</dt>
-<dd>You can link to other notes by specifying the note ID as the target. This works even when the note section is in <a href="#2">another file</a> [2]. Even if you move the linked note to another file, the link will still be valid.
-</dd>
-<dt><a href="#5" title="An annotated direct link generates a backlink.">Backlinks</a> [5]</dt>
-<dd>An annotated direct link generates a backlink. It’s sometimes nicer to put the annotation in a reference link. But you have to make sure that the label is unique across all your note files. One way to do this is to use IDs of the source and target notes, like this <a href="#5" title="This creates another backlink.">[4-5]</a> [5].
-</dd>
-<dt>Sequence links</dt>
-<dd>A <a href="#6">sequence link</a> [6] is a special type of link that indicates the order to read a sequence of notes in.
-</dd>
-</dl>
-</section>
-<section id="5" class="level1" title="Backlinks are generated from annotated direct links">
-<h1 title="Backlinks are generated from annotated direct links">5 Backlinks are generated from annotated direct links</h1>
-<p><a href="##links">#links</a> <a href="##backlinks">#backlinks</a></p>
-<p>This note has backlinks generated from note 4 in the ‘See also’ section  [<a href="#8" title="The See also section contains generated backlinks.">8</a>]. If you hover over the backlink, you’ll see the description from the <a href="#4">forward link</a> [4].</p>
-</section>
-<section id="6" class="level1" title="Notes in a sequence have aliases">
-<h1 title="Notes in a sequence have aliases">6 Notes in a sequence have aliases</h1>
-<p><a href="##sequence-links">#sequence-links</a> <a href="##aliases">#aliases</a></p>
-<p>While <a href="#1" title="Notes can have alias IDs.">note IDs</a> [1] are meant to uniquely identify notes, aliases are meant to show which notes belong in a sequence. For example,</p>
-<pre><code>0a -&gt; 0a1 -&gt; 0a1b</code></pre>
-<p>Just by looking at the aliases of a note, you’ll know which notes come before and after it. Each of these aliases correspond to a real ID. These aliases are defined in an outline note using <a href="#10">sequence links</a> [10].</p>
-<p>You can see the immediate neighbors of this note in the ‘See also’ section  [<a href="#8" title="The aliases of the sequence neighbors of a note appear in the See also section.">8</a>].</p>
-</section>
-<section id="7" class="level1" title="Specify a bibliography file to use citations">
-<h1 title="Specify a bibliography file to use citations">7 Specify a bibliography file to use citations</h1>
-<p><a href="##tools">#tools</a></p>
-<p>If you specify a bibliography in the options, <code>slipbox</code> generates a bibliography page containing every reference in the bibliography. You can access this page by replacing the URL hash with #<a href="#references">references</a>.</p>
-<p>It also generates a section for each cited reference, which contains a list of all notes that cite the reference <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
-<p>You have to specify the bibliography file using the <code>-c</code> option. Take note of the quotes and the spaces in the options.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -c <span class="st">&#39; --bibliography notes.bib&#39;</span> -d <span class="st">&#39; -o notes.html&#39;</span></span></code></pre></div>
-</section>
-<section id="8" class="level1" title="See also section: backlinks and sequence links">
-<h1 title="See also section: backlinks and sequence links">8 See also section: backlinks and sequence links</h1>
-<p><a href="##backlinks">#backlinks</a> <a href="##sequence-links">#sequence-links</a> <a href="##aliases">#aliases</a></p>
-<p>The ‘See also’ section lists <a href="#5" title="Backlinks appear in the See also section.">backlinks</a> [5] and <a href="#6" title="Immediate neighbors appear in the See also section.">sequence links</a> [6]. The sequence links include ‘previous notes’ and ‘next notes’ as defined by some outline note. You can distinguish between backlinks and sequence links by looking at the ID that appears next to the title of the linked note.</p>
+<section id="6" class="level1" title="Direct links">
+<h1 title="Direct links">6 Direct links</h1>
+<p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
+<p>Direct links are an explicit way to <a href="#4">connect</a> [4] two notes. To link to a note, you only have to specify the <a href="#3">ID of the note</a> [3] as the link target. In markdown, <code class="sourceCode markdown"><span class="co">[</span><span class="ot">link to note 3</span><span class="co">](#3)</span></code>. This works even when the linked note is in another file.</p>
+<p>Direct links from the active note appear in the See also section with a boldfaced ID. The interactive graph displays these links with solid black lines.</p>
+<section id="backlinks" class="level3">
+<h3>Backlinks</h3>
+<p><code>slipbox</code> generates backlinks from annotated links.</p>
 <ul>
-<li>Backlinks are shown with <a href="#1">real IDs</a> [1] (only contain numbers).</li>
-<li>Sequence links are shown with <a href="#6">aliases</a> [6] (contain a mix of numbers and letters  [<a href="#9">9</a>]).</li>
+<li>Backlink IDs in the See also section have regular font.</li>
+<li>Hovering over the backlink will show the link annotation.</li>
+<li>Backlinks in the interactive graph appear as dashed lines.</li>
+</ul>
+<p><a href="#7" title="6a">Sequence links</a> [6a] also use link annotations, but in a different way.</p>
+</section>
+<section id="external-links" class="level3">
+<h3>External links</h3>
+<p>It’s also possible to <a href="#10" title="6b">link to files</a> [6b] outside of the slipbox.</p>
+</section>
+</section>
+<section id="7" class="level1" title="Sequence links">
+<h1 title="Sequence links">7 Sequence links</h1>
+<p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
+<p>A sequence link is a special type of <a href="#6">link</a> [6] that indicates that a set of notes are to be read in sequence.</p>
+<section id="note-aliases" class="level3">
+<h3>Note aliases</h3>
+<p>You can determine which sequences a particular note belongs to by simply looking at its note aliases. A note alias is a string that alternates between numbers and letters.</p>
+<p>For example, suppose 4a2b is a note alias of note 12. The note alias says that note 12 belongs in a sequence containing notes 4, 4a, 4a2, etc., in that order.</p>
+<p>We can think of notes 4a and 4a2b as neighbors of note 4a2.</p>
+<ul>
+<li>Links to neighbor notes in the See also section show the note ID and the alias.</li>
+<li>Neighbor links in the interactive graph are solid red.</li>
 </ul>
 </section>
-<section id="9" class="level1" title="How to derive note aliases">
-<h1 title="How to derive note aliases">9 How to derive note aliases</h1>
-<p><a href="##aliases">#aliases</a> <a href="##sequence-links">#sequence-links</a></p>
-<p>A note alias is a string of numbers and letters. It always starts with a number.</p>
-<p>Example: <a href="#6">0a1b</a> [6]. The first number (0) indicates the owner or the outline note of the sequence. Often it is the ID of the note that contains the sequence link for the alias.</p>
-<p>In this example, <a href="#4">0a1</a> [4] is preceded by <a href="#1">0a</a> [1] and followed by <a href="#6">0a1b</a> [6]. Presumably, there’s another note <a href="#5">0a1a</a> [5] that follows note <a href="#4">0a1</a> [4]. So to follow a note alias, just append a number [letter] if the last symbol is a letter [number]. The sequence links for these note aliases are defined in note  [<a href="#0">0</a>].</p>
+<section id="how-to-create-sequence-links" class="level3">
+<h3>How to create sequence links</h3>
+<p>Sequence links are created using regular links, but the link has to have a note alias in the description.</p>
+<p>Example: <code class="sourceCode markdown"><span class="co">[</span><span class="ot">sequence link</span><span class="co">](#12 &#39;#4a2b&#39;)</span></code>` assigns 4a2b as an alias to note 12.</p>
 </section>
-<section id="10" class="level1" title="How to create a sequence link">
-<h1 title="How to create a sequence link">10 How to create a sequence link</h1>
-<p><a href="##sequence-links">#sequence-links</a> <a href="##aliases">#aliases</a></p>
-<p>A sequence link looks just like a <a href="#4">direct link</a> [4], but there’s one difference: it contains an alias description.</p>
-<p>A sequence link has three parts.</p>
-<ol type="1">
-<li>Some (optional) text</li>
-<li>The <a href="#1">real ID</a> [1] of the target note</li>
-<li>The note <a href="#6" title="The note alias is used to annotate a sequence link.">alias</a> [6]</li>
-</ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">[</span><span class="ot">Text</span><span class="co">](#11 &#39;10a1b3&#39;)</span></span></code></pre></div>
-<p>Note 0 contains sequence links for these notes  [<a href="#0">0</a>].</p>
 </section>
-<section id="11" class="level1" title="Visualize notes using Cytoscape">
-<h1 title="Visualize notes using Cytoscape">11 Visualize notes using Cytoscape</h1>
-<p><a href="##links">#links</a> <a href="##sequence-links">#sequence-links</a> <a href="##backlinks">#backlinks</a> <a href="##visualization">#visualization</a> <a href="##interactive">#interactive</a></p>
-<p>An interactive visualization of your notes will appear below the See also section if the active note is connected to other notes. Black lines represent <a href="#4" title="Direct links appear as black lines in the interactive graph.">direct links</a> [4], red lines represent <a href="#10" title="Sequence links appear as red lines in the interactive graph.">sequence links</a> [10]. Dashed lines represent <a href="#5" title="Backlinks appear as dashed lines in the interactive graph.">backlinks</a> [5].</p>
+<section id="8" class="level1" title="Text search">
+<h1 title="Text search">8 Text search</h1>
+<p>Even without <a href="#5">tags</a> [5] or <a href="#6">links</a> [6], you can look for notes using text search. You can open the #<a href="#search">search</a> page by clicking on the search button at the top.</p>
 </section>
-<section id="12" class="level1" title="How to link to images">
-<h1 title="How to link to images">12 How to link to images</h1>
-<p><a href="##images">#images</a> <a href="##links">#links</a></p>
-<p>You can <a href="#4">link</a> [4] to images using absolute paths, relative paths and URLs. Relative paths are interpreted to be relative to the output HTML.</p>
+<section id="9" class="level1" title="Citations">
+<h1 title="Citations">9 Citations</h1>
+<p><a href="##examples">#examples</a></p>
+<p><code>slipbox</code> uses <code>pandoc-citeproc</code> for citations. You can click on a citation to see a list of all notes that cite the same reference.</p>
+<p>Clicking on the header of the reference page will open a list of all cited references.</p>
+<p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
+<p>In order to activate <code>citeproc</code>, you have to specify a bibliography file to <code>pandoc</code> using the <code>-c</code> option. Take note of the quotes and spaces in the options.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -c <span class="st">&#39; --bibliography notes.bib&#39;</span> -d <span class="st">&#39; -o notes.html&#39;</span></span></code></pre></div>
+</section>
+<section id="10" class="level1" title="Questions">
+<h1 title="Questions">10 Questions</h1>
+<section id="support-for-formats-other-than-markdown" class="level3">
+<h3>Support for formats other than markdown</h3>
+<p><code>slipbox</code> should have partial support for most input formats that <code>pandoc</code> supports. However, certain features such as <a href="#6">backlinks</a> [6] and <a href="#7">sequence links</a> [7] require link annotations.</p>
+</section>
+<section id="how-to-link-to-external-files" class="level3">
+<h3>How to link to external files</h3>
+<p>Links must be relative to the output HTML.</p>
 <p>Suppose you have the following directory structure.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">notes/input.md</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">output.html</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
-<p>You could link to <code>image.png</code> from <code>notes/input.md</code> as:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="al">![description](images/image.png)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="ex">notes/input.md</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="ex">output.html</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
+<p>To link to the image from <code>input.md</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="co">&lt;!--input.md--&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="al">![](images/image.png)</span></span></code></pre></div>
 </section>
-<section id="13" class="level1" title="Text search">
-<h1 title="Text search">13 Text search</h1>
-<p><a href="##text">#text</a> <a href="##search">#search</a></p>
-<p>You can search your notes by going to #<a href="#search">search</a>.</p>
 </section>
 
-<section id='#You' title='#You' class='level1'>
+<section id='#examples' title='#examples' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
-      #You
+      #examples
     </a>
   </h1>
   <ul>
     <li>
-      [3] 
-      <a href='#3'>
-        You can use hashtags anywhere in the note
+      [2] 
+      <a href='#2'>
+        Basic usage
       </a>
     </li>
-  </ul>
-</section>
-<section id='#add' title='#add' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #add
-    </a>
-  </h1>
-  <ul>
     <li>
       [3] 
       <a href='#3'>
-        You can use hashtags anywhere in the note
+        How to organize notes
       </a>
     </li>
-  </ul>
-</section>
-<section id='#aliases' title='#aliases' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #aliases
-    </a>
-  </h1>
-  <ul>
     <li>
       [6] 
       <a href='#6'>
-        Notes in a sequence have aliases
+        Direct links
       </a>
     </li>
     <li>
-      [8] 
-      <a href='#8'>
-        See also section: backlinks and sequence links
+      [7] 
+      <a href='#7'>
+        Sequence links
       </a>
     </li>
     <li>
       [9] 
       <a href='#9'>
-        How to derive note aliases
-      </a>
-    </li>
-    <li>
-      [10] 
-      <a href='#10'>
-        How to create a sequence link
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#backlinks' title='#backlinks' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #backlinks
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [4] 
-      <a href='#4'>
-        Types of links
-      </a>
-    </li>
-    <li>
-      [5] 
-      <a href='#5'>
-        Backlinks are generated from annotated direct links
-      </a>
-    </li>
-    <li>
-      [8] 
-      <a href='#8'>
-        See also section: backlinks and sequence links
-      </a>
-    </li>
-    <li>
-      [11] 
-      <a href='#11'>
-        Visualize notes using Cytoscape
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#can' title='#can' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #can
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [3] 
-      <a href='#3'>
-        You can use hashtags anywhere in the note
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#images' title='#images' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #images
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [12] 
-      <a href='#12'>
-        How to link to images
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#interactive' title='#interactive' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #interactive
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [11] 
-      <a href='#11'>
-        Visualize notes using Cytoscape
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#like' title='#like' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #like
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [3] 
-      <a href='#3'>
-        You can use hashtags anywhere in the note
+        Citations
       </a>
     </li>
   </ul>
@@ -1204,147 +1079,30 @@
   </h1>
   <ul>
     <li>
-      [4] 
-      <a href='#4'>
-        Types of links
-      </a>
-    </li>
-    <li>
-      [5] 
-      <a href='#5'>
-        Backlinks are generated from annotated direct links
-      </a>
-    </li>
-    <li>
-      [11] 
-      <a href='#11'>
-        Visualize notes using Cytoscape
-      </a>
-    </li>
-    <li>
-      [12] 
-      <a href='#12'>
-        How to link to images
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#search' title='#search' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #search
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [13] 
-      <a href='#13'>
-        Text search
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#sequence-links' title='#sequence-links' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #sequence-links
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [4] 
-      <a href='#4'>
-        Types of links
-      </a>
-    </li>
-    <li>
       [6] 
       <a href='#6'>
-        Notes in a sequence have aliases
+        Direct links
       </a>
     </li>
-    <li>
-      [8] 
-      <a href='#8'>
-        See also section: backlinks and sequence links
-      </a>
-    </li>
-    <li>
-      [9] 
-      <a href='#9'>
-        How to derive note aliases
-      </a>
-    </li>
-    <li>
-      [10] 
-      <a href='#10'>
-        How to create a sequence link
-      </a>
-    </li>
-    <li>
-      [11] 
-      <a href='#11'>
-        Visualize notes using Cytoscape
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#tags' title='#tags' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #tags
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [3] 
-      <a href='#3'>
-        You can use hashtags anywhere in the note
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#text' title='#text' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #text
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [13] 
-      <a href='#13'>
-        Text search
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#this.' title='#this.' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #this.
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [3] 
-      <a href='#3'>
-        You can use hashtags anywhere in the note
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#tools' title='#tools' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #tools
-    </a>
-  </h1>
-  <ul>
     <li>
       [7] 
       <a href='#7'>
-        Specify a bibliography file to use citations
+        Sequence links
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#tag' title='#tag' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #tag
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [5] 
+      <a href='#5'>
+        Tags
       </a>
     </li>
   </ul>
@@ -1357,9 +1115,15 @@
   </h1>
   <ul>
     <li>
-      [11] 
-      <a href='#11'>
-        Visualize notes using Cytoscape
+      [6] 
+      <a href='#6'>
+        Direct links
+      </a>
+    </li>
+    <li>
+      [7] 
+      <a href='#7'>
+        Sequence links
       </a>
     </li>
   </ul>
@@ -1370,43 +1134,8 @@
   </h1>
   <ul>
     <li>
-      <a href='##You'>
-        #You
-      </a>
-    </li>
-    <li>
-      <a href='##add'>
-        #add
-      </a>
-    </li>
-    <li>
-      <a href='##aliases'>
-        #aliases
-      </a>
-    </li>
-    <li>
-      <a href='##backlinks'>
-        #backlinks
-      </a>
-    </li>
-    <li>
-      <a href='##can'>
-        #can
-      </a>
-    </li>
-    <li>
-      <a href='##images'>
-        #images
-      </a>
-    </li>
-    <li>
-      <a href='##interactive'>
-        #interactive
-      </a>
-    </li>
-    <li>
-      <a href='##like'>
-        #like
+      <a href='##examples'>
+        #examples
       </a>
     </li>
     <li>
@@ -1415,33 +1144,8 @@
       </a>
     </li>
     <li>
-      <a href='##search'>
-        #search
-      </a>
-    </li>
-    <li>
-      <a href='##sequence-links'>
-        #sequence-links
-      </a>
-    </li>
-    <li>
-      <a href='##tags'>
-        #tags
-      </a>
-    </li>
-    <li>
-      <a href='##text'>
-        #text
-      </a>
-    </li>
-    <li>
-      <a href='##this.'>
-        #this.
-      </a>
-    </li>
-    <li>
-      <a href='##tools'>
-        #tools
+      <a href='##tag'>
+        #tag
       </a>
     </li>
     <li>
@@ -1462,9 +1166,9 @@
   </p>
   <ul>
     <li>
-      [7] 
-      <a href='#7'>
-        Specify a bibliography file to use citations
+      [9] 
+      <a href='#9'>
+        Citations
       </a>
     </li>
   </ul>

@@ -1,7 +1,7 @@
 slipbox
 =======
 
-`slipbox` is a collection of tools for managing notes.
+`slipbox` is a static site generator for Zettelkasten notes.
 
 Features
 --------
