@@ -171,6 +171,32 @@ def test_scan_empty_file(mock_db, tmp_path):
     assert not list(mock_db.execute("SELECT * FROM Bibliography"))
     assert not list(mock_db.execute("SELECT * FROM Citations"))
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+def test_scan_filenames(mock_db, tmp_path):
+    """Filenames must be grepped from input files only."""
+    markdown = tmp_path/"foo.md"
+    skip = tmp_path/"bar.md"
+    markdown.write_text("# 0 Note\n\nBody.\n")
+    skip.write_text("# 0 Note\n\nBody.\n")
+    scan.scan(mock_db, [str(markdown)], "", False)
+
+    result = list(mock_db.execute("SELECT filename FROM Notes WHERE id = 0"))
+    assert len(result) == 1
+    assert result[0][0] == str(markdown)
+
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+def test_scan_filenames0(mock_db, tmp_path):
+    """Filenames must be grepped from input files only."""
+    markdown = tmp_path/"bar.md"
+    skip = tmp_path/"foo.md"
+    markdown.write_text("# 0 Note\n\nBody.\n")
+    skip.write_text("# 0 Note\n\nBody.\n")
+    scan.scan(mock_db, [str(markdown)], "", False)
+
+    result = list(mock_db.execute("SELECT filename FROM Notes WHERE id = 0"))
+    assert len(result) == 1
+    assert result[0][0] == str(markdown)
+
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
     directory = tmp_path/"directory"
