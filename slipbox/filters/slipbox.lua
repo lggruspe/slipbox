@@ -67,6 +67,17 @@ function SlipBox:save_sequence(link)
       local children = self.children[parent] or {}
       table.insert(children, link.alias)
       self.children[parent] = children
+
+      if parent == tostring(link.src) then
+        local aliases = assert(self.notes[link.src]).aliases or {}
+        table.insert(aliases, tostring(link.src))
+        self.notes[link.src].aliases = aliases
+
+        self.aliases[tostring(link.src)] = {
+          id = link.src,
+          owner = link.src,
+        }
+      end
     end
   end
 end
@@ -194,17 +205,14 @@ end
 local function sequences_to_sql(sequences)
   local values = ""
   for alias, children in pairs(sequences) do
-    -- aliases must contain numbers and letters
-    if not alias:match'^%d+$' then
-      local parent = sqlite_string(alias)
-      for _, v in ipairs(children) do
-        local child = sqlite_string(v)
-        local value = string.format("(%s, %s)", parent, child)
-        if values == "" then
-          values = values .. ' ' .. value
-        else
-          values = values .. ", " .. value
-        end
+    local parent = sqlite_string(alias)
+    for _, v in ipairs(children) do
+      local child = sqlite_string(v)
+      local value = string.format("(%s, %s)", parent, child)
+      if values == "" then
+        values = values .. ' ' .. value
+      else
+        values = values .. ", " .. value
       end
     end
   end
