@@ -120,15 +120,17 @@ describe("get_sequence_link", function()
   end)
 end)
 
-local function test_get_link_nil()
-  -- Make sure get_sequence_link and get_direct_link can return nil.
-  -- Test case: tag links should not be classified as a direct or sequence link.
-  local div = make_sample_div()
-  local link = make_tag_link()
-  local result = links.get_direct_link(div, link) or
-    links.get_sequence_link(div, link)
-  assert(not result)
-end
+describe("get_direct_link and get_sequence_link", function()
+  describe("on tag links", function()
+    it("should return nil", function()
+      local div = make_sample_div()
+      local link = make_tag_link()
+      local result = links.get_direct_link(div, link) or
+        links.get_sequence_link(div, link)
+      assert(not result)
+    end)
+  end)
+end)
 
 describe("get_direct_link", function()
   it("should be able to return an object with a non-null description", function()
