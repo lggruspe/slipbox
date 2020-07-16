@@ -120,7 +120,7 @@ describe('Database', function () {
           () => db.add(new Sequence(null, null)),
           DomainError)
 
-        assert(!db.data.aliases['b'])
+        assert(!db.data.aliases.b)
         assert.equal(db.data.aliases['2'].children.length, 1)
         assert(db.data.aliases['2'].children.includes('2a'))
       })
@@ -344,7 +344,7 @@ describe('Query', function () {
 
   describe('parent', function () {
     describe('of non-existent alias', function () {
-      it("should be null", function () {
+      it('should be null', function () {
         assert(query.parent('1') === null)
       })
     })

@@ -8,11 +8,11 @@ bundle:
 .PHONY:	check
 check: bundle
 	cd slipbox; cat filters/*.test.lua | lua
-	npm test
+	npx eslint test --global describe --global it --global beforeEach --rule 'no-unused-vars: 0'
 	npm run lint
-	#npx eslint test --global describe --global it
-	cd slipbox; pytest --cov=. --cov-fail-under=80 --cov-report=term-missing --cov-branch
+	npm test
 	pylint slipbox --fail-under=10 -d R0903
+	cd slipbox; pytest --cov=. --cov-fail-under=80 --cov-report=term-missing --cov-branch
 	@echo "Yay!"
 
 .PHONY:	docs
