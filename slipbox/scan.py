@@ -135,7 +135,7 @@ def store_html_sections(conn, html: str, sources: [str]):
     sources
     : List of source files from which the html was generated.
     """
-    if not html or not sources:
+    if not html.strip() or not sources:
         return
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys=ON")

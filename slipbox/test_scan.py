@@ -14,6 +14,9 @@ def insert_file_script(*files):
     return sql.format("), (".join(map(sqlite_string, files)))
 
 def test_is_recently_modified(tmp_path):
+    """The function returned by is_recently_modified should return true iff
+    the input file was modified after the specified timestamp.
+    """
     before = time.time()
     path = tmp_path/"file"
     path.touch()
@@ -29,6 +32,7 @@ def test_is_recently_modified(tmp_path):
     assert modified_after(path)
 
 def test_is_file_in_db(mock_db, tmp_path):
+    """Quick check for is_file_in_db."""
     conn = mock_db
     present = tmp_path/"present"
     absent = tmp_path/"absent"
@@ -37,12 +41,16 @@ def test_is_file_in_db(mock_db, tmp_path):
     assert not scan.is_file_in_db(absent.name, conn)
 
 def test_has_valid_pattern():
+    """has_valid_pattern is true only for filenames that match at least one of
+    the wildcard patterns."""
     patterns = ("*.md", "*.rst")
     assert scan.has_valid_pattern("a.md", patterns)
     assert scan.has_valid_pattern("a.rst", patterns)
     assert not scan.has_valid_pattern("a.tex", patterns)
+    assert not scan.has_valid_pattern("a.md", (".md"))
 
 def test_files_in_path(tmp_path):
+    """files_in_path should only find files in the specified directory."""
     subdir = tmp_path/"subdir"
     inside = subdir/"inside.md"
     outside = tmp_path/"outside.md"
@@ -77,6 +85,11 @@ def test_find_new_files(mock_db, tmp_path):
     assert new_files == [str(absent)]
 
 def test_group_by_file_extension():
+    """group_by_file_extension should split by file type.
+
+    Files with no extension should be considered their own type.
+    """
+
     files = ["a.md", "b.md", ".md", "c.tex", ".tex", ""]
     groups = list(map(list, scan.group_by_file_extension(files)))
     assert len(groups) == 5
@@ -86,13 +99,15 @@ def test_group_by_file_extension():
     assert [".tex"] in groups
     assert [""] in groups
 
-def test_group_by_file_extensions_on_the_same_type():
+def test_group_by_file_extension_on_the_same_type():
+    """group_by_file_extension should group files with the same type together."""
     files = [f"{c}.md" for c in "abcdefg"]
     groups = list(map(list, scan.group_by_file_extension(files)))
     assert len(groups) == 1
     assert files in groups
 
 def test_build_command():
+    """Sanity check for build_command."""
     output = "output.html"
     options = "--mathjax"
     assert not scan.build_command([], output, options)
@@ -138,6 +153,23 @@ def test_scan(mock_db, tmp_path):
     assert not list(mock_db.execute("SELECT * FROM Html"))
     scan.scan(mock_db, [str(input_file)], "", False)
     assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
+
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+def test_scan_empty_file(mock_db, tmp_path):
+    """Scanned files that are empty shouldn't have entries in the database."""
+    empty = tmp_path/"empty.md"
+    empty.touch()
+    scan.scan(mock_db, [str(empty)], "", False)
+    assert not list(mock_db.execute("SELECT * FROM Files"))
+    assert not list(mock_db.execute("SELECT * FROM Notes"))
+    assert not list(mock_db.execute("SELECT * FROM Tags"))
+    assert not list(mock_db.execute("SELECT * FROM Links"))
+    assert not list(mock_db.execute("SELECT * FROM Aliases"))
+    assert not list(mock_db.execute("SELECT * FROM Sequences"))
+    assert not list(mock_db.execute("SELECT * FROM Html"))
+    assert not list(mock_db.execute("SELECT * FROM Sections"))
+    assert not list(mock_db.execute("SELECT * FROM Bibliography"))
+    assert not list(mock_db.execute("SELECT * FROM Citations"))
 
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
