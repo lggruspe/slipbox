@@ -34,6 +34,24 @@ it('isSequence', function () {
   assert(!isSequence('', ''))
 })
 
+describe('Note', function () {
+  describe('with invalid note attributes', function () {
+    it('should raise DomainError', function () {
+      assert.throws(() => new Note('1', null))
+      assert.throws(() => new Note(2, ''))
+      assert.throws(() => new Note('3', 'Title'))
+    })
+  })
+
+  describe('with valid note attributes', function () {
+    it('should not raise errors', function () {
+      const note = new Note(0, 'Title')
+      assert.strictEqual(note.id, 0)
+      assert.strictEqual(note.title, 'Title')
+    })
+  })
+})
+
 describe('Database', function () {
   let db = null
 
@@ -42,20 +60,10 @@ describe('Database', function () {
   })
 
   describe('add Note', function () {
-    describe('with invalid note attributes', function () {
-      it('should raise DomainError', function () {
-        db.add(new Note(0, 'title'))
-
-        assert.throws(
-          () => db.add(new Note('1', null)),
-          DomainError)
-
-        assert.throws(
-          () => db.add(new Note(2, '')),
-          DomainError)
-
-        assert.strictEqual(db.data.notes.length, 1)
-      })
+    it('sanity check', function () {
+      assert.strictEqual(db.data.notes.length, 0)
+      db.add(new Note(0, 'title'))
+      assert.strictEqual(db.data.notes.length, 1)
     })
 
     describe('with duplicate ID', function () {
