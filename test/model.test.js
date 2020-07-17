@@ -25,14 +25,13 @@ it('isSequence', function () {
   assert(isSequence('1', '1a'))
   assert(isSequence('2', '2b'))
   assert(isSequence('3', '3abc'))
+  assert(isSequence(null, '7'))
+  assert(isSequence(null, null))
+
   assert(!isSequence('4a', '4b'))
   assert(!isSequence('5c', '5'))
   assert(!isSequence('', '6'))
-
-  assert(isSequence(null, '7'))
-
   assert(!isSequence('', ''))
-  assert(isSequence(null, null))
 })
 
 describe('Database', function () {

@@ -84,15 +84,10 @@ local function alias_parent(alias)
   if not is_valid_alias(alias) then return nil end
   if alias == nil then return nil end
 
-  local last = character_class(alias:sub(#alias, #alias))
-  local pattern
-  if last == 'd' then
-    pattern = '^(.-)[0-9]+$'
-  else
-    pattern = '^(.-)[a-z]+$'
-  end
-  local result, count = alias:gsub(pattern, '%1')
-  return count == 0 and nil or result
+  local result, count = alias:gsub('^(.-)[0-9]+$', '%1')
+  if count > 0 and result ~= "" then return result end
+  result, count = alias:gsub('^(.-)[a-z]+$', '%1')
+  if count > 0 and result ~= "" then return result end
 end
 
 local function is_sequence(prev, next)
