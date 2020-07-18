@@ -18,11 +18,6 @@ function Li (children) {
   return li
 }
 
-function aliasOwner (alias) {
-  const found = alias.match(/^\d+/)
-  return found ? found[0] : ''
-}
-
 function * backlinkLIs (query, id) {
   const note = query.note(id)
   if (note) {
@@ -134,37 +129,6 @@ function createSeeAlsoDiv (query, id) {
   return div
 }
 
-function createAliasesP (query, id) {
-  const p = document.createElement('p')
-  p.id = 'slipbox-aliases'
-
-  const note = query.note(id)
-  if (!note) return p
-
-  const aliases = Array.from(note.aliases()).map(alias => {
-    const span = document.createElement('span')
-    span.appendChild(document.createTextNode(' ['))
-    span.appendChild(A(alias, '#' + aliasOwner(alias)))
-    span.appendChild(document.createTextNode(']'))
-    return span
-  })
-  if (aliases.length > 0) {
-    const text = document.createElement('strong')
-    text.innerText = 'Aliases:'
-    p.appendChild(text)
-    aliases.forEach(alias => p.appendChild(alias))
-  }
-  return p
-}
-
-function setAliasesP (query, id) {
-  const p = document.getElementById('slipbox-aliases')
-  if (p) {
-    p.remove()
-  }
-  document.body.appendChild(createAliasesP(query, id))
-}
-
 function setSeeAlsoDiv (query, id) {
   const div = document.getElementById('slipbox-see-also')
   if (div) {
@@ -176,7 +140,6 @@ function setSeeAlsoDiv (query, id) {
 function seeAlso (query, hash) {
   const section = getSectionFromHash(hash) // closest level1 ancestor
   const id = section ? Number(section.id) : 0
-  setAliasesP(query, id)
   setSeeAlsoDiv(query, id)
 }
 
