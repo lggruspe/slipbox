@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpskt84q2_</title>
+  <title>tmpefh1hidv</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -437,6 +437,7 @@
       const record = this.db.data.aliases[alias];
       if (!record || !record.parent) return null
       const parentRecord = this.db.data.aliases[record.parent];
+      // TODO what if parentRecord.id === 0?
       if (!parentRecord || !parentRecord.id) return null
       return {
         note: this.note(parentRecord.id),
@@ -1004,7 +1005,7 @@
 </section>
 <section id="9" class="level1" title="Citations">
 <h1 title="Citations">9 Citations</h1>
-<p><a href="##examples">#examples</a></p>
+<p><a href="##examples">#examples</a> <a href="##links">#links</a></p>
 <p><code>slipbox</code> uses <code>pandoc-citeproc</code> for citations. You can click on a citation to see a list of all notes that cite the same reference.</p>
 <p>Clicking on the header of the reference page will open a list of all cited references.</p>
 <p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
@@ -1088,6 +1089,12 @@
       [7] 
       <a href='#7'>
         Sequence links
+      </a>
+    </li>
+    <li>
+      [9] 
+      <a href='#9'>
+        Citations
       </a>
     </li>
   </ul>

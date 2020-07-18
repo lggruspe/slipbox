@@ -197,6 +197,29 @@ def test_scan_filenames0(mock_db, tmp_path):
     assert len(result) == 1
     assert result[0][0] == str(markdown)
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+def test_scan_external_sequence_links(mock_db, tmp_path):
+    """Alias.owner must be equal to the root of the sequence defined by the
+    alias, not to the source of the sequence link.
+    """
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# 0 Foo
+
+[Bar](#1 '0a')
+
+# 1 Bar
+
+[Bar](#1 '0b')
+""")
+    scan.scan(mock_db, [str(markdown)], "", False)
+    result = list(mock_db.execute("""
+        SELECT id, owner, alias FROM Aliases ORDER BY alias
+    """))
+    assert len(result) == 3
+    assert result[0] == (0, 0, '0')
+    assert result[1] == (1, 0, '0a')
+    assert result[2] == (1, 0, '0b')
+
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
     directory = tmp_path/"directory"

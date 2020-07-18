@@ -1,3 +1,5 @@
+local links_m = require "filters/links"
+
 local SlipBox = {}
 function SlipBox:new()
   self.__index = self
@@ -54,7 +56,7 @@ function SlipBox:save_sequence(link)
   if link.dest and link.alias then
     self.aliases[link.alias] = {
       id = link.dest,
-      owner = link.src,
+      owner = links_m.alias_root(link.alias),
     }
     -- dest might not be in notes if it's not in the current set of input files
     if self.notes[link.dest] then
@@ -75,7 +77,7 @@ function SlipBox:save_sequence(link)
 
         self.aliases[tostring(link.src)] = {
           id = link.src,
-          owner = link.src,
+          owner = links_m.alias_root(link.alias),
         }
       end
     end
