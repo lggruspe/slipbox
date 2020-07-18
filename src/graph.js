@@ -10,11 +10,12 @@ function graphArea () {
   return div
 }
 
-function noteElement (id, currentNote = false) {
+function noteElement (note, currentNote = false) {
   return {
     data: {
-      id: id,
-      label: id,
+      id: note.id,
+      title: note.title,
+      label: note.id,
       color: currentNote ? 'white' : undefined
     }
   }
@@ -31,28 +32,28 @@ function linkElement (type, source, target) {
 }
 
 function * neighborElements (query, id) {
-  yield noteElement(id, true)
   const note = query.note(id)
+  yield noteElement(note, true)
 
   for (const backlink of note.backlinks()) {
-    yield noteElement(backlink.src.id)
+    yield noteElement(backlink.src)
     yield linkElement('backlink', backlink.src.id, id)
   }
   for (const link of note.links()) {
-    yield noteElement(link.dest.id)
+    yield noteElement(link.dest)
     yield linkElement('direct', id, link.dest.id)
   }
   for (const parent of note.parents()) {
-    yield noteElement(parent.note.id)
+    yield noteElement(parent.note)
     yield linkElement('sequence', parent.note.id, id)
   }
   for (const child of note.children()) {
-    yield noteElement(child.note.id)
+    yield noteElement(child.note)
     yield linkElement('sequence', id, child.note.id)
   }
   for (const descendant of query.descendants(String(id))) {
-    yield noteElement(descendant.note.id)
-    yield noteElement(descendant.parentID)
+    yield noteElement(descendant.note)
+    yield noteElement(query.note(descendant.parentID))
     yield linkElement('sequence', descendant.parentID, descendant.note.id)
   }
 }
@@ -108,11 +109,39 @@ function createCytoscape (container, elements) {
   })
 }
 
+function noteInfoDiv () {
+  const div = document.createElement('div')
+  div.style.bottom = 0
+  div.style.right = 0
+  div.style.padding = '20px'
+  div.style.position = 'fixed'
+  div.style.zIndex = 1
+  return div
+}
+
+function hoverHandlers (container) {
+  const h3 = document.createElement('h3')
+  const infoDiv = noteInfoDiv()
+  infoDiv.appendChild(h3)
+  container.appendChild(infoDiv)
+
+  const show = event => {
+    h3.textContent = event.target.data().title
+  }
+  const hide = event => {
+    h3.textContent = ''
+  }
+  return [show, hide]
+}
+
 function init (query) {
   let container = graphArea()
+  let infoContainer = document.createElement('div')
 
   function resetGraph () {
     container.remove()
+    infoContainer.remove()
+
     const id = Number(window.location.hash.slice(1))
     if (!Number.isInteger(id)) return
 
@@ -120,11 +149,18 @@ function init (query) {
     if (elements.length < 2) return
 
     container = graphArea()
-    document.body.append(container)
+    infoContainer = document.createElement('div')
+    document.body.appendChild(infoContainer)
+    document.body.appendChild(container)
+
     const cy = createCytoscape(container, elements)
     cy.layout({ name: 'cose' }).run()
     cy.reset()
     cy.center()
+
+    const [show, hide] = hoverHandlers(infoContainer)
+    cy.on('select', 'node', show)
+    cy.on('unselect', 'node', hide)
   }
 
   resetGraph()
