@@ -16,7 +16,8 @@ function noteElement (note, currentNote = false) {
       id: note.id,
       title: note.title,
       label: note.id,
-      color: currentNote ? 'white' : undefined
+      color: currentNote ? 'white' : 'black',
+      bgColor: currentNote ? 'black' : 'gray'
     }
   }
 }
@@ -71,6 +72,7 @@ function createCytoscape (container, elements) {
     multigraph: true,
     container: container,
     elements: elements,
+    selectionType: 'additive',
     style: [
       {
         selector: 'node',
@@ -80,23 +82,16 @@ function createCytoscape (container, elements) {
           width: 'label',
           padding: '8px',
           shape: 'round-rectangle',
-          'text-halign': 'center',
-          'text-valign': 'center',
-          'text-wrap': 'wrap',
-          'text-max-width': 100
-        }
-      },
-      {
-        selector: 'node[color]',
-        style: {
-          'background-color': 'black',
           color: 'data(color)',
           label: 'data(label)',
           height: 'label',
           width: 'label',
           padding: '8px',
+          'background-color': 'data(bgColor)',
           'text-halign': 'center',
-          'text-valign': 'center'
+          'text-valign': 'center',
+          'text-wrap': 'wrap',
+          'text-max-width': 100
         }
       },
       {

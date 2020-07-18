@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpjr0084zj</title>
+  <title>tmpjsqlde7k</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -99,7 +99,8 @@
         id: note.id,
         title: note.title,
         label: note.id,
-        color: currentNote ? 'white' : undefined
+        color: currentNote ? 'white' : 'black',
+        bgColor: currentNote ? 'black' : 'gray'
       }
     }
   }
@@ -154,6 +155,7 @@
       multigraph: true,
       container: container,
       elements: elements,
+      selectionType: 'additive',
       style: [
         {
           selector: 'node',
@@ -163,23 +165,16 @@
             width: 'label',
             padding: '8px',
             shape: 'round-rectangle',
-            'text-halign': 'center',
-            'text-valign': 'center',
-            'text-wrap': 'wrap',
-            'text-max-width': 100
-          }
-        },
-        {
-          selector: 'node[color]',
-          style: {
-            'background-color': 'black',
             color: 'data(color)',
             label: 'data(label)',
             height: 'label',
             width: 'label',
             padding: '8px',
+            'background-color': 'data(bgColor)',
             'text-halign': 'center',
-            'text-valign': 'center'
+            'text-valign': 'center',
+            'text-wrap': 'wrap',
+            'text-max-width': 100
           }
         },
         {
