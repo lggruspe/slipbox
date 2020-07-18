@@ -79,8 +79,11 @@ function createCytoscape (container, elements) {
           height: 'label',
           width: 'label',
           padding: '8px',
+          shape: 'round-rectangle',
           'text-halign': 'center',
-          'text-valign': 'center'
+          'text-valign': 'center',
+          'text-wrap': 'wrap',
+          'text-max-width': 100
         }
       },
       {
@@ -136,10 +139,13 @@ function hoverHandlers (container) {
   container.appendChild(infoDiv)
 
   const show = event => {
-    a.textContent = event.target.data().title
-    a.href = '#' + event.target.data().id
+    const title = event.target.data('title')
+    a.textContent = title
+    a.href = '#' + event.target.data('id')
+    event.target.data('label', title)
   }
   const hide = event => {
+    event.target.data('label', event.target.data('id'))
     a.textContent = ''
   }
   return [show, hide]

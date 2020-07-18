@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpfcwh9_fe</title>
+  <title>tmpjr0084zj</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -162,8 +162,11 @@
             height: 'label',
             width: 'label',
             padding: '8px',
+            shape: 'round-rectangle',
             'text-halign': 'center',
-            'text-valign': 'center'
+            'text-valign': 'center',
+            'text-wrap': 'wrap',
+            'text-max-width': 100
           }
         },
         {
@@ -219,10 +222,13 @@
     container.appendChild(infoDiv);
 
     const show = event => {
-      a.textContent = event.target.data().title;
-      a.href = '#' + event.target.data().id;
+      const title = event.target.data('title');
+      a.textContent = title;
+      a.href = '#' + event.target.data('id');
+      event.target.data('label', title);
     };
     const hide = event => {
+      event.target.data('label', event.target.data('id'));
       a.textContent = '';
     };
     return [show, hide]
