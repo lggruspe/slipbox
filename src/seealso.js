@@ -82,12 +82,28 @@ function * childrenLIs (query, id) {
   }
 }
 
+function * descendantLIs (query, id) {
+  const note = query.note(id)
+  if (note) {
+    for (const descendant of query.descendants(String(id))) {
+      yield {
+        note: descendant.note,
+        li: Li([
+          document.createTextNode(`[${descendant.note.id}/${descendant.alias}] `),
+          A(descendant.note.title, '#' + descendant.note.id)
+        ])
+      }
+    }
+  }
+}
+
 function createRelatedUl (query, id) {
   const related = [
     ...backlinkLIs(query, id),
     ...directLinkLIs(query, id),
     ...parentLIs(query, id),
-    ...childrenLIs(query, id)
+    ...childrenLIs(query, id),
+    ...descendantLIs(query, id)
   ]
   related.sort((a, b) => {
     if (a.note.id < b.note.id) return -1
