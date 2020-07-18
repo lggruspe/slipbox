@@ -18,6 +18,14 @@ function isValidAlias (alias) {
   return true
 }
 
+function isNumber (string) {
+  if (!string) return false
+  for (const c of string) {
+    if (characterClass(c) !== 'd') return false
+  }
+  return true
+}
+
 function aliasParent (alias) {
   if (!isValidAlias(alias)) return null
   if (alias === null) return null
@@ -95,7 +103,7 @@ class Alias {
     check(typeof alias === 'string', 'non-string Alias.alias')
     check(isValidAlias(alias), 'malformed Alias.alias')
     check(alias, 'empty alias')
-    if (Number.isInteger(Number(alias))) {
+    if (isNumber(alias)) {
       check(String(id) === alias, 'invalid Alias.alias')
     }
 
@@ -285,6 +293,7 @@ export {
   aliasParent,
   Database,
   DomainError,
+  isNumber,
   isSequence,
   Link,
   Note,

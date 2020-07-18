@@ -3,6 +3,7 @@ import {
   aliasParent,
   Database,
   DomainError,
+  isNumber,
   isSequence,
   Link,
   Note,
@@ -34,6 +35,14 @@ it('isSequence', function () {
   assert(!isSequence('', ''))
 })
 
+it('isNumber', function () {
+  assert(isNumber('1'))
+  assert(isNumber('0'))
+  assert(!isNumber('1e1'))
+  assert(!isNumber(null))
+  assert(!isNumber(''))
+})
+
 describe('Note', function () {
   describe('with invalid note attributes', function () {
     it('should raise DomainError', function () {
@@ -62,9 +71,19 @@ describe('Alias', function () {
   })
 
   describe('with other root alias', function () {
-    it('should raise Domain Error', function () {
+    it('should raise DomainError', function () {
       assert.throws(() => new Alias(7, '8'), DomainError)
       assert(new Alias(7, '7') instanceof Alias)
+    })
+  })
+
+  describe('with scientific notation-like alias', function () {
+    it('should not raise DomainError', function () {
+      const alias = new Alias(53, '104e1')
+      assert(alias)
+      assert(alias instanceof Alias)
+      assert(alias.id === 53)
+      assert(alias.alias === '104e1')
     })
   })
 })
