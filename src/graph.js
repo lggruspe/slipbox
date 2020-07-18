@@ -51,10 +51,17 @@ function * neighborElements (query, id) {
     yield noteElement(child.note)
     yield linkElement('sequence', id, child.note.id)
   }
-  for (const descendant of query.descendants(String(id))) {
-    yield noteElement(descendant.note)
-    yield noteElement(query.note(descendant.parentID))
-    yield linkElement('sequence', descendant.parentID, descendant.note.id)
+  for (const alias of note.aliases()) {
+    for (const ancestor of query.ancestors(alias)) {
+      yield noteElement(ancestor.note)
+      yield noteElement(query.note(ancestor.childID))
+      yield linkElement('sequence', ancestor.note.id, ancestor.childID)
+    }
+    for (const descendant of query.descendants(alias)) {
+      yield noteElement(descendant.note)
+      yield noteElement(query.note(descendant.parentID))
+      yield linkElement('sequence', descendant.parentID, descendant.note.id)
+    }
   }
 }
 

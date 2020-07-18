@@ -284,7 +284,12 @@ class Query {
       if (parentRecord) {
         const parent = this.note(parentRecord.id)
         if (parent) {
-          yield { note: parent, alias: record.parent }
+          yield {
+            note: parent,
+            alias: record.parent,
+            childID: record.id, // of between alias and ancestor
+            childAlias: alias
+          }
         }
         yield * this.ancestors(record.parent)
       }

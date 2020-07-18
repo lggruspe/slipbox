@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmpolxdqz04</title>
+  <title>tmp_6zgk0bl</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -134,10 +134,17 @@
       yield noteElement(child.note);
       yield linkElement('sequence', id, child.note.id);
     }
-    for (const descendant of query.descendants(String(id))) {
-      yield noteElement(descendant.note);
-      yield noteElement(query.note(descendant.parentID));
-      yield linkElement('sequence', descendant.parentID, descendant.note.id);
+    for (const alias of note.aliases()) {
+      for (const ancestor of query.ancestors(alias)) {
+        yield noteElement(ancestor.note);
+        yield noteElement(query.note(ancestor.childID));
+        yield linkElement('sequence', ancestor.note.id, ancestor.childID);
+      }
+      for (const descendant of query.descendants(alias)) {
+        yield noteElement(descendant.note);
+        yield noteElement(query.note(descendant.parentID));
+        yield linkElement('sequence', descendant.parentID, descendant.note.id);
+      }
     }
   }
 
@@ -529,6 +536,25 @@
               parentAlias: alias
             };
           }
+        }
+      }
+    }
+
+    * ancestors (alias) {
+      const record = this.db.data.aliases[alias];
+      if (record) {
+        const parentRecord = this.db.data.aliases[record.parent];
+        if (parentRecord) {
+          const parent = this.note(parentRecord.id);
+          if (parent) {
+            yield {
+              note: parent,
+              alias: record.parent,
+              childID: record.id, // of between alias and ancestor
+              childAlias: alias
+            };
+          }
+          yield * this.ancestors(record.parent);
         }
       }
     }

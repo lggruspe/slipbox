@@ -441,8 +441,10 @@ describe('Query', function () {
     })
 
     describe('of alias with no parent', function () {
+      it("shouldn't yield anything", function () {
         const result = Array.from(query.ancestors('0'))
         assert(result.length === 0)
+      })
     })
 
     describe('should yield Note and alias', function () {
@@ -454,6 +456,10 @@ describe('Query', function () {
       assert.strictEqual(result.length, 2)
       assert.strictEqual(result[0].alias, '0')
       assert.strictEqual(result[1].alias, '0a')
+      assert.strictEqual(result[0].childAlias, '0a')
+      assert.strictEqual(result[1].childAlias, '0a1')
+      assert.strictEqual(result[0].childID, 1)
+      assert.strictEqual(result[1].childID, 2)
     })
   })
 
