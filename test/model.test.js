@@ -37,9 +37,9 @@ it('isSequence', function () {
 describe('Note', function () {
   describe('with invalid note attributes', function () {
     it('should raise DomainError', function () {
-      assert.throws(() => new Note('1', null))
-      assert.throws(() => new Note(2, ''))
-      assert.throws(() => new Note('3', 'Title'))
+      assert.throws(() => new Note('1', null), DomainError)
+      assert.throws(() => new Note(2, ''), DomainError)
+      assert.throws(() => new Note('3', 'Title'), DomainError)
     })
   })
 
@@ -48,6 +48,23 @@ describe('Note', function () {
       const note = new Note(0, 'Title')
       assert.strictEqual(note.id, 0)
       assert.strictEqual(note.title, 'Title')
+    })
+  })
+})
+
+describe('Alias', function () {
+  describe('with invalid attributes', function () {
+    it('should raise DomainError', function () {
+      assert.throws(() => new Alias(0, ''), DomainError)
+      assert.throws(() => new Alias(0, null), DomainError)
+      assert.throws(() => new Alias(0, undefined), DomainError)
+    })
+  })
+
+  describe('with other root alias', function () {
+    it('should raise Domain Error', function () {
+      assert.throws(() => new Alias(7, '8'), DomainError)
+      assert(new Alias(7, '7') instanceof Alias)
     })
   })
 })
@@ -115,12 +132,12 @@ describe('Database', function () {
       it('should raise DomainError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
-        db.add(new Alias(0, '2')) // TODO shouldn't be able to create top-level alias
-        db.add(new Alias(0, '2a'))
-        db.add(new Sequence('2', '2a'))
+        db.add(new Alias(0, '2a')) // TODO shouldn't be able to create top-level alias
+        db.add(new Alias(0, '2a1'))
+        db.add(new Sequence('2a', '2a1'))
 
         assert.throws(
-          () => db.add(new Sequence('2', 'b')),
+          () => db.add(new Sequence('2a', 'b')),
           DomainError)
 
         assert.throws(
@@ -128,27 +145,27 @@ describe('Database', function () {
           DomainError)
 
         assert(!db.data.aliases.b)
-        assert.equal(db.data.aliases['2'].children.length, 1)
-        assert(db.data.aliases['2'].children.includes('2a'))
+        assert.equal(db.data.aliases['2a'].children.length, 1)
+        assert(db.data.aliases['2a'].children.includes('2a1'))
       })
     })
 
     describe('with null aliases', function () {
       it('should raise DomainError', function () {
         db.add(new Note(0, 'note'))
-        db.add(new Alias(0, '2'))
+        db.add(new Alias(0, '0'))
 
         assert.throws(
-          () => db.add(new Sequence(null, '2')),
+          () => db.add(new Sequence(null, '0')),
           DomainError)
 
-        assert(db.data.aliases['2'].parent === null)
+        assert(db.data.aliases['0'].parent === null)
 
         assert.throws(
-          () => db.add(new Sequence('', '2')),
+          () => db.add(new Sequence('', '0')),
           DomainError)
 
-        assert(db.data.aliases['2'].parent === null)
+        assert(db.data.aliases['0'].parent === null)
       })
     })
 
@@ -164,39 +181,39 @@ describe('Database', function () {
       it('should raise DomainError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
-        db.add(new Alias(0, '2'))
-        db.add(new Alias(1, '2a'))
+        db.add(new Alias(0, '2a'))
+        db.add(new Alias(1, '2a1'))
 
         assert.throws(
-          () => db.add(new Sequence('2a', '2')),
+          () => db.add(new Sequence('2a1', '2a')),
           DomainError)
 
         assert.throws(
-          () => db.add(new Sequence('2', '3')),
+          () => db.add(new Sequence('2a', '3')),
           DomainError)
 
-        assert(db.data.aliases['2'].children.length === 0)
         assert(db.data.aliases['2a'].children.length === 0)
-        assert(db.data.aliases['2'].parent === null)
+        assert(db.data.aliases['2a1'].children.length === 0)
         assert(db.data.aliases['2a'].parent === null)
+        assert(db.data.aliases['2a1'].parent === null)
       })
     })
 
     it('with valid aliases', function () {
       db.add(new Note(0, 'parent'))
       db.add(new Note(1, 'child'))
-      db.add(new Alias(0, '2'))
-      db.add(new Alias(1, '2b'))
-      db.add(new Sequence('2', '2b'))
+      db.add(new Alias(0, '2b'))
+      db.add(new Alias(1, '2b1'))
+      db.add(new Sequence('2b', '2b1'))
 
-      assert(db.data.aliases['2'].id === 0)
-      assert.equal(db.data.aliases['2'].children.length, 1)
-      assert(db.data.aliases['2'].children.includes('2b'))
-      assert(db.data.aliases['2'].parent === null)
+      assert(db.data.aliases['2b'].id === 0)
+      assert.equal(db.data.aliases['2b'].children.length, 1)
+      assert(db.data.aliases['2b'].children.includes('2b1'))
+      assert(db.data.aliases['2b'].parent === null)
 
-      assert(db.data.aliases['2b'].id === 1)
-      assert(db.data.aliases['2b'].children.length === 0)
-      assert(db.data.aliases['2b'].parent === '2')
+      assert(db.data.aliases['2b1'].id === 1)
+      assert(db.data.aliases['2b1'].children.length === 0)
+      assert(db.data.aliases['2b1'].parent === '2b')
     })
   })
 

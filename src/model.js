@@ -95,6 +95,9 @@ class Alias {
     check(typeof alias === 'string', 'non-string Alias.alias')
     check(isValidAlias(alias), 'malformed Alias.alias')
     check(alias, 'empty alias')
+    if (Number.isInteger(Number(alias))) {
+      check(String(id) === alias, 'invalid Alias.alias')
+    }
 
     this.id = id
     this.alias = alias
