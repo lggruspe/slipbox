@@ -86,6 +86,7 @@ function * descendantLIs (query, id) {
   const note = query.note(id)
   if (note) {
     for (const descendant of query.descendants(String(id))) {
+      if (descendant.parentID === id) continue
       yield {
         note: descendant.note,
         li: Li([
