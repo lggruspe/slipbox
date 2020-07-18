@@ -432,6 +432,31 @@ describe('Query', function () {
     })
   })
 
+  describe('ancestors', function () {
+    describe('of non-existent alias', function () {
+      it("shouldn't yield anything", function () {
+        const result = Array.from(query.ancestors('0a1a'))
+        assert(result.length === 0)
+      })
+    })
+
+    describe('of alias with no parent', function () {
+        const result = Array.from(query.ancestors('0'))
+        assert(result.length === 0)
+    })
+
+    describe('should yield Note and alias', function () {
+      const result = Array.from(query.ancestors('0a1')).sort(function (a, b) {
+        if (a.alias < b.alias) return -1
+        if (a.alias === b.alias) return 0
+        return 1
+      })
+      assert.strictEqual(result.length, 2)
+      assert.strictEqual(result[0].alias, '0')
+      assert.strictEqual(result[1].alias, '0a')
+    })
+  })
+
   describe('descendants', function () {
     describe('of non-existent alias', function () {
       it("shouldn't yield anything", function () {

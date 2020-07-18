@@ -277,6 +277,20 @@ class Query {
     }
   }
 
+  * ancestors (alias) {
+    const record = this.db.data.aliases[alias]
+    if (record) {
+      const parentRecord = this.db.data.aliases[record.parent]
+      if (parentRecord) {
+        const parent = this.note(parentRecord.id)
+        if (parent) {
+          yield { note: parent, alias: record.parent }
+        }
+        yield * this.ancestors(record.parent)
+      }
+    }
+  }
+
   * descendants (alias) {
     const record = this.db.data.aliases[alias]
     if (record) {
