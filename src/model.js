@@ -247,6 +247,16 @@ class Query {
       }
     }
   }
+
+  * descendants (alias) {
+    const record = this.db.data.aliases[alias]
+    if (record) {
+      for (const child of this.children(alias)) {
+        yield child
+        yield * this.descendants(child.alias)
+      }
+    }
+  }
 }
 
 export {

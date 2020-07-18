@@ -115,7 +115,7 @@ describe('Database', function () {
       it('should raise DomainError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
-        db.add(new Alias(0, '2'))
+        db.add(new Alias(0, '2')) // TODO shouldn't be able to create top-level alias
         db.add(new Alias(0, '2a'))
         db.add(new Sequence('2', '2a'))
 
@@ -285,7 +285,8 @@ describe('Query', function () {
   query.db.add(new Link(n1, n2, ''))
   query.db.add(new Alias(1, '0a'))
   query.db.add(new Alias(2, '0a1'))
-  const s = query.db.add(new Sequence('0a', '0a1'))
+  query.db.add(new Sequence('0', '0a'))
+  query.db.add(new Sequence('0a', '0a1'))
 
   describe('note', function () {
     describe('non-integer ID', function () {
@@ -390,6 +391,26 @@ describe('Query', function () {
       assert.strictEqual(result.length, 1)
       assert(result[0].note.equals(n2))
       assert.strictEqual(result[0].alias, '0a1')
+    })
+  })
+
+  describe('descendants', function () {
+    describe('of non-existent alias', function () {
+      it("shouldn't yield anything", function () {
+        const result = Array.from(query.descendants('1a'))
+        assert(result.length === 0)
+      })
+    })
+
+    describe('of alias with no children', function () {
+      it("shouldn't yield anything", function () {
+        const result = Array.from(query.descendants('0a1'))
+        assert(result.length === 0)
+      })
+    })
+
+    it('should yield Note and alias', function () {
+      // TODO
     })
   })
 })
