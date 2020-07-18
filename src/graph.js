@@ -2,11 +2,11 @@ import cytoscape from 'cytoscape'
 
 function graphArea () {
   const div = document.createElement('div')
-  div.style.width = '100%'
-  div.style.height = '500px'
+  div.style.width = '100vw'
+  div.style.height = '80vh'
   div.style.position = 'relative'
   div.style.top = '0px'
-  div.style.left = '0px'
+  div.style.left = 'calc(-50vw + 50%)'
   return div
 }
 
