@@ -132,9 +132,20 @@ class Sequence {
   }
 
   addTo (db) {
-    const prev = db.data.aliases[this.prev]
+    let prev = db.data.aliases[this.prev]
     const next = db.data.aliases[this.next]
-    if (!prev || !next) return
+
+    if (!next) return
+    if (!prev) {
+      try {
+        if (!db.add(new Alias(Number(this.prev), this.prev))) {
+          return null
+        }
+        prev = db.data.aliases[this.prev]
+      } catch (e) {
+        return null
+      }
+    }
 
     const prevNote = db.data.notes[prev.id]
     const nextNote = db.data.notes[next.id]

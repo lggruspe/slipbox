@@ -132,7 +132,7 @@ describe('Database', function () {
       it('should raise DomainError', function () {
         db.add(new Note(0, 'parent'))
         db.add(new Note(1, 'child'))
-        db.add(new Alias(0, '2a')) // TODO shouldn't be able to create top-level alias
+        db.add(new Alias(0, '2a'))
         db.add(new Alias(0, '2a1'))
         db.add(new Sequence('2a', '2a1'))
 
@@ -427,7 +427,14 @@ describe('Query', function () {
     })
 
     it('should yield Note and alias', function () {
-      // TODO
+      const result = Array.from(query.descendants('0')).sort(function (a, b) {
+        if (a.alias < b.alias) return -1
+        if (a.alias === b.alias) return 0
+        return 1
+      })
+      assert.strictEqual(result.length, 2)
+      assert.strictEqual(result[0].alias, '0a')
+      assert.strictEqual(result[1].alias, '0a1')
     })
   })
 })
