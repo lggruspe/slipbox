@@ -115,21 +115,25 @@ function noteInfoDiv () {
   div.style.right = 0
   div.style.padding = '20px'
   div.style.position = 'fixed'
+  div.style.maxWidth = '30em'
   div.style.zIndex = 1
   return div
 }
 
 function hoverHandlers (container) {
   const h3 = document.createElement('h3')
+  const a = document.createElement('a')
+  h3.appendChild(a)
   const infoDiv = noteInfoDiv()
   infoDiv.appendChild(h3)
   container.appendChild(infoDiv)
 
   const show = event => {
-    h3.textContent = event.target.data().title
+    a.textContent = event.target.data().title
+    a.href = '#' + event.target.data().id
   }
   const hide = event => {
-    h3.textContent = ''
+    a.textContent = ''
   }
   return [show, hide]
 }
