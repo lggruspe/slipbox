@@ -50,6 +50,11 @@ function * neighborElements (query, id) {
     yield noteElement(child.note.id)
     yield linkElement('sequence', id, child.note.id)
   }
+  for (const descendant of query.descendants(String(id))) {
+    yield noteElement(descendant.note.id)
+    yield noteElement(descendant.parentID)
+    yield linkElement('sequence', descendant.parentID, descendant.note.id)
+  }
 }
 
 function createCytoscape (container, elements) {

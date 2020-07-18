@@ -257,7 +257,14 @@ class Query {
         if (!childRecord) continue
         const childID = childRecord.id
         const child = this.note(childID)
-        if (child) yield { note: child, alias: childAlias }
+        if (child) {
+          yield {
+            note: child,
+            alias: childAlias,
+            parentID: record.id,
+            parentAlias: alias
+          }
+        }
       }
     }
   }
