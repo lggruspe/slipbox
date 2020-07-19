@@ -3,6 +3,7 @@
 import os
 import shlex
 import subprocess
+import tempfile
 
 from .templates import Elem, render
 from .utils import make_temporary_file, write_lines
@@ -131,10 +132,12 @@ def create_reference_pages(conn):
 
 def generate_complete_html(conn, options):
     """Create final HTML file with javascript."""
-    with make_temporary_file(suffix=".md", text=True) as dummy,\
-            make_temporary_file() as script,\
+    with make_temporary_file() as script,\
             make_temporary_file(suffix=".html", text=True) as html,\
-            make_temporary_file(suffix=".html", text=True) as extra:
+            make_temporary_file(suffix=".html", text=True) as extra,\
+            tempfile.TemporaryDirectory() as tempdir:
+        dummy = os.path.join(tempdir, "Slipbox.md")
+        print(dummy, type(dummy))
         write_lines(dummy, [DUMMY_MARKDOWN])
         write_lines(script, generate_javascript(conn))
         write_lines(html, generate_active_htmls(conn))
