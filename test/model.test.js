@@ -274,21 +274,6 @@ describe('Database', function () {
       })
     })
 
-    describe('without annotation', function () {
-      it('should not generate backlink', function () {
-        const n0 = db.add(new Note(0, 'src'))
-        const n1 = db.add(new Note(1, 'dest'))
-        db.add(new Link(n0, n1, ''))
-
-        assert(db.data.notes[0].links.length === 1)
-        assert(db.data.notes[0].links[0].dest === n1)
-        assert(db.data.notes[0].links[0].annotation === '')
-
-        assert(db.data.notes[0].backlinks.length === 0)
-        assert(db.data.notes[1].backlinks.length === 0)
-      })
-    })
-
     describe('with annotation', function () {
       it('should generate backlink', function () {
         const n0 = db.add(new Note(0, 'src'))
@@ -307,6 +292,26 @@ describe('Database', function () {
         assert.strictEqual(
           db.data.notes[1].backlinks[0],
           db.data.notes[0].links[0])
+      })
+    })
+
+    describe('without annotation', function () {
+      it('should also generate backlink', function () {
+        const n0 = db.add(new Note(0, 'src'))
+        const n1 = db.add(new Note(1, 'dest'))
+        db.add(new Link(n0, n1, ''))
+
+        assert(db.data.notes[0].links.length === 1)
+        assert(db.data.notes[0].links[0].dest === n1)
+        assert(db.data.notes[0].links[0].annotation === '')
+
+        assert(db.data.notes[0].backlinks.length === 0)
+        assert(db.data.notes[1].backlinks.length === 1)
+
+        assert.strictEqual(
+          db.data.notes[0].links[0],
+          db.data.notes[1].backlinks[0]
+        )
       })
     })
   })
@@ -375,14 +380,16 @@ describe('Query', function () {
       assert.strictEqual(result[0].src, n0)
     })
 
-    it("shouldn't yield unannotated links", function () {
+    it('should yield unannotated links too', function () {
       const backlinks = Array.from(query.backlinks(n2))
-      assert.strictEqual(backlinks.length, 0)
+      assert.strictEqual(backlinks.length, 1)
 
       // even if there are forward links
       const links = Array.from(query.links(n1))
       assert.strictEqual(links.length, 1)
       assert.strictEqual(links[0].dest, n2)
+
+      assert.strictEqual(backlinks[0].src, n1)
     })
   })
 

@@ -40,11 +40,9 @@ function SlipBox:save_backlink(link)
   assert(link ~= nil)
   assert(link.tag == "direct" and link.src and link.dest)
   assert(link.description)
-  if link.description ~= "" then
-    local backlinks = self.backlinks[link.dest] or {}
-    table.insert(backlinks, link)
-    self.backlinks[link.dest] = backlinks
-  end
+  local backlinks = self.backlinks[link.dest] or {}
+  table.insert(backlinks, link)
+  self.backlinks[link.dest] = backlinks
 end
 
 function SlipBox:save_sequence(link)
@@ -92,9 +90,7 @@ function SlipBox:save_link(link)
       self.links[link.src] = links
     end
     if link.tag == "direct" then
-      if link.description and link.description ~= "" then
-        self:save_backlink(link)
-      end
+      self:save_backlink(link)
     elseif link.tag == "sequence" then
       self:save_sequence(link)
     end

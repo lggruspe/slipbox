@@ -188,9 +188,7 @@ class Link {
       annotation: this.annotation
     }
     src.links.push(link)
-    if (link.annotation) {
-      dest.backlinks.push(link)
-    }
+    dest.backlinks.push(link)
   }
 }
 

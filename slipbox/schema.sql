@@ -62,7 +62,3 @@ SELECT * FROM Aliases WHERE id IN (SELECT id FROM Notes);
 -- respects foreign key constraints
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
-
--- links with backlinks (annotations)
-CREATE VIEW IF NOT EXISTS StrongLinks AS
-SELECT * FROM ValidLinks WHERE annotation != '';
