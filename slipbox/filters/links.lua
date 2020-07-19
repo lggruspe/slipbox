@@ -66,12 +66,11 @@ local function create_pandoc_link(link, elem)
   -- : A pandoc Link object.
   assert(elem.tag == "Link")
   assert(link.tag == "direct" or link.tag == "sequence")
-  local content = link.alias or link.dest
   if is_textless_link(elem) then
     local title = link.alias or link.description
     return {
       pandoc.Str" [",
-      pandoc.Link({pandoc.Str(content)}, elem.target, title, elem.attributes),
+      pandoc.Link({pandoc.Str(link.dest)}, elem.target, title, elem.attributes),
       pandoc.Str']',
     }
   end
