@@ -58,7 +58,7 @@ local function is_textless_link(elem)
 end
 
 local function create_pandoc_link(link, elem)
-  -- Create a new pandoc Link.
+  -- Create a new pandoc Link for textless links.
   --
   -- link
   -- : Either a direct or a sequence link.
@@ -74,8 +74,6 @@ local function create_pandoc_link(link, elem)
       pandoc.Link({pandoc.Str(content)}, elem.target, title, elem.attributes),
       pandoc.Str']',
     }
-  else
-    return {elem, pandoc.Str(" ["..content..']')}
   end
 end
 

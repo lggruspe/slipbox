@@ -835,11 +835,11 @@
 <h1 title="slipbox">0 slipbox</h1>
 <p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
 <ul>
-<li><a href="#1" title="0a">Installation</a> [0a]</li>
-<li><a href="#2" title="0a1">Basic usage</a> [0a1]</li>
-<li><a href="#3">Organizing notes</a> [3]</li>
-<li><a href="#4">Connecting notes</a> [4]</li>
-<li><a href="#10" title="0b">Questions</a> [0b]</li>
+<li><a href="#1" title="0a">Installation</a></li>
+<li><a href="#2" title="0a1">Basic usage</a></li>
+<li><a href="#3">Organizing notes</a></li>
+<li><a href="#4">Connecting notes</a></li>
+<li><a href="#10" title="0b">Questions</a></li>
 </ul>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 </section>
@@ -848,7 +848,7 @@
 <p>Make sure you have <code>grep</code>, <code>pandoc</code> and <code>python</code> installed.</p>
 <p>Then</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
-<p>Next step: <a href="#2" title="1a">run slipbox</a> [1a]</p>
+<p>Next step: <a href="#2" title="1a">run slipbox</a></p>
 </section>
 <section id="2" class="level1" title="Basic usage">
 <h1 title="Basic usage">2 Basic usage</h1>
@@ -867,7 +867,7 @@
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co"># Take note of the quotes and spaces.</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes slipbox.db -d <span class="st">&#39; -o example.html&#39;</span></span></code></pre></div>
-<p>This creates an SQLite file and an HTML file containing <a href="#3" title="2a">all your notes</a> [2a]. Don’t delete the database file, because <code>slipbox</code> will use it to avoid recompiling all notes from scratch in future invocations.</p>
+<p>This creates an SQLite file and an HTML file containing <a href="#3" title="2a">all your notes</a>. Don’t delete the database file, because <code>slipbox</code> will use it to avoid recompiling all notes from scratch in future invocations.</p>
 </section>
 <section id="3" class="level1" title="How to organize notes">
 <h1 title="How to organize notes">3 How to organize notes</h1>
@@ -883,18 +883,18 @@
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>202006151725 Next note</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="fu">======================</span></span></code></pre></div>
-<p>I recommend shorter IDs instead of longer ones if you want to use <a href="#7">sequence links</a> [7]. It’s important to <a href="#4" title="3a">make connections</a> [3a] between ideas in your notes.</p>
+<p>I recommend shorter IDs instead of longer ones if you want to use <a href="#7">sequence links</a>. It’s important to <a href="#4" title="3a">make connections</a> between ideas in your notes.</p>
 </section>
 <section id="4" class="level1" title="How to find related notes">
 <h1 title="How to find related notes">4 How to find related notes</h1>
 <p><code>slipbox</code> provides multiple ways to connect notes.</p>
 <ul>
-<li><a href="#5" title="4a">Tags</a> [4a]</li>
-<li><a href="#6" title="4b">Direct links</a> [4b]</li>
-<li><a href="#6" title="Annotated links generates backlinks">Backlinks</a> [6]</li>
-<li><a href="#7" title="4c">Sequence links</a> [4c]</li>
-<li><a href="#8" title="4d">Text search</a> [4d]</li>
-<li><a href="#9" title="4a1">Citations</a> [4a1]</li>
+<li><a href="#5" title="4a">Tags</a></li>
+<li><a href="#6" title="4b">Direct links</a></li>
+<li><a href="#6" title="Annotated links generates backlinks">Backlinks</a></li>
+<li><a href="#7" title="4c">Sequence links</a></li>
+<li><a href="#8" title="4d">Text search</a></li>
+<li><a href="#9" title="4a1">Citations</a></li>
 </ul>
 </section>
 <section id="5" class="level1" title="Tags">
@@ -905,7 +905,7 @@
 <section id="6" class="level1" title="Direct links">
 <h1 title="Direct links">6 Direct links</h1>
 <p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
-<p>Direct links are an explicit way to <a href="#4">connect</a> [4] two notes. To link to a note, you only have to specify the <a href="#3">ID of the note</a> [3] as the link target. In markdown, <code class="sourceCode markdown"><span class="co">[</span><span class="ot">link to note 3</span><span class="co">](#3)</span></code>. This works even when the linked note is in another file.</p>
+<p>Direct links are an explicit way to <a href="#4">connect</a> two notes. To link to a note, you only have to specify the <a href="#3">ID of the note</a> as the link target. In markdown, <code class="sourceCode markdown"><span class="co">[</span><span class="ot">link to note 3</span><span class="co">](#3)</span></code>. This works even when the linked note is in another file.</p>
 <p>Direct links from the active note appear in the See also section with a boldfaced ID. The interactive graph displays these links with solid black lines.</p>
 <section id="backlinks" class="level3">
 <h3>Backlinks</h3>
@@ -915,17 +915,17 @@
 <li>Hovering over the backlink will show the link annotation.</li>
 <li>Backlinks in the interactive graph appear as dashed lines.</li>
 </ul>
-<p><a href="#7" title="6a">Sequence links</a> [6a] also use link annotations, but in a different way.</p>
+<p><a href="#7" title="6a">Sequence links</a> also use link annotations, but in a different way.</p>
 </section>
 <section id="external-links" class="level3">
 <h3>External links</h3>
-<p>It’s also possible to <a href="#10" title="6b">link to files</a> [6b] outside of the slipbox.</p>
+<p>It’s also possible to <a href="#10" title="6b">link to files</a> outside of the slipbox.</p>
 </section>
 </section>
 <section id="7" class="level1" title="Sequence links">
 <h1 title="Sequence links">7 Sequence links</h1>
 <p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
-<p>A sequence link is a special type of <a href="#6">link</a> [6] that indicates that a set of notes are to be read in sequence.</p>
+<p>A sequence link is a special type of <a href="#6">link</a> that indicates that a set of notes are to be read in sequence.</p>
 <section id="note-aliases" class="level3">
 <h3>Note aliases</h3>
 <p>You can determine which sequences a particular note belongs to by simply looking at its note aliases. A note alias is a string that alternates between numbers and letters.</p>
@@ -944,7 +944,7 @@
 </section>
 <section id="8" class="level1" title="Text search">
 <h1 title="Text search">8 Text search</h1>
-<p>Even without <a href="#5">tags</a> [5] or <a href="#6">links</a> [6], you can look for notes using text search. You can open the #<a href="#search">search</a> page by clicking on the search button at the top.</p>
+<p>Even without <a href="#5">tags</a> or <a href="#6">links</a>, you can look for notes using text search. You can open the #<a href="#search">search</a> page by clicking on the search button at the top.</p>
 </section>
 <section id="9" class="level1" title="Citations">
 <h1 title="Citations">9 Citations</h1>
@@ -960,7 +960,7 @@
 <h1 title="Questions">10 Questions</h1>
 <section id="support-for-formats-other-than-markdown" class="level3">
 <h3>Support for formats other than markdown</h3>
-<p><code>slipbox</code> should have partial support for most input formats that <code>pandoc</code> supports. However, certain features such as <a href="#6">backlinks</a> [6] and <a href="#7">sequence links</a> [7] require link annotations.</p>
+<p><code>slipbox</code> should have partial support for most input formats that <code>pandoc</code> supports. However, certain features such as <a href="#6">backlinks</a> and <a href="#7">sequence links</a> require link annotations.</p>
 </section>
 <section id="how-to-link-to-external-files" class="level3">
 <h3>How to link to external files</h3>
