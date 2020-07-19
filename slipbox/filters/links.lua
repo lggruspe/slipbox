@@ -85,7 +85,10 @@ local function make_link_filter(div, slipbox)
     -- Process direct links and sequence links.
     -- Run by walking from div.
     local link = get_sequence_link(div, elem) or get_direct_link(div, elem)
-    if not link then return nil end
+    if not link then
+      if not elem.target or elem.target == "" then return elem.content end
+      return nil
+    end
     if link.tag == "sequence" or link.tag == "direct" then
       slipbox:save_link(link)
       return create_pandoc_link(link, elem)
