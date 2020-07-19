@@ -96,7 +96,7 @@ It's important to [make connections](#4 '3a') between ideas in your notes.
 
 - [Tags](#5 '4a')
 - [Direct links](#6 '4b')
-- [Backlinks](#6 'Annotated links generates backlinks')
+- Backlinks
 - [Sequence links](#7 '4c')
 - [Text search](#8 '4d')
 - [Citations](#9 '4a1')
@@ -121,19 +121,13 @@ the link target.
 In markdown, `[link to note 3](#3)`{ .markdown }.
 This works even when the linked note is in another file.
 
-Direct links from the active note appear in the See also section with
-a boldfaced ID.
-The interactive graph displays these links with solid black lines.
+Direct links in the active note appear in the interactive graph as solid
+black lines.
 
 ### Backlinks
 
-`slipbox` generates backlinks from annotated links.
-
-- Backlink IDs in the See also section have regular font.
-- Hovering over the backlink will show the link annotation.
-- Backlinks in the interactive graph appear as dashed lines.
-
-[Sequence links](#7 '6a') also use link annotations, but in a different way.
+`slipbox` generates backlinks from direct links.
+They also appear as solid black lines.
 
 ### External links
 
@@ -158,9 +152,7 @@ The note alias says that note 12 belongs in a sequence containing notes
 4, 4a, 4a2, etc., in that order.
 
 We can think of notes 4a and 4a2b as neighbors of note 4a2.
-
-- Links to neighbor notes in the See also section show the note ID and the alias.
-- Neighbor links in the interactive graph are solid red.
+The interactive graph shows sequence links as dashed lines.
 
 ### How to create sequence links
 
@@ -209,8 +201,7 @@ python -m slipbox notes.db notes -c ' --bibliography notes.bib' -d ' -o notes.ht
 
 `slipbox` should have partial support for most input formats that
 `pandoc` supports.
-However, certain features such as [backlinks](#6) and [sequence links](#7) require
-link annotations.
+However, [sequence links](#7) require link annotations.
 
 ### How to link to external files
 

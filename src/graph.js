@@ -16,7 +16,7 @@ function noteElement (note, currentNote = false) {
       id: note.id,
       title: note.title,
       label: note.id,
-      color: currentNote ? 'white' : 'black',
+      color: 'white',
       bgColor: currentNote ? 'black' : 'gray'
     }
   }
@@ -25,8 +25,8 @@ function noteElement (note, currentNote = false) {
 function linkElement (type, source, target) {
   console.assert(['backlink', 'direct', 'sequence'].includes(type))
   const id = type.slice(0, 1) + `${source}-${target}`
-  const style = type === 'backlink' ? 'dashed' : 'solid'
-  const color = type === 'sequence' ? 'red' : 'black'
+  const style = type === 'sequence' ? 'dashed' : 'solid'
+  const color = 'black'
   return {
     data: { id, source, target, arrow: 'triangle', style, color }
   }

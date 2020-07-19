@@ -99,7 +99,7 @@
         id: note.id,
         title: note.title,
         label: note.id,
-        color: currentNote ? 'white' : 'black',
+        color: 'white',
         bgColor: currentNote ? 'black' : 'gray'
       }
     }
@@ -108,8 +108,8 @@
   function linkElement (type, source, target) {
     console.assert(['backlink', 'direct', 'sequence'].includes(type));
     const id = type.slice(0, 1) + `${source}-${target}`;
-    const style = type === 'backlink' ? 'dashed' : 'solid';
-    const color = type === 'sequence' ? 'red' : 'black';
+    const style = type === 'sequence' ? 'dashed' : 'solid';
+    const color = 'black';
     return {
       data: { id, source, target, arrow: 'triangle', style, color }
     }
@@ -773,8 +773,6 @@
   window.query.db.add(new Model.Link(
     window.query.note(3), window.query.note(7), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(6), 'Annotated links generates backlinks'))
-  window.query.db.add(new Model.Link(
     window.query.note(6), window.query.note(4), ''))
   window.query.db.add(new Model.Link(
     window.query.note(6), window.query.note(3), ''))
@@ -788,8 +786,6 @@
     window.query.note(0), window.query.note(3), ''))
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(4), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(6), ''))
   window.query.db.add(new Model.Link(
     window.query.note(10), window.query.note(7), ''))
   window.query.db.add(new Model.Alias(0, '0'))
@@ -806,7 +802,6 @@
   window.query.db.add(new Model.Alias(6, '4b'))
   window.query.db.add(new Model.Alias(6, '6'))
   window.query.db.add(new Model.Alias(7, '4c'))
-  window.query.db.add(new Model.Alias(7, '6a'))
   window.query.db.add(new Model.Alias(8, '4d'))
   window.query.db.add(new Model.Alias(9, '4a1'))
   window.query.db.add(new Model.Alias(10, '0b'))
@@ -822,7 +817,6 @@
   window.query.db.add(new Model.Sequence('4', '4c'))
   window.query.db.add(new Model.Sequence('4', '4d'))
   window.query.db.add(new Model.Sequence('4a', '4a1'))
-  window.query.db.add(new Model.Sequence('6', '6a'))
   window.query.db.add(new Model.Sequence('6', '6b'))
   window.initSlipbox()
   })
@@ -889,7 +883,7 @@
 <ul>
 <li><a href="#5" title="4a">Tags</a></li>
 <li><a href="#6" title="4b">Direct links</a></li>
-<li><a href="#6" title="Annotated links generates backlinks">Backlinks</a></li>
+<li>Backlinks</li>
 <li><a href="#7" title="4c">Sequence links</a></li>
 <li><a href="#8" title="4d">Text search</a></li>
 <li><a href="#9" title="4a1">Citations</a></li>
@@ -904,16 +898,10 @@
 <h1 title="Direct links">6 Direct links</h1>
 <p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
 <p>Direct links are an explicit way to <a href="#4">connect</a> two notes. To link to a note, you only have to specify the <a href="#3">ID of the note</a> as the link target. In markdown, <code class="sourceCode markdown"><span class="co">[</span><span class="ot">link to note 3</span><span class="co">](#3)</span></code>. This works even when the linked note is in another file.</p>
-<p>Direct links from the active note appear in the See also section with a boldfaced ID. The interactive graph displays these links with solid black lines.</p>
+<p>Direct links in the active note appear in the interactive graph as solid black lines.</p>
 <section id="backlinks" class="level3">
 <h3>Backlinks</h3>
-<p><code>slipbox</code> generates backlinks from annotated links.</p>
-<ul>
-<li>Backlink IDs in the See also section have regular font.</li>
-<li>Hovering over the backlink will show the link annotation.</li>
-<li>Backlinks in the interactive graph appear as dashed lines.</li>
-</ul>
-<p><a href="#7" title="6a">Sequence links</a> also use link annotations, but in a different way.</p>
+<p><code>slipbox</code> generates backlinks from direct links. They also appear as solid black lines.</p>
 </section>
 <section id="external-links" class="level3">
 <h3>External links</h3>
@@ -928,11 +916,7 @@
 <h3>Note aliases</h3>
 <p>You can determine which sequences a particular note belongs to by simply looking at its note aliases. A note alias is a string that alternates between numbers and letters.</p>
 <p>For example, suppose 4a2b is a note alias of note 12. The note alias says that note 12 belongs in a sequence containing notes 4, 4a, 4a2, etc., in that order.</p>
-<p>We can think of notes 4a and 4a2b as neighbors of note 4a2.</p>
-<ul>
-<li>Links to neighbor notes in the See also section show the note ID and the alias.</li>
-<li>Neighbor links in the interactive graph are solid red.</li>
-</ul>
+<p>We can think of notes 4a and 4a2b as neighbors of note 4a2. The interactive graph shows sequence links as dashed lines.</p>
 </section>
 <section id="how-to-create-sequence-links" class="level3">
 <h3>How to create sequence links</h3>
@@ -958,7 +942,7 @@
 <h1 title="Questions">10 Questions</h1>
 <section id="support-for-formats-other-than-markdown" class="level3">
 <h3>Support for formats other than markdown</h3>
-<p><code>slipbox</code> should have partial support for most input formats that <code>pandoc</code> supports. However, certain features such as <a href="#6">backlinks</a> and <a href="#7">sequence links</a> require link annotations.</p>
+<p><code>slipbox</code> should have partial support for most input formats that <code>pandoc</code> supports. However, <a href="#7">sequence links</a> require link annotations.</p>
 </section>
 <section id="how-to-link-to-external-files" class="level3">
 <h3>How to link to external files</h3>
