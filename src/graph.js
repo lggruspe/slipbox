@@ -2,11 +2,11 @@ import cytoscape from 'cytoscape'
 
 function graphArea () {
   const div = document.createElement('div')
-  div.style.width = '100vw'
-  div.style.height = '80vh'
+  div.style.width = '100%'
+  div.style.height = '60vh'
   div.style.position = 'relative'
   div.style.top = '0px'
-  div.style.left = 'calc(-50vw + 50%)'
+  div.style.left = '0px'
   return div
 }
 
@@ -145,8 +145,10 @@ function hoverHandlers (container) {
 function init (query) {
   let container = graphArea()
   let infoContainer = document.createElement('div')
+  const hr = document.createElement('hr')
 
   function resetGraph () {
+    hr.remove()
     container.remove()
     infoContainer.remove()
 
@@ -158,6 +160,7 @@ function init (query) {
 
     container = graphArea()
     infoContainer = document.createElement('div')
+    document.body.appendChild(hr)
     document.body.appendChild(infoContainer)
     document.body.appendChild(container)
 
