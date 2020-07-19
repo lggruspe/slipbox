@@ -8,6 +8,8 @@ window.query = new Model.Query(new Model.Database())
 window.Model = Model
 
 window.initSlipbox = function () {
+  const title = document.getElementById('title-block-header')
+  if (title) { title.remove() }
   Search.init()
   Toggle.init()
   Graph.init(window.query)

@@ -137,7 +137,6 @@ def generate_complete_html(conn, options):
             make_temporary_file(suffix=".html", text=True) as extra,\
             tempfile.TemporaryDirectory() as tempdir:
         dummy = os.path.join(tempdir, "Slipbox.md")
-        print(dummy, type(dummy))
         write_lines(dummy, [DUMMY_MARKDOWN])
         write_lines(script, generate_javascript(conn))
         write_lines(html, generate_active_htmls(conn))
@@ -146,7 +145,8 @@ def generate_complete_html(conn, options):
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-        cmd = "pandoc {dummy} -H {script} -B {html} -B {extra} --section-divs {options}".format(
+        cmd = "pandoc {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
             dummy=shlex.quote(dummy), script=shlex.quote(script),
-            html=shlex.quote(html), options=options, extra=shlex.quote(extra))
+            html=shlex.quote(html), opts=options, extra=shlex.quote(extra),
+            title="--metadata title=Slipbox")
         subprocess.run(shlex.split(cmd), check=False)

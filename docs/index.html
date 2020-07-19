@@ -752,6 +752,8 @@
   window.Model = Model;
 
   window.initSlipbox = function () {
+    const title = document.getElementById('title-block-header');
+    if (title) { title.remove(); }
     init$1();
     init$2();
     init(window.query);
@@ -1136,6 +1138,9 @@
     </dd>
   </dl>
 </section>
+<header id="title-block-header">
+<h1 class="title">Slipbox</h1>
+</header>
 <p><span class="math inline"> </span></p>
 <div class="sourceCode" id="cb1" style="display:none"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
 </body>
