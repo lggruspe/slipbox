@@ -185,7 +185,7 @@ function Query:note(id)
       local alias = aliases()
       if alias ~= nil then
         local parent = self:parent(alias)
-        return parent ~- nil and parent or me()
+        return parent ~= nil and parent or me()
       end
     end
     return me
