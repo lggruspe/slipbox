@@ -18,7 +18,7 @@ Requirements
 
 - `pandoc`
 - `python3`
-- `grep`
+- GNU `grep`
 
 Installation
 ------------
