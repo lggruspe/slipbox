@@ -66,6 +66,14 @@ def test_files_in_path(tmp_path):
     assert str(subdir) not in files
     assert str(nested) not in files
 
+def test_files_in_path_to_file(tmp_path):
+    """files_in_path should yield input if it's just a file."""
+    input_file = tmp_path/"input.md"
+    input_file.touch()
+
+    files = list(scan.files_in_path(str(input_file)))
+    assert files == [str(input_file)]
+
 def test_find_new_files(mock_db, tmp_path):
     """find_new_files must only return existing files that aren't yet in the
     database and match the input patterns (*.md by default).
