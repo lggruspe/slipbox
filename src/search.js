@@ -60,6 +60,11 @@ function searchBar () {
   input.placeholder = 'Search notes...'
   input.classList.add('search-bar')
   input.style.width = '80%'
+  input.style.background = 'transparent'
+  input.style.border = 'none'
+  input.style.borderBottomStyle = 'solid'
+  input.style.borderWidth = 'thin'
+
   input.addEventListener('change', () => searchNotes(fuse))
 
   form.appendChild(input)
