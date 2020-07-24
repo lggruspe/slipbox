@@ -3,7 +3,7 @@ all:
 
 .PHONY:	bundle
 bundle:
-	npx rollup -c
+	npm run bundle
 
 .PHONY:	check
 check: bundle

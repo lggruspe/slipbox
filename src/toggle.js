@@ -10,6 +10,7 @@ function hideSections () {
         case section.id.slice(0, 4) === 'ref-':
         case section.id === 'search':
         case section.id === 'tags':
+        case section.id === 'entrypoints':
           section.style.display = 'none'
           break
         default:

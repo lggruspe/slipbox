@@ -78,6 +78,27 @@ def create_tags(conn):
                    **{"class": "level1"})
     return render(section)
 
+def create_entrypoints(conn):
+    """Create HTML section for entrypoints.
+
+    This contains all notes that starts a sequence.
+    """
+    query = """
+        SELECT id, title FROM Aliases JOIN Notes USING (id)
+            WHERE CAST(id AS STRING) = alias
+                ORDER BY title
+    """
+    entrypoints = conn.execute(query)
+    items = (Elem("li", Elem("a", title, href=f"#{nid}"))
+             for nid, title in entrypoints)
+    section = Elem("section",
+                   Elem("h1", "Entrypoints"),
+                   Elem("ul", *items),
+                   id="entrypoints",
+                   title="Entrypoints",
+                   **{"class": "level1"})
+    return render(section)
+
 def create_tag_page(conn, tag):
     """Create HTML section that lists all notes with the tag."""
     sql = """
@@ -145,6 +166,7 @@ def generate_complete_html(conn, options):
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
+            print(create_entrypoints(conn), file=file)
         cmd = "pandoc {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
             dummy=shlex.quote(dummy), script=shlex.quote(script),
             html=shlex.quote(html), opts=options, extra=shlex.quote(extra),
