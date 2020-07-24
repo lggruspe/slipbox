@@ -51,7 +51,6 @@ function searchNotes (fuse) {
 function searchBar () {
   const form = document.createElement('form')
   form.action = 'javascript:void(0)'
-  form.style.textAlign = 'center'
 
   const fuse = createFuse()
 
@@ -59,13 +58,16 @@ function searchBar () {
   input.type = 'text'
   input.placeholder = 'Search notes...'
   input.classList.add('search-bar')
-  input.style.width = '80%'
+  input.style.width = '100%'
   input.style.background = 'transparent'
   input.style.border = 'none'
   input.style.borderBottomStyle = 'solid'
   input.style.borderWidth = 'thin'
 
-  input.addEventListener('change', () => searchNotes(fuse))
+  input.addEventListener('change', function () {
+    window.location.hash = '#search'
+    searchNotes(fuse)
+  })
 
   form.appendChild(input)
   return form
@@ -82,23 +84,46 @@ function searchPage () {
   page.id = 'search'
   page.title = 'Search'
   page.classList.add('level1')
-  page.appendChild(searchBar())
-  page.appendChild(document.createElement('br'))
   page.appendChild(searchResults())
   return page
 }
 
-function searchButton () {
-  const a = document.createElement('a')
-  a.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>'
-  a.href = '#search'
-  a.title = 'Search notes'
-  return a
+function searchSpan () {
+  const span = document.createElement('span')
+  span.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>'
+
+  const svg = span.querySelector('svg')
+  svg.style.height = '1em'
+  return span
+}
+
+function searchForm () {
+  const button = searchSpan()
+  const form = searchBar()
+  form.style.display = 'none'
+
+  const input = form.querySelector('input')
+
+  button.addEventListener('click', function () {
+    button.style.display = 'none'
+    form.style.display = ''
+    input.focus()
+  })
+
+  form.addEventListener('focusout', function () {
+    button.style.display = ''
+    form.style.display = 'none'
+  })
+
+  const div = document.createElement('div')
+  div.appendChild(button)
+  div.appendChild(form)
+  return div
 }
 
 function init () {
   document.body.appendChild(searchPage())
-  document.body.insertBefore(searchButton(), document.body.firstChild)
+  document.body.insertBefore(searchForm(), document.body.firstChild)
 }
 
 export { init }
