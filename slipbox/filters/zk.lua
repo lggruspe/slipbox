@@ -22,8 +22,9 @@ local function Div(elem)
   local notes = {}
   filter = footnotes.make_footnote_filter(notes)
   elem = pandoc.walk_block(elem, filter)
-  for _, block in ipairs(notes) do
-    table.insert(elem.content, block)
+  if next(notes) then
+    table.insert(elem.content, pandoc.HorizontalRule())
+    table.insert(elem.content, footnotes.list_footnotes(notes))
   end
   return elem
 end
