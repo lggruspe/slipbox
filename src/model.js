@@ -246,8 +246,7 @@ class Query {
     const record = this.db.data.aliases[alias]
     if (!record || !record.parent) return null
     const parentRecord = this.db.data.aliases[record.parent]
-    // TODO what if parentRecord.id === 0?
-    if (!parentRecord || !parentRecord.id) return null
+    if (!parentRecord || parentRecord.id == null) return null
     return {
       note: this.note(parentRecord.id),
       alias: record.parent

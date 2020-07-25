@@ -402,8 +402,8 @@ describe('Query', function () {
 
     describe('of alias with no parent', function () {
       it('should be null', function () {
-        assert(query.db.data.aliases['0a'])
-        assert(query.parent('0a') === null)
+        assert(query.db.data.aliases['0'])
+        assert(query.parent('0') === null)
       })
     })
 
@@ -411,6 +411,15 @@ describe('Query', function () {
       const parent = query.parent('0a1')
       assert(parent.note.equals(n1))
       assert.strictEqual(parent.alias, '0a')
+    })
+
+    describe('with id equal to 0', function () {
+      it('should be found', function () {
+        const parent = query.parent('0a')
+        assert(parent.note.equals(n0))
+        assert.strictEqual(parent.alias, '0')
+        assert.strictEqual(parent.note.id, 0)
+      })
     })
   })
 
