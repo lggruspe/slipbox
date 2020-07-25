@@ -6,6 +6,7 @@ local links = require "filters/links"
 local post = require "filters/post"
 local slipbox = require "filters/slipbox"
 local tags = require "filters/tags"
+local footnotes = require "filters/footnotes"
 
 local current_slipbox = slipbox.SlipBox:new()
 
@@ -16,7 +17,15 @@ local function Div(elem)
   filter = links.make_link_filter(elem, current_slipbox)
   elem = pandoc.walk_block(elem, filter)
   filter = cites.make_cite_filter(elem, current_slipbox)
-  return pandoc.walk_block(elem, filter)
+  elem = pandoc.walk_block(elem, filter)
+
+  local notes = {}
+  filter = footnotes.make_footnote_filter(notes)
+  elem = pandoc.walk_block(elem, filter)
+  for _, block in ipairs(notes) do
+    table.insert(elem.content, block)
+  end
+  return elem
 end
 
 return {
