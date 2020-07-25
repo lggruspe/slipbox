@@ -22,7 +22,7 @@ local function get_sequence_link(div, link)
       tag = "sequence",
       src = src,
       dest = dest,
-      alias = link.title,
+      description = link.title,
     }
   end
 end
@@ -58,7 +58,7 @@ local function rewrite_textless_link(link, elem)
   assert(elem.tag == "Link")
   assert(link.tag == "direct" or link.tag == "sequence")
   if is_textless_link(elem) then
-    local title = link.alias or link.description
+    local title = link.description
     return {
       pandoc.Str" [",
       pandoc.Link({pandoc.Str(link.dest)}, elem.target, title, elem.attributes),

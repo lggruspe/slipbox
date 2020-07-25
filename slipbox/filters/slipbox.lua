@@ -48,24 +48,24 @@ end
 function SlipBox:save_sequence(link)
   -- Set aliases and children tables (for sequence/folgezettel notes).
   assert(link ~= nil)
-  assert(link.tag == "sequence" and link.alias)
-  assert(link.alias ~= "")
+  assert(link.tag == "sequence" and link.description)
+  assert(link.description~= "")
 
-  if link.dest and link.alias then
-    self.aliases[link.alias] = {
+  if link.dest and link.description then
+    self.aliases[link.description] = {
       id = link.dest,
-      owner = utils.alias_root(link.alias),
+      owner = utils.alias_root(link.description),
     }
     -- dest might not be in notes if it's not in the current set of input files
     if self.notes[link.dest] then
       local aliases = assert(self.notes[link.dest]).aliases or {}
-      table.insert(aliases, link.alias)
+      table.insert(aliases, link.description)
       self.notes[link.dest].aliases = aliases
     end
-    local parent = parent_sequence(link.alias)
+    local parent = parent_sequence(link.description)
     if parent then
       local children = self.children[parent] or {}
-      table.insert(children, link.alias)
+      table.insert(children, link.description)
       self.children[parent] = children
 
       if parent == tostring(link.src) then
@@ -75,7 +75,7 @@ function SlipBox:save_sequence(link)
 
         self.aliases[tostring(link.src)] = {
           id = link.src,
-          owner = utils.alias_root(link.alias),
+          owner = utils.alias_root(link.description),
         }
       end
     end
