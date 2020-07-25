@@ -1,3 +1,5 @@
+local utils = require "filters/utils"
+
 local function parse_number_target(s)
   -- Return identifier if s is a section number.
   local t, count = s:gsub('^#(%d+)$', '%1')
@@ -18,8 +20,10 @@ local function get_sequence_link(div, link)
   local pattern = '^(%d+)(%a[%a%d]*)$'
   local seqnum = link.title or ""   -- NOTE why isn't this in link.attributes.title?
 
+  if not utils.is_valid_alias(seqnum) then return nil end
+
   local prefix = alias_root(seqnum)
-  if prefix == nil then return nil end
+  assert(prefix)
 
   local _, count = seqnum:gsub(pattern, '%2')
   if count == 0 then return nil end
@@ -57,7 +61,7 @@ local function is_textless_link(elem)
   return content == nil or content == ""
 end
 
-local function create_pandoc_link(link, elem)
+local function rewrite_textless_link(link, elem)
   -- Create a new pandoc Link for textless links.
   --
   -- link
@@ -81,16 +85,16 @@ local function make_link_filter(div, slipbox)
   local function Link(elem)
     -- Process direct links and sequence links.
     -- Run by walking from div.
+    if not elem.target or elem.target == "" then return elem.content end
+
     local link = get_sequence_link(div, elem) or get_direct_link(div, elem)
-    if not link then
-      if not elem.target or elem.target == "" then return elem.content end
-      return nil
-    end
-    if link.tag == "sequence" or link.tag == "direct" then
+    if link then
+      assert(link.tag == "sequence" or link.tag == "direct")
       slipbox:save_link(link)
-      return create_pandoc_link(link, elem)
+      return rewrite_textless_link(link, elem)
     end
   end
+
   return {Link = Link}
 end
 
