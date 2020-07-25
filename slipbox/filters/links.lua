@@ -10,13 +10,11 @@ end
 
 local function get_sequence_link(div, link)
   assert(div.tag == "Div" and link.tag == "Link")
-  local pattern = '^(%d+)(%a[%a%d]*)$'
   local seqnum = link.title or ""   -- NOTE why isn't this in link.attributes.title?
 
   if not utils.is_valid_alias(seqnum) then return nil end
+  if seqnum:match '^%d+$' then return nil end
 
-  local _, count = seqnum:gsub(pattern, '%2')
-  if count == 0 then return nil end
   local src = tonumber(div.identifier)
   local dest = parse_number_target(link.target)
   if src and dest then

@@ -118,6 +118,16 @@ describe("get_sequence_link", function()
     assert.truthy(result.alias)
     assert.truthy(result.alias:match('^%d+%a[%d%a]*$'))
   end)
+
+  describe("on Link that has an integer alias", function()
+    it("should return nil", function()
+      local div = make_sample_div()
+      local link = mock_link({make_sample_str()}, "#5", "5")
+
+      local result = links.get_sequence_link(div, link)
+      assert.is_nil(result)
+    end)
+  end)
 end)
 
 describe("get_direct_link and get_sequence_link", function()
