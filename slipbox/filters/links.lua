@@ -8,32 +8,23 @@ local function parse_number_target(s)
   end
 end
 
-local function get_sequence_link(div, link)
+local function get_link(div, link)
   assert(div.tag == "Div" and link.tag == "Link")
-  local seqnum = link.title or ""   -- NOTE why isn't this in link.attributes.title?
 
-  if not utils.is_valid_alias(seqnum) then return nil end
-  if seqnum:match '^%d+$' then return nil end
-
-  local src = tonumber(div.identifier)
-  local dest = parse_number_target(link.target)
-  if src and dest then
-    return {
-      tag = "sequence",
-      src = src,
-      dest = dest,
-      description = link.title,
-    }
+  local tag = "sequence"
+  local seqnum = link.title or ""
+  if not utils.is_valid_alias(seqnum) then
+    tag = "direct"
   end
-end
+  if seqnum:match '^%d+$' then
+    tag = "direct"
+  end
 
-local function get_direct_link(div, link)
-  assert(div.tag == "Div" and link.tag == "Link")
   local src = tonumber(div.identifier)
   local dest = parse_number_target(link.target)
   if src and dest then
     return {
-      tag = "direct",
+      tag = tag,
       src = src,
       dest = dest,
       description = link.title,
@@ -74,7 +65,7 @@ local function make_link_filter(div, slipbox)
     -- Run by walking from div.
     if not elem.target or elem.target == "" then return elem.content end
 
-    local link = get_sequence_link(div, elem) or get_direct_link(div, elem)
+    local link = get_link(div, elem)
     if link then
       assert(link.tag == "sequence" or link.tag == "direct")
       slipbox:save_link(link)
@@ -88,6 +79,5 @@ end
 return {
   make_link_filter = make_link_filter,
   -- private:
-  get_direct_link = get_direct_link,
-  get_sequence_link = get_sequence_link,
+  get_link = get_link,
 }
