@@ -597,13 +597,9 @@
     return new Fuse(sections, options)
   }
 
-  function getSearchResults (fuse) {
-    const div = document.querySelector('input.search-bar');
-    return fuse.search(div.value)
-  }
-
-  function displayResults (results) {
-    const div = document.querySelector('div.search-results');
+  function displayResults (results, container) {
+    // Display results in container.
+    const div = container;
     div.textContent = '';
     for (const result of results) {
       const p = document.createElement('p');
@@ -626,17 +622,8 @@
     }
   }
 
-  function searchNotes (fuse) {
-    const results = getSearchResults(fuse);
-    displayResults(results);
-  }
-
-  function searchBar () {
-    const form = document.createElement('form');
-    form.action = 'javascript:void(0)';
-
-    const fuse = createFuse();
-
+  function searchBar (fuse, container) {
+    // Container will contain search results.
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Search notes...';
@@ -649,11 +636,10 @@
 
     input.addEventListener('change', function () {
       window.location.hash = '#search';
-      searchNotes(fuse);
+      const results = fuse.search(input.value);
+      displayResults(results, container);
     });
-
-    form.appendChild(input);
-    return form
+    return input
   }
 
   function searchResults () {
@@ -662,51 +648,50 @@
     return div
   }
 
-  function searchPage () {
+  function searchPage (container) {
+    // Container will contain search results.
     const page = document.createElement('section');
     page.id = 'search';
     page.title = 'Search';
     page.classList.add('level1');
-    page.appendChild(searchResults());
+    page.appendChild(container);
     return page
   }
 
   function searchSpan () {
     const span = document.createElement('span');
     span.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>';
-
-    const svg = span.querySelector('svg');
-    svg.style.height = '1em';
+    span.firstChild.style.height = '1em';
     return span
   }
 
-  function searchForm () {
+  function searchForm (container) {
+    // Container will contain search results.
     const button = searchSpan();
-    const form = searchBar();
-    form.style.display = 'none';
-
-    const input = form.querySelector('input');
+    const input = searchBar(createFuse(), container);
+    input.style.display = 'none';
 
     button.addEventListener('click', function () {
       button.style.display = 'none';
-      form.style.display = '';
+      input.style.display = '';
       input.focus();
     });
 
-    form.addEventListener('focusout', function () {
+    input.addEventListener('focusout', function () {
       button.style.display = '';
-      form.style.display = 'none';
+      input.style.display = 'none';
     });
 
     const div = document.createElement('div');
     div.appendChild(button);
-    div.appendChild(form);
+    div.appendChild(input);
     return div
   }
 
   function init$1 () {
-    document.body.appendChild(searchPage());
-    document.body.insertBefore(searchForm(), document.body.firstChild);
+    const container = searchResults();
+    document.body.appendChild(searchPage(container));
+    document.body.insertBefore(searchForm(container), document.body.firstChild);
   }
 
   function hideSections () {

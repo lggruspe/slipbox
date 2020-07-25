@@ -21,12 +21,6 @@ end
 
 return {
   header.make_id_title_filter(current_slipbox),
-  {
-    Pandoc = function(doc)
-      doc.blocks = pandoc.utils.make_sections(false, nil, doc.blocks)
-      return doc
-    end
-  },
   {Div = Div},
   images.make_image_filter(),
   post.make_sql_dump_filter(current_slipbox),

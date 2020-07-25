@@ -14,9 +14,10 @@ local function parse_id_and_title(s)
 end
 
 local function make_id_title_filter(slipbox)
-  -- create filter for processing header ids and titles
+  -- Create filter for processing header ids and titles
+  -- and splitting the document into sections.
   local function Header(elem)
-    -- try to set elem id and title from content
+    -- Try to set elem id and title from content.
     local content = pandoc.utils.stringify(elem.content)
     local h = parse_id_and_title(content)
     if h then
@@ -26,7 +27,16 @@ local function make_id_title_filter(slipbox)
       return elem
     end
   end
-  return {Header = Header}
+
+  local function Pandoc(doc)
+    doc.blocks = pandoc.utils.make_sections(false, nil, doc.blocks)
+    return doc
+  end
+
+  return {
+    Header = Header,
+    Pandoc = Pandoc,
+  }
 end
 
 return {
