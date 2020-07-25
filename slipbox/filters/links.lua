@@ -8,22 +8,12 @@ local function parse_number_target(s)
   end
 end
 
-local function alias_root(alias)
-  -- Return alias root or nil (if invalid).
-  local pattern = '^(%d+)(%a[%a%d]*)$'
-  local prefix, count = alias:gsub(pattern, '%1')
-  if count > 0 then return prefix end
-end
-
 local function get_sequence_link(div, link)
   assert(div.tag == "Div" and link.tag == "Link")
   local pattern = '^(%d+)(%a[%a%d]*)$'
   local seqnum = link.title or ""   -- NOTE why isn't this in link.attributes.title?
 
   if not utils.is_valid_alias(seqnum) then return nil end
-
-  local prefix = alias_root(seqnum)
-  assert(prefix)
 
   local _, count = seqnum:gsub(pattern, '%2')
   if count == 0 then return nil end
@@ -32,7 +22,6 @@ local function get_sequence_link(div, link)
   if src and dest then
     return {
       tag = "sequence",
-      root = prefix,
       src = src,
       dest = dest,
       alias = link.title,
@@ -99,7 +88,6 @@ local function make_link_filter(div, slipbox)
 end
 
 return {
-  alias_root = alias_root,
   make_link_filter = make_link_filter,
   -- private:
   get_direct_link = get_direct_link,

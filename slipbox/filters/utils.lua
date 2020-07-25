@@ -17,4 +17,14 @@ local function is_valid_alias(alias)
   return true
 end
 
-return { is_valid_alias = is_valid_alias }
+local function alias_root(alias)
+  -- Return alias root or nil (if invalid).
+  local pattern = '^(%d+)(%a[%a%d]*)$'
+  local prefix, count = alias:gsub(pattern, '%1')
+  if count > 0 then return prefix end
+end
+
+return {
+  is_valid_alias = is_valid_alias,
+  alias_root = alias_root,
+}

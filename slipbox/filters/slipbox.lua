@@ -1,4 +1,4 @@
-local links_m = require "filters/links"
+local utils = require "filters/utils"
 
 local SlipBox = {}
 function SlipBox:new()
@@ -48,13 +48,13 @@ end
 function SlipBox:save_sequence(link)
   -- Set aliases and children tables (for sequence/folgezettel notes).
   assert(link ~= nil)
-  assert(link.tag == "sequence" and link.alias and link.root)
-  assert(link.root ~= "" and link.alias ~= "")
+  assert(link.tag == "sequence" and link.alias)
+  assert(link.alias ~= "")
 
   if link.dest and link.alias then
     self.aliases[link.alias] = {
       id = link.dest,
-      owner = links_m.alias_root(link.alias),
+      owner = utils.alias_root(link.alias),
     }
     -- dest might not be in notes if it's not in the current set of input files
     if self.notes[link.dest] then
@@ -75,7 +75,7 @@ function SlipBox:save_sequence(link)
 
         self.aliases[tostring(link.src)] = {
           id = link.src,
-          owner = links_m.alias_root(link.alias),
+          owner = utils.alias_root(link.alias),
         }
       end
     end
