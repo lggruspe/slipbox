@@ -6,7 +6,6 @@ function SlipBox:new()
   return setmetatable({
     notes = {},
     links = {},
-    backlinks = {},
     aliases = {},
     children = {},
     tags = {},
@@ -34,15 +33,6 @@ local function parent_sequence(s)
   if count ~= 0 then return t end
   t, count = s:gsub('^(.-)%a+$', '%1')
   if count ~= 0 then return t end
-end
-
-function SlipBox:save_backlink(link)
-  assert(link ~= nil)
-  assert(link.tag == "direct" and link.src and link.dest)
-  assert(link.description)
-  local backlinks = self.backlinks[link.dest] or {}
-  table.insert(backlinks, link)
-  self.backlinks[link.dest] = backlinks
 end
 
 function SlipBox:save_sequence(link)
@@ -89,9 +79,7 @@ function SlipBox:save_link(link)
       table.insert(links, link)
       self.links[link.src] = links
     end
-    if link.tag == "direct" then
-      self:save_backlink(link)
-    elseif link.tag == "sequence" then
+    if link.tag == "sequence" then
       self:save_sequence(link)
     end
   end
