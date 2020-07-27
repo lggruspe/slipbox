@@ -1,6 +1,11 @@
 .PHONY:	all
 all:
 
+.PHONY:	init
+init:
+	npm ci
+	pip install -r requirements.txt
+
 .PHONY:	bundle
 bundle:
 	npm run bundle

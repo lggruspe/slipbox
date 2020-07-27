@@ -3,8 +3,21 @@
 import contextlib
 import os
 import shlex
+import shutil
 import subprocess
 import tempfile
+
+def pandoc():
+    """Pandoc location."""
+    return os.environ.get("PANDOC", "pandoc")
+
+def grep():
+    """Grep location."""
+    return os.environ.get("GREP", "grep")
+
+def check_requirements():
+    """Check if grep and pandoc are installed."""
+    return shutil.which(pandoc()) and shutil.which(grep())
 
 def get_contents(filename):
     """Get contents of given file."""

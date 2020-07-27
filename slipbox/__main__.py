@@ -2,10 +2,12 @@
 
 import os
 import sqlite3
+import sys
 
 from .page import generate_complete_html
 from .scan import scan, remove_outdated_files_from_database, input_files
 from .scan import initialize_database
+from .utils import check_requirements
 
 def main(args):
     """Generate HTML file from input files."""
@@ -20,6 +22,8 @@ def main(args):
         generate_complete_html(conn, args.document_options)
 
 if __name__ == "__main__":
+    if not check_requirements():
+        sys.exit("[ERROR] pandoc and grep not found.")
     from argparse import ArgumentParser
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")

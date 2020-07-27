@@ -1,12 +1,11 @@
 """Test scan.py."""
 import os
-import shutil
 import time
 
 import pytest
 
 from . import scan
-from .utils import sqlite_string
+from .utils import sqlite_string, check_requirements
 
 def insert_file_script(*files):
     """Create SQL query string to insert into the Files table."""
@@ -153,7 +152,7 @@ def test_remove_outdated_files_from_database(mock_db, tmp_path):
     assert not scan.is_file_in_db(str(modified), conn)
     assert scan.is_file_in_db(str(temp), conn)
 
-@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan(mock_db, tmp_path):
     """Smoke test for scan."""
     input_file = tmp_path/"input.md"
@@ -162,7 +161,7 @@ def test_scan(mock_db, tmp_path):
     scan.scan(mock_db, [str(input_file)], "", False)
     assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
 
-@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_empty_file(mock_db, tmp_path):
     """Scanned files that are empty shouldn't have entries in the database."""
     empty = tmp_path/"empty.md"
@@ -179,7 +178,7 @@ def test_scan_empty_file(mock_db, tmp_path):
     assert not list(mock_db.execute("SELECT * FROM Bibliography"))
     assert not list(mock_db.execute("SELECT * FROM Citations"))
 
-@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_filenames(mock_db, tmp_path):
     """Filenames must be grepped from input files only."""
     markdown = tmp_path/"foo.md"
@@ -192,7 +191,7 @@ def test_scan_filenames(mock_db, tmp_path):
     assert len(result) == 1
     assert result[0][0] == str(markdown)
 
-@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_filenames0(mock_db, tmp_path):
     """Filenames must be grepped from input files only."""
     markdown = tmp_path/"bar.md"
@@ -205,7 +204,7 @@ def test_scan_filenames0(mock_db, tmp_path):
     assert len(result) == 1
     assert result[0][0] == str(markdown)
 
-@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_external_sequence_links(mock_db, tmp_path):
     """Alias.owner must be equal to the root of the sequence defined by the
     alias, not to the source of the sequence link.
