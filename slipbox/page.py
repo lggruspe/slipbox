@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 
 from .templates import Elem, render
-from .utils import make_temporary_file, write_lines
+from .utils import make_temporary_file, write_lines, pandoc
 
 DUMMY_MARKDOWN = r"""$\,$
 ``` {.c style="display:none"}
@@ -167,8 +167,8 @@ def generate_complete_html(conn, options):
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
             print(create_entrypoints(conn), file=file)
-        cmd = "pandoc {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
-            dummy=shlex.quote(dummy), script=shlex.quote(script),
+        cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
+            pandoc=pandoc(), dummy=shlex.quote(dummy), script=shlex.quote(script),
             html=shlex.quote(html), opts=options, extra=shlex.quote(extra),
             title="--metadata title=Slipbox")
         subprocess.run(shlex.split(cmd), check=False)
