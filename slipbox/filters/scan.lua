@@ -4,7 +4,6 @@ local function grep_headers(options)
   options = [[ -rIoZH "[0-9]\+\s\+.\+" ]] .. (options or "")
   local program = os.getenv("GREP") or "grep"
   local command = program .. options
-  print(command)
   return io.popen(command):lines()
 end
 
