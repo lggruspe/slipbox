@@ -164,6 +164,7 @@ def scan(conn, inputs, scan_options, convert_to_data_url):
             cmd = build_command(files, html, scan_options)
             out, err = utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
                                          CONVERT_TO_DATA_URL=convert_to_data_url,
+                                         GREP=utils.grep(),
                                          SCAN_INPUT_LIST=scan_input_list)
             run_script_on_database(conn, slipbox_sql)
 

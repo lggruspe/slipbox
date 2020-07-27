@@ -1,8 +1,10 @@
 local header = require "filters/header"
 
 local function grep_headers(options)
-  local command = [[grep -rIoZH "[0-9]\+\s\+.\+" ]]
-  if options and options ~= "" then command = command .. options end
+  options = [[ -rIoZH "[0-9]\+\s\+.\+" ]] .. (options or "")
+  local program = os.getenv("GREP") or "grep"
+  local command = program .. options
+  print(command)
   return io.popen(command):lines()
 end
 
