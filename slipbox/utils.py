@@ -50,4 +50,4 @@ def run_command(cmd, **kwargs):
     env.update(**kwargs)
     proc = subprocess.run(shlex.split(cmd), env=env, check=False,
                           capture_output=True)
-    return proc.stdout, proc.stderr
+    return proc

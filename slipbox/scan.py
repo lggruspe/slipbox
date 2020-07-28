@@ -162,16 +162,17 @@ def scan(conn, inputs, scan_options, convert_to_data_url):
         with utils.make_temporary_file() as slipbox_sql,\
                 utils.make_temporary_file(suffix=".html", text=True) as html:
             cmd = build_command(files, html, scan_options)
-            out, err = utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
-                                         CONVERT_TO_DATA_URL=convert_to_data_url,
-                                         GREP=utils.grep(),
-                                         SCAN_INPUT_LIST=scan_input_list)
+            proc = utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
+                                     CONVERT_TO_DATA_URL=convert_to_data_url,
+                                     GREP=utils.grep(),
+                                     SCAN_INPUT_LIST=scan_input_list)
+            if proc.stdout:
+                print(proc.stdout.decode())
+            if proc.stderr:
+                print(proc.stderr.decode(), file=sys.stderr)
+            if proc.returncode:
+                print("Scan failed.", file=sys.stderr)
+                continue
             run_script_on_database(conn, slipbox_sql)
-
-            if out:
-                print(out.decode())
-            if err:
-                print(err.decode(), file=sys.stderr)
-
             contents = utils.get_contents(html)
         store_html_sections(conn, contents, inputs)

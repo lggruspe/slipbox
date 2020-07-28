@@ -42,23 +42,25 @@ def test_run_command(tmp_path):
     first.write_text("first")
     second.write_text("second")
 
-    out, err = utils.run_command("grep first {} {}".format(
+    proc = utils.run_command("grep first {} {}".format(
         shlex.quote(str(first)), shlex.quote(str(second))
     ))
-    assert not err
-    assert str(first) in out.decode()
-    assert str(second) not in out.decode()
-    out, err = utils.run_command("grep second {} {}".format(
+    assert not proc.stderr
+    assert not proc.returncode
+    assert str(first) in proc.stdout.decode()
+    assert str(second) not in proc.stdout.decode()
+    proc = utils.run_command("grep second {} {}".format(
         shlex.quote(str(first)), shlex.quote(str(second))
     ))
-    assert not err
-    assert str(first) not in out.decode()
-    assert str(second) in out.decode()
+    assert not proc.stderr
+    assert str(first) not in proc.stdout.decode()
+    assert str(second) in proc.stdout.decode()
 
 @pytest.mark.skipif(not shutil.which("env"), reason="requires env")
 def test_run_command_with_kwargs():
     """Keyword arguments to run_command must be used as environment variables.
     """
-    out, err = utils.run_command("env", ZZZZZZZZZZ="ZZZZZZZZZZ")
-    assert not err
-    assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in out.decode()
+    proc = utils.run_command("env", ZZZZZZZZZZ="ZZZZZZZZZZ")
+    assert not proc.stderr
+    assert not proc.returncode
+    assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in proc.stdout.decode()
