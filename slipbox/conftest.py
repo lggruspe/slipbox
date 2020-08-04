@@ -1,9 +1,10 @@
+# type: ignore
 """Functions for mocking the database."""
 
 import sqlite3
 from typing import Iterable
 
-import pytest   # type: ignore
+import pytest
 
 from . import scan
 

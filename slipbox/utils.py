@@ -7,7 +7,7 @@ import shlex
 import shutil
 import subprocess
 import tempfile
-from typing import Any, Iterable, Iterator
+from typing import Any, Iterator
 
 def pandoc() -> str:
     """Pandoc location."""
@@ -25,19 +25,13 @@ def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""
     return "'{}'".format(text.replace("'", "''"))
 
-def write_lines(filename: str, text: Iterable[str]) -> None:
-    """Write text (iterable) to file."""
-    with open(filename, "w") as file:
-        for line in text:
-            print(line, file=file)
-
 @contextlib.contextmanager
 def make_temporary_file(*args: Any, **kwargs: Any) -> Iterator[Path]:
     """Temporary file context manager that returns filename."""
     _, filename = tempfile.mkstemp(*args, **kwargs)
     path = Path(filename)
     yield path
-    path.unlink(missing_ok=True)
+    path.unlink()
 
 def run_command(cmd: str, **kwargs: Any) -> subprocess.CompletedProcess:
     """Run command with environment variables in kwargs.

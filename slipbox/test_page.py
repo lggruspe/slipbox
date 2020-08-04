@@ -1,7 +1,7 @@
 # type: ignore
 """Test page.py."""
 
-import pytest # type: ignore
+import pytest
 from . import page
 from .utils import check_requirements
 

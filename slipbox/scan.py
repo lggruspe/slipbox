@@ -81,14 +81,6 @@ def input_files(
     new = find_new_files(conn, map(Path, paths), patterns)
     yield from filter(os.path.isfile, set(modified).union(new))
 
-def run_script_on_database(conn: Connection, script: str) -> None:
-    """Run script stored in file on database."""
-    with open(script) as file:
-        cur = conn.cursor()
-        for line in file:
-            cur.execute(line)
-        conn.commit()
-
 def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
     """Generate an iterator for each file extension.
 
@@ -174,6 +166,7 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
             if proc.returncode:
                 print("Scan failed.", file=sys.stderr)
                 continue
-            run_script_on_database(conn, str(slipbox_sql))
+            conn.executescript(slipbox_sql.read_text())
+            conn.commit()
             contents = html.read_text()
         store_html_sections(conn, contents, inputs)
