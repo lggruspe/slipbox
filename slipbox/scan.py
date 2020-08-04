@@ -5,26 +5,27 @@ import fnmatch
 import os
 from pathlib import Path
 import shlex
+from sqlite3 import Connection
 import sys
-from typing import Iterable, List, Set, Union
+from typing import Iterable, List, Set, Tuple, Union
 
 from . import utils
 
-def initialize_database(conn):
+def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
     sql = Path(__file__).with_name("schema.sql").read_text()
     conn.executescript(sql)
     conn.commit()
 
-def fetch_files(conn) -> Iterable[Path]:
+def fetch_files(conn: Connection) -> Iterable[Path]:
     """Get files from the database."""
     return (Path(p) for p, in conn.execute("SELECT filename FROM Files"))
 
-def is_recently_modified(timestamp, filename: Union[Path, str]) -> bool:
+def is_recently_modified(timestamp: float, filename: Union[Path, str]) -> bool:
     """Check if file has been modified after the timestamp."""
     return os.path.exists(filename) and os.path.getmtime(filename) >= timestamp
 
-def is_file_in_db(path: Path, conn):
+def is_file_in_db(path: Path, conn: Connection) -> bool:
     """Check if file is recorded in the database."""
     cur = conn.cursor()
     sql = "SELECT filename FROM Files WHERE filename = ?"
@@ -32,14 +33,14 @@ def is_file_in_db(path: Path, conn):
         return True
     return False
 
-def has_valid_pattern(filename, patterns):
+def has_valid_pattern(filename: Path, patterns: Iterable[str]) -> bool:
     """Check if filename matches one of the patterns."""
     for pattern in patterns:
-        if fnmatch.fnmatch(filename, pattern):
+        if fnmatch.fnmatch(str(filename), pattern):
             return True
     return False
 
-def files_in_path(path: Path):
+def files_in_path(path: Path) -> Iterable[Path]:
     """Recursively glob files in path."""
     if path.is_file():
         yield path
@@ -53,13 +54,22 @@ def files_in_paths(paths: Iterable[Path]) -> Set[Path]:
         new_files = new_files.union(files_in_path(path))
     return new_files
 
-def find_new_files(conn, paths: Iterable[Path], patterns=("*.md",)):
+def find_new_files(
+        conn: Connection,
+        paths: Iterable[Path],
+        patterns: Iterable[str] = ("*.md",)
+    ) -> Iterable[Path]:
     """Look for files that are not yet in the database."""
     condition = lambda x: x.is_file() and not is_file_in_db(x, conn) and \
             has_valid_pattern(x, patterns)
     return filter(condition, files_in_paths(paths))
 
-def input_files(conn, timestamp, paths: Iterable[str], patterns=("*.md",)) -> Iterable[Path]:
+def input_files(
+        conn: Connection,
+        timestamp: float,
+        paths: Iterable[str],
+        patterns: Iterable[str] = ("*.md",)
+    ) -> Iterable[Path]:
     """Generate files that must be rescanned/processed by pandoc.
 
     Neighbor notes of deleted/modified files don't have to be rescanned,
@@ -71,7 +81,7 @@ def input_files(conn, timestamp, paths: Iterable[str], patterns=("*.md",)) -> It
     new = find_new_files(conn, map(Path, paths), patterns)
     yield from filter(os.path.isfile, set(modified).union(new))
 
-def run_script_on_database(conn, script):
+def run_script_on_database(conn: Connection, script: str) -> None:
     """Run script stored in file on database."""
     with open(script) as file:
         cur = conn.cursor()
@@ -79,18 +89,18 @@ def run_script_on_database(conn, script):
             cur.execute(line)
         conn.commit()
 
-def group_by_file_extension(files):
+def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
     """Generate an iterator for each file extension.
 
     Each file with no file extension is given its own iterator.
     """
-    def key(filename):
+    def key(filename: Union[str, Path]) -> Tuple[str, str]:
         root, ext = os.path.splitext(filename)
         return (ext, "") if ext else ("", root)
     groups = groupby(sorted(files, key=key), key=key)
     return map(lambda g: g[1], groups)
 
-def build_command(inputs: str, output, options=""):
+def build_command(inputs: str, output: str, options: str = "") -> str:
     """Construct a single pandoc command to run on inputs.
 
     inputs is a string of filenames separated by spaces.
@@ -105,7 +115,7 @@ def build_command(inputs: str, output, options=""):
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + inputs
 
-def remove_outdated_files_from_database(conn, timestamp):
+def remove_outdated_files_from_database(conn: Connection, timestamp: float) -> None:
     """Remove outdated files from the database.
 
     This includes files that have been deleted from the file system,
@@ -122,7 +132,7 @@ def remove_outdated_files_from_database(conn, timestamp):
         cur.execute("DELETE FROM Files WHERE filename = ?", (str(filename),))
     conn.commit()
 
-def store_html_sections(conn, html: str, sources: List[Path]):
+def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
     """Insert Html and Sections entries for html and sources.
 
     html
@@ -144,9 +154,9 @@ def store_html_sections(conn, html: str, sources: List[Path]):
         cur2.execute(insert, (row[0], lastrowid))
     conn.commit()
 
-def scan(conn, inputs: List[Path], scan_options, convert_to_data_url):
+def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained: bool) -> None:
     """Process inputs and store results in database."""
-    convert_to_data_url = "1" if convert_to_data_url else ""
+    convert_to_data_url = "1" if self_contained else ""
     for batch in group_by_file_extension(inputs):
         files = list(batch)
         scan_input_list = " ".join(shlex.quote(str(p)) for p in files)

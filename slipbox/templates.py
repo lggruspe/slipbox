@@ -1,15 +1,17 @@
 """HTML elements."""
 
+from __future__ import annotations
 from textwrap import indent
+from typing import Any, Union
 
 class Elem:
     """Represents an HTML element."""
-    def __init__(self, tag, *children, **attributes):
+    def __init__(self, tag: str, *children: Union[str, Elem], **attributes: Any):
         self.tag = tag
         self.children = list(children)
         self.attributes = attributes.copy()
 
-def render(elem, prefix=""):
+def render(elem: Union[str, Elem], prefix: str = "") -> str:
     """Render HTML from Elem or str."""
     if isinstance(elem, str):
         return prefix + elem

@@ -2,8 +2,10 @@
 
 from pathlib import Path
 import shlex
+from sqlite3 import Connection
 import subprocess
 import tempfile
+from typing import Iterable
 
 from .templates import Elem, render
 from .utils import make_temporary_file, write_lines, pandoc
@@ -13,16 +15,15 @@ DUMMY_MARKDOWN = r"""$\,$
 ```
 """
 
-def generate_active_htmls(conn):
+def generate_active_htmls(conn: Connection) -> Iterable[str]:
     """Get HTML stored in the database for active sections."""
     sql = """
         SELECT body FROM Html WHERE id IN (SELECT html FROM Sections)
             ORDER BY id DESC
     """
-    cur = conn.cursor()
-    return map(lambda row: row[0], cur.execute(sql))
+    return (body for body, in conn.execute(sql))
 
-def generate_data(conn):
+def generate_data(conn: Connection) -> Iterable[str]:
     """Generate slipbox data in javascript."""
     for nid, title in conn.execute("SELECT id, title FROM Notes ORDER BY id"):
         yield f"window.query.db.add(new Model.Note({nid}, {title!r}))"
@@ -37,7 +38,7 @@ def generate_data(conn):
     for prev, next_ in conn.execute(sql):
         yield f"window.query.db.add(new Model.Sequence({prev!r}, {next_!r}))"
 
-def generate_javascript(conn):
+def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""
     yield '<script type="module">'
     bundle = Path(__file__).parent/"data"/"bundle.js"
@@ -50,7 +51,7 @@ def generate_javascript(conn):
     yield "})"
     yield "</script>"
 
-def create_bibliography(conn):
+def create_bibliography(conn: Connection) -> str:
     """Create bibliography HTML section from database entries."""
     sql = "SELECT key, text FROM Bibliography ORDER BY key"
     items = []
@@ -65,7 +66,7 @@ def create_bibliography(conn):
                    **{"class": "level1"})
     return render(section)
 
-def create_tags(conn):
+def create_tags(conn: Connection) -> str:
     """Create HTML section that lists all tags."""
     rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
     tags = (row[0] for row in rows)
@@ -78,7 +79,7 @@ def create_tags(conn):
                    **{"class": "level1"})
     return render(section)
 
-def create_entrypoints(conn):
+def create_entrypoints(conn: Connection) -> str:
     """Create HTML section for entrypoints.
 
     This contains all notes that starts a sequence.
@@ -99,7 +100,7 @@ def create_entrypoints(conn):
                    **{"class": "level1"})
     return render(section)
 
-def create_tag_page(conn, tag):
+def create_tag_page(conn: Connection, tag: str) -> str:
     """Create HTML section that lists all notes with the tag."""
     sql = """
         SELECT id, title FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
@@ -116,13 +117,13 @@ def create_tag_page(conn, tag):
                    **{"class": "level1"})
     return render(section)
 
-def create_tag_pages(conn):
+def create_tag_pages(conn: Connection) -> str:
     """Create all tag pages."""
     rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
     tags = (row[0] for row in rows)
     return '\n'.join(create_tag_page(conn, tag) for tag in tags)
 
-def create_reference_page(conn, reference):
+def create_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""
     sql = """
         SELECT note, title, text FROM Citations
@@ -145,13 +146,13 @@ def create_reference_page(conn, reference):
                    **{"class": "level1"})
     return render(section)
 
-def create_reference_pages(conn):
+def create_reference_pages(conn: Connection) -> str:
     """Create all reference pages."""
     rows = conn.execute("SELECT key FROM Bibliography ORDER BY key")
     references = (row[0] for row in rows)
     return '\n'.join(create_reference_page(conn, ref) for ref in references)
 
-def generate_complete_html(conn, options):
+def generate_complete_html(conn: Connection, options: str) -> None:
     """Create final HTML file with javascript."""
     with make_temporary_file() as script,\
             make_temporary_file(suffix=".html", text=True) as html,\
