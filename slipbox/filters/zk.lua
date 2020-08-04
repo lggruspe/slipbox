@@ -1,24 +1,25 @@
 pandoc.utils = require "pandoc.utils"
-local cites = require "filters/cites"
+local collect = require "filters/collect"
 local header = require "filters/header"
 local images = require "filters/images"
-local links = require "filters/links"
+local modify = require "filters/modify"
 local post = require "filters/post"
 local slipbox = require "filters/slipbox"
-local tags = require "filters/tags"
 local footnotes = require "filters/footnotes"
 
 local current_slipbox = slipbox.SlipBox:new()
 
 local function Div(elem)
   -- Process tags and links.
-  elem = pandoc.walk_block(elem, tags.section_filter(elem, current_slipbox))
-  elem = pandoc.walk_block(elem, links.section_filter(elem, current_slipbox))
-
   local id = tonumber(elem.identifier)
   if id then
-      elem = pandoc.walk_block(elem, cites.section_filter(id, current_slipbox))
+    pandoc.walk_block(elem, collect.tags(id, current_slipbox))
+    pandoc.walk_block(elem, collect.links(id, current_slipbox))
+    pandoc.walk_block(elem, collect.citations(id, current_slipbox))
   end
+
+  elem = pandoc.walk_block(elem, modify.tags())
+  elem = pandoc.walk_block(elem, modify.links())
 
   local notes = {}
   local filter = footnotes.make_footnote_filter(notes)

@@ -1,6 +1,6 @@
 require "busted.runner" ()
 
-local links = require "filters/links"
+local utils = require "filters/utils"
 
 local function mock_attr(identifier, classes, attributes)
   -- Mock pandoc.Attr.
@@ -103,7 +103,7 @@ describe("get_link", function()
   describe("on a direct Link", function()
     it("should be able to return an object with a non-null description", function()
       local link = make_direct_link()
-      local result = links.get_link(0, link)
+      local result = utils.get_link(0, link)
       assert.truthy(result)
       assert.truthy(result.description)
       assert.are_not.equal(result.description, "")
@@ -113,7 +113,7 @@ describe("get_link", function()
   describe("on a sequence Link", function()
     it("should return an object with an alias description.", function()
       local link = make_sequence_link()
-      local result = links.get_link(0, link)
+      local result = utils.get_link(0, link)
       assert.truthy(result)
       assert.truthy(result.description)
       assert.truthy(result.description:match('^%d+%a[%d%a]*$'))
@@ -122,7 +122,7 @@ describe("get_link", function()
     describe("with an integer alias", function()
       it("should return a direct link", function()
         local link = mock_link({make_sample_str()}, "#5", "5")
-        local result = links.get_link(0, link)
+        local result = utils.get_link(0, link)
         assert.truthy(result)
         assert.is_equal(result.tag, "direct")
       end)
@@ -132,8 +132,22 @@ describe("get_link", function()
   describe("on tag links", function()
     it("should return nil", function()
       local link = make_tag_link()
-      local result = links.get_link(0, link)
+      local result = utils.get_link(0, link)
       assert(not result)
     end)
   end)
+end)
+
+it("hashtag_prefix", function()
+  local examples = {
+    ["# "]  = nil,
+    ["## "] = nil,
+    ["#tag."] = "#tag",
+    ["##Hash-Tag_0-9!"] = "##Hash-Tag_0-9",
+  }
+
+  for input, expected in pairs(examples) do
+    local output = utils.hashtag_prefix(input)
+    assert.are.equal(output, expected)
+  end
 end)
