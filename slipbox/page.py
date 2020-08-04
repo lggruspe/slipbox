@@ -9,10 +9,11 @@ from typing import Iterable
 from .templates import Elem, render
 from .utils import pandoc, temporary_directory
 
-DUMMY_MARKDOWN = r"""$\,$
-``` {.c style="display:none"}
+DUMMY_MARKDOWN = r"""::: {style="display:none"}
+$\,$
+```c
 ```
-"""
+:::"""
 
 def generate_active_htmls(conn: Connection) -> Iterable[str]:
     """Get HTML stored in the database for active sections."""
