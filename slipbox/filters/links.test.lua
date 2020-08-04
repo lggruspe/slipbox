@@ -52,6 +52,7 @@ local function mock_link(content, target, title, attr)
   }
 end
 
+--[[
 local function mock_div(content, attr)
   -- Mock pandoc.Div.
   -- content
@@ -80,12 +81,7 @@ local function mock_plain(content)
     t = "Plain",
   }
 end
-
-local function make_sample_div()
-  local div = mock_div{mock_plain{mock_str"Content"}}
-  div.identifier = 1
-  return div
-end
+--]]
 
 local function make_sample_str()
   return mock_str"text"
@@ -106,9 +102,8 @@ end
 describe("get_link", function()
   describe("on a direct Link", function()
     it("should be able to return an object with a non-null description", function()
-      local div = make_sample_div()
       local link = make_direct_link()
-      local result = links.get_link(div, link)
+      local result = links.get_link(0, link)
       assert.truthy(result)
       assert.truthy(result.description)
       assert.are_not.equal(result.description, "")
@@ -117,9 +112,8 @@ describe("get_link", function()
 
   describe("on a sequence Link", function()
     it("should return an object with an alias description.", function()
-      local div = make_sample_div()
       local link = make_sequence_link()
-      local result = links.get_link(div, link)
+      local result = links.get_link(0, link)
       assert.truthy(result)
       assert.truthy(result.description)
       assert.truthy(result.description:match('^%d+%a[%d%a]*$'))
@@ -127,9 +121,8 @@ describe("get_link", function()
 
     describe("with an integer alias", function()
       it("should return a direct link", function()
-        local div = make_sample_div()
         local link = mock_link({make_sample_str()}, "#5", "5")
-        local result = links.get_link(div, link)
+        local result = links.get_link(0, link)
         assert.truthy(result)
         assert.is_equal(result.tag, "direct")
       end)
@@ -138,10 +131,8 @@ describe("get_link", function()
 
   describe("on tag links", function()
     it("should return nil", function()
-      local div = make_sample_div()
       local link = make_tag_link()
-      local result = links.get_link(div, link) or
-        links.get_link(div, link)
+      local result = links.get_link(0, link)
       assert(not result)
     end)
   end)

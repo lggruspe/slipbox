@@ -14,12 +14,11 @@ function SlipBox:new()
 end
 
 function SlipBox:save_citation(id, citation)
-  id = tonumber(id)
-  if id then
-    local citations = self.citations[id] or {}
-    citations[citation] = true
-    self.citations[id] = citations
-  end
+  -- Save citation from note id (number).
+  -- Does not perform checks on id.
+  local citations = self.citations[id] or {}
+  citations[citation] = true
+  self.citations[id] = citations
 end
 
 function SlipBox:save_note(note)

@@ -8,8 +8,12 @@ local function parse_number_target(s)
   end
 end
 
-local function get_link(div, link)
-  assert(div.tag == "Div" and link.tag == "Link")
+local function get_link(src, link)
+  assert(link.tag == "Link")
+  assert(type(src) == "number")
+
+  local dest = parse_number_target(link.target)
+  if not src or not dest then return nil end
 
   local tag = "sequence"
   local seqnum = link.title or ""
@@ -20,8 +24,6 @@ local function get_link(div, link)
     tag = "direct"
   end
 
-  local src = tonumber(div.identifier)
-  local dest = parse_number_target(link.target)
   if src and dest then
     return {
       tag = tag,
@@ -65,7 +67,10 @@ local function make_link_filter(div, slipbox)
     -- Run by walking from div.
     if not elem.target or elem.target == "" then return elem.content end
 
-    local link = get_link(div, elem)
+    local src = tonumber(div.identifier)
+    if not src then return nil end
+
+    local link = get_link(src, elem)
     if link then
       assert(link.tag == "sequence" or link.tag == "direct")
       slipbox:save_link(link)
