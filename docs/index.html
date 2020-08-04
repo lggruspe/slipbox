@@ -115,25 +115,24 @@
     }
   }
 
-  function * neighborElements (query, id) {
-    const note = query.note(id);
+  function * neighborElements (query, note) {
     yield noteElement(note, true);
 
     for (const backlink of note.backlinks()) {
       yield noteElement(backlink.src);
-      yield linkElement('backlink', backlink.src.id, id);
+      yield linkElement('backlink', backlink.src.id, note.id);
     }
     for (const link of note.links()) {
       yield noteElement(link.dest);
-      yield linkElement('direct', id, link.dest.id);
+      yield linkElement('direct', note.id, link.dest.id);
     }
     for (const parent of note.parents()) {
       yield noteElement(parent.note);
-      yield linkElement('sequence', parent.note.id, id);
+      yield linkElement('sequence', parent.note.id, note.id);
     }
     for (const child of note.children()) {
       yield noteElement(child.note);
-      yield linkElement('sequence', id, child.note.id);
+      yield linkElement('sequence', note.id, child.note.id);
     }
     for (const alias of note.aliases()) {
       for (const ancestor of query.ancestors(alias)) {
@@ -238,7 +237,11 @@
       const id = Number(window.location.hash.slice(1));
       if (!Number.isInteger(id)) return
 
-      const elements = Array.from(neighborElements(query, id));
+      const note = query.note(id);
+      const elements = [];
+      if (note != null) {
+        elements.push(...neighborElements(query, note));
+      }
       if (elements.length < 2) return
 
       container = graphArea();
