@@ -12,15 +12,12 @@ local current_slipbox = slipbox.SlipBox:new()
 
 local function Div(elem)
   -- Process tags and links.
-  local filter = tags.make_tag_filter(elem, current_slipbox)
-  elem = pandoc.walk_block(elem, filter)
-  filter = links.make_link_filter(elem, current_slipbox)
-  elem = pandoc.walk_block(elem, filter)
-  filter = cites.make_cite_filter(elem, current_slipbox)
-  elem = pandoc.walk_block(elem, filter)
+  elem = pandoc.walk_block(elem, tags.section_filter(elem, current_slipbox))
+  elem = pandoc.walk_block(elem, links.section_filter(elem, current_slipbox))
+  elem = pandoc.walk_block(elem, cites.section_filter(elem, current_slipbox))
 
   local notes = {}
-  filter = footnotes.make_footnote_filter(notes)
+  local filter = footnotes.make_footnote_filter(notes)
   elem = pandoc.walk_block(elem, filter)
   if next(notes) then
     table.insert(elem.content, pandoc.HorizontalRule())

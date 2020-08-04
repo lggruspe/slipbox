@@ -60,7 +60,7 @@ local function rewrite_textless_link(link, elem)
   end
 end
 
-local function make_link_filter(div, slipbox)
+local function section_filter(div, slipbox)
   -- Create filter to walk div block.
   local function Link(elem)
     -- Process direct links and sequence links.
@@ -82,7 +82,7 @@ local function make_link_filter(div, slipbox)
 end
 
 return {
-  make_link_filter = make_link_filter,
+  section_filter = section_filter,
   -- private:
   get_link = get_link,
 }

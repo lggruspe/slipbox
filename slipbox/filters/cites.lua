@@ -1,4 +1,4 @@
-local function make_cite_filter(div, slipbox)
+local function section_filter(div, slipbox)
   -- Create filter that records citations.
   local function Cite(elem)
     local id = tonumber(div.identifier)
@@ -12,5 +12,5 @@ local function make_cite_filter(div, slipbox)
 end
 
 return {
-  make_cite_filter = make_cite_filter,
+  section_filter = section_filter,
 }

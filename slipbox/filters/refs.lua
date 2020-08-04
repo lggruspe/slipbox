@@ -5,7 +5,7 @@ local function is_reference_id(s)
   return s:match('^ref%-.+$') and true or false
 end
 
-local function make_cite_filter(references)
+local function section_filter(references)
   -- Create filter that transforms pandoc-citeproc bibliography.
   local function Div(elem)
     if is_reference_id(elem.identifier) then
@@ -49,7 +49,7 @@ local function Div(elem)
   -- Suppress bibliography and update SQL.
   if elem.identifier == "refs" then
     local refs = {}
-    pandoc.walk_block(elem, make_cite_filter(refs))
+    pandoc.walk_block(elem, section_filter(refs))
     save_to_sql(refs)
     return {}
   end

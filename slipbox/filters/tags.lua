@@ -2,7 +2,7 @@ local function hashtag_prefix(s)
   return s:match('^#+[-_a-zA-Z0-9]+')
 end
 
-local function make_tag_filter(div, slipbox)
+local function section_filter(div, slipbox)
   -- create filter to walk div block
   local function Str(elem)
     -- save hashtag keywords
@@ -19,7 +19,6 @@ local function make_tag_filter(div, slipbox)
 end
 
 return {
-  make_tag_filter = make_tag_filter,
-
+  section_filter = section_filter,
   hashtag_prefix = hashtag_prefix,
 }
