@@ -20,11 +20,9 @@ def fetch_files(conn):
     """Get files from the database."""
     return (row[0] for row in conn.execute("SELECT filename FROM Files"))
 
-def is_recently_modified(timestamp):
-    """Create function that checks if a file has been modified since the given
-    timestamp.
-    """
-    return lambda f: os.path.exists(f) and os.path.getmtime(f) >= timestamp
+def is_recently_modified(timestamp, filename):
+    """Check if file has been modified after the timestamp."""
+    return os.path.exists(filename) and os.path.getmtime(filename) >= timestamp
 
 def is_file_in_db(filename, conn):
     """Check if file is recorded in the database."""
@@ -69,18 +67,11 @@ def input_files(conn, timestamp, paths, patterns=("*.md",)):
     since those notes don't get affected when notes they reference to are
     removed from the database.
     """
-    modified = map(os.path.normpath, filter(is_recently_modified(timestamp),
-                                            fetch_files(conn)))
+    files = lambda: fetch_files(conn)
+    modified = map(os.path.normpath,
+                   (p for p in files() if is_recently_modified(timestamp, p)))
     new = find_new_files(conn, paths, patterns)
     yield from filter(os.path.isfile, set(modified).union(new))
-
-def delete_files_from_database(conn, files):
-    """Delete files from the database."""
-    cur = conn.cursor()
-    cur.execute("PRAGMA foreign_keys=ON")
-    for filename in files:
-        cur.execute("DELETE FROM Files WHERE filename = ?", (filename,))
-    conn.commit()
 
 def run_script_on_database(conn, script):
     """Run script stored in file on database."""
@@ -119,14 +110,19 @@ def build_command(files, output, options=""):
 def remove_outdated_files_from_database(conn, timestamp):
     """Remove outdated files from the database.
 
-    This includes files that have been deleted from the file system, and files
-    that have recently been modified.
-    The second set of files will be added back to the database after scanning.
+    This includes files that have been deleted from the file system,
+    and files that have been modified recently.
+    Recently modified files will be added back to the database after scanning.
     """
-    missing = filter(lambda x: not os.path.exists(x), fetch_files(conn))
-    modified = filter(is_recently_modified(timestamp), fetch_files(conn))
-    return delete_files_from_database(conn, map(os.path.normpath,
-                                                chain(missing, modified)))
+    files = lambda: fetch_files(conn)
+    missing = (p for p in files() if not os.path.exists(p))
+    modified = (p for p in files() if is_recently_modified(timestamp, p))
+
+    cur = conn.cursor()
+    cur.execute("PRAGMA foreign_keys=ON")
+    for filename in chain(missing, modified):
+        cur.execute("DELETE FROM Files WHERE filename = ?", (filename,))
+    conn.commit()
 
 def store_html_sections(conn, html: str, sources: [str]):
     """Insert Html and Sections entries for html and sources.

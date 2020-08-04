@@ -13,22 +13,20 @@ def insert_file_script(*files):
     return sql.format("), (".join(map(sqlite_string, files)))
 
 def test_is_recently_modified(tmp_path):
-    """The function returned by is_recently_modified should return true iff
-    the input file was modified after the specified timestamp.
+    """is_recently_modified should return true iff the input file was modified
+    after the specified timestamp.
     """
     before = time.time()
     path = tmp_path/"file"
     path.touch()
     os.utime(path, ns=(time.time_ns(), time.time_ns()))
     after = time.time()
-    modified_before = scan.is_recently_modified(before)
-    modified_after = scan.is_recently_modified(after)
 
-    assert modified_before(path)
-    assert not modified_after(path)
+    assert scan.is_recently_modified(before, path)
+    assert not scan.is_recently_modified(after, path)
 
     os.utime(path, ns=(time.time_ns(), time.time_ns()))
-    assert modified_after(path)
+    assert scan.is_recently_modified(after, path)
 
 def test_is_file_in_db(mock_db, tmp_path):
     """Quick check for is_file_in_db."""
