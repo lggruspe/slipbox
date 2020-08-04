@@ -2,6 +2,7 @@
 
 import contextlib
 import os
+from pathlib import Path
 import shlex
 import shutil
 import subprocess
@@ -20,11 +21,6 @@ def check_requirements() -> bool:
     """Check if grep and pandoc are installed."""
     return bool(shutil.which(pandoc()) and shutil.which(grep()))
 
-def get_contents(filename: str) -> str:
-    """Get contents of given file."""
-    with open(filename) as file:
-        return file.read()
-
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""
     return "'{}'".format(text.replace("'", "''"))
@@ -36,11 +32,12 @@ def write_lines(filename: str, text: Iterable[str]) -> None:
             print(line, file=file)
 
 @contextlib.contextmanager
-def make_temporary_file(*args: Any, **kwargs: Any) -> Iterator[str]:
+def make_temporary_file(*args: Any, **kwargs: Any) -> Iterator[Path]:
     """Temporary file context manager that returns filename."""
     _, filename = tempfile.mkstemp(*args, **kwargs)
-    yield filename
-    os.remove(filename)
+    path = Path(filename)
+    yield path
+    path.unlink(missing_ok=True)
 
 def run_command(cmd: str, **kwargs: Any) -> subprocess.CompletedProcess:
     """Run command with environment variables in kwargs.

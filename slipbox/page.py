@@ -8,7 +8,7 @@ import tempfile
 from typing import Iterable
 
 from .templates import Elem, render
-from .utils import make_temporary_file, write_lines, pandoc
+from .utils import make_temporary_file, pandoc
 
 DUMMY_MARKDOWN = r"""$\,$
 ``` {.c style="display:none"}
@@ -160,8 +160,8 @@ def generate_complete_html(conn: Connection, options: str) -> None:
             tempfile.TemporaryDirectory() as tempdir:
         dummy = Path(tempdir)/"Slipbox.md"
         dummy.write_text(DUMMY_MARKDOWN)
-        write_lines(script, generate_javascript(conn))
-        write_lines(html, generate_active_htmls(conn))
+        script.write_text('\n'.join(generate_javascript(conn)))
+        html.write_text('\n'.join(generate_active_htmls(conn)))
         with open(extra, "w") as file:
             print(create_tag_pages(conn), file=file)
             print(create_tags(conn), file=file)
@@ -169,7 +169,7 @@ def generate_complete_html(conn: Connection, options: str) -> None:
             print(create_bibliography(conn), file=file)
             print(create_entrypoints(conn), file=file)
         cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
-            pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(script),
-            html=shlex.quote(html), opts=options, extra=shlex.quote(extra),
+            pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
+            html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
             title="--metadata title=Slipbox")
         subprocess.run(shlex.split(cmd), check=False)

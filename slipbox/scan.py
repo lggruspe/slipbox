@@ -162,8 +162,8 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
         scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
         with utils.make_temporary_file() as slipbox_sql,\
                 utils.make_temporary_file(suffix=".html", text=True) as html:
-            cmd = build_command(scan_input_list, html, scan_options)
-            proc = utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
+            cmd = build_command(scan_input_list, str(html), scan_options)
+            proc = utils.run_command(cmd, SLIPBOX_SQL=str(slipbox_sql),
                                      CONVERT_TO_DATA_URL=convert_to_data_url,
                                      GREP=utils.grep(),
                                      SCAN_INPUT_LIST=scan_input_list)
@@ -174,6 +174,6 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
             if proc.returncode:
                 print("Scan failed.", file=sys.stderr)
                 continue
-            run_script_on_database(conn, slipbox_sql)
-            contents = utils.get_contents(html)
+            run_script_on_database(conn, str(slipbox_sql))
+            contents = html.read_text()
         store_html_sections(conn, contents, inputs)
