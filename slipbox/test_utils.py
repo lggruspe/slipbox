@@ -13,15 +13,13 @@ def test_sqlite_string():
     assert utils.sqlite_string("''") == "''''''"
     assert utils.sqlite_string("'foo'bar'") == "'''foo''bar'''"
 
-def test_make_temporary_file():
-    """make_temporary_file must automatically delete file, and must call mkstemp
-    with the correct parameters.
-    """
-    with utils.make_temporary_file(suffix=".txt", text=True) as temp:
-        filename = temp
-        assert filename.exists()
-    assert not filename.exists()
-    assert filename.suffix == ".txt"
+def test_temporary_directory():
+    """temporary_directory gets deleted when the context manager exits."""
+    with utils.temporary_directory() as temp:
+        path = temp
+        assert temp.exists()
+        assert temp.is_dir()
+    assert not path.exists()
 
 @pytest.mark.skipif(not shutil.which(utils.grep()), reason="requires grep")
 def test_run_command(tmp_path):

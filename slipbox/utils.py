@@ -26,12 +26,10 @@ def sqlite_string(text: str) -> str:
     return "'{}'".format(text.replace("'", "''"))
 
 @contextlib.contextmanager
-def make_temporary_file(*args: Any, **kwargs: Any) -> Iterator[Path]:
-    """Temporary file context manager that returns filename."""
-    _, filename = tempfile.mkstemp(*args, **kwargs)
-    path = Path(filename)
-    yield path
-    path.unlink()
+def temporary_directory() -> Iterator[Path]:
+    """Path to temporary directory."""
+    with tempfile.TemporaryDirectory() as tempdir:
+        yield Path(tempdir)
 
 def run_command(cmd: str, **kwargs: Any) -> subprocess.CompletedProcess:
     """Run command with environment variables in kwargs.

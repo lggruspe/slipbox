@@ -152,8 +152,10 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
     for batch in group_by_file_extension(inputs):
         files = list(batch)
         scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
-        with utils.make_temporary_file() as slipbox_sql,\
-                utils.make_temporary_file(suffix=".html", text=True) as html:
+
+        with utils.temporary_directory() as tempdir:
+            slipbox_sql = tempdir/"slipbox.sql"
+            html = tempdir/"temp.html"
             cmd = build_command(scan_input_list, str(html), scan_options)
             proc = utils.run_command(cmd, SLIPBOX_SQL=str(slipbox_sql),
                                      CONVERT_TO_DATA_URL=convert_to_data_url,

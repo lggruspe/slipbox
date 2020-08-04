@@ -4,11 +4,10 @@ from pathlib import Path
 import shlex
 from sqlite3 import Connection
 import subprocess
-import tempfile
 from typing import Iterable
 
 from .templates import Elem, render
-from .utils import make_temporary_file, pandoc
+from .utils import pandoc, temporary_directory
 
 DUMMY_MARKDOWN = r"""$\,$
 ``` {.c style="display:none"}
@@ -154,11 +153,11 @@ def create_reference_pages(conn: Connection) -> str:
 
 def generate_complete_html(conn: Connection, options: str) -> None:
     """Create final HTML file with javascript."""
-    with make_temporary_file() as script,\
-            make_temporary_file(suffix=".html", text=True) as html,\
-            make_temporary_file(suffix=".html", text=True) as extra,\
-            tempfile.TemporaryDirectory() as tempdir:
-        dummy = Path(tempdir)/"Slipbox.md"
+    with temporary_directory() as tempdir:
+        script = tempdir/"script.js"
+        html = tempdir/"cached.html"
+        extra = tempdir/"extra.html"
+        dummy = tempdir/"Slipbox.md"
         dummy.write_text(DUMMY_MARKDOWN)
         script.write_text('\n'.join(generate_javascript(conn)))
         html.write_text('\n'.join(generate_active_htmls(conn)))
