@@ -3,7 +3,7 @@
 import os
 import shlex
 import shutil
-import pytest
+import pytest # type: ignore
 
 from . import utils
 

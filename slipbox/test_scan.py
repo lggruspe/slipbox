@@ -1,16 +1,18 @@
 """Test scan.py."""
 import os
+import pathlib
 import time
 
-import pytest
+import pytest # type: ignore
 
 from . import scan
 from .utils import sqlite_string, check_requirements
 
-def insert_file_script(*files):
+def insert_file_script(*files: pathlib.Path):
     """Create SQL query string to insert into the Files table."""
     sql = "INSERT INTO Files (filename) VALUES ({})"
-    return sql.format("), (".join(map(sqlite_string, files)))
+    filenames = (sqlite_string(str(p)) for p in files)
+    return sql.format("), (".join(filenames))
 
 def test_is_recently_modified(tmp_path):
     """is_recently_modified should return true iff the input file was modified
@@ -57,19 +59,19 @@ def test_files_in_path(tmp_path):
     outside.touch()
     nested.mkdir()
 
-    files = list(map(os.path.abspath, scan.files_in_path(subdir)))
-    assert str(inside) in files
-    assert str(outside) not in files
-    assert str(subdir) not in files
-    assert str(nested) not in files
+    files = [p.resolve() for p in scan.files_in_path(subdir)]
+    assert inside in files
+    assert outside not in files
+    assert subdir not in files
+    assert nested not in files
 
 def test_files_in_path_to_file(tmp_path):
     """files_in_path should yield input if it's just a file."""
     input_file = tmp_path/"input.md"
     input_file.touch()
 
-    files = list(scan.files_in_path(str(input_file)))
-    assert files == [str(input_file)]
+    files = list(scan.files_in_path(input_file))
+    assert files == [input_file]
 
 def test_find_new_files(mock_db, tmp_path):
     """find_new_files must only return existing files that aren't yet in the
@@ -85,9 +87,9 @@ def test_find_new_files(mock_db, tmp_path):
     directory.mkdir()
     txt.touch()
 
-    conn.executescript(insert_file_script(str(present)))
-    new_files = list(scan.find_new_files(conn, [str(tmp_path)]))
-    assert new_files == [str(absent)]
+    conn.executescript(insert_file_script(present))
+    new_files = list(scan.find_new_files(conn, [tmp_path]))
+    assert new_files == [absent]
 
 def test_group_by_file_extension():
     """group_by_file_extension should split by file type.
@@ -115,8 +117,8 @@ def test_build_command():
     """Sanity check for build_command."""
     output = "output.html"
     options = "--mathjax"
-    assert not scan.build_command([], output, options)
-    cmd = scan.build_command(["cha1.md", "cha2.md"], output, options)
+    assert not scan.build_command("  ", output, options)
+    cmd = scan.build_command("cha1.md cha2.md", output, options)
     assert "cha1.md cha2.md" in cmd
     assert f"-o {output}" in cmd
     assert options in cmd
@@ -135,10 +137,10 @@ def test_remove_outdated_files_from_database(mock_db, tmp_path):
     modified.touch()
     temp.touch()
 
-    conn.executescript(insert_file_script(str(missing), str(modified), str(temp)))
-    assert scan.is_file_in_db(str(missing), conn)
-    assert scan.is_file_in_db(str(modified), conn)
-    assert scan.is_file_in_db(str(temp), conn)
+    conn.executescript(insert_file_script(missing, modified, temp))
+    assert scan.is_file_in_db(missing, conn)
+    assert scan.is_file_in_db(modified, conn)
+    assert scan.is_file_in_db(temp, conn)
 
     timestamp = time.time()
     missing.unlink()
@@ -146,9 +148,9 @@ def test_remove_outdated_files_from_database(mock_db, tmp_path):
 
     scan.remove_outdated_files_from_database(conn, timestamp)
 
-    assert not scan.is_file_in_db(str(missing), conn)
-    assert not scan.is_file_in_db(str(modified), conn)
-    assert scan.is_file_in_db(str(temp), conn)
+    assert not scan.is_file_in_db(missing, conn)
+    assert not scan.is_file_in_db(modified, conn)
+    assert scan.is_file_in_db(temp, conn)
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan(mock_db, tmp_path):
@@ -156,7 +158,7 @@ def test_scan(mock_db, tmp_path):
     input_file = tmp_path/"input.md"
     input_file.write_text("# 1 Test note\n\nHello, world!\n")
     assert not list(mock_db.execute("SELECT * FROM Html"))
-    scan.scan(mock_db, [str(input_file)], "", False)
+    scan.scan(mock_db, [input_file], "", False)
     assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
@@ -164,7 +166,7 @@ def test_scan_empty_file(mock_db, tmp_path):
     """Scanned files that are empty shouldn't have entries in the database."""
     empty = tmp_path/"empty.md"
     empty.touch()
-    scan.scan(mock_db, [str(empty)], "", False)
+    scan.scan(mock_db, [empty], "", False)
     assert not list(mock_db.execute("SELECT * FROM Files"))
     assert not list(mock_db.execute("SELECT * FROM Notes"))
     assert not list(mock_db.execute("SELECT * FROM Tags"))
@@ -183,11 +185,11 @@ def test_scan_filenames(mock_db, tmp_path):
     skip = tmp_path/"bar.md"
     markdown.write_text("# 0 Note\n\nBody.\n")
     skip.write_text("# 0 Note\n\nBody.\n")
-    scan.scan(mock_db, [str(markdown)], "", False)
+    scan.scan(mock_db, [markdown], "", False)
 
     result = list(mock_db.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
-    assert result[0][0] == str(markdown)
+    assert markdown.samefile(result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_filenames0(mock_db, tmp_path):
@@ -196,11 +198,11 @@ def test_scan_filenames0(mock_db, tmp_path):
     skip = tmp_path/"foo.md"
     markdown.write_text("# 0 Note\n\nBody.\n")
     skip.write_text("# 0 Note\n\nBody.\n")
-    scan.scan(mock_db, [str(markdown)], "", False)
+    scan.scan(mock_db, [markdown], "", False)
 
     result = list(mock_db.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
-    assert result[0][0] == str(markdown)
+    assert markdown.samefile(result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_external_sequence_links(mock_db, tmp_path):
@@ -216,7 +218,7 @@ def test_scan_external_sequence_links(mock_db, tmp_path):
 
 [Bar](#1 '0b')
 """)
-    scan.scan(mock_db, [str(markdown)], "", False)
+    scan.scan(mock_db, [markdown], "", False)
     result = list(mock_db.execute("""
         SELECT id, owner, alias FROM Aliases ORDER BY alias
     """))
@@ -239,8 +241,8 @@ def test_input_files_that_match_pattern(mock_db, tmp_path):
     conn = mock_db
     timestamp = time.time()
     patterns = ("*.md", "*.txt")
-    inputs = scan.input_files(conn, timestamp, [str(tmp_path)], patterns)
-    assert sorted(inputs) == [str(markdown), str(txt)]
+    inputs = scan.input_files(conn, timestamp, [tmp_path], patterns)
+    assert sorted(inputs) == [markdown, txt]
 
 def test_input_files_not_in_db(mock_db, tmp_path):
     """input_files must not include files already in the database."""
@@ -250,11 +252,11 @@ def test_input_files_not_in_db(mock_db, tmp_path):
     skip.touch()
 
     conn = mock_db
-    conn.executescript(insert_file_script(str(skip)))
+    conn.executescript(insert_file_script(skip))
 
     timestamp = time.time()
-    inputs = scan.input_files(conn, timestamp, [str(tmp_path)])
-    assert list(inputs) == [str(new)]
+    inputs = scan.input_files(conn, timestamp, [tmp_path])
+    assert list(inputs) == [new]
 
 def test_input_files_recursive(mock_db, tmp_path):
     """input_files must find files recursively."""
@@ -265,8 +267,8 @@ def test_input_files_recursive(mock_db, tmp_path):
 
     conn = mock_db
     timestamp = time.time()
-    inputs = scan.input_files(conn, timestamp, [str(tmp_path)])
-    assert sorted(inputs) == [str(new)]
+    inputs = scan.input_files(conn, timestamp, [tmp_path])
+    assert sorted(inputs) == [new]
 
 def test_input_files_single_input(mock_db, tmp_path):
     """input_files must work with a single input file."""
@@ -275,5 +277,5 @@ def test_input_files_single_input(mock_db, tmp_path):
 
     conn = mock_db
     timestamp = time.time()
-    inputs = scan.input_files(conn, timestamp, [str(new)])
-    assert sorted(inputs) == [str(new)]
+    inputs = scan.input_files(conn, timestamp, [new])
+    assert sorted(inputs) == [new]

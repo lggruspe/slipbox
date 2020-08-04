@@ -18,6 +18,7 @@ check: bundle
 	npm run lint
 	npm test
 	pylint slipbox --fail-under=10 -d R0903
+	mypy -p slipbox
 	cd slipbox; pytest --cov=. --cov-fail-under=80 --cov-report=term-missing --cov-branch
 	@echo "Yay!"
 

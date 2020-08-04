@@ -2,33 +2,33 @@
 
 from itertools import chain, groupby
 import fnmatch
-import glob
 import os
+from pathlib import Path
 import shlex
 import sys
+from typing import Iterable, List, Set, Union
 
 from . import utils
 
 def initialize_database(conn):
     """Initialize database with schema.sql."""
-    filename = os.path.join(os.path.dirname(__file__), "schema.sql")
-    sql = utils.get_contents(filename)
+    sql = Path(__file__).with_name("schema.sql").read_text()
     conn.executescript(sql)
     conn.commit()
 
-def fetch_files(conn):
+def fetch_files(conn) -> Iterable[Path]:
     """Get files from the database."""
-    return (row[0] for row in conn.execute("SELECT filename FROM Files"))
+    return (Path(p) for p, in conn.execute("SELECT filename FROM Files"))
 
-def is_recently_modified(timestamp, filename):
+def is_recently_modified(timestamp, filename: Union[Path, str]) -> bool:
     """Check if file has been modified after the timestamp."""
     return os.path.exists(filename) and os.path.getmtime(filename) >= timestamp
 
-def is_file_in_db(filename, conn):
+def is_file_in_db(path: Path, conn):
     """Check if file is recorded in the database."""
     cur = conn.cursor()
     sql = "SELECT filename FROM Files WHERE filename = ?"
-    for _ in cur.execute(sql, (filename,)):
+    for _ in cur.execute(sql, (str(path),)):
         return True
     return False
 
@@ -39,28 +39,27 @@ def has_valid_pattern(filename, patterns):
             return True
     return False
 
-def files_in_path(path):
+def files_in_path(path: Path):
     """Recursively glob files in path."""
-    if os.path.isfile(path):
+    if path.is_file():
         yield path
-    elif os.path.isdir(path):
-        basedir = os.path.join(path, "**")
-        yield from filter(os.path.isfile, glob.iglob(basedir, recursive=True))
+    elif path.is_dir():
+        yield from filter(os.path.isfile, path.rglob('*'))
 
-def files_in_paths(paths):
+def files_in_paths(paths: Iterable[Path]) -> Set[Path]:
     """Recursively glob files in every path in paths."""
-    new_files = set()
+    new_files: Set[Path] = set()
     for path in paths:
         new_files = new_files.union(files_in_path(path))
     return new_files
 
-def find_new_files(conn, paths, patterns=("*.md",)):
+def find_new_files(conn, paths: Iterable[Path], patterns=("*.md",)):
     """Look for files that are not yet in the database."""
-    condition = lambda x: os.path.isfile(x) and not is_file_in_db(x, conn) and \
+    condition = lambda x: x.is_file() and not is_file_in_db(x, conn) and \
             has_valid_pattern(x, patterns)
-    return filter(condition, map(os.path.normpath, files_in_paths(paths)))
+    return filter(condition, files_in_paths(paths))
 
-def input_files(conn, timestamp, paths, patterns=("*.md",)):
+def input_files(conn, timestamp, paths: Iterable[str], patterns=("*.md",)) -> Iterable[Path]:
     """Generate files that must be rescanned/processed by pandoc.
 
     Neighbor notes of deleted/modified files don't have to be rescanned,
@@ -68,9 +67,8 @@ def input_files(conn, timestamp, paths, patterns=("*.md",)):
     removed from the database.
     """
     files = lambda: fetch_files(conn)
-    modified = map(os.path.normpath,
-                   (p for p in files() if is_recently_modified(timestamp, p)))
-    new = find_new_files(conn, paths, patterns)
+    modified = (p for p in files() if is_recently_modified(timestamp, p))
+    new = find_new_files(conn, map(Path, paths), patterns)
     yield from filter(os.path.isfile, set(modified).union(new))
 
 def run_script_on_database(conn, script):
@@ -92,20 +90,20 @@ def group_by_file_extension(files):
     groups = groupby(sorted(files, key=key), key=key)
     return map(lambda g: g[1], groups)
 
-def build_command(files, output, options=""):
-    """Construct a single pandoc command to run on input files.
+def build_command(inputs: str, output, options=""):
+    """Construct a single pandoc command to run on inputs.
 
+    inputs is a string of filenames separated by spaces.
+    Each filename must be shlex.quoted if needed.
     Return an empty string if there are no input files.
     """
-    datadir = shlex.quote(os.path.abspath(os.path.dirname(__file__)))
+    if not inputs.strip():
+        return ""
+    datadir = shlex.quote(str(Path(__file__).parent.resolve()))
     cmd = f"{utils.pandoc()} -Lzk.lua -Fpandoc-citeproc -Lrefs.lua --section-divs " \
             f"--data-dir {datadir} -Mlink-citations:true {options} " \
             "-o {} ".format(shlex.quote(output))
-    empty = True
-    for filename in files:
-        empty = False
-        cmd += " {}".format(shlex.quote(filename))
-    return cmd if not empty else ""
+    return cmd + ' ' + inputs
 
 def remove_outdated_files_from_database(conn, timestamp):
     """Remove outdated files from the database.
@@ -115,16 +113,16 @@ def remove_outdated_files_from_database(conn, timestamp):
     Recently modified files will be added back to the database after scanning.
     """
     files = lambda: fetch_files(conn)
-    missing = (p for p in files() if not os.path.exists(p))
+    missing = (p for p in files() if not p.exists())
     modified = (p for p in files() if is_recently_modified(timestamp, p))
 
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys=ON")
     for filename in chain(missing, modified):
-        cur.execute("DELETE FROM Files WHERE filename = ?", (filename,))
+        cur.execute("DELETE FROM Files WHERE filename = ?", (str(filename),))
     conn.commit()
 
-def store_html_sections(conn, html: str, sources: [str]):
+def store_html_sections(conn, html: str, sources: List[Path]):
     """Insert Html and Sections entries for html and sources.
 
     html
@@ -139,25 +137,22 @@ def store_html_sections(conn, html: str, sources: [str]):
     cur.execute("INSERT INTO Html(body) VALUES (?)", (html,))
     lastrowid = cur.lastrowid
     query = "SELECT DISTINCT id FROM Notes WHERE filename IN ({})".format(
-        ", ".join(map(utils.sqlite_string, sources)))
+        ", ".join(utils.sqlite_string(str(source)) for source in sources))
     insert = "INSERT OR IGNORE INTO Sections(note, html) VALUES (?, ?)"
     cur2 = conn.cursor()
     for row in cur.execute(query):
         cur2.execute(insert, (row[0], lastrowid))
     conn.commit()
 
-def scan(conn, inputs, scan_options, convert_to_data_url):
-    """Process inputs and store results in database.
-
-    inputs shouldn't be an iterator, because it is used multiple times.
-    """
+def scan(conn, inputs: List[Path], scan_options, convert_to_data_url):
+    """Process inputs and store results in database."""
     convert_to_data_url = "1" if convert_to_data_url else ""
     for batch in group_by_file_extension(inputs):
         files = list(batch)
-        scan_input_list = " ".join(map(shlex.quote, files))
+        scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
         with utils.make_temporary_file() as slipbox_sql,\
                 utils.make_temporary_file(suffix=".html", text=True) as html:
-            cmd = build_command(files, html, scan_options)
+            cmd = build_command(scan_input_list, html, scan_options)
             proc = utils.run_command(cmd, SLIPBOX_SQL=slipbox_sql,
                                      CONVERT_TO_DATA_URL=convert_to_data_url,
                                      GREP=utils.grep(),

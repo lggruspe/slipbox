@@ -1,7 +1,7 @@
 """Functions for mocking the database."""
 
 import sqlite3
-import pytest
+import pytest   # type: ignore
 
 from . import scan
 
