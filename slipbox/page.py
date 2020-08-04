@@ -1,6 +1,6 @@
 """Generate complete HTML containing all slipbox notes."""
 
-import os
+from pathlib import Path
 import shlex
 import subprocess
 import tempfile
@@ -39,9 +39,8 @@ def generate_data(conn):
 def generate_javascript(conn):
     """Generate slipbox javascript code."""
     yield '<script type="module">'
-    basedir = os.path.dirname(__file__)
-    with open(os.path.join(basedir, "data/bundle.js")) as file:
-        yield file.read().strip()
+    bundle = Path(__file__).parent/"data"/"bundle.js"
+    yield bundle.read_text().strip()
     yield '</script>'
     yield '<script type="text/javascript">'
     yield "window.addEventListener('DOMContentLoaded', () => {"
@@ -157,7 +156,7 @@ def generate_complete_html(conn, options):
             make_temporary_file(suffix=".html", text=True) as html,\
             make_temporary_file(suffix=".html", text=True) as extra,\
             tempfile.TemporaryDirectory() as tempdir:
-        dummy = os.path.join(tempdir, "Slipbox.md")
+        dummy = Path(tempdir)/"Slipbox.md"
         write_lines(dummy, [DUMMY_MARKDOWN])
         write_lines(script, generate_javascript(conn))
         write_lines(html, generate_active_htmls(conn))
