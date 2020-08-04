@@ -1,6 +1,8 @@
 """Test page.py."""
 
+import pytest # type: ignore
 from . import page
+from .utils import check_requirements
 
 SQL = """
     PRAGMA foreign_keys=ON;
@@ -113,3 +115,9 @@ def test_create_reference_page(mock_db):
     </li>
   </ul>
 </section>"""
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_generate_complete_html(mock_db):
+    """Sanity check."""
+    options = ""
+    page.generate_complete_html(mock_db, options)

@@ -10,7 +10,8 @@ from .utils import make_temporary_file, write_lines, pandoc
 
 DUMMY_MARKDOWN = r"""$\,$
 ``` {.c style="display:none"}
-```"""
+```
+"""
 
 def generate_active_htmls(conn):
     """Get HTML stored in the database for active sections."""
@@ -157,7 +158,7 @@ def generate_complete_html(conn, options):
             make_temporary_file(suffix=".html", text=True) as extra,\
             tempfile.TemporaryDirectory() as tempdir:
         dummy = Path(tempdir)/"Slipbox.md"
-        write_lines(dummy, [DUMMY_MARKDOWN])
+        dummy.write_text(DUMMY_MARKDOWN)
         write_lines(script, generate_javascript(conn))
         write_lines(html, generate_active_htmls(conn))
         with open(extra, "w") as file:
@@ -167,7 +168,7 @@ def generate_complete_html(conn, options):
             print(create_bibliography(conn), file=file)
             print(create_entrypoints(conn), file=file)
         cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
-            pandoc=pandoc(), dummy=shlex.quote(dummy), script=shlex.quote(script),
+            pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(script),
             html=shlex.quote(html), opts=options, extra=shlex.quote(extra),
             title="--metadata title=Slipbox")
         subprocess.run(shlex.split(cmd), check=False)
