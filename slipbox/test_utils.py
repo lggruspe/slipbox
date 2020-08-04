@@ -1,9 +1,11 @@
+# type: ignore
 """Test utils.py."""
 
 import os
 import shlex
 import shutil
-import pytest # type: ignore
+
+import pytest
 
 from . import utils
 

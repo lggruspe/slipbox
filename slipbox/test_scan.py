@@ -1,9 +1,11 @@
+# type: ignore
 """Test scan.py."""
+
 import os
 import pathlib
 import time
 
-import pytest # type: ignore
+import pytest
 
 from . import scan
 from .utils import sqlite_string, check_requirements

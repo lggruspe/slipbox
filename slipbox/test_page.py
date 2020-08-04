@@ -1,3 +1,4 @@
+# type: ignore
 """Test page.py."""
 
 import pytest # type: ignore

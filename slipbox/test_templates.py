@@ -1,3 +1,4 @@
+# type: ignore
 """Test templates.py."""
 
 from .templates import Elem, render

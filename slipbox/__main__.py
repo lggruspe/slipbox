@@ -1,5 +1,6 @@
 """Build HTML from all notes in slipbox."""
 
+from argparse import ArgumentParser, Namespace
 import os
 import sqlite3
 import sys
@@ -9,9 +10,9 @@ from .scan import scan, remove_outdated_files_from_database, input_files
 from .scan import initialize_database
 from .utils import check_requirements
 
-def main(args):
+def main(args: Namespace) -> None:
     """Generate HTML file from input files."""
-    timestamp = 0
+    timestamp = 0.0
     if os.path.exists(args.database):
         timestamp = os.path.getmtime(args.database)
     with sqlite3.connect(args.database) as conn:
@@ -24,7 +25,6 @@ def main(args):
 if __name__ == "__main__":
     if not check_requirements():
         sys.exit("[ERROR] pandoc and grep not found.")
-    from argparse import ArgumentParser
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")
     parser.add_argument("database", help="filename of sqlite3 database")
