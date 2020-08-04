@@ -22,8 +22,9 @@ local function make_id_title_filter(slipbox)
     local h = parse_id_and_title(content)
     if h then
       slipbox:save_note(h)
-      elem.attr.identifier = h.id
-      elem.attr.attributes.title = h.title
+      elem.identifier = h.id
+      elem.attributes.title = h.title
+      elem.attributes.level = elem.level
       return elem
     end
   end

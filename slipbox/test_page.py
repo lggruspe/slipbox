@@ -27,7 +27,8 @@ def test_create_bibliography(mock_db):
     conn = mock_db
     conn.executescript(SQL)
     html = page.create_bibliography(conn)
-    assert html == """<section id='references' title='References' class='level1'>
+    assert html == \
+"""<section id='references' title='References' style='display:none' class='level1'>
   <h1>
     References
   </h1>
@@ -48,7 +49,7 @@ def test_create_tags(mock_db):
     conn = mock_db
     conn.executescript(SQL)
     html = page.create_tags(conn)
-    assert html == """<section id='tags' title='Tags' class='level1'>
+    assert html == """<section id='tags' title='Tags' style='display:none' class='level1'>
   <h1>
     Tags
   </h1>
@@ -71,7 +72,7 @@ def test_create_tag_page(mock_db):
     conn = mock_db
     conn.executescript(SQL)
     html = page.create_tag_page(conn, "#test")
-    assert html == """<section id='#test' title='#test' class='level1'>
+    assert html == """<section id='#test' title='#test' style='display:none' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
       #test
@@ -98,7 +99,7 @@ def test_create_reference_page(mock_db):
     conn = mock_db
     conn.executescript(SQL)
     html = page.create_reference_page(conn, "ref-test")
-    assert html == """<section id='ref-test' title='ref-test' class='level1'>
+    assert html == """<section id='ref-test' title='ref-test' style='display:none' class='level1'>
   <h1>
     <a href='#references'>
       @test

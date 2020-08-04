@@ -14,7 +14,11 @@ local function Div(elem)
   -- Process tags and links.
   elem = pandoc.walk_block(elem, tags.section_filter(elem, current_slipbox))
   elem = pandoc.walk_block(elem, links.section_filter(elem, current_slipbox))
-  elem = pandoc.walk_block(elem, cites.section_filter(elem, current_slipbox))
+
+  local id = tonumber(elem.identifier)
+  if id then
+      elem = pandoc.walk_block(elem, cites.section_filter(id, current_slipbox))
+  end
 
   local notes = {}
   local filter = footnotes.make_footnote_filter(notes)
@@ -22,6 +26,13 @@ local function Div(elem)
   if next(notes) then
     table.insert(elem.content, pandoc.HorizontalRule())
     table.insert(elem.content, footnotes.list_footnotes(notes))
+  end
+
+  if elem.attributes.level then
+    if elem.attributes.level == "1" then
+      elem.attributes.style = "display:none"
+    end
+    elem.attributes.level = nil
   end
   return elem
 end

@@ -693,26 +693,6 @@
     document.body.insertBefore(searchForm(container), document.body.firstChild);
   }
 
-  function hideSections () {
-    const sections = document.getElementsByTagName('section');
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      if (section.classList.contains('level1')) {
-        switch (true) {
-          case Number.isInteger(Number(section.id)):
-          case section.id.charAt(0) === '#':
-          case section.id === 'references':
-          case section.id.slice(0, 4) === 'ref-':
-          case section.id === 'search':
-          case section.id === 'tags':
-          case section.id === 'entrypoints':
-            section.style.display = 'none';
-            break
-        }
-      }
-    }
-  }
-
   function getSectionFromHash (hash) {
     const id = hash.substring(1);
     if (!id) { return null }
@@ -745,6 +725,7 @@
     const section = document.createElement('section');
     section.id = '0';
     section.classList.add('level1');
+    section.style.display = 'none';
     const h1 = document.createElement('h1');
     h1.innerText = 'Note not found';
     section.appendChild(h1);
@@ -753,8 +734,6 @@
 
   function init$2 () {
     document.body.appendChild(notFoundSection());
-    hideSections();
-
     const changeSection = sectionChanger();
     changeSection();
     window.addEventListener('hashchange', changeSection);
@@ -838,8 +817,8 @@
   </script>
 </head>
 <body>
-<section id="0" class="level1" title="slipbox">
-<h1 title="slipbox">0 slipbox</h1>
+<section id="0" class="level1" data-level="1" title="slipbox" style="display:none">
+<h1 title="slipbox" data-level="1">0 slipbox</h1>
 <p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
 <ul>
 <li><a href="#1" title="0a">Installation</a></li>
@@ -850,15 +829,15 @@
 </ul>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 </section>
-<section id="1" class="level1" title="Installation">
-<h1 title="Installation">1 Installation</h1>
+<section id="1" class="level1" data-level="1" title="Installation" style="display:none">
+<h1 title="Installation" data-level="1">1 Installation</h1>
 <p>Make sure you have <code>grep</code>, <code>pandoc</code> and <code>python</code> installed.</p>
 <p>Then</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <p>Next step: <a href="#2" title="1a">run slipbox</a></p>
 </section>
-<section id="2" class="level1" title="Basic usage">
-<h1 title="Basic usage">2 Basic usage</h1>
+<section id="2" class="level1" data-level="1" title="Basic usage" style="display:none">
+<h1 title="Basic usage" data-level="1">2 Basic usage</h1>
 <p><a href="##examples">#examples</a></p>
 <p><code>slipbox</code> recursively looks for notes in the locations that you specify when you run <code>slipbox</code>.</p>
 <p>Here’s a minimal example.</p>
@@ -876,8 +855,8 @@
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes slipbox.db -d <span class="st">&#39; -o example.html&#39;</span></span></code></pre></div>
 <p>This creates an SQLite file and an HTML file containing <a href="#3" title="2a">all your notes</a>. Don’t delete the database file, because <code>slipbox</code> will use it to avoid recompiling all notes from scratch in future invocations.</p>
 </section>
-<section id="3" class="level1" title="How to organize notes">
-<h1 title="How to organize notes">3 How to organize notes</h1>
+<section id="3" class="level1" data-level="1" title="How to organize notes" style="display:none">
+<h1 title="How to organize notes" data-level="1">3 How to organize notes</h1>
 <p><a href="##examples">#examples</a></p>
 <p>You can put multiple notes in a single file, because a note is just a section in a markdown file.</p>
 <p>Notes in one file are separated by level 1 headings. The heading must contain a note ID and a title for <code>slipbox</code> to find the note. The ID can be any number, but it has to be unique.</p>
@@ -892,8 +871,8 @@
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="fu">======================</span></span></code></pre></div>
 <p>I recommend shorter IDs instead of longer ones if you want to use <a href="#7">sequence links</a>. It’s important to <a href="#4" title="3a">make connections</a> between ideas in your notes.</p>
 </section>
-<section id="4" class="level1" title="How to find related notes">
-<h1 title="How to find related notes">4 How to find related notes</h1>
+<section id="4" class="level1" data-level="1" title="How to find related notes" style="display:none">
+<h1 title="How to find related notes" data-level="1">4 How to find related notes</h1>
 <p><code>slipbox</code> provides multiple ways to connect notes.</p>
 <ul>
 <li><a href="#5" title="4a">Tags</a></li>
@@ -904,13 +883,13 @@
 <li><a href="#9" title="4a1">Citations</a></li>
 </ul>
 </section>
-<section id="5" class="level1" title="Tags">
-<h1 title="Tags">5 Tags</h1>
+<section id="5" class="level1" data-level="1" title="Tags" style="display:none">
+<h1 title="Tags" data-level="1">5 Tags</h1>
 <p>Notes can be related by tags. You can click on a <a href="##tag">#tag</a> to see a list of other notes that share the tag.</p>
 <p>Clicking on the header in the <a href="##tag">#tag</a> page will show a list of all #<a href="#tags">tags</a>.</p>
 </section>
-<section id="6" class="level1" title="Direct links">
-<h1 title="Direct links">6 Direct links</h1>
+<section id="6" class="level1" data-level="1" title="Direct links" style="display:none">
+<h1 title="Direct links" data-level="1">6 Direct links</h1>
 <p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
 <p>Direct links are an explicit way to <a href="#4">connect</a> two notes. To link to a note, you only have to specify the <a href="#3">ID of the note</a> as the link target. In markdown, <code class="sourceCode markdown"><span class="co">[</span><span class="ot">link to note 3</span><span class="co">](#3)</span></code>. This works even when the linked note is in another file.</p>
 <p>Direct links in the active note appear in the interactive graph as solid black lines.</p>
@@ -923,8 +902,8 @@
 <p>It’s also possible to <a href="#10" title="6b">link to files</a> outside of the slipbox.</p>
 </section>
 </section>
-<section id="7" class="level1" title="Sequence links">
-<h1 title="Sequence links">7 Sequence links</h1>
+<section id="7" class="level1" data-level="1" title="Sequence links" style="display:none">
+<h1 title="Sequence links" data-level="1">7 Sequence links</h1>
 <p><a href="##examples">#examples</a> <a href="##links">#links</a> <a href="##visualization">#visualization</a></p>
 <p>A sequence link is a special type of <a href="#6">link</a> that indicates that a set of notes are to be read in sequence.</p>
 <section id="note-aliases" class="level3">
@@ -939,12 +918,12 @@
 <p>Example: <code class="sourceCode markdown"><span class="co">[</span><span class="ot">sequence link</span><span class="co">](#12 &#39;#4a2b&#39;)</span></code>` assigns 4a2b as an alias to note 12.</p>
 </section>
 </section>
-<section id="8" class="level1" title="Text search">
-<h1 title="Text search">8 Text search</h1>
+<section id="8" class="level1" data-level="1" title="Text search" style="display:none">
+<h1 title="Text search" data-level="1">8 Text search</h1>
 <p>Even without <a href="#5">tags</a> or <a href="#6">links</a>, you can look for notes using text search. You can open the #<a href="#search">search</a> page by clicking on the search button at the top.</p>
 </section>
-<section id="9" class="level1" title="Citations">
-<h1 title="Citations">9 Citations</h1>
+<section id="9" class="level1" data-level="1" title="Citations" style="display:none">
+<h1 title="Citations" data-level="1">9 Citations</h1>
 <p><a href="##examples">#examples</a> <a href="##links">#links</a></p>
 <p><code>slipbox</code> uses <code>pandoc-citeproc</code> for citations. You can click on a citation to see a list of all notes that cite the same reference.</p>
 <p>Clicking on the header of the reference page will open a list of all cited references.</p>
@@ -953,8 +932,8 @@
 <p>Example:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox notes.db notes -c <span class="st">&#39; --bibliography notes.bib&#39;</span> -d <span class="st">&#39; -o notes.html&#39;</span></span></code></pre></div>
 </section>
-<section id="10" class="level1" title="Questions">
-<h1 title="Questions">10 Questions</h1>
+<section id="10" class="level1" data-level="1" title="Questions" style="display:none">
+<h1 title="Questions" data-level="1">10 Questions</h1>
 <section id="support-for-formats-other-than-markdown" class="level3">
 <h3>Support for formats other than markdown</h3>
 <p><code>slipbox</code> should have partial support for most input formats that <code>pandoc</code> supports. However, <a href="#7">sequence links</a> require link annotations.</p>
@@ -972,7 +951,7 @@
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="al">![](images/image.png)</span></span></code></pre></div>
 </section>
 </section>
-<section id='#examples' title='#examples' class='level1'>
+<section id='#examples' title='#examples' style='display:none' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
       #examples
@@ -1011,7 +990,7 @@
     </li>
   </ul>
 </section>
-<section id='#links' title='#links' class='level1'>
+<section id='#links' title='#links' style='display:none' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
       #links
@@ -1038,7 +1017,7 @@
     </li>
   </ul>
 </section>
-<section id='#tag' title='#tag' class='level1'>
+<section id='#tag' title='#tag' style='display:none' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
       #tag
@@ -1053,7 +1032,7 @@
     </li>
   </ul>
 </section>
-<section id='#visualization' title='#visualization' class='level1'>
+<section id='#visualization' title='#visualization' style='display:none' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
       #visualization
@@ -1074,7 +1053,7 @@
     </li>
   </ul>
 </section>
-<section id='tags' title='Tags' class='level1'>
+<section id='tags' title='Tags' style='display:none' class='level1'>
   <h1>
     Tags
   </h1>
@@ -1101,7 +1080,7 @@
     </li>
   </ul>
 </section>
-<section id='ref-cite2020' title='ref-cite2020' class='level1'>
+<section id='ref-cite2020' title='ref-cite2020' style='display:none' class='level1'>
   <h1>
     <a href='#references'>
       @cite2020
@@ -1119,7 +1098,7 @@
     </li>
   </ul>
 </section>
-<section id='references' title='References' class='level1'>
+<section id='references' title='References' style='display:none' class='level1'>
   <h1>
     References
   </h1>
@@ -1134,7 +1113,7 @@
     </dd>
   </dl>
 </section>
-<section id='entrypoints' title='Entrypoints' class='level1'>
+<section id='entrypoints' title='Entrypoints' style='display:none' class='level1'>
   <h1>
     Entrypoints
   </h1>

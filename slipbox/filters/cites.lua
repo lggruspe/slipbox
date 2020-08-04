@@ -1,11 +1,10 @@
-local function section_filter(div, slipbox)
-  -- Create filter that records citations.
+local function section_filter(id, slipbox)
+  -- Create filter that records citations for note ID.
+  assert(type(id) == "number")
+
   local function Cite(elem)
-    local id = tonumber(div.identifier)
-    if id then
-      for _, citation in pairs(elem.citations) do
-        slipbox:save_citation(id, citation.id)
-      end
+    for _, citation in pairs(elem.citations) do
+      slipbox:save_citation(id, citation.id)
     end
   end
   return {Cite = Cite}

@@ -62,6 +62,7 @@ def create_bibliography(conn: Connection) -> str:
                    Elem("dl", *items),
                    id="references",
                    title="References",
+                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -75,6 +76,7 @@ def create_tags(conn: Connection) -> str:
                    Elem("ul", *items),
                    id="tags",
                    title="Tags",
+                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -96,6 +98,7 @@ def create_entrypoints(conn: Connection) -> str:
                    Elem("ul", *items),
                    id="entrypoints",
                    title="Entrypoints",
+                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -113,6 +116,7 @@ def create_tag_page(conn: Connection, tag: str) -> str:
                    Elem("ul", *items),
                    id=tag,
                    title=tag,
+                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -142,6 +146,7 @@ def create_reference_page(conn: Connection, reference: str) -> str:
                    Elem("ul", *items),
                    id=reference,
                    title=reference,
+                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
