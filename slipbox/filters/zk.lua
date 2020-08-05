@@ -1,3 +1,4 @@
+local pandoc = require "pandoc"
 pandoc.utils = require "pandoc.utils"
 local filters = require "filters/filters"
 local images = require "filters/images"
@@ -8,10 +9,6 @@ local current_slipbox = slipbox.SlipBox:new()
 
 local function Div(elem)
   -- Process tags and links.
-  local id = tonumber(elem.identifier)
-  if id then
-    pandoc.walk_block(elem, filters.collect(id, current_slipbox))
-  end
   elem = pandoc.walk_block(elem, filters.modify())
 
   local notes = {}
@@ -33,6 +30,7 @@ end
 
 return {
   filters.init(current_slipbox),
+  filters.collect(current_slipbox),
   {Div = Div},
   images.make_image_filter(),
   filters.serialize(current_slipbox),

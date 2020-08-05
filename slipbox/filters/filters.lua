@@ -32,29 +32,36 @@ local function init(slipbox)
   }
 end
 
-local function collect(id, slipbox)
+local function collect(slipbox)
   -- Create filter that saves citations, links and tags.
 
-  assert(type(id) == "number")
   return {
-    Cite = function(elem)
-      for _, citation in pairs(elem.citations) do
-        slipbox:save_citation(id, citation.id)
-      end
-    end,
+    Div = function(div)
+      local id = tonumber(div.identifier)
+      if id then
+        pandoc.walk_block(div, {
 
-    Link = function(elem)
-      local link = utils.get_link(id, elem)
-      if link then
-        slipbox:save_link(link)
-      end
-    end,
+          Cite = function(elem)
+            for _, citation in pairs(elem.citations) do
+              slipbox:save_citation(id, citation.id)
+            end
+          end,
 
-    Str = function(elem)
-      if utils.hashtag_prefix(elem.text) then
-        slipbox:save_tag(id, elem.text)
+          Link = function(elem)
+            local link = utils.get_link(id, elem)
+            if link then
+              slipbox:save_link(link)
+            end
+          end,
+
+          Str = function(elem)
+            if utils.hashtag_prefix(elem.text) then
+              slipbox:save_tag(id, elem.text)
+            end
+          end,
+        })
       end
-    end,
+    end
   }
 end
 
