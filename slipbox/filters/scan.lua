@@ -1,4 +1,4 @@
-local header = require "filters/header"
+local utils = require "filters/utils"
 
 local function grep_headers(options)
   options = [[ -rIoZH "[0-9]\+\s\+.\+" ]] .. (options or "")
@@ -33,7 +33,7 @@ end
 local function normalize_header(markup)
   local block = pandoc.read(markup).blocks[1]
   local content = pandoc.utils.stringify(block.content)
-  return header.parse_id_and_title(content)
+  return utils.parse_id_and_title(content)
 end
 
 local function parse_grep_output(slipbox, iter)
@@ -46,21 +46,19 @@ local function parse_grep_output(slipbox, iter)
     if not line then break end
     local filename, matched = parse_grep_line_output(line)
     assert(matched)
-    local h = normalize_header(matched)
-    if h then
-      if filename and h.id and h.title then
-        local k = tonumber(h.id)
-        assert(k)
-        local note = slipbox.notes[k]
-        if note and h.title:sub(1, #note.title) == note.title then
-          -- check prefix instead of comparing directly because grepped string
-          -- might contain trailing symbols
-          -- ex: \chapter{10 Note title} would cause the title to have a
-          -- trailing }
-          filenames[k] = {filename = filename, title = h.title}
-        end
+
+    local id, title = normalize_header(matched)
+    if id and title and filename then
+      local note = slipbox.notes[id]
+      if note and title:sub(1, #note.title) == note.title then
+        -- check prefix instead of comparing directly because grepped string
+        -- might contain trailing symbols
+        -- ex: \chapter{10 Note title} would cause the title to have a
+        -- trailing }
+        filenames[id] = {filename = filename, title = title}
       end
     end
+
   end
   return filenames
 end

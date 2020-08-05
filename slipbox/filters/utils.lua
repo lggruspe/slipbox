@@ -62,9 +62,25 @@ local function get_link(src, link)
   end
 end
 
+local function parse_id_and_title(s)
+  local pattern = '^(%d+)%s+(.+)$'
+  local id, count = s:gsub(pattern, '%1')
+  if count == 0 then return nil end
+  local title
+  title, count = s:gsub(pattern, '%2')
+  if count ~= 0 then
+    id = tonumber(id)
+    assert(type(id) == "number")
+    assert(type(title) == "string")
+    assert(title ~= "")
+    return id, title
+  end
+end
+
 return {
   is_valid_alias = is_valid_alias,
   alias_root = alias_root,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
+  parse_id_and_title = parse_id_and_title,
 }
