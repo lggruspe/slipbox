@@ -1,6 +1,5 @@
 pandoc.utils = require "pandoc.utils"
-local collect = require "filters/collect"
-local header = require "filters/header"
+local filters = require "filters/filters"
 local images = require "filters/images"
 local modify = require "filters/modify"
 local post = require "filters/post"
@@ -13,9 +12,7 @@ local function Div(elem)
   -- Process tags and links.
   local id = tonumber(elem.identifier)
   if id then
-    pandoc.walk_block(elem, collect.tags(id, current_slipbox))
-    pandoc.walk_block(elem, collect.links(id, current_slipbox))
-    pandoc.walk_block(elem, collect.citations(id, current_slipbox))
+    pandoc.walk_block(elem, filters.collect(id, current_slipbox))
   end
 
   elem = pandoc.walk_block(elem, modify.tags())
@@ -39,7 +36,7 @@ local function Div(elem)
 end
 
 return {
-  header.make_id_title_filter(current_slipbox),
+  filters.init(current_slipbox),
   {Div = Div},
   images.make_image_filter(),
   post.make_sql_dump_filter(current_slipbox),
