@@ -1,8 +1,6 @@
 pandoc.utils = require "pandoc.utils"
 local filters = require "filters/filters"
 local images = require "filters/images"
-local modify = require "filters/modify"
-local post = require "filters/post"
 local slipbox = require "filters/slipbox"
 local footnotes = require "filters/footnotes"
 
@@ -14,9 +12,7 @@ local function Div(elem)
   if id then
     pandoc.walk_block(elem, filters.collect(id, current_slipbox))
   end
-
-  elem = pandoc.walk_block(elem, modify.tags())
-  elem = pandoc.walk_block(elem, modify.links())
+  elem = pandoc.walk_block(elem, filters.modify())
 
   local notes = {}
   local filter = footnotes.make_footnote_filter(notes)
@@ -39,5 +35,5 @@ return {
   filters.init(current_slipbox),
   {Div = Div},
   images.make_image_filter(),
-  post.make_sql_dump_filter(current_slipbox),
+  filters.serialize(current_slipbox),
 }

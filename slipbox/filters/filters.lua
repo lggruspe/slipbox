@@ -1,5 +1,6 @@
 -- Pandoc filters.
 
+local pandoc = require "pandoc"
 pandoc.utils = require "pandoc.utils"
 
 local utils = require "filters/utils"
@@ -57,7 +58,61 @@ local function collect(id, slipbox)
   }
 end
 
+local function modify()
+  -- Create filter that modifies the document.
+
+  return {
+    Link = function(elem)
+      -- Rewrite links with empty targets/text.
+      if not elem.target or elem.target == "" then
+        return elem.content
+      end
+
+      local content = pandoc.utils.stringify(elem.content or "")
+      if content == "" then
+        return {
+          pandoc.Str " [",
+          pandoc.Link(
+            {pandoc.Str(elem.target)},
+            elem.target,
+            elem.title),
+          pandoc.Str "]",
+        }
+      end
+    end,
+
+    Str = function(elem)
+      -- Turn #tags into links.
+      if utils.hashtag_prefix(elem.text) then
+        return pandoc.Link({elem}, '#'..elem.text)
+      end
+    end
+  }
+end
+
+local function serialize(slipbox)
+  -- Create filter to dump slipbox data into SLIPBOX_SQL.
+  return {
+    Pandoc = function()
+      local sql_file = os.getenv "SLIPBOX_SQL"
+      local scan_input_list = os.getenv "SCAN_INPUT_LIST"
+      if sql_file and sql_file ~= "" then
+        local scan = require "filters/scan"
+        local filenames = scan.parse_grep_output(slipbox, scan.grep_headers(scan_input_list))
+        local sql = slipbox:to_sql(filenames)
+        local file = io.open(sql_file, 'a')
+        if file then
+          file:write(sql)
+          file:close()
+        end
+      end
+    end
+  }
+end
+
 return {
   init = init,
   collect = collect,
+  modify = modify,
+  serialize = serialize,
 }
