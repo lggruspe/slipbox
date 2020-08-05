@@ -20,8 +20,9 @@ local function make_id_title_filter(slipbox)
     -- Try to set elem id and title from content.
     local content = pandoc.utils.stringify(elem.content)
     local h = parse_id_and_title(content)
-    if h then
-      slipbox:save_note(h)
+    if not h then return end
+    if type(h.id) == "number" and h.title and h.title ~= "" then
+      slipbox:save_note(h.id, h.title)
       elem.identifier = h.id
       elem.attributes.title = h.title
       elem.attributes.level = elem.level

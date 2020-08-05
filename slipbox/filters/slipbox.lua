@@ -15,16 +15,17 @@ end
 
 function SlipBox:save_citation(id, citation)
   -- Save citation from note id (number).
-  -- Does not perform checks on id.
+  assert(type(id) == "number")
   local citations = self.citations[id] or {}
   citations[citation] = true
   self.citations[id] = citations
 end
 
-function SlipBox:save_note(note)
-  if note.id then
-    self.notes[note.id] = {title = note.title}
-  end
+function SlipBox:save_note(id, title)
+  assert(type(id) == "number")
+  assert(type(title) == "string")
+  assert(title ~= "")
+  self.notes[id] = {title = title}
 end
 
 local function parent_sequence(s)
@@ -86,11 +87,13 @@ end
 
 function SlipBox:save_tag(id, tag)
   -- Insert id into self:tags[tag].
-  if id and tag ~= "" then
-    local tags = self.tags[tag] or {}
-    table.insert(tags, id)
-    self.tags[tag] = tags
-  end
+  assert(type(id) == "number")
+  assert(type(tag) == "string")
+  assert(tag ~= "")
+
+  local tags = self.tags[tag] or {}
+  table.insert(tags, id)
+  self.tags[tag] = tags
 end
 
 local function sqlite_string(s)
