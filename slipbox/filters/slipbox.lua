@@ -8,7 +8,6 @@ function SlipBox:new()
     notes = {},
     links = {},
     aliases = {},
-    children = {},
     tags = {},
     citations = {},
   }, self)
@@ -41,13 +40,6 @@ function SlipBox:save_note(id, title)
   self.notes[id] = {title = title}
 end
 
-local function parent_sequence(s)
-  local t, count = s:gsub('^(.-)%d+$', '%1')
-  if count ~= 0 then return t end
-  t, count = s:gsub('^(.-)%a+$', '%1')
-  if count ~= 0 then return t end
-end
-
 function SlipBox:save_alias(id, alias, owner)
   -- Save alias record in the slipbox.
   -- Return list of error messages if the alias is already used by a
@@ -72,11 +64,12 @@ function SlipBox:save_alias(id, alias, owner)
 end
 
 function SlipBox:save_sequence(link)
-  -- Set aliases and children tables (for sequence/folgezettel notes).
+  -- Set aliases table for sequence/folgezettel notes.
   -- Return list of error messages if source of sequence link is not the
   -- same as the root of the sequence.
   -- Also return list of error messages if note aliases can't be defined.
   assert(link ~= nil)
+  assert(type(link.dest) == "number")
   assert(link.tag == "sequence" and link.description)
   assert(link.description ~= "")
 
@@ -93,23 +86,16 @@ function SlipBox:save_sequence(link)
     }
   end
 
-  if link.dest and link.description then
-    local err = self:save_alias(link.dest, link.description, owner)
+  local err = self:save_alias(link.dest, link.description, owner)
+  if err then return err end
+
+  local parent = utils.parent_sequence(link.description)
+  if parent == tostring(link.src) then
+    err = self:save_alias(link.src, parent, owner)
     if err then return err end
-
-    -- NOTE dest might not be in notes if it's not in the current set of input files
-    local parent = parent_sequence(link.description)
-    if parent then
-      local children = self.children[parent] or {}
-      table.insert(children, link.description)
-      self.children[parent] = children
-
-      if parent == tostring(link.src) then
-        err = self:save_alias(link.src, tostring(link.src), owner)
-        if err then return err end
-      end
-    end
   end
+
+  -- TODO does this work even if dest or parent are not going to be scanned?
 end
 
 function SlipBox:save_link(link)
@@ -233,13 +219,16 @@ local function aliases_to_sql(aliases)
   return ""
 end
 
-local function sequences_to_sql(sequences)
+local function sequences_to_sql(aliases)
   local values = ""
-  for alias, children in pairs(sequences) do
-    local parent = sqlite_string(alias)
-    for _, v in ipairs(children) do
-      local child = sqlite_string(v)
-      local value = string.format("(%s, %s)", parent, child)
+
+  for alias in pairs(aliases) do
+    local parent = utils.alias_parent(alias)
+    if parent then
+      assert(aliases[parent])
+
+      local child = sqlite_string(alias)
+      local value = string.format("(%s, %s)", sqlite_string(parent), child)
       if values == "" then
         values = values .. ' ' .. value
       else
@@ -314,12 +303,10 @@ function SlipBox:to_sql(filenames)
   -- : Table that maps note ids to filenames (see scan.parse_grep_output).
   return files_to_sql(filenames) .. notes_to_sql(self.notes, filenames) ..
     tags_to_sql(self.tags) .. links_to_sql(self.links) ..
-    aliases_to_sql(self.aliases) .. sequences_to_sql(self.children) ..
+    aliases_to_sql(self.aliases) .. sequences_to_sql(self.aliases) ..
     citations_to_sql(self.citations)
 end
 
 return {
   SlipBox = SlipBox,
-  -- private:
-  parent_sequence = parent_sequence,
 }
