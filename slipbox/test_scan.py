@@ -246,6 +246,30 @@ Bar.
     assert len(result) == 1
     assert result == [0]
 
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_duplicate_ids_in_a_file(mock_db, tmp_path, capsys):
+    """If there are duplicate IDs in a file, only the first one must be saved.
+
+    scan must show a warning when this happens.
+    """
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# 0 First note
+
+Foo.
+
+# 0 Duplicate
+
+Bar.
+""")
+    scan.scan(mock_db, [markdown], "", False)
+    result = list(mock_db.execute("SELECT id, title FROM Notes"))
+    assert len(result) == 1
+    assert result == [(0, "First note")]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
+
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
     directory = tmp_path/"directory"

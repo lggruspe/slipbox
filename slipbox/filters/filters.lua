@@ -3,6 +3,7 @@
 local pandoc = require "pandoc"
 pandoc.utils = require "pandoc.utils"
 
+local log = require "filters/log"
 local utils = require "filters/utils"
 
 local function init(slipbox)
@@ -16,7 +17,9 @@ local function init(slipbox)
     local content = pandoc.utils.stringify(elem.content)
     local id, title = utils.parse_id_and_title(content)
     if id and title then
-      slipbox:save_note(id, title)
+      local err = slipbox:save_note(id, title)
+      if err then log.warning(err) end
+
       elem.identifier = id
       elem.attributes.title = title
       elem.attributes.level = elem.level  -- Gets added to parent section

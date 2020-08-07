@@ -22,9 +22,21 @@ function SlipBox:save_citation(id, citation)
 end
 
 function SlipBox:save_note(id, title)
+  -- Save note into slipbox.
+  -- Return list of error messages if a note with the same ID already
+  -- exists.
   assert(type(id) == "number")
   assert(type(title) == "string")
   assert(title ~= "")
+
+  local note = self.notes[id]
+  if note then
+    return {
+      string.format("Duplicate ID: %d.", id),
+      string.format("Could not insert note '%s'.", title),
+      string.format("Note '%s' already uses the ID.", note.title)
+    }
+  end
   self.notes[id] = {title = title}
 end
 
