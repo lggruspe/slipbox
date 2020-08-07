@@ -48,21 +48,43 @@ local function parent_sequence(s)
   if count ~= 0 then return t end
 end
 
+function SlipBox:save_alias(id, alias, owner)
+  -- Save alias record in the slipbox.
+  -- Return list of error messages if the alias is already used by a
+  -- different note.
+  assert(type(id) == "number")
+  assert(utils.is_valid_alias(alias))
+  assert(alias)
+
+  local record = self.aliases[alias]
+  if record and record.id ~= id then
+    return {
+      string.format("Duplicate alias definition for '%s' used by note %d.",
+        alias, record.id),
+      string.format("It will not be used as an alias for note %d.", id),
+    }
+  end
+
+  self.aliases[alias] = {
+    id = id,
+    owner = owner,
+  }
+end
+
 function SlipBox:save_sequence(link)
   -- Set aliases and children tables (for sequence/folgezettel notes).
   -- Return list of error messages if source of sequence link is not the
   -- same as the root of the sequence.
+  -- Also return list of error messages if note aliases can't be defined.
   assert(link ~= nil)
   assert(link.tag == "sequence" and link.description)
   assert(link.description ~= "")
 
   local owner = utils.alias_root(link.description)
-
   if link.dest and link.description then
-    self.aliases[link.description] = {
-      id = link.dest,
-      owner = owner,
-    }
+    local err = self:save_alias(link.dest, link.description, owner)
+    if err then return err end
+
     -- NOTE dest might not be in notes if it's not in the current set of input files
     local parent = parent_sequence(link.description)
     if parent then
@@ -71,10 +93,8 @@ function SlipBox:save_sequence(link)
       self.children[parent] = children
 
       if parent == tostring(link.src) then
-        self.aliases[tostring(link.src)] = {
-          id = link.src,
-          owner = owner,
-        }
+        err = self:save_alias(link.src, tostring(link.src), owner)
+        if err then return err end
       end
     end
   end

@@ -294,6 +294,35 @@ Baz.
     assert not stdout
     assert stderr
 
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
+    """If a note defines duplicate aliases, only the first one must be saved.
+
+    scan must show a warning when this happens.
+    """
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# 0 Foo
+
+[Bar](#1 '0a')
+[Baz](#2 '0a')
+
+# 1 Bar
+
+Bar.
+
+# 2 Baz
+
+Baz.
+""")
+    scan.scan(mock_db, [markdown], "", False)
+    result = list(mock_db.execute("SELECT id FROM Aliases WHERE alias = '0a'"))
+    assert len(result) == 1
+    assert result == [(1,)]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
+
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
     directory = tmp_path/"directory"
