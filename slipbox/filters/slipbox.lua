@@ -89,7 +89,7 @@ function SlipBox:save_sequence(link)
   local err = self:save_alias(link.dest, link.description, owner)
   if err then return err end
 
-  local parent = utils.parent_sequence(link.description)
+  local parent = utils.alias_parent(link.description)
   if parent == tostring(link.src) then
     err = self:save_alias(link.src, parent, owner)
     if err then return err end

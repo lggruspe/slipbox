@@ -152,37 +152,12 @@ it("hashtag_prefix", function()
   end
 end)
 
-it("alias_parent", function()
+describe("alias_parent", function()
   assert.are.equal(utils.alias_parent("1a"), "1")
   assert.are.equal(utils.alias_parent(nil), nil)
   assert.are_equal(utils.alias_parent(""), nil)
   assert.are.equal(utils.alias_parent("2"), nil)
-end)
 
-it("is_sequence", function()
-  assert.truthy(utils.is_sequence('1', '1a'))
-  assert.truthy(utils.is_sequence('2', '2b'))
-  assert.truthy(utils.is_sequence('3', '3abc'))
-  assert.truthy(utils.is_sequence(nil, '7'))
-  assert.truthy(utils.is_sequence(nil, nil))
-
-  assert.truthy(not utils.is_sequence('4a', '4b'))
-  assert.truthy(not utils.is_sequence('5c', '5'))
-  assert.truthy(not utils.is_sequence('', '6'))
-  assert.truthy(not utils.is_sequence('', ''))
-end)
-
-it("is_valid_alias", function()
-  assert.truthy(utils.is_valid_alias(nil))
-  assert.truthy(utils.is_valid_alias("0"))
-  assert.truthy(utils.is_valid_alias("1a"))
-
-  assert.falsy(utils.is_valid_alias(1))
-  assert.falsy(utils.is_valid_alias("b"))
-  assert.falsy(utils.is_valid_alias(""))
-end)
-
-describe("parent_sequence", function()
   it("should drop the last sequence of digits or letters", function()
     local cases = {
       ["10a"] = "10",
@@ -193,8 +168,18 @@ describe("parent_sequence", function()
       ["10a1a1a"] = "10a1a1",
     }
     for i, o in pairs(cases) do
-      local result = utils.parent_sequence(i)
+      local result = utils.alias_parent(i)
       assert.are.equal(o, result)
     end
   end)
+end)
+
+it("is_valid_alias", function()
+  assert.truthy(utils.is_valid_alias(nil))
+  assert.truthy(utils.is_valid_alias("0"))
+  assert.truthy(utils.is_valid_alias("1a"))
+
+  assert.falsy(utils.is_valid_alias(1))
+  assert.falsy(utils.is_valid_alias("b"))
+  assert.falsy(utils.is_valid_alias(""))
 end)
