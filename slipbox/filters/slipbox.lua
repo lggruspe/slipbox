@@ -54,7 +54,7 @@ function SlipBox:save_sequence(link)
   -- same as the root of the sequence.
   assert(link ~= nil)
   assert(link.tag == "sequence" and link.description)
-  assert(link.description~= "")
+  assert(link.description ~= "")
 
   local owner = utils.alias_root(link.description)
 
@@ -63,12 +63,7 @@ function SlipBox:save_sequence(link)
       id = link.dest,
       owner = owner,
     }
-    -- dest might not be in notes if it's not in the current set of input files
-    if self.notes[link.dest] then
-      local aliases = assert(self.notes[link.dest]).aliases or {}
-      table.insert(aliases, link.description)
-      self.notes[link.dest].aliases = aliases
-    end
+    -- NOTE dest might not be in notes if it's not in the current set of input files
     local parent = parent_sequence(link.description)
     if parent then
       local children = self.children[parent] or {}
@@ -76,10 +71,6 @@ function SlipBox:save_sequence(link)
       self.children[parent] = children
 
       if parent == tostring(link.src) then
-        local aliases = assert(self.notes[link.src]).aliases or {}
-        table.insert(aliases, tostring(link.src))
-        self.notes[link.src].aliases = aliases
-
         self.aliases[tostring(link.src)] = {
           id = link.src,
           owner = owner,
