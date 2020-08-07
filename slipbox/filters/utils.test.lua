@@ -171,3 +171,13 @@ it("is_sequence", function()
   assert.truthy(not utils.is_sequence('', '6'))
   assert.truthy(not utils.is_sequence('', ''))
 end)
+
+it("is_valid_alias", function()
+  assert.truthy(utils.is_valid_alias(nil))
+  assert.truthy(utils.is_valid_alias("0"))
+  assert.truthy(utils.is_valid_alias("1a"))
+
+  assert.falsy(utils.is_valid_alias(1))
+  assert.falsy(utils.is_valid_alias("b"))
+  assert.falsy(utils.is_valid_alias(""))
+end)
