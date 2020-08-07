@@ -301,6 +301,28 @@ Baz.
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_missing_alias(mock_db, tmp_path, capsys):
+    """scan must show a warning if there's a gap in an alias sequence."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# 0 Foo
+
+[Bar](#1 '0a')
+[Baz](#2 '0a1a')
+
+# 1 Bar
+
+Bar.
+
+# 2 Baz
+
+Baz.
+""")
+    scan.scan(mock_db, [markdown], "", False)
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 

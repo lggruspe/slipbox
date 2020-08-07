@@ -222,17 +222,22 @@ end
 local function sequences_to_sql(aliases)
   local values = ""
 
-  for alias in pairs(aliases) do
+  for alias, rec in pairs(aliases) do
     local parent = utils.alias_parent(alias)
     if parent then
-      assert(aliases[parent])
-
-      local child = sqlite_string(alias)
-      local value = string.format("(%s, %s)", sqlite_string(parent), child)
-      if values == "" then
-        values = values .. ' ' .. value
+      if not aliases[parent] then
+        log.warning {
+          string.format("Missing note alias: '%s'.", parent),
+          string.format("Note %d with alias '%s' will be unreachable.", rec.id, alias),
+        }
       else
-        values = values .. ", " .. value
+        local child = sqlite_string(alias)
+        local value = string.format("(%s, %s)", sqlite_string(parent), child)
+        if values == "" then
+          values = values .. ' ' .. value
+        else
+          values = values .. ", " .. value
+        end
       end
     end
   end
