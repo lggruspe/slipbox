@@ -77,10 +77,26 @@ local function parse_id_and_title(s)
   end
 end
 
+local function alias_parent(alias)
+  if not is_valid_alias(alias) then return nil end
+  if alias == nil then return nil end
+
+  local result, count = alias:gsub('^(.-)[0-9]+$', '%1')
+  if count > 0 and result ~= "" then return result end
+  result, count = alias:gsub('^(.-)[a-z]+$', '%1')
+  if count > 0 and result ~= "" then return result end
+end
+
+local function is_sequence(prev, next)
+  return alias_parent(next) == prev
+end
+
 return {
   is_valid_alias = is_valid_alias,
   alias_root = alias_root,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
   parse_id_and_title = parse_id_and_title,
+  alias_parent = alias_parent,
+  is_sequence = is_sequence,
 }

@@ -151,3 +151,23 @@ it("hashtag_prefix", function()
     assert.are.equal(output, expected)
   end
 end)
+
+it("alias_parent", function()
+  assert.are.equal(utils.alias_parent("1a"), "1")
+  assert.are.equal(utils.alias_parent(nil), nil)
+  assert.are_equal(utils.alias_parent(""), nil)
+  assert.are.equal(utils.alias_parent("2"), nil)
+end)
+
+it("is_sequence", function()
+  assert.truthy(utils.is_sequence('1', '1a'))
+  assert.truthy(utils.is_sequence('2', '2b'))
+  assert.truthy(utils.is_sequence('3', '3abc'))
+  assert.truthy(utils.is_sequence(nil, '7'))
+  assert.truthy(utils.is_sequence(nil, nil))
+
+  assert.truthy(not utils.is_sequence('4a', '4b'))
+  assert.truthy(not utils.is_sequence('5c', '5'))
+  assert.truthy(not utils.is_sequence('', '6'))
+  assert.truthy(not utils.is_sequence('', ''))
+end)
