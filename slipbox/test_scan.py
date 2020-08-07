@@ -270,6 +270,30 @@ Bar.
     assert not stdout
     assert stderr
 
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_different_alias_owner(mock_db, tmp_path, capsys):
+    """A note can't define a note alias with a different root note.
+
+    scan must show a warning when this happens.
+    """
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# 0 Foo
+
+[Foo](#2 '1a')
+
+# 1 Bar
+
+Bar.
+
+# 2 Baz
+
+Baz.
+""")
+    scan.scan(mock_db, [markdown], "", False)
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
+
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
     directory = tmp_path/"directory"
