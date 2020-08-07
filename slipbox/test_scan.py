@@ -207,9 +207,12 @@ def test_scan_filenames0(mock_db, tmp_path):
     assert markdown.samefile(result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_scan_external_sequence_links(mock_db, tmp_path):
-    """Alias.owner must be equal to the root of the sequence defined by the
-    alias, not to the source of the sequence link.
+def test_scan_external_sequence_links(mock_db, tmp_path, capsys):
+    """The root of the note alias must be the same as note ID that
+    defines the alias.
+
+    Aliases that don't follow this rule are ignored.
+    scan must show a warning when this happens.
     """
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Foo
@@ -224,10 +227,13 @@ def test_scan_external_sequence_links(mock_db, tmp_path):
     result = list(mock_db.execute("""
         SELECT id, owner, alias FROM Aliases ORDER BY alias
     """))
-    assert len(result) == 3
+    assert len(result) == 2
     assert result[0] == (0, 0, '0')
     assert result[1] == (1, 0, '0a')
-    assert result[2] == (1, 0, '0b')
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_non_level1_headers(mock_db, tmp_path):

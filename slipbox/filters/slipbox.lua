@@ -81,6 +81,18 @@ function SlipBox:save_sequence(link)
   assert(link.description ~= "")
 
   local owner = utils.alias_root(link.description)
+  if owner ~= tostring(link.src) then
+    return {
+      string.format(
+        "Note %d defines a note alias (%s) with a different root.",
+        link.src,
+        link.description,
+        owner
+      ),
+      "The alias definition will be ignored."
+    }
+  end
+
   if link.dest and link.description then
     local err = self:save_alias(link.dest, link.description, owner)
     if err then return err end
@@ -97,17 +109,6 @@ function SlipBox:save_sequence(link)
         if err then return err end
       end
     end
-  end
-
-  if owner ~= tostring(link.src) then
-    return {
-      string.format(
-        "Note %d defines a note alias (%s) with a different root.",
-        link.src,
-        link.description,
-        owner
-      ),
-    }
   end
 end
 
