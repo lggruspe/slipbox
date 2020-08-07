@@ -229,6 +229,23 @@ def test_scan_external_sequence_links(mock_db, tmp_path):
     assert result[1] == (1, 0, '0a')
     assert result[2] == (1, 0, '0b')
 
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_non_level1_headers(mock_db, tmp_path):
+    """Only level 1 headers must be considered as note headers."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# 0 Valid note header
+
+Foo.
+
+## 1 Invalid note header
+
+Bar.
+""")
+    scan.scan(mock_db, [markdown], "", False)
+    result = [nid for nid, in mock_db.execute("SELECT id FROM Notes")]
+    assert len(result) == 1
+    assert result == [0]
+
 def test_input_files_that_match_pattern(mock_db, tmp_path):
     """input_files must only return files that match the input pattern."""
     directory = tmp_path/"directory"

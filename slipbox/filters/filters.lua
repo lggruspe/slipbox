@@ -10,6 +10,9 @@ local function init(slipbox)
   -- into sections.
 
   local function Header(elem)
+    -- Only scan level 1 headers.
+    if elem.level ~= 1 then return end
+
     local content = pandoc.utils.stringify(elem.content)
     local id, title = utils.parse_id_and_title(content)
     if id and title then
