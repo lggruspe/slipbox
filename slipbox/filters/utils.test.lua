@@ -221,3 +221,26 @@ describe("parse_id_and_title", function()
     assert.are.equal(title, "Title")
   end)
 end)
+
+describe("alias_root", function()
+  describe("with invalid alias input", function()
+    it("should return nil", function()
+      assert.is_nil(utils.alias_root(""))
+      assert.is_nil(utils.alias_root("a"))
+    end)
+  end)
+
+  describe("with valid alias input", function()
+    it("should return nil if it has no parent", function()
+      for i = 0, 3 do
+        assert.is_nil(utils.alias_root(tostring(i)))
+      end
+    end)
+
+    it("should drop everything but the number prefix", function()
+      assert.are.equal(utils.alias_root("1a"), "1")
+      assert.are.equal(utils.alias_root("2ab"), "2")
+      assert.are.equal(utils.alias_root("3a1b"), "3")
+    end)
+  end)
+end)
