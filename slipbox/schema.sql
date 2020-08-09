@@ -55,6 +55,10 @@ CREATE TABLE IF NOT EXISTS Citations (
     PRIMARY KEY(note, reference)
 );
 
+CREATE TABLE IF NOT EXISTS Rescan (
+    filename PRIMARY KEY REFERENCES Files
+);
+
 -- respects foreign key constraints
 CREATE VIEW IF NOT EXISTS ValidAliases AS
 SELECT * FROM Aliases WHERE id IN (SELECT id FROM Notes);

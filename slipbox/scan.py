@@ -5,7 +5,7 @@ import fnmatch
 import os
 from pathlib import Path
 import shlex
-from sqlite3 import Connection
+from sqlite3 import Connection, IntegrityError
 import sys
 from typing import Iterable, List, Set, Tuple, Union
 
@@ -15,6 +15,18 @@ def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
     sql = Path(__file__).with_name("schema.sql").read_text()
     conn.executescript(sql)
+    conn.commit()
+
+def execute_script(conn: Connection, script: Path) -> None:
+    """Execute SQLite script."""
+    cur = conn.cursor()
+    with open(script) as file:
+        for line in file:
+            try:
+                cur.execute(line)
+            except IntegrityError as error:
+                print(line)
+                print(error)
     conn.commit()
 
 def fetch_files(conn: Connection) -> Iterable[Path]:
@@ -164,7 +176,6 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
             if proc.returncode:
                 print("Scan failed.", file=sys.stderr)
                 continue
-            conn.executescript(slipbox_sql.read_text())
-            conn.commit()
+            execute_script(conn, slipbox_sql)
             contents = html.read_text()
         store_html_sections(conn, contents, inputs)
