@@ -162,10 +162,9 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
         scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
 
         with utils.temporary_directory() as tempdir:
-            slipbox_sql = tempdir/"slipbox.sql"
             html = tempdir/"temp.html"
             cmd = build_command(scan_input_list, str(html), scan_options)
-            proc = utils.run_command(cmd, SLIPBOX_SQL=str(slipbox_sql),
+            proc = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
                                      CONVERT_TO_DATA_URL=convert_to_data_url,
                                      GREP=utils.grep(),
                                      SCAN_INPUT_LIST=scan_input_list)
@@ -176,6 +175,12 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
             if proc.returncode:
                 print("Scan failed.", file=sys.stderr)
                 continue
-            execute_script(conn, slipbox_sql)
+            execute_script(conn, tempdir/"files.sql")
+            execute_script(conn, tempdir/"notes.sql")
+            execute_script(conn, tempdir/"tags.sql")
+            execute_script(conn, tempdir/"links.sql")
+            execute_script(conn, tempdir/"aliases.sql")
+            execute_script(conn, tempdir/"sequences.sql")
+            execute_script(conn, tempdir/"citations.sql")
             contents = html.read_text()
         store_html_sections(conn, contents, inputs)

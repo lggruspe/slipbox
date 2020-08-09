@@ -254,19 +254,18 @@ local function citations_to_sql(citations)
   return ""
 end
 
-function SlipBox:to_sql(filenames)
+function SlipBox:write_to_sql(basedir, filenames)
   -- Create sql statements from slipbox contents.
   -- filenames
   -- : Table that maps note ids to filenames (see scan.parse_grep_output).
-  return table.concat {
-    files_to_sql(filenames),
-    notes_to_sql(self.notes, filenames),
-    tags_to_sql(self.tags),
-    links_to_sql(self.links),
-    aliases_to_sql(self.aliases),
-    sequences_to_sql(self.aliases),
-    citations_to_sql(self.citations),
-  }
+  local write = utils.write_text
+  write(basedir .. "/files.sql", files_to_sql(filenames))
+  write(basedir .. "/notes.sql", notes_to_sql(self.notes, filenames))
+  write(basedir .. "/tags.sql", tags_to_sql(self.tags))
+  write(basedir .. "/links.sql", links_to_sql(self.links))
+  write(basedir .. "/aliases.sql", aliases_to_sql(self.aliases))
+  write(basedir .. "/sequences.sql", sequences_to_sql(self.aliases))
+  write(basedir .. "/citations.sql", citations_to_sql(self.citations))
 end
 
 return {

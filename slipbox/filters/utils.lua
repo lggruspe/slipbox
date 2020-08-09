@@ -86,6 +86,22 @@ local function alias_parent(alias)
   if count > 0 and result ~= "" then return result end
 end
 
+local function append_text(filename, text)
+  local file = io.open(filename, 'a')
+  if not file then return false end
+  file:write(text)
+  file:close()
+  return true
+end
+
+local function write_text(filename, text)
+  local file = io.open(filename, 'w')
+  if not file then return false end
+  file:write(text)
+  file:close()
+  return true
+end
+
 return {
   is_valid_alias = is_valid_alias,
   alias_root = alias_root,
@@ -93,4 +109,6 @@ return {
   get_link = get_link,
   parse_id_and_title = parse_id_and_title,
   alias_parent = alias_parent,
+  write_text = write_text,
+  append_text = append_text,
 }

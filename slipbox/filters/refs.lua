@@ -1,5 +1,7 @@
 pandoc.utils = require "pandoc.utils"
 
+local utils = require "filters/utils"
+
 local function is_reference_id(s)
   -- Check if s is a reference identifier.
   return s:match('^ref%-.+$') and true or false
@@ -32,17 +34,14 @@ end
 
 local function save_to_sql(refs)
   -- Write reference info to SQL.
-  local sql_file = os.getenv("SLIPBOX_SQL")
-  if sql_file and sql_file ~= "" then
-    local sql = to_sql(refs)
-    if sql and sql ~= "" then
-      local file = io.open(sql_file, 'a')
-      if file then
-        file:write(sql)
-        file:close()
-      end
-    end
-  end
+  -- Append to citations.sql (see slipbox.lua:write_to_sql).
+  local tmpdir = os.getenv "SLIPBOX_TMPDIR"
+  if not tmpdir or tmpdir == "" then return end
+
+  local sql = to_sql(refs)
+  if not sql or sql == "" then return end
+
+  utils.append_text(tmpdir .. "/citations.sql", sql)
 end
 
 local function Div(elem)

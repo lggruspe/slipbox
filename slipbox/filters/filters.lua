@@ -104,21 +104,16 @@ local function modify()
 end
 
 local function serialize(slipbox)
-  -- Create filter to dump slipbox data into SLIPBOX_SQL.
+  -- Create filter to dump slipbox data into SLIPBOX_TMPDIR.
   return {
     Pandoc = function()
-      local sql_file = os.getenv "SLIPBOX_SQL"
+      local tmpdir = os.getenv "SLIPBOX_TMPDIR"
       local scan_input_list = os.getenv "SCAN_INPUT_LIST"
-      if sql_file and sql_file ~= "" then
-        local scan = require "filters/scan"
-        local filenames = scan.parse_grep_output(slipbox, scan.grep_headers(scan_input_list))
-        local sql = slipbox:to_sql(filenames)
-        local file = io.open(sql_file, 'a')
-        if file then
-          file:write(sql)
-          file:close()
-        end
-      end
+      if not tmpdir or tmpdir == "" then return end
+
+      local scan = require "filters/scan"
+      local filenames = scan.parse_grep_output(slipbox, scan.grep_headers(scan_input_list))
+      slipbox:write_to_sql(tmpdir, filenames)
     end
   }
 end
