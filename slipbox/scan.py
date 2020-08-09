@@ -40,18 +40,14 @@ def has_valid_pattern(filename: Path, patterns: Iterable[str]) -> bool:
             return True
     return False
 
-def files_in_path(path: Path) -> Iterable[Path]:
-    """Recursively glob files in path."""
-    if path.is_file():
-        yield path
-    elif path.is_dir():
-        yield from filter(os.path.isfile, path.rglob('*'))
-
-def files_in_paths(paths: Iterable[Path]) -> Set[Path]:
+def glob_files(paths: Iterable[Path]) -> Set[Path]:
     """Recursively glob files in every path in paths."""
     new_files: Set[Path] = set()
     for path in paths:
-        new_files = new_files.union(files_in_path(path))
+        if path.is_file():
+            new_files.add(path)
+        elif path.is_dir():
+            new_files.update(filter(os.path.isfile, path.rglob('*')))
     return new_files
 
 def find_new_files(
@@ -62,7 +58,7 @@ def find_new_files(
     """Look for files that are not yet in the database."""
     condition = lambda x: x.is_file() and not is_file_in_db(x, conn) and \
             has_valid_pattern(x, patterns)
-    return filter(condition, files_in_paths(paths))
+    return filter(condition, glob_files(paths))
 
 def input_files(
         conn: Connection,

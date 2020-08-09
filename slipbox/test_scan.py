@@ -50,30 +50,32 @@ def test_has_valid_pattern():
     assert not scan.has_valid_pattern("a.tex", patterns)
     assert not scan.has_valid_pattern("a.md", (".md"))
 
-def test_files_in_path(tmp_path):
-    """files_in_path should only find files in the specified directory."""
-    subdir = tmp_path/"subdir"
-    inside = subdir/"inside.md"
-    outside = tmp_path/"outside.md"
-    nested = subdir/"nested"
-    subdir.mkdir()
-    inside.touch()
-    outside.touch()
-    nested.mkdir()
+def test_glob_files(tmp_path):
+    """glob_files should return set of files in the given set of paths."""
+    directory = tmp_path/"directory"
+    directory.mkdir()
+    directory.joinpath("subdirectory").mkdir()
 
-    files = [p.resolve() for p in scan.files_in_path(subdir)]
-    assert inside in files
-    assert outside not in files
-    assert subdir not in files
-    assert nested not in files
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"directory"/"c.md"
+    file_d = tmp_path/"directory"/"d.md"
+    file_e = tmp_path/"directory"/"subdirectory"/"e.md"
 
-def test_files_in_path_to_file(tmp_path):
-    """files_in_path should yield input if it's just a file."""
-    input_file = tmp_path/"input.md"
-    input_file.touch()
+    file_a.touch()
+    file_b.touch()
+    file_c.touch()
+    file_d.touch()
+    file_e.touch()
 
-    files = list(scan.files_in_path(input_file))
-    assert files == [input_file]
+    inputs = [file_a, file_b, directory]
+    files = scan.glob_files(inputs)
+    assert len(files) == 5
+    assert file_a in files
+    assert file_b in files
+    assert file_c in files
+    assert file_d in files
+    assert file_e in files
 
 def test_find_new_files(mock_db, tmp_path):
     """find_new_files must only return existing files that aren't yet in the
