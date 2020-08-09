@@ -132,96 +132,64 @@ end
 local function notes_to_sql(notes, filenames)
   -- Generate sql from notes in slipbox.
   -- Get filenames from filenames table.
+  local template = "INSERT OR IGNORE INTO Notes (id, title, filename) VALUES (%d, %s, %s);\n"
   local values = ""
   for id, note in pairs(notes) do
     local result = filenames[id]
     if result then
       local title = sqlite_string(note.title)
       local filename = sqlite_string(result.filename)
-      local value = string.format("(%d, %s, %s)", id, title, filename)
-      if values == "" then
-        values = values .. ' ' .. value
-      else
-        values = values .. ", " .. value
-      end
+      values = values .. template:format(id, title, filename)
       -- result might be nil if scan.lua couldn't find its filename.
       -- This occurs when the title in the header contains other symbols
       -- (ex: links, references, equations, etc.).
       -- TODO warning
     end
   end
-  if values ~= "" then
-    return "INSERT OR IGNORE INTO Notes (id, title, filename) VALUES "
-      .. values .. ";\n"
-  end
-  return ""
+  return values
 end
 
 local function tags_to_sql(tags)
   -- Generate sql from tags in slipbox.
+  local template = "INSERT OR IGNORE INTO Tags (tag, id) VALUES (%s, %d);\n"
   local values = ""
   for tag, ids in pairs(tags) do
     for _, id in ipairs(ids) do
       assert(id and id == tonumber(id))
-      local value = string.format("(%s, %d)", sqlite_string(tag), id)
-      if values == "" then
-        values = values .. ' ' .. value
-      else
-        values = values .. ", " .. value
-      end
+      values = values .. template:format(sqlite_string(tag), id)
     end
   end
-  if values ~= "" then
-    return "INSERT OR IGNORE INTO Tags (tag, id) VALUES " .. values .. ";\n"
-  end
-  return ""
+  return values
 end
 
 local function links_to_sql(links)
   -- Create sql from direct links in slipbox.
   -- Ignores sequence links.
+  local template = "INSERT OR IGNORE INTO Links (src, dest, annotation) VALUES (%d, %d, %s);\n"
   local values = ""
   for src, dests in pairs(links) do
     for _, dest in ipairs(dests) do
       if dest.tag == "direct" then
         local annotation = sqlite_string(dest.description)
-        local value = string.format("(%d, %d, %s)", src, dest.dest, annotation)
-        if values == "" then
-          values = values .. ' ' .. value
-        else
-          values = values .. ", " .. value
-        end
+        values = values .. template:format(src, dest.dest, annotation)
       end
     end
   end
-  if values ~= "" then
-    return "INSERT OR IGNORE INTO Links (src, dest, annotation) VALUES "
-      ..values.. ";\n"
-  end
-  return ""
+  return values
 end
 
 local function aliases_to_sql(aliases)
+  local template = "INSERT OR IGNORE INTO Aliases (id, alias, owner) VALUES (%d, %s, %d);\n"
   local values = ""
   for alias, rec in pairs(aliases) do
-    local value = string.format("(%d, %s, %d)", rec.id, sqlite_string(alias),
-      rec.owner)
-    if values == "" then
-      values = values .. ' ' .. value
-    else
-      values = values .. ", " .. value
-    end
+    values = values .. template:format(rec.id, sqlite_string(alias), rec.owner)
   end
-  if values ~= "" then
-    return "INSERT OR IGNORE INTO Aliases (id, alias, owner) VALUES "
-      .. values .. ";\n"
-  end
-  return ""
+  return values
 end
 
 local function sequences_to_sql(aliases)
+  local template = "INSERT OR IGNORE INTO Sequences (prev, next) VALUES (%s, %s);\n"
   local values = ""
-
   for alias, rec in pairs(aliases) do
     local parent = utils.alias_parent(alias)
     if parent then
@@ -231,41 +199,25 @@ local function sequences_to_sql(aliases)
           string.format("Note %d with alias '%s' will be unreachable.", rec.id, alias),
         }
       else
-        local child = sqlite_string(alias)
-        local value = string.format("(%s, %s)", sqlite_string(parent), child)
-        if values == "" then
-          values = values .. ' ' .. value
-        else
-          values = values .. ", " .. value
-        end
+        values = values .. template:format(sqlite_string(parent), sqlite_string(alias))
       end
     end
   end
-  if values ~= "" then
-    return "INSERT OR IGNORE INTO Sequences (prev, next) VALUES "
-      .. values .. ";\n"
-  end
-  return ""
+  return values
 end
 
 local function files_to_sql(filenames)
-  local values = ""
   local unique_filenames = {}
   for _, v in pairs(filenames) do
     unique_filenames[v.filename] = true
   end
+
+  local template = "INSERT OR IGNORE INTO Files (filename) VALUES (%s);\n"
+  local values = ""
   for filename in pairs(unique_filenames) do
-    local value = string.format("(%s)", sqlite_string(filename))
-    if values == "" then
-      values = values .. ' ' .. value
-    else
-      values = values .. ", " .. value
-    end
+    values = values .. template:format(sqlite_string(filename))
   end
-  if values ~= "" then
-    return "INSERT OR IGNORE INTO Files (filename) VALUES " .. values .. ";\n"
-  end
-  return ""
+  return values
 end
 
 local function citations_to_sql(citations)
@@ -306,10 +258,15 @@ function SlipBox:to_sql(filenames)
   -- Create sql statements from slipbox contents.
   -- filenames
   -- : Table that maps note ids to filenames (see scan.parse_grep_output).
-  return files_to_sql(filenames) .. notes_to_sql(self.notes, filenames) ..
-    tags_to_sql(self.tags) .. links_to_sql(self.links) ..
-    aliases_to_sql(self.aliases) .. sequences_to_sql(self.aliases) ..
-    citations_to_sql(self.citations)
+  return table.concat {
+    files_to_sql(filenames),
+    notes_to_sql(self.notes, filenames),
+    tags_to_sql(self.tags),
+    links_to_sql(self.links),
+    aliases_to_sql(self.aliases),
+    sequences_to_sql(self.aliases),
+    citations_to_sql(self.citations),
+  }
 end
 
 return {
