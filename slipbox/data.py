@@ -38,13 +38,13 @@ def process_notes(conn: Connection, path: Path) -> None:
     """Process Notes data in path."""
     def fix(nid: int, title: str, filename: str) -> None:
         cur = conn.cursor()
-        cur.execute("SELECT title FROM Notes WHERE id = ?", (nid,))
+        cur.execute("SELECT title, filename FROM Notes WHERE id = ?", (nid,))
         existing = cur.fetchone()
         warning(
             f"Duplicate ID: {nid}.",
             f"Could not insert note {title!r}.",
             f"Note {existing[0]!r} already uses the ID.",
-            f"See {filename!r}."
+            f"See {filename!r} or {existing[1]!r}."
         )
 
     sql = "INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)"
