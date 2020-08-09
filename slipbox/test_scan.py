@@ -325,6 +325,17 @@ Baz.
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_blank_grep(mock_db, tmp_path, capsys, monkeypatch):
+    """scan must ignore GREP="" variable setting."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("# 0 Test\n\nTest.\n")
+    monkeypatch.setenv("GREP", "")
+    scan.scan(mock_db, [markdown], "", False)
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 

@@ -2,7 +2,8 @@ local utils = require "filters/utils"
 
 local function grep_headers(options)
   options = [[ -rIoZH "[0-9]\+\s\+.\+" ]] .. (options or "")
-  local program = os.getenv("GREP") or "grep"
+  local program = os.getenv("GREP")
+  if program == "" then program = "grep" end
   local command = program .. options
   return io.popen(command):lines()
 end
