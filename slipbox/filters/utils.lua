@@ -63,16 +63,15 @@ local function get_link(src, link)
 end
 
 local function parse_id_and_title(s)
-  local pattern = '^(%d+)%s+(.+)$'
+  local pattern = '^%s*(%d+)%s+(.-)%s*$'
   local id, count = s:gsub(pattern, '%1')
   if count == 0 then return nil end
   local title
   title, count = s:gsub(pattern, '%2')
-  if count ~= 0 then
+  if count ~= 0 and title ~= "" then
     id = tonumber(id)
     assert(type(id) == "number")
     assert(type(title) == "string")
-    assert(title ~= "")
     return id, title
   end
 end
