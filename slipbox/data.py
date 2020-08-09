@@ -2,17 +2,32 @@
 
 import csv
 from pathlib import Path
-from sqlite3 import Connection
-from typing import Sequence, Type
+from sqlite3 import Connection, IntegrityError
+from sys import stderr
+from typing import Callable, Sequence, Type
 
-def run_sql_on_csv(conn: Connection, path: Path, sql: str, types: Sequence[Type]) -> None:
+def warning(message: str, *information: str) -> None:
+    """Show warning message."""
+    print(f"[WARNING] {message}", file=stderr)
+    for info in information:
+        print(f"  {info}", file=stderr)
+
+def run_sql_on_csv(conn: Connection,
+                   path: Path,
+                   sql: str,
+                   types: Sequence[Type],
+                   callback: Callable = None) -> None:
     """Run SQl query on CSV data."""
     cur = conn.cursor()
     with open(path) as file:
         reader = csv.reader(file)
         for row in reader:
             args = [t(a) for t, a in zip(types, row)]
-            cur.execute(sql, args)
+            try:
+                cur.execute(sql, args)
+            except IntegrityError:
+                if callback:
+                    callback(*args)
 
 def process_files(conn: Connection, path: Path) -> None:
     """Process Files data in path."""
@@ -21,8 +36,19 @@ def process_files(conn: Connection, path: Path) -> None:
 
 def process_notes(conn: Connection, path: Path) -> None:
     """Process Notes data in path."""
-    sql = "INSERT OR IGNORE INTO Notes (id, title, filename) VALUES (?, ?, ?)"
-    run_sql_on_csv(conn, path, sql, (int, str, str))
+    def fix(nid: int, title: str, filename: str) -> None:
+        cur = conn.cursor()
+        cur.execute("SELECT title FROM Notes WHERE id = ?", (nid,))
+        existing = cur.fetchone()
+        warning(
+            f"Duplicate ID: {nid}.",
+            f"Could not insert note {title!r}.",
+            f"Note {existing[0]!r} already uses the ID.",
+            f"See {filename!r}."
+        )
+
+    sql = "INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)"
+    run_sql_on_csv(conn, path, sql, (int, str, str), fix)
 
 def process_tags(conn: Connection, path: Path) -> None:
     """Process Tags data in path."""
