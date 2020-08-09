@@ -1,3 +1,4 @@
+local csv = require "filters/csv"
 local log = require "filters/log"
 local utils = require "filters/utils"
 
@@ -129,67 +130,58 @@ local function sqlite_string(s)
   return string.format("'%s'", s:gsub("'", "''"))
 end
 
-local function notes_to_sql(notes, filenames)
-  -- Generate sql from notes in slipbox.
-  -- Get filenames from filenames table.
-  local template = "INSERT OR IGNORE INTO Notes (id, title, filename) VALUES (%d, %s, %s);\n"
-  local values = ""
+local function notes_to_csv(notes, filenames)
+  -- Generate CSV data from slipbox notes.
+  local w = csv.Writer:new{"id", "title", "filename"}
   for id, note in pairs(notes) do
     local result = filenames[id]
     if result then
-      local title = sqlite_string(note.title)
-      local filename = sqlite_string(result.filename)
-      values = values .. template:format(id, title, filename)
+      w:write{id, note.title, result.filename}
       -- result might be nil if scan.lua couldn't find its filename.
       -- This occurs when the title in the header contains other symbols
       -- (ex: links, references, equations, etc.).
       -- TODO warning
     end
   end
-  return values
+  return w.data
 end
 
-local function tags_to_sql(tags)
-  -- Generate sql from tags in slipbox.
-  local template = "INSERT OR IGNORE INTO Tags (tag, id) VALUES (%s, %d);\n"
-  local values = ""
+local function tags_to_csv(tags)
+  -- Generate CSV data from tags in slipbox.
+  local w = csv.Writer:new{"tag", "id"}
   for tag, ids in pairs(tags) do
     for _, id in ipairs(ids) do
       assert(id and id == tonumber(id))
-      values = values .. template:format(sqlite_string(tag), id)
+      w:write{tag, id}
     end
   end
-  return values
+  return w.data
 end
 
-local function links_to_sql(links)
-  -- Create sql from direct links in slipbox.
+local function links_to_csv(links)
+  -- Create CSV data from direct links in slipbox.
   -- Ignores sequence links.
-  local template = "INSERT OR IGNORE INTO Links (src, dest, annotation) VALUES (%d, %d, %s);\n"
-  local values = ""
+  local w = csv.Writer:new{"src", "dest", "annotation"}
   for src, dests in pairs(links) do
     for _, dest in ipairs(dests) do
       if dest.tag == "direct" then
-        local annotation = sqlite_string(dest.description)
-        values = values .. template:format(src, dest.dest, annotation)
+        w:write{src, dest.dest, dest.description}
       end
     end
   end
-  return values
+  return w.data
 end
 
-local function aliases_to_sql(aliases)
-  local template = "INSERT OR IGNORE INTO Aliases (id, alias, owner) VALUES (%d, %s, %d);\n"
-  local values = ""
+local function aliases_to_csv(aliases)
+  local w = csv.Writer:new{"id", "alias", "owner"}
   for alias, rec in pairs(aliases) do
-    values = values .. template:format(rec.id, sqlite_string(alias), rec.owner)
+    w:write{rec.id, alias, rec.owner}
   end
-  return values
+  return w.data
 end
 
-local function sequences_to_sql(aliases)
-  local template = "INSERT OR IGNORE INTO Sequences (prev, next) VALUES (%s, %s);\n"
-  local values = ""
+local function sequences_to_csv(aliases)
+  local w = csv.Writer:new{"prev", "next"}
   for alias, rec in pairs(aliases) do
     local parent = utils.alias_parent(alias)
     if parent then
@@ -199,25 +191,24 @@ local function sequences_to_sql(aliases)
           string.format("Note %d with alias '%s' will be unreachable.", rec.id, alias),
         }
       else
-        values = values .. template:format(sqlite_string(parent), sqlite_string(alias))
+        w:write{parent, alias}
       end
     end
   end
-  return values
+  return w.data
 end
 
-local function files_to_sql(filenames)
+local function files_to_csv(filenames)
   local unique_filenames = {}
   for _, v in pairs(filenames) do
     unique_filenames[v.filename] = true
   end
 
-  local template = "INSERT OR IGNORE INTO Files (filename) VALUES (%s);\n"
-  local values = ""
+  local w = csv.Writer:new{"filename"}
   for filename in pairs(unique_filenames) do
-    values = values .. template:format(sqlite_string(filename))
+    w:write{filename}
   end
-  return values
+  return w.data
 end
 
 local function citations_to_sql(citations)
@@ -254,17 +245,17 @@ local function citations_to_sql(citations)
   return ""
 end
 
-function SlipBox:write_to_sql(basedir, filenames)
+function SlipBox:write_data(basedir, filenames)
   -- Create sql statements from slipbox contents.
   -- filenames
   -- : Table that maps note ids to filenames (see scan.parse_grep_output).
   local write = utils.write_text
-  write(basedir .. "/files.sql", files_to_sql(filenames))
-  write(basedir .. "/notes.sql", notes_to_sql(self.notes, filenames))
-  write(basedir .. "/tags.sql", tags_to_sql(self.tags))
-  write(basedir .. "/links.sql", links_to_sql(self.links))
-  write(basedir .. "/aliases.sql", aliases_to_sql(self.aliases))
-  write(basedir .. "/sequences.sql", sequences_to_sql(self.aliases))
+  write(basedir .. "/files.csv", files_to_csv(filenames))
+  write(basedir .. "/notes.csv", notes_to_csv(self.notes, filenames))
+  write(basedir .. "/tags.csv", tags_to_csv(self.tags))
+  write(basedir .. "/links.csv", links_to_csv(self.links))
+  write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
+  write(basedir .. "/sequences.csv", sequences_to_csv(self.aliases))
   write(basedir .. "/citations.sql", citations_to_sql(self.citations))
 end
 

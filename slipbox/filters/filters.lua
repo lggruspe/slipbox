@@ -113,7 +113,7 @@ local function serialize(slipbox)
 
       local scan = require "filters/scan"
       local filenames = scan.parse_grep_output(slipbox, scan.grep_headers(scan_input_list))
-      slipbox:write_to_sql(tmpdir, filenames)
+      slipbox:write_data(tmpdir, filenames)
     end
   }
 end

@@ -2,7 +2,7 @@ local Writer = {}
 function Writer:new(fields)
   self.__index = self
   return setmetatable({
-    header = table.concat(fields),
+    header = table.concat(fields, ','),
     columns = #fields,
     data = "",
   }, self)
@@ -22,7 +22,7 @@ function Writer:record(fields)
 end
 
 function Writer:write(fields)
-  self.data = string.format("%s%s\n", self.data, self.record(fields))
+  self.data = string.format("%s%s\n", self.data, self:record(fields))
 end
 
 return {Writer = Writer}

@@ -9,7 +9,7 @@ from sqlite3 import Connection, IntegrityError
 import sys
 from typing import Iterable, List, Set, Tuple, Union
 
-from . import utils
+from . import data, utils
 
 def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
@@ -175,12 +175,7 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
             if proc.returncode:
                 print("Scan failed.", file=sys.stderr)
                 continue
-            execute_script(conn, tempdir/"files.sql")
-            execute_script(conn, tempdir/"notes.sql")
-            execute_script(conn, tempdir/"tags.sql")
-            execute_script(conn, tempdir/"links.sql")
-            execute_script(conn, tempdir/"aliases.sql")
-            execute_script(conn, tempdir/"sequences.sql")
+            data.process_csvs(conn, tempdir)
             execute_script(conn, tempdir/"citations.sql")
             contents = html.read_text()
         store_html_sections(conn, contents, inputs)
