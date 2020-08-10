@@ -2,13 +2,14 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Sequence
 
 @dataclass
 class Config:
     """Slipbox config object."""
-    database = Path("slipbox.db")
-    paths = [Path()]
-    patterns = ['*.md']
-    content_options = ""
-    document_options = ""
-    convert_to_data_url = False
+    database: Path = Path("slipbox.db")
+    paths: Sequence[Path] = (Path(),)
+    patterns: Sequence[str] = ('*.md',)
+    content_options: str = ""
+    document_options: str = ""
+    convert_to_data_url: bool = False

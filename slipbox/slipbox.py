@@ -93,11 +93,9 @@ def added_notes(slipbox: Slipbox) -> List[Path]:
 def modified_notes(slipbox: Slipbox) -> List[Path]:
     """Return list of notes modified since the last scan."""
     files = scan.fetch_files(slipbox.conn)
-    modified = (p for p in files if scan.is_recently_modified(slipbox.timestamp, p))
-    return list(modified)
+    return [p for p in files if scan.is_recently_modified(slipbox.timestamp, p)]
 
 def deleted_notes(slipbox: Slipbox) -> List[Path]:
     """Return list of notes that have been deleted from the file system."""
     files = scan.fetch_files(slipbox.conn)
-    deleted = (p for p in files if not p.exists())
-    return list(deleted)
+    return [p for p in files if not p.exists()]
