@@ -120,35 +120,6 @@ def test_build_command():
     assert f"-o {output}" in cmd
     assert options in cmd
 
-def test_remove_outdated_files_from_database(mock_db, tmp_path):
-    """remove_outdated_files_from_database must remove:
-
-    - Files that have been deleted from the file system.
-    - Files that have been modified since the most recent scan.
-    """
-    conn = mock_db
-    missing = tmp_path/"missing.md"
-    modified = tmp_path/"modified.md"
-    temp = tmp_path/"temp.md"
-    missing.touch()
-    modified.touch()
-    temp.touch()
-
-    conn.executescript(insert_file_script(missing, modified, temp))
-    assert scan.is_file_in_db(missing, conn)
-    assert scan.is_file_in_db(modified, conn)
-    assert scan.is_file_in_db(temp, conn)
-
-    timestamp = time.time()
-    missing.unlink()
-    os.utime(modified, ns=(time.time_ns(), time.time_ns()))
-
-    scan.remove_outdated_files_from_database(conn, timestamp)
-
-    assert not scan.is_file_in_db(missing, conn)
-    assert not scan.is_file_in_db(modified, conn)
-    assert scan.is_file_in_db(temp, conn)
-
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan(mock_db, tmp_path):
     """Smoke test for scan."""

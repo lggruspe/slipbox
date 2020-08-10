@@ -17,9 +17,9 @@ class Slipbox:
     def __init__(self, config: Config = Config()):
         self.timestamp = 0.0
         self.config = config
-        self.conn = sqlite3.connect(config.database)
         if config.database.exists():
             self.timestamp = os.path.getmtime(config.database)
+        self.conn = sqlite3.connect(config.database)
 
         sql = Path(__file__).with_name("schema.sql").read_text()
         self.conn.executescript(sql)

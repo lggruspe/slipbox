@@ -1,6 +1,7 @@
 # type: ignore
 """Test slipbox.py."""
 
+from os import remove
 from sys import version_info
 
 import pytest
@@ -61,3 +62,17 @@ def test_added_notes_recursive(tmp_path):
 
     slipbox.config.paths = (tmp_path,)
     assert added_notes(slipbox) == [new]
+
+@pytest.mark.skipif(version_info.minor < 8, reason="requires python3.8")
+def test_slipbox_context_manager(tmp_path):
+    """Test database timestamp."""
+    config = Config(database=tmp_path/"slipbox.db")
+    config.database.unlink(missing_ok=True)
+    try:
+        remove(config.database)
+    except FileNotFoundError:
+        pass
+    with Slipbox(config) as slipbox:
+        assert slipbox.timestamp == 0.0
+    with Slipbox(config) as slipbox:
+        assert slipbox.timestamp != 0.0

@@ -1,6 +1,6 @@
 """Look for files that must be compiled."""
 
-from itertools import chain, groupby
+from itertools import groupby
 import fnmatch
 import os
 from pathlib import Path
@@ -97,23 +97,6 @@ def build_command(inputs: str, output: str, options: str = "") -> str:
             f"--data-dir {datadir} -Mlink-citations:true {options} " \
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + inputs
-
-def remove_outdated_files_from_database(conn: Connection, timestamp: float) -> None:
-    """Remove outdated files from the database.
-
-    This includes files that have been deleted from the file system,
-    and files that have been modified recently.
-    Recently modified files will be added back to the database after scanning.
-    """
-    files = lambda: fetch_files(conn)
-    missing = (p for p in files() if not p.exists())
-    modified = (p for p in files() if is_recently_modified(timestamp, p))
-
-    cur = conn.cursor()
-    cur.execute("PRAGMA foreign_keys=ON")
-    cur.executemany("DELETE FROM Files WHERE filename IN (?)",
-                    ((str(path),) for path in chain(missing, modified)))
-    conn.commit()
 
 def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
     """Insert Html and Sections entries for html and sources.
