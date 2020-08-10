@@ -41,3 +41,9 @@ def run_command(cmd: str, **kwargs: Any) -> subprocess.CompletedProcess:
     proc = subprocess.run(shlex.split(cmd), env=env, check=False,
                           capture_output=True)
     return proc
+
+def insert_file_script(*files: Path) -> str:
+    """Create SQL query string to insert into the Files table."""
+    sql = "INSERT INTO Files (filename) VALUES ({})"
+    filenames = (sqlite_string(str(p)) for p in files)
+    return sql.format("), (".join(filenames))

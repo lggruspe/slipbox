@@ -2,19 +2,12 @@
 """Test scan.py."""
 
 import os
-import pathlib
 import time
 
 import pytest
 
 from . import scan
-from .utils import sqlite_string, check_requirements
-
-def insert_file_script(*files: pathlib.Path):
-    """Create SQL query string to insert into the Files table."""
-    sql = "INSERT INTO Files (filename) VALUES ({})"
-    filenames = (sqlite_string(str(p)) for p in files)
-    return sql.format("), (".join(filenames))
+from .utils import check_requirements, insert_file_script
 
 def test_is_recently_modified(tmp_path):
     """is_recently_modified should return true iff the input file was modified
@@ -395,56 +388,3 @@ Baz.
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr
-
-def test_input_files_that_match_pattern(mock_db, tmp_path):
-    """input_files must only return files that match the input pattern."""
-    directory = tmp_path/"directory"
-    markdown = tmp_path/"input.md"
-    txt = tmp_path/"input.txt"
-    tex = tmp_path/"ignore.tex"
-    directory.mkdir()
-    markdown.touch()
-    txt.touch()
-    tex.touch()
-
-    conn = mock_db
-    timestamp = time.time()
-    patterns = ("*.md", "*.txt")
-    inputs = scan.input_files(conn, timestamp, [tmp_path], patterns)
-    assert sorted(inputs) == [markdown, txt]
-
-def test_input_files_not_in_db(mock_db, tmp_path):
-    """input_files must not include files already in the database."""
-    new = tmp_path/"new.md"
-    skip = tmp_path/"skip.md"
-    new.touch()
-    skip.touch()
-
-    conn = mock_db
-    conn.executescript(insert_file_script(skip))
-
-    timestamp = time.time()
-    inputs = scan.input_files(conn, timestamp, [tmp_path])
-    assert list(inputs) == [new]
-
-def test_input_files_recursive(mock_db, tmp_path):
-    """input_files must find files recursively."""
-    directory = tmp_path/"directory"
-    new = directory/"new.md"
-    directory.mkdir()
-    new.touch()
-
-    conn = mock_db
-    timestamp = time.time()
-    inputs = scan.input_files(conn, timestamp, [tmp_path])
-    assert sorted(inputs) == [new]
-
-def test_input_files_single_input(mock_db, tmp_path):
-    """input_files must work with a single input file."""
-    new = tmp_path/"new.md"
-    new.touch()
-
-    conn = mock_db
-    timestamp = time.time()
-    inputs = scan.input_files(conn, timestamp, [new])
-    assert sorted(inputs) == [new]

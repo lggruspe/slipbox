@@ -72,23 +72,6 @@ def find_new_files(
             has_valid_pattern(x, patterns)
     return filter(condition, glob_files(paths))
 
-def input_files(
-        conn: Connection,
-        timestamp: float,
-        paths: Iterable[str],
-        patterns: Iterable[str] = ("*.md",)
-    ) -> Iterable[Path]:
-    """Generate files that must be rescanned/processed by pandoc.
-
-    Neighbor notes of deleted/modified files don't have to be rescanned,
-    since those notes don't get affected when notes they reference to are
-    removed from the database.
-    """
-    files = lambda: fetch_files(conn)
-    modified = (p for p in files() if is_recently_modified(timestamp, p))
-    new = find_new_files(conn, map(Path, paths), patterns)
-    yield from filter(os.path.isfile, set(modified).union(new))
-
 def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
     """Generate an iterator for each file extension.
 
