@@ -255,6 +255,38 @@ Bar.
     assert result == [0]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
+    """scan must show a warning if a new note shares ID of an existing note.
+
+    The warning message must show the filenames of both notes.
+    """
+    file_a = tmp_path/"a.md"
+    file_a.write_text("# 0 Existing note\n\nTest.\n")
+
+    scan.scan(mock_db, [file_a], "", False)
+    result = list(mock_db.execute("SELECT id, title FROM Notes"))
+    assert len(result) == 1
+    assert result == [(0, "Existing note")]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+    file_b = tmp_path/"b.md"
+    file_b.write_text("# 0 Duplicate note\n\nTest.\n")
+
+    scan.scan(mock_db, [file_b], "", False)
+    result = list(mock_db.execute("SELECT id, title FROM Notes"))
+    assert len(result) == 1
+    assert result == [(0, "Existing note")]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
+    assert str(file_a) in stderr
+    assert str(file_b) in stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_ids_in_a_file(mock_db, tmp_path, capsys):
     """If there are duplicate IDs in a file, only the first one must be saved.
 
