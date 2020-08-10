@@ -128,8 +128,8 @@ def remove_outdated_files_from_database(conn: Connection, timestamp: float) -> N
 
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys=ON")
-    for filename in chain(missing, modified):
-        cur.execute("DELETE FROM Files WHERE filename = ?", (str(filename),))
+    cur.executemany("DELETE FROM Files WHERE filename IN (?)",
+                    ((str(path),) for path in chain(missing, modified)))
     conn.commit()
 
 def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
