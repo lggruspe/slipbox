@@ -30,6 +30,7 @@ def test_added_notes_pattern(tmp_path):
     notes = added_notes(slipbox)
     assert sorted(notes) == [markdown, txt]
 
+@pytest.mark.skipif(version_info.minor < 8, reason="requires python3.8")
 def test_added_notes_in_db(tmp_path):
     """added_notes must not already be in the database."""
     config = Config(database=tmp_path/"slipbox.db")
@@ -46,6 +47,7 @@ def test_added_notes_in_db(tmp_path):
     slipbox.config.paths = (tmp_path,)
     assert added_notes(slipbox) == [new]
 
+@pytest.mark.skipif(version_info.minor < 8, reason="requires python3.8")
 def test_added_notes_recursive(tmp_path):
     """added_notes must find files recursively."""
     config = Config(database=tmp_path/"slipbox.db")
