@@ -3,14 +3,14 @@
 import csv
 from pathlib import Path
 from sqlite3 import Connection, IntegrityError
-from sys import stderr
+import sys
 from typing import Callable, Sequence, Type
 
 def warning(message: str, *information: str) -> None:
     """Show warning message."""
-    print(f"[WARNING] {message}", file=stderr)
+    print(f"[WARNING] {message}", file=sys.stderr)
     for info in information:
-        print(f"  {info}", file=stderr)
+        print(f"  {info}", file=sys.stderr)
 
 def run_sql_on_csv(conn: Connection,
                    path: Path,
