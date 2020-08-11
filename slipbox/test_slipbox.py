@@ -101,3 +101,23 @@ def test_deleted_notes(tmp_path):
     added.touch()
 
     assert deleted_notes(slipbox) == [delete]
+
+def test_purge(tmp_path):
+    """Input files must be purged from the database."""
+    paths = []
+    for prefix in "abcd":
+        path = tmp_path/f"{prefix}.md"
+        path.touch()
+        paths.append(path)
+
+    config = Config(database=tmp_path/"slipbox.db")
+    slipbox = Slipbox(config)
+    slipbox.conn.executescript(insert_file_script(*paths))
+
+    slipbox.purge(paths[2:])
+
+    result = slipbox.conn.execute("SELECT filename FROM Files")
+    remaining = sorted(filename for filename, in result)
+    assert len(remaining) == 2
+    for path, filename in zip(paths, remaining):
+        assert path.samefile(filename)
