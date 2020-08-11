@@ -24,7 +24,7 @@ check: bundle
 
 .PHONY:	docs
 docs:	bundle
-	python -m slipbox docs/docs.db docs/*.md \
+	python -m slipbox -s docs/docs.db -P docs/*.md \
 		-c ' --bibliography docs/tutorial.bib' \
 		-d ' -o docs/index.html -c basic.css'
 

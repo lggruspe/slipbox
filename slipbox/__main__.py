@@ -21,9 +21,9 @@ if __name__ == "__main__":
 
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")
-    parser.add_argument("database", default=config.database, type=Path,
+    parser.add_argument("-s", "--database", default=config.database, type=Path,
                         help="filename of sqlite3 database")
-    parser.add_argument("paths", nargs='+', default=config.paths, type=Path,
+    parser.add_argument("-P", "--paths", nargs='+', default=config.paths, type=Path,
                         help="list of files or directories that contain notes")
     parser.add_argument("-p", "--patterns", nargs='*', default=config.patterns,
                         help="list of glob patterns")
