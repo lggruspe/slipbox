@@ -195,3 +195,25 @@ def test_suggest_edits_exclude_deleted_notes(tmp_path):
     notes = slipbox.find_notes()
     suggestions = list(slipbox.suggest_edits(notes))
     assert suggestions == [(1, "B", file_b)]
+
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_run(tmp_path, capsys):
+    """There must be no suggestions when running for the first time."""
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"c.md"
+    file_a.write_text("# 0 A\n\nA.\n[B](#2 '0a').\n")
+    file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
+    file_c.write_text("# 2 C\n\nC.\n")
+
+    config = Config(database=tmp_path/"slipbox.db")
+    config.paths = (tmp_path,)
+    slipbox = Slipbox(config)
+    slipbox.timestamp = time()
+
+    slipbox.run()
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
