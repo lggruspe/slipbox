@@ -48,3 +48,8 @@ License
 -------
 
 MIT.
+
+Credits
+-------
+
+This project includes [pandoc.css](https://gist.github.com/killercup/5917178).
