@@ -9,10 +9,10 @@ from .config import Config
 from .slipbox import Slipbox, added_notes, modified_notes, deleted_notes
 from .utils import check_requirements, insert_file_script
 
-def test_added_notes_pattern(tmp_path):
+def test_added_notes_pattern(tmp_path, sbox):
     """added_notes must match the input pattern."""
-    config = Config(database=tmp_path/"slipbox.db")
-    slipbox = Slipbox(config)
+    slipbox = sbox
+    slipbox.config.patterns = ('*.md', '*.txt')
 
     directory = tmp_path/"directory"
     markdown = tmp_path/"input.md"
@@ -23,37 +23,28 @@ def test_added_notes_pattern(tmp_path):
     txt.touch()
     tex.touch()
 
-    slipbox.config.paths = (tmp_path,)
-    slipbox.config.patterns = ('*.md', '*.txt')
     notes = added_notes(slipbox)
     assert sorted(notes) == [markdown, txt]
 
-def test_added_notes_in_db(tmp_path):
+def test_added_notes_in_db(tmp_path, sbox):
     """added_notes must not already be in the database."""
-    config = Config(database=tmp_path/"slipbox.db")
-    slipbox = Slipbox(config)
+    slipbox = sbox
 
     new = tmp_path/"new.md"
     skip = tmp_path/"skip.md"
     new.touch()
     skip.touch()
-
     slipbox.conn.executescript(insert_file_script(skip))
-
-    slipbox.config.paths = (tmp_path,)
     assert added_notes(slipbox) == [new]
 
-def test_added_notes_recursive(tmp_path):
+def test_added_notes_recursive(tmp_path, sbox):
     """added_notes must find files recursively."""
-    config = Config(database=tmp_path/"slipbox.db")
-    slipbox = Slipbox(config)
+    slipbox = sbox
 
     directory = tmp_path/"directory"
     new = directory/"new.md"
     directory.mkdir()
     new.touch()
-
-    slipbox.config.paths = (tmp_path,)
     assert added_notes(slipbox) == [new]
 
 def test_slipbox_context_manager(tmp_path):
@@ -64,7 +55,7 @@ def test_slipbox_context_manager(tmp_path):
     with Slipbox(config) as slipbox:
         assert slipbox.timestamp != 0.0
 
-def test_modified_notes(tmp_path):
+def test_modified_notes(tmp_path, sbox):
     """modified_notes must exclude the following notes:
 
     - Notes that aren't in the database
@@ -74,9 +65,7 @@ def test_modified_notes(tmp_path):
     not_modified = tmp_path/"not_modified.md"
     added = tmp_path/"added.md"
 
-    config = Config(database=tmp_path/"slipbox.db")
-    slipbox = Slipbox(config)
-    slipbox.config.paths = (tmp_path,)
+    slipbox = sbox
 
     slipbox.conn.executescript(insert_file_script(modified, not_modified))
 
@@ -85,7 +74,7 @@ def test_modified_notes(tmp_path):
 
     assert modified_notes(slipbox) == [modified]
 
-def test_deleted_notes(tmp_path):
+def test_deleted_notes(tmp_path, sbox):
     """deleted_notes must exclude the following files:
 
     - Notes not in the database
@@ -95,9 +84,7 @@ def test_deleted_notes(tmp_path):
     dont_delete = tmp_path/"dont_delete.md"
     added = tmp_path/"not_in_db.md"
 
-    config = Config(database=tmp_path/"slipbox.db")
-    slipbox = Slipbox(config)
-    slipbox.config.paths = (tmp_path,)
+    slipbox = sbox
 
     slipbox.conn.executescript(insert_file_script(delete, dont_delete))
 
@@ -106,7 +93,7 @@ def test_deleted_notes(tmp_path):
 
     assert deleted_notes(slipbox) == [delete]
 
-def test_purge(tmp_path):
+def test_purge(tmp_path, sbox):
     """Input files must be purged from the database."""
     paths = []
     for prefix in "abcd":
@@ -114,8 +101,7 @@ def test_purge(tmp_path):
         path.touch()
         paths.append(path)
 
-    config = Config(database=tmp_path/"slipbox.db")
-    slipbox = Slipbox(config)
+    slipbox = sbox
     slipbox.conn.executescript(insert_file_script(*paths))
 
     slipbox.purge(paths[2:])
@@ -127,7 +113,7 @@ def test_purge(tmp_path):
         assert path.samefile(filename)
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_suggest_edits_backlinks(tmp_path):
+def test_suggest_edits_backlinks(tmp_path, sbox):
     """slipbox.suggest_edits must include backlinks of outdated notes."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -136,9 +122,7 @@ def test_suggest_edits_backlinks(tmp_path):
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
-    config = Config(database=tmp_path/"slipbox.db")
-    config.paths = (tmp_path,)
-    slipbox = Slipbox(config)
+    slipbox = sbox
     slipbox.timestamp = time()
 
     slipbox.process([file_a, file_b, file_c])
@@ -150,7 +134,7 @@ def test_suggest_edits_backlinks(tmp_path):
     assert suggestions == [(1, "B", file_b)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_suggest_edits_aliases(tmp_path):
+def test_suggest_edits_aliases(tmp_path, sbox):
     """slipbox.suggest_edits must include alias owners of outdated notes."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -159,9 +143,7 @@ def test_suggest_edits_aliases(tmp_path):
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
-    config = Config(database=tmp_path/"slipbox.db")
-    config.paths = (tmp_path,)
-    slipbox = Slipbox(config)
+    slipbox = sbox
     slipbox.timestamp = time()
 
     slipbox.process([file_a, file_b, file_c])
@@ -173,7 +155,7 @@ def test_suggest_edits_aliases(tmp_path):
     assert suggestions == [(0, "A", file_a)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_suggest_edits_exclude_deleted_notes(tmp_path):
+def test_suggest_edits_exclude_deleted_notes(tmp_path, sbox):
     """slipbox.suggest_edits must exclude deleted notes."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -182,9 +164,7 @@ def test_suggest_edits_exclude_deleted_notes(tmp_path):
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
-    config = Config(database=tmp_path/"slipbox.db")
-    config.paths = (tmp_path,)
-    slipbox = Slipbox(config)
+    slipbox = sbox
     slipbox.timestamp = time()
 
     slipbox.process([file_a, file_b, file_c])
@@ -198,7 +178,7 @@ def test_suggest_edits_exclude_deleted_notes(tmp_path):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_run(tmp_path, capsys):
+def test_run(tmp_path, capsys, sbox):
     """There must be no suggestions when running for the first time."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -207,9 +187,7 @@ def test_run(tmp_path, capsys):
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
-    config = Config(database=tmp_path/"slipbox.db")
-    config.paths = (tmp_path,)
-    slipbox = Slipbox(config)
+    slipbox = sbox
     slipbox.timestamp = time()
 
     slipbox.run()
