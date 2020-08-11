@@ -17,49 +17,28 @@ local function is_valid_alias(alias)
   return true
 end
 
-local function alias_root(alias)
-  -- Return alias root or nil (if invalid).
-  local pattern = '^(%d+)(%a[%a%d]*)$'
-  local prefix, count = alias:gsub(pattern, '%1')
-  if count > 0 then return prefix end
-end
-
 local function hashtag_prefix(s)
   return s:match '^#+[-_a-zA-Z0-9]+'
-end
-
-local function parse_number_target(s)
-  -- Return identifier if s is a section number.
-  local t, count = s:gsub('^#(%d+)$', '%1')
-  if count ~= 0 then
-    return tonumber(t)
-  end
 end
 
 local function get_link(src, link)
   assert(link.tag == "Link")
   assert(type(src) == "number")
 
-  local dest = parse_number_target(link.target)
-  if not src or not dest then return nil end
+  if not link.target:match('^#%d+$') then return end
 
-  local tag = "sequence"
-  local seqnum = link.title or ""
-  if not is_valid_alias(seqnum) then
-    tag = "direct"
-  end
-  if seqnum:match '^%d+$' then
-    tag = "direct"
+  local tag = link.title:match('^/%a%w*$') and "sequence" or "direct"
+  local description = link.title
+  if tag == "sequence" then
+    description = tostring(src) .. link.title:sub(2)
   end
 
-  if src and dest then
-    return {
-      tag = tag,
-      src = src,
-      dest = dest,
-      description = link.title,
-    }
-  end
+  return {
+    tag = tag,
+    src = src,
+    dest = tonumber(link.target:sub(2)),
+    description = description,
+  }
 end
 
 local function parse_id_and_title(s)
@@ -104,7 +83,6 @@ end
 
 return {
   is_valid_alias = is_valid_alias,
-  alias_root = alias_root,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
   parse_id_and_title = parse_id_and_title,

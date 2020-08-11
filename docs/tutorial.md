@@ -3,11 +3,11 @@
 
 `slipbox` is a static site generator for Zettelkasten notes.
 
-- [Installation](#1 '0a')
-- [Basic usage](#2 '0a1')
+- [Installation](#1 '/a')
+- [Basic usage](#2 '/a1')
 - [Organizing notes](#3)
 - [Connecting notes](#4)
-- [Questions](#10 '0b')
+- [Questions](#10 '/b')
 
 GitHub: <https://github.com/lggruspe/slipbox>
 
@@ -23,7 +23,7 @@ Then
 pip install slipbox
 ```
 
-Next step: [run slipbox](#2 '1a')
+Next step: [run slipbox](#2 '/a')
 
 
 2 Basic usage
@@ -54,7 +54,7 @@ $EDITOR notes/hello.md
 python -m slipbox notes slipbox.db -d ' -o example.html'
 ```
 
-This creates an SQLite file and an HTML file containing [all your notes](#3 '2a').
+This creates an SQLite file and an HTML file containing [all your notes](#3 '/a').
 Don't delete the database file, because `slipbox` will use it to avoid
 recompiling all notes from scratch in future invocations.
 
@@ -86,7 +86,7 @@ note.
 
 I recommend shorter IDs instead of longer ones if you want to use
 [sequence links](#7).
-It's important to [make connections](#4 '3a') between ideas in your notes.
+It's important to [make connections](#4 '/a') between ideas in your notes.
 
 
 4 How to find related notes
@@ -94,12 +94,12 @@ It's important to [make connections](#4 '3a') between ideas in your notes.
 
 `slipbox` provides multiple ways to connect notes.
 
-- [Tags](#5 '4a')
-- [Direct links](#6 '4b')
+- [Tags](#5 '/a')
+- [Direct links](#6 '/b')
 - Backlinks
-- [Sequence links](#7 '4c')
-- [Text search](#8 '4d')
-- [Citations](#9 '4a1')
+- [Sequence links](#7 '/c')
+- [Text search](#8 '/d')
+- [Citations](#9 '/a1')
 
 
 5 Tags
@@ -131,7 +131,7 @@ They also appear as solid black lines.
 
 ### External links
 
-It's also possible to [link to files](#10 '6b') outside of the slipbox.
+It's also possible to [link to files](#10 '/b') outside of the slipbox.
 
 
 7 Sequence links

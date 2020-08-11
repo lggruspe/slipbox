@@ -173,35 +173,6 @@ def test_scan_filenames0(mock_db, tmp_path):
     assert markdown.samefile(result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_scan_external_sequence_links(mock_db, tmp_path, capsys):
-    """The root of the note alias must be the same as note ID that
-    defines the alias.
-
-    Aliases that don't follow this rule are ignored.
-    scan must show a warning when this happens.
-    """
-    markdown = tmp_path/"test.md"
-    markdown.write_text("""# 0 Foo
-
-[Bar](#1 '0a')
-
-# 1 Bar
-
-[Bar](#1 '0b')
-""")
-    scan.scan(mock_db, [markdown], "", False)
-    result = list(mock_db.execute("""
-        SELECT id, owner, alias FROM Aliases ORDER BY alias
-    """))
-    assert len(result) == 2
-    assert result[0] == (0, 0, '0')
-    assert result[1] == (1, 0, '0a')
-
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert stderr
-
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_non_level1_headers(mock_db, tmp_path):
     """Only level 1 headers must be considered as note headers."""
     markdown = tmp_path/"test.md"
@@ -275,37 +246,13 @@ Bar.
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_scan_with_different_alias_owner(mock_db, tmp_path, capsys):
-    """A note can't define a note alias with a different root note.
-
-    scan must show a warning when this happens.
-    """
-    markdown = tmp_path/"test.md"
-    markdown.write_text("""# 0 Foo
-
-[Foo](#2 '1a')
-
-# 1 Bar
-
-Bar.
-
-# 2 Baz
-
-Baz.
-""")
-    scan.scan(mock_db, [markdown], "", False)
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert stderr
-
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_missing_alias(mock_db, tmp_path, capsys):
     """scan must show a warning if there's a gap in an alias sequence."""
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Foo
 
-[Bar](#1 '0a')
-[Baz](#2 '0a1a')
+[Bar](#1 '/a')
+[Baz](#2 '/a1a')
 
 # 1 Bar
 
@@ -340,8 +287,8 @@ def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Foo
 
-[Bar](#1 '0a')
-[Baz](#2 '0a')
+[Bar](#1 '/a')
+[Baz](#2 '/a')
 
 # 1 Bar
 

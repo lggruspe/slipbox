@@ -118,7 +118,7 @@ def test_suggest_edits_backlinks(tmp_path, sbox):
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
     file_c = tmp_path/"c.md"
-    file_a.write_text("# 0 A\n\nA.\n[B](#1 '0a').\n")
+    file_a.write_text("# 0 A\n\nA.\n[B](#1 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
@@ -139,7 +139,7 @@ def test_suggest_edits_aliases(tmp_path, sbox):
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
     file_c = tmp_path/"c.md"
-    file_a.write_text("# 0 A\n\nA.\n[B](#1 '0a').\n")
+    file_a.write_text("# 0 A\n\nA.\n[B](#1 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
@@ -160,7 +160,7 @@ def test_suggest_edits_exclude_deleted_notes(tmp_path, sbox):
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
     file_c = tmp_path/"c.md"
-    file_a.write_text("# 0 A\n\nA.\n[B](#2 '0a').\n")
+    file_a.write_text("# 0 A\n\nA.\n[B](#2 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
@@ -183,7 +183,7 @@ def test_run(tmp_path, capsys, sbox):
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
     file_c = tmp_path/"c.md"
-    file_a.write_text("# 0 A\n\nA.\n[B](#2 '0a').\n")
+    file_a.write_text("# 0 A\n\nA.\n[B](#2 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
 
