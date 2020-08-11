@@ -9,6 +9,7 @@ from typing import Iterable, Iterator, List, Tuple
 
 from . import scan, page
 from .config import Config
+from .data import warning
 from .utils import sqlite_string
 
 Notes = namedtuple("Notes", "added modified deleted")
@@ -99,12 +100,17 @@ class Slipbox:
     def run(self) -> None:
         """Run all steps needed to compile output."""
         notes = self.find_notes()
-        suggestions = self.suggest_edits(notes)
+        suggestions = list(self.suggest_edits(notes))
         self.purge(chain(notes.modified, notes.deleted))
         self.process(chain(notes.added, notes.modified))
         self.compile()
-        for note in suggestions:
-            print(note)
+        if suggestions:
+            warning(
+                "The notes below are related to notes that have recently been updated.",
+                "You might want to review them for inconsistent links.",
+                *(f"  {nid}. {title} in {str(path)!r}."
+                  for nid, title, path in suggestions)
+            )
 
 def added_notes(slipbox: Slipbox) -> List[Path]:
     """Return list of newly added notes."""
