@@ -1,9 +1,13 @@
 # type: ignore
 """Test slipbox.py."""
 
+from time import time
+
+import pytest
+
 from .config import Config
 from .slipbox import Slipbox, added_notes, modified_notes, deleted_notes
-from .utils import insert_file_script
+from .utils import check_requirements, insert_file_script
 
 def test_added_notes_pattern(tmp_path):
     """added_notes must match the input pattern."""
@@ -121,3 +125,73 @@ def test_purge(tmp_path):
     assert len(remaining) == 2
     for path, filename in zip(paths, remaining):
         assert path.samefile(filename)
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_suggest_edits_backlinks(tmp_path):
+    """slipbox.suggest_edits must include backlinks of outdated notes."""
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"c.md"
+    file_a.write_text("# 0 A\n\nA.\n[B](#1 '0a').\n")
+    file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
+    file_c.write_text("# 2 C\n\nC.\n")
+
+    config = Config(database=tmp_path/"slipbox.db")
+    config.paths = (tmp_path,)
+    slipbox = Slipbox(config)
+    slipbox.timestamp = time()
+
+    slipbox.process([file_a, file_b, file_c])
+
+    file_c.touch()
+
+    notes = slipbox.find_notes()
+    suggestions = list(slipbox.suggest_edits(notes))
+    assert suggestions == [(1, "B", file_b)]
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_suggest_edits_aliases(tmp_path):
+    """slipbox.suggest_edits must include alias owners of outdated notes."""
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"c.md"
+    file_a.write_text("# 0 A\n\nA.\n[B](#1 '0a').\n")
+    file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
+    file_c.write_text("# 2 C\n\nC.\n")
+
+    config = Config(database=tmp_path/"slipbox.db")
+    config.paths = (tmp_path,)
+    slipbox = Slipbox(config)
+    slipbox.timestamp = time()
+
+    slipbox.process([file_a, file_b, file_c])
+
+    file_b.touch()
+
+    notes = slipbox.find_notes()
+    suggestions = list(slipbox.suggest_edits(notes))
+    assert suggestions == [(0, "A", file_a)]
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_suggest_edits_exclude_deleted_notes(tmp_path):
+    """slipbox.suggest_edits must exclude deleted notes."""
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"c.md"
+    file_a.write_text("# 0 A\n\nA.\n[B](#2 '0a').\n")
+    file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
+    file_c.write_text("# 2 C\n\nC.\n")
+
+    config = Config(database=tmp_path/"slipbox.db")
+    config.paths = (tmp_path,)
+    slipbox = Slipbox(config)
+    slipbox.timestamp = time()
+
+    slipbox.process([file_a, file_b, file_c])
+
+    file_c.touch()
+    file_a.unlink()
+
+    notes = slipbox.find_notes()
+    suggestions = list(slipbox.suggest_edits(notes))
+    assert suggestions == [(1, "B", file_b)]
