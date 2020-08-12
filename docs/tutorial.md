@@ -156,11 +156,13 @@ The interactive graph shows sequence links as dashed lines.
 
 ### How to create sequence links
 
-Sequence links are created using regular links,
-but the link has to have a note alias in the description.
+Sequence links are regular links with a note alias in the description.
+The note alias is prefixed by a slash instead of the ID of the first
+note in the sequence.
 
-Example: `[sequence link](#12 '#4a2b')`{ .markdown }`
-assigns 4a2b as an alias to note 12.
+Example: `[sequence link](#12 '/a2b')`{ .markdown }`
+assigns 4a2b as an alias to note 12,
+assuming 4 is the note that contains the link.
 
 
 8 Text search
