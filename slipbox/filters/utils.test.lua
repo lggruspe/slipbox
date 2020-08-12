@@ -92,7 +92,7 @@ local function make_direct_link()
 end
 
 local function make_sequence_link()
-  return mock_link({make_sample_str()}, "#5", "1a")
+  return mock_link({make_sample_str()}, "#5", "/a")
 end
 
 local function make_tag_link()
@@ -117,6 +117,7 @@ describe("get_link", function()
       assert.truthy(result)
       assert.truthy(result.description)
       assert.truthy(result.description:match('^%d+%a[%d%a]*$'))
+      assert.is_equal(result.tag, "sequence")
     end)
 
     describe("with an integer alias", function()

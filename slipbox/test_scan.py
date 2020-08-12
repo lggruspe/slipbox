@@ -279,6 +279,25 @@ def test_scan_with_blank_grep(mock_db, tmp_path, capsys, monkeypatch):
     assert not stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_aliases(mock_db, tmp_path):
+    """Only slash aliases must be saved."""
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"c.md"
+    file_a.write_text("""# 0 A
+
+[B](#1 '0a').
+[C](#2 '/b').
+""")
+    file_b.write_text("# 1 B\n\nB.")
+    file_c.write_text("# 2 C\n\nC.")
+
+    scan.scan(mock_db, [file_a, file_b, file_c], "", False)
+    result = list(mock_db.execute("SELECT id, alias, owner FROM Aliases ORDER BY alias"))
+    assert len(result) == 2
+    assert result == [(0, '0', 0), (2, '0b', 0)]
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 
