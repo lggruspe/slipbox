@@ -74,33 +74,44 @@ end
 local function modify()
   -- Create filter that modifies the document.
 
-  return {
-    Link = function(elem)
-      -- Rewrite links with empty targets/text.
-      if not elem.target or elem.target == "" then
-        return elem.content
-      end
+  local function Div(div)
+    local id = tonumber(div.identifier)
+    if not id then return div end
 
-      local content = pandoc.utils.stringify(elem.content or "")
-      if content == "" then
-        return {
-          pandoc.Str " [",
-          pandoc.Link(
-            {pandoc.Str(elem.target)},
-            elem.target,
-            elem.title),
-          pandoc.Str "]",
-        }
-      end
-    end,
+    local filters = {
+      Link = function(elem)
+        -- Rewrite links with empty targets/text.
+        if not elem.target or elem.target == "" then
+          log.warning {
+            "Empty link target.",
+            string.format("See note %d.", id),
+          }
+          return elem.content
+        end
 
-    Str = function(elem)
-      -- Turn #tags into links.
-      if utils.hashtag_prefix(elem.text) then
-        return pandoc.Link({elem}, '#'..elem.text)
+        local content = pandoc.utils.stringify(elem.content or "")
+        if content == "" then
+          return {
+            pandoc.Str " [",
+            pandoc.Link(
+              {pandoc.Str(elem.target)},
+              elem.target,
+              elem.title),
+            pandoc.Str "]",
+          }
+        end
+      end,
+
+      Str = function(elem)
+        -- Turn #tags into links.
+        if utils.hashtag_prefix(elem.text) then
+          return pandoc.Link({elem}, '#'..elem.text)
+        end
       end
-    end
-  }
+    }
+    return pandoc.walk_block(div, filters)
+  end
+  return {Div = Div}
 end
 
 local function serialize(slipbox)

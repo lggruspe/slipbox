@@ -9,7 +9,7 @@ local current_slipbox = slipbox.SlipBox:new()
 
 local function Div(elem)
   -- Process tags and links.
-  elem = pandoc.walk_block(elem, filters.modify())
+  elem = filters.modify().Div(elem)
 
   local notes = {}
   local filter = footnotes.make_footnote_filter(notes)

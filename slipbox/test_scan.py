@@ -298,6 +298,19 @@ def test_scan_aliases(mock_db, tmp_path):
     assert result == [(0, '0', 0), (2, '0b', 0)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_empty_link_target(mock_db, tmp_path, capsys):
+    """scan must show a warning if there is a link with an empty target."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("# 0 Foo\n\n[Empty]().\n")
+    scan.scan(mock_db, [markdown], "", False)
+    result = list(mock_db.execute("SELECT * FROM Links"))
+    assert not result
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 
