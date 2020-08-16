@@ -38,34 +38,53 @@ local function init(slipbox)
   }
 end
 
+local Collect = {}
+function Collect:new(slipbox, div)
+  local id = tonumber(div.identifier)
+  if not id then return end
+
+  self.__index = self
+  return setmetatable({
+    slipbox = slipbox,
+    id = id,
+    div = div,
+  }, self)
+end
+
+function Collect:Cite(elem)
+  for _, citation in pairs(elem.citations) do
+    self.slipbox:save_citation(self.id, citation.id)
+  end
+end
+
+function Collect:Link(elem)
+  local link = utils.get_link(self.id, elem)
+  if link then
+    self.slipbox:save_link(link)
+  end
+end
+
+function Collect:Str(elem)
+  if utils.hashtag_prefix(elem.text) then
+    self.slipbox:save_tag(self.id, elem.text)
+  end
+end
+
+function Collect:filter()
+  return {
+    Cite = function(elem) return self:Cite(elem) end,
+    Link = function(elem) return self:Link(elem) end,
+    Str = function(elem) return self:Str(elem) end,
+  }
+end
+
 local function collect(slipbox)
   -- Create filter that saves citations, links and tags.
-
   return {
     Div = function(div)
-      local id = tonumber(div.identifier)
-      if id then
-        pandoc.walk_block(div, {
-
-          Cite = function(elem)
-            for _, citation in pairs(elem.citations) do
-              slipbox:save_citation(id, citation.id)
-            end
-          end,
-
-          Link = function(elem)
-            local link = utils.get_link(id, elem)
-            if link then
-              slipbox:save_link(link)
-            end
-          end,
-
-          Str = function(elem)
-            if utils.hashtag_prefix(elem.text) then
-              slipbox:save_tag(id, elem.text)
-            end
-          end,
-        })
+      local context = Collect:new(slipbox, div)
+      if context then
+        pandoc.walk_block(div, context:filter())
       end
     end
   }
@@ -73,7 +92,6 @@ end
 
 local function modify()
   -- Create filter that modifies the document.
-
   local function Div(div)
     local id = tonumber(div.identifier)
     if not id then return div end
