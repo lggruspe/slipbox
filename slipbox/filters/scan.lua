@@ -41,7 +41,6 @@ local function parse_grep_output(slipbox, iter)
   -- Parse grep output and store result (note id and filename) in a table.
   -- iter
   -- : An iterator that generates lines of the output.
-  local filenames = {}
   while true do
     local line = iter()
     if not line then break end
@@ -56,15 +55,17 @@ local function parse_grep_output(slipbox, iter)
         -- might contain trailing symbols
         -- ex: \chapter{10 Note title} would cause the title to have a
         -- trailing }
-        filenames[id] = {filename = filename, title = title}
+        note.filename = filename
       end
     end
 
   end
-  return filenames
+end
+
+local function grep_filenames(slipbox, inputs)
+  parse_grep_output(slipbox, grep_headers(inputs))
 end
 
 return {
-  grep_headers = grep_headers,
-  parse_grep_output = parse_grep_output,
+  grep_filenames = grep_filenames,
 }

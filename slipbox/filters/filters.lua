@@ -162,8 +162,8 @@ local function serialize(slipbox)
       if not tmpdir or tmpdir == "" then return end
 
       local scan = require "filters/scan"
-      local filenames = scan.parse_grep_output(slipbox, scan.grep_headers(scan_input_list))
-      slipbox:write_data(tmpdir, filenames)
+      scan.grep_filenames(slipbox, scan_input_list)
+      slipbox:write_data(tmpdir)
     end
   }
 end

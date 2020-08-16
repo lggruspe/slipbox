@@ -122,17 +122,15 @@ local function sqlite_string(s)
   return string.format("'%s'", s:gsub("'", "''"))
 end
 
-local function notes_to_csv(notes, filenames)
+local function notes_to_csv(notes)
   -- Generate CSV data from slipbox notes.
   local w = csv.Writer:new{"id", "title", "filename"}
   for id, note in pairs(notes) do
-    local result = filenames[id]
-    if result then
-      w:write{id, note.title, result.filename}
-      -- result might be nil if scan.lua couldn't find its filename.
+    if note.filename then
+      w:write{id, note.title, note.filename}
+      -- TODO show warning if note.filename is nil
       -- This occurs when the title in the header contains other symbols
       -- (ex: links, references, equations, etc.).
-      -- TODO warning
     end
   end
   return w.data
@@ -190,10 +188,10 @@ local function sequences_to_csv(aliases)
   return w.data
 end
 
-local function files_to_csv(filenames)
+local function files_to_csv(notes)
   local unique_filenames = {}
-  for _, v in pairs(filenames) do
-    unique_filenames[v.filename] = true
+  for _, note in pairs(notes) do
+    unique_filenames[note.filename] = true
   end
 
   local w = csv.Writer:new{"filename"}
@@ -237,13 +235,12 @@ local function citations_to_sql(citations)
   return ""
 end
 
-function SlipBox:write_data(basedir, filenames)
+function SlipBox:write_data(basedir)
   -- Create sql statements from slipbox contents.
-  -- filenames
-  -- : Table that maps note ids to filenames (see scan.parse_grep_output).
+  -- Must be called only after filenames have been grepped.
   local write = utils.write_text
-  write(basedir .. "/files.csv", files_to_csv(filenames))
-  write(basedir .. "/notes.csv", notes_to_csv(self.notes, filenames))
+  write(basedir .. "/files.csv", files_to_csv(self.notes))
+  write(basedir .. "/notes.csv", notes_to_csv(self.notes))
   write(basedir .. "/tags.csv", tags_to_csv(self.tags))
   write(basedir .. "/links.csv", links_to_csv(self.links))
   write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
