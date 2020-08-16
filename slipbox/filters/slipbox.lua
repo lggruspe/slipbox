@@ -11,6 +11,10 @@ function SlipBox:new()
     aliases = {},
     tags = {},
     citations = {},
+
+    invalid = {
+      has_empty_link_target = {},
+    },
   }, self)
 end
 

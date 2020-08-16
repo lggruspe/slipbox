@@ -99,16 +99,14 @@ function Modifier:new(div)
   return setmetatable({
     id = id,
     div = div,
+    has_empty_link_target = false,
   }, self)
 end
 
 function Modifier:Link(elem)
   -- Rewrite links with empty targets/text.
   if not elem.target or elem.target == "" then
-    log.warning {
-      "Empty link target.",
-      string.format("See note %d.", self.id),
-    }
+    self.has_empty_link_target = true
     return elem.content
   end
 
@@ -139,13 +137,18 @@ function Modifier:filter()
   }
 end
 
-local function modify()
+local function modify(slipbox)
   -- Create filter that modifies the document.
   return {
     Div = function(div)
       local mod = Modifier:new(div)
-      if not mod then return div end
-      return pandoc.walk_block(div, mod:filter())
+      if mod then
+        div = pandoc.walk_block(div, mod:filter())
+        if mod.has_empty_link_target then
+          slipbox.invalid.has_empty_link_target[mod.id] = true
+        end
+      end
+      return div
     end
   }
 end
@@ -165,9 +168,38 @@ local function serialize(slipbox)
   }
 end
 
+local function check(slipbox)
+  -- Create filter that prints warning messages for invalid notes.
+  return {
+    Pandoc = function()
+      local has_empty_link_target = {}
+      for id in pairs(slipbox.invalid.has_empty_link_target) do
+        table.insert(has_empty_link_target, id)
+      end
+      if #has_empty_link_target == 0 then
+        return
+      end
+
+      table.sort(has_empty_link_target)
+
+      local messages = {"The notes below contain links with an empty target."}
+      local template = "%d. %s."
+      for _, id in ipairs(has_empty_link_target) do
+        local title = (slipbox.notes[id] or {}).title
+        if title then
+          local message = template:format(id, title)
+          table.insert(messages, message)
+        end
+      end
+      log.warning(messages)
+    end
+  }
+end
+
 return {
   init = init,
   collect = collect,
   modify = modify,
   serialize = serialize,
+  check = check,
 }

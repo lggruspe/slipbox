@@ -9,7 +9,7 @@ local current_slipbox = slipbox.SlipBox:new()
 
 local function Div(elem)
   -- Process tags and links.
-  elem = filters.modify().Div(elem)
+  elem = filters.modify(current_slipbox).Div(elem)
 
   local notes = {}
   local filter = footnotes.make_footnote_filter(notes)
@@ -34,4 +34,5 @@ return {
   {Div = Div},
   images.make_image_filter(),
   filters.serialize(current_slipbox),
+  filters.check(current_slipbox),
 }
