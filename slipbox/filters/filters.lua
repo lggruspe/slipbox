@@ -38,8 +38,8 @@ local function init(slipbox)
   }
 end
 
-local Collect = {}
-function Collect:new(slipbox, div)
+local Collector = {}
+function Collector:new(slipbox, div)
   local id = tonumber(div.identifier)
   if not id then return end
 
@@ -51,26 +51,26 @@ function Collect:new(slipbox, div)
   }, self)
 end
 
-function Collect:Cite(elem)
+function Collector:Cite(elem)
   for _, citation in pairs(elem.citations) do
     self.slipbox:save_citation(self.id, citation.id)
   end
 end
 
-function Collect:Link(elem)
+function Collector:Link(elem)
   local link = utils.get_link(self.id, elem)
   if link then
     self.slipbox:save_link(link)
   end
 end
 
-function Collect:Str(elem)
+function Collector:Str(elem)
   if utils.hashtag_prefix(elem.text) then
     self.slipbox:save_tag(self.id, elem.text)
   end
 end
 
-function Collect:filter()
+function Collector:filter()
   return {
     Cite = function(elem) return self:Cite(elem) end,
     Link = function(elem) return self:Link(elem) end,
@@ -82,54 +82,72 @@ local function collect(slipbox)
   -- Create filter that saves citations, links and tags.
   return {
     Div = function(div)
-      local context = Collect:new(slipbox, div)
-      if context then
-        pandoc.walk_block(div, context:filter())
+      local col = Collector:new(slipbox, div)
+      if col then
+        pandoc.walk_block(div, col:filter())
       end
     end
   }
 end
 
+local Modifier = {}
+function Modifier:new(div)
+  local id = tonumber(div.identifier)
+  if not id then return end
+
+  self.__index = self
+  return setmetatable({
+    id = id,
+    div = div,
+  }, self)
+end
+
+function Modifier:Link(elem)
+  -- Rewrite links with empty targets/text.
+  if not elem.target or elem.target == "" then
+    log.warning {
+      "Empty link target.",
+      string.format("See note %d.", self.id),
+    }
+    return elem.content
+  end
+
+  local content = pandoc.utils.stringify(elem.content or "")
+  if content == "" then
+    return {
+      pandoc.Str " [",
+      pandoc.Link(
+        {pandoc.Str(elem.target)},
+        elem.target,
+        elem.title),
+      pandoc.Str "]",
+    }
+  end
+end
+
+function Modifier.Str(elem)
+  -- Turn #tags into links.
+  if utils.hashtag_prefix(elem.text) then
+    return pandoc.Link({elem}, '#'..elem.text)
+  end
+end
+
+function Modifier:filter()
+  return {
+    Link = function(elem) return self:Link(elem) end,
+    Str = function(elem) return self.Str(elem) end,
+  }
+end
+
 local function modify()
   -- Create filter that modifies the document.
-  local function Div(div)
-    local id = tonumber(div.identifier)
-    if not id then return div end
-
-    local filters = {
-      Link = function(elem)
-        -- Rewrite links with empty targets/text.
-        if not elem.target or elem.target == "" then
-          log.warning {
-            "Empty link target.",
-            string.format("See note %d.", id),
-          }
-          return elem.content
-        end
-
-        local content = pandoc.utils.stringify(elem.content or "")
-        if content == "" then
-          return {
-            pandoc.Str " [",
-            pandoc.Link(
-              {pandoc.Str(elem.target)},
-              elem.target,
-              elem.title),
-            pandoc.Str "]",
-          }
-        end
-      end,
-
-      Str = function(elem)
-        -- Turn #tags into links.
-        if utils.hashtag_prefix(elem.text) then
-          return pandoc.Link({elem}, '#'..elem.text)
-        end
-      end
-    }
-    return pandoc.walk_block(div, filters)
-  end
-  return {Div = Div}
+  return {
+    Div = function(div)
+      local mod = Modifier:new(div)
+      if not mod then return div end
+      return pandoc.walk_block(div, mod:filter())
+    end
+  }
 end
 
 local function serialize(slipbox)
