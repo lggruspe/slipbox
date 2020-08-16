@@ -311,6 +311,20 @@ def test_scan_with_empty_link_target(mock_db, tmp_path, capsys):
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys):
+    """Headers with non-integer IDs should be ignored."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("# 1e1 Invalid note ID\n\nTest.\n")
+    scan.scan(mock_db, [markdown], "", False)
+
+    result = list(mock_db.execute("SELECT * FROM Notes"))
+    assert not result
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 
