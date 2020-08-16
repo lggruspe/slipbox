@@ -25,8 +25,8 @@ def generate_active_htmls(conn: Connection) -> Iterable[str]:
 
 def generate_data(conn: Connection) -> Iterable[str]:
     """Generate slipbox data in javascript."""
-    for nid, title in conn.execute("SELECT id, title FROM Notes ORDER BY id"):
-        yield f"window.query.db.add(new Model.Note({nid}, {title!r}))"
+    for nid, title, filename in conn.execute("SELECT id, title, filename FROM Notes ORDER BY id"):
+        yield f"window.query.db.add(new Model.Note({nid}, {title!r}, {filename!r}))"
     sql = "SELECT src, dest, annotation FROM ValidLinks"
     for src, dest, annotation in conn.execute(sql):
         yield f"""window.query.db.add(new Model.Link(

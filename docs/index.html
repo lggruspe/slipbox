@@ -99,6 +99,7 @@
       data: {
         id: note.id,
         title: note.title,
+        filename: note.filename,
         label: note.id,
         color: 'white',
         bgColor: currentNote ? 'black' : 'gray'
@@ -205,22 +206,27 @@
   }
 
   function hoverHandlers (container) {
-    const h3 = document.createElement('h3');
-    const a = document.createElement('a');
-    h3.appendChild(a);
+    const header = document.createElement('header');
+    header.innerHTML = '<h3><a href=""></a></h3><p></p>';
+    const a = header.querySelector('a');
+    const p = header.querySelector('p');
+
     const infoDiv = noteInfoDiv();
-    infoDiv.appendChild(h3);
+    infoDiv.appendChild(header);
     container.appendChild(infoDiv);
 
     const show = event => {
       const title = event.target.data('title');
+      const filename = event.target.data('filename');
       a.textContent = title;
       a.href = '#' + event.target.data('id');
+      p.textContent = filename;
       event.target.data('label', title);
     };
     const hide = event => {
       event.target.data('label', event.target.data('id'));
       a.textContent = '';
+      p.textContent = '';
     };
     return [show, hide]
   }
@@ -315,6 +321,7 @@
     //   notes: [
     //     {
     //       title: <str>,
+    //       filename: <str>,
     //       aliases: [<str>],
     //       links: [{ src: <int>, dest: <int>, annotation: <str> }],
     //       backlinks: [<link>]
@@ -340,19 +347,23 @@
   }
 
   class Note {
-    constructor (id, title) {
+    constructor (id, title, filename) {
       check(Number.isInteger(id), 'invalid Note.id');
       check(typeof title === 'string', 'invalid Note.title');
+      check(typeof filename === 'string', 'invalid Note.filename');
       check(title, 'empty Note.title');
+      check(filename, 'missing Note.filename');
 
       this.id = id;
       this.title = title;
+      this.filename = filename;
     }
 
     addTo (db) {
       // Overwrite existing entry in notes.
       db.data.notes[this.id] = {
         title: this.title,
+        filename: this.filename,
         aliases: [],
         links: [],
         backlinks: []
@@ -360,7 +371,7 @@
     }
 
     equals (note) {
-      return this.id === note.id && this.title === note.title
+      return this.id === note.id && this.title === note.title && this.filename === note.filename
     }
   }
 
@@ -468,7 +479,7 @@
       const record = this.db.data.notes[id];
       if (!record) return null
 
-      const note = new Note(id, record.title);
+      const note = new Note(id, record.title, record.filename);
 
       note.links = () => this.links(note);
       note.backlinks = () => this.backlinks(note);
@@ -757,17 +768,17 @@
   </script>
   <script type="text/javascript">
   window.addEventListener('DOMContentLoaded', () => {
-  window.query.db.add(new Model.Note(0, 'slipbox'))
-  window.query.db.add(new Model.Note(1, 'Installation'))
-  window.query.db.add(new Model.Note(2, 'Basic usage'))
-  window.query.db.add(new Model.Note(3, 'How to organize notes'))
-  window.query.db.add(new Model.Note(4, 'How to find related notes'))
-  window.query.db.add(new Model.Note(5, 'Tags'))
-  window.query.db.add(new Model.Note(6, 'Direct links'))
-  window.query.db.add(new Model.Note(7, 'Sequence links'))
-  window.query.db.add(new Model.Note(8, 'Text search'))
-  window.query.db.add(new Model.Note(9, 'Citations'))
-  window.query.db.add(new Model.Note(10, 'Questions'))
+  window.query.db.add(new Model.Note(0, 'slipbox', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(1, 'Installation', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(2, 'Basic usage', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(3, 'How to organize notes', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(4, 'How to find related notes', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(5, 'Tags', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(6, 'Direct links', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(7, 'Sequence links', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(8, 'Text search', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(9, 'Citations', 'docs/tutorial.md'))
+  window.query.db.add(new Model.Note(10, 'Questions', 'docs/tutorial.md'))
   window.query.db.add(new Model.Link(
     window.query.note(3), window.query.note(7), ''))
   window.query.db.add(new Model.Link(

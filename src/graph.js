@@ -15,6 +15,7 @@ function noteElement (note, currentNote = false) {
     data: {
       id: note.id,
       title: note.title,
+      filename: note.filename,
       label: note.id,
       color: 'white',
       bgColor: currentNote ? 'black' : 'gray'
@@ -121,22 +122,27 @@ function noteInfoDiv () {
 }
 
 function hoverHandlers (container) {
-  const h3 = document.createElement('h3')
-  const a = document.createElement('a')
-  h3.appendChild(a)
+  const header = document.createElement('header')
+  header.innerHTML = '<h3><a href=""></a></h3><p></p>'
+  const a = header.querySelector('a')
+  const p = header.querySelector('p')
+
   const infoDiv = noteInfoDiv()
-  infoDiv.appendChild(h3)
+  infoDiv.appendChild(header)
   container.appendChild(infoDiv)
 
   const show = event => {
     const title = event.target.data('title')
+    const filename = event.target.data('filename')
     a.textContent = title
     a.href = '#' + event.target.data('id')
+    p.textContent = filename
     event.target.data('label', title)
   }
   const hide = event => {
     event.target.data('label', event.target.data('id'))
     a.textContent = ''
+    p.textContent = ''
   }
   return [show, hide]
 }

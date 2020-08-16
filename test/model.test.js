@@ -46,17 +46,20 @@ it('isNumber', function () {
 describe('Note', function () {
   describe('with invalid note attributes', function () {
     it('should raise DomainError', function () {
-      assert.throws(() => new Note('1', null), DomainError)
-      assert.throws(() => new Note(2, ''), DomainError)
-      assert.throws(() => new Note('3', 'Title'), DomainError)
+      assert.throws(() => new Note('1', null, 'test.md'), DomainError)
+      assert.throws(() => new Note(2, '', 'test.md'), DomainError)
+      assert.throws(() => new Note('3', 'Title', 'test.md'), DomainError)
+      assert.throws(() => new Note(3, 'Title'), DomainError)
+      assert.throws(() => new Note(3, 'Title', ''), DomainError)
     })
   })
 
   describe('with valid note attributes', function () {
     it('should not raise errors', function () {
-      const note = new Note(0, 'Title')
+      const note = new Note(0, 'Title', 'test.md')
       assert.strictEqual(note.id, 0)
       assert.strictEqual(note.title, 'Title')
+      assert.strictEqual(note.filename, 'test.md')
     })
   })
 })
@@ -98,14 +101,14 @@ describe('Database', function () {
   describe('add Note', function () {
     it('sanity check', function () {
       assert.strictEqual(db.data.notes.length, 0)
-      db.add(new Note(0, 'title'))
+      db.add(new Note(0, 'title', 'test.md'))
       assert.strictEqual(db.data.notes.length, 1)
     })
 
     describe('with duplicate ID', function () {
       it('should overwrite existing entry', function () {
-        db.add(new Note(0, 'oops'))
-        db.add(new Note(0, 'yay'))
+        db.add(new Note(0, 'oops', 'test.md'))
+        db.add(new Note(0, 'yay', 'test.md'))
         assert.strictEqual(db.data.notes.length, 1)
         const note = db.data.notes[0]
         assert(note)
@@ -117,9 +120,9 @@ describe('Database', function () {
   describe('add Alias', function () {
     describe('with malformed alias', function () {
       it('should raise DomainError', function () {
-        db.add(new Note(0, 'foo'))
-        db.add(new Note(1, 'bar'))
-        db.add(new Note(2, 'baz'))
+        db.add(new Note(0, 'foo', 'test.md'))
+        db.add(new Note(1, 'bar', 'test.md'))
+        db.add(new Note(2, 'baz', 'test.md'))
         db.add(new Alias(0, '2a'))
         db.add(new Alias(2, '123abc'))
 
@@ -149,8 +152,8 @@ describe('Database', function () {
   describe('add Sequence', function () {
     describe('with malformed aliases', function () {
       it('should raise DomainError', function () {
-        db.add(new Note(0, 'parent'))
-        db.add(new Note(1, 'child'))
+        db.add(new Note(0, 'parent', 'test.md'))
+        db.add(new Note(1, 'child', 'test.md'))
         db.add(new Alias(0, '2a'))
         db.add(new Alias(0, '2a1'))
         db.add(new Sequence('2a', '2a1'))
@@ -171,7 +174,7 @@ describe('Database', function () {
 
     describe('with null aliases', function () {
       it('should raise DomainError', function () {
-        db.add(new Note(0, 'note'))
+        db.add(new Note(0, 'note', 'test.md'))
         db.add(new Alias(0, '0'))
 
         assert.throws(
@@ -198,8 +201,8 @@ describe('Database', function () {
 
     describe('with non-sequential aliases', function () {
       it('should raise DomainError', function () {
-        db.add(new Note(0, 'parent'))
-        db.add(new Note(1, 'child'))
+        db.add(new Note(0, 'parent', 'test.md'))
+        db.add(new Note(1, 'child', 'test.md'))
         db.add(new Alias(0, '2a'))
         db.add(new Alias(1, '2a1'))
 
@@ -219,8 +222,8 @@ describe('Database', function () {
     })
 
     it('with valid aliases', function () {
-      db.add(new Note(0, 'parent'))
-      db.add(new Note(1, 'child'))
+      db.add(new Note(0, 'parent', 'test.md'))
+      db.add(new Note(1, 'child', 'test.md'))
       db.add(new Alias(0, '2b'))
       db.add(new Alias(1, '2b1'))
       db.add(new Sequence('2b', '2b1'))
@@ -239,8 +242,8 @@ describe('Database', function () {
   describe('add Link', function () {
     describe('with malformed attributes', function () {
       it('should raise DomainError', function () {
-        db.add(new Note(0, 'src'))
-        db.add(new Note(1, 'dest'))
+        db.add(new Note(0, 'src', 'test.md'))
+        db.add(new Note(1, 'dest', 'test.md'))
 
         assert.throws(
           () => db.add(new Link(0, 1, null)),
@@ -263,8 +266,8 @@ describe('Database', function () {
 
     describe('between nonexistent notes', function () {
       it('should be ignored', function () {
-        const n0 = db.add(new Note(0, 'note 0'))
-        const n1 = new Note(1, 'note 1')
+        const n0 = db.add(new Note(0, 'note 0', 'test.md'))
+        const n1 = new Note(1, 'note 1', 'test.md')
 
         db.add(new Link(n0, n1, 'oops'))
         db.add(new Link(n1, n0, 'oops'))
@@ -276,8 +279,8 @@ describe('Database', function () {
 
     describe('with annotation', function () {
       it('should generate backlink', function () {
-        const n0 = db.add(new Note(0, 'src'))
-        const n1 = db.add(new Note(1, 'dest'))
+        const n0 = db.add(new Note(0, 'src', 'test.md'))
+        const n1 = db.add(new Note(1, 'dest', 'test.md'))
         db.add(new Link(n0, n1, 'annotation'))
 
         assert(db.data.notes[0].links.length === 1)
@@ -297,8 +300,8 @@ describe('Database', function () {
 
     describe('without annotation', function () {
       it('should also generate backlink', function () {
-        const n0 = db.add(new Note(0, 'src'))
-        const n1 = db.add(new Note(1, 'dest'))
+        const n0 = db.add(new Note(0, 'src', 'test.md'))
+        const n1 = db.add(new Note(1, 'dest', 'test.md'))
         db.add(new Link(n0, n1, ''))
 
         assert(db.data.notes[0].links.length === 1)
@@ -319,9 +322,9 @@ describe('Database', function () {
 
 describe('Query', function () {
   const query = new Query(new Database())
-  const n0 = query.db.add(new Note(0, 'Note 0'))
-  const n1 = query.db.add(new Note(1, 'Note 1'))
-  const n2 = query.db.add(new Note(2, 'Note 2'))
+  const n0 = query.db.add(new Note(0, 'Note 0', 'test.md'))
+  const n1 = query.db.add(new Note(1, 'Note 1', 'test.md'))
+  const n2 = query.db.add(new Note(2, 'Note 2', 'test.md'))
   query.db.add(new Link(n0, n1, '0->1'))
   query.db.add(new Link(n1, n2, ''))
   query.db.add(new Alias(1, '0a'))
@@ -359,7 +362,7 @@ describe('Query', function () {
   describe('links', function () {
     describe('from non-existent note', function () {
       it("shouldn't yield anything", function () {
-        const result = Array.from(query.links(new Note(1000, 'title')))
+        const result = Array.from(query.links(new Note(1000, 'title', 'test.md')))
         assert(result.length === 0)
       })
     })
@@ -516,9 +519,9 @@ describe('Query.note', function () {
 
   beforeEach(function () {
     query = new Query(new Database())
-    const n0 = query.db.add(new Note(0, 'note 0'))
-    const n1 = query.db.add(new Note(1, 'note 1'))
-    const n2 = query.db.add(new Note(2, 'note 2'))
+    const n0 = query.db.add(new Note(0, 'note 0', 'test.md'))
+    const n1 = query.db.add(new Note(1, 'note 1', 'test.md'))
+    const n2 = query.db.add(new Note(2, 'note 2', 'test.md'))
 
     query.db.add(new Link(n0, n1, '0->1'))
     query.db.add(new Link(n1, n2, '1->2'))

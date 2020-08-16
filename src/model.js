@@ -48,6 +48,7 @@ class Database {
   //   notes: [
   //     {
   //       title: <str>,
+  //       filename: <str>,
   //       aliases: [<str>],
   //       links: [{ src: <int>, dest: <int>, annotation: <str> }],
   //       backlinks: [<link>]
@@ -73,19 +74,23 @@ function check (condition, message) {
 }
 
 class Note {
-  constructor (id, title) {
+  constructor (id, title, filename) {
     check(Number.isInteger(id), 'invalid Note.id')
     check(typeof title === 'string', 'invalid Note.title')
+    check(typeof filename === 'string', 'invalid Note.filename')
     check(title, 'empty Note.title')
+    check(filename, 'missing Note.filename')
 
     this.id = id
     this.title = title
+    this.filename = filename
   }
 
   addTo (db) {
     // Overwrite existing entry in notes.
     db.data.notes[this.id] = {
       title: this.title,
+      filename: this.filename,
       aliases: [],
       links: [],
       backlinks: []
@@ -93,7 +98,7 @@ class Note {
   }
 
   equals (note) {
-    return this.id === note.id && this.title === note.title
+    return this.id === note.id && this.title === note.title && this.filename === note.filename
   }
 }
 
@@ -201,7 +206,7 @@ class Query {
     const record = this.db.data.notes[id]
     if (!record) return null
 
-    const note = new Note(id, record.title)
+    const note = new Note(id, record.title, record.filename)
 
     note.links = () => this.links(note)
     note.backlinks = () => this.backlinks(note)
