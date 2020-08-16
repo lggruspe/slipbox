@@ -183,11 +183,13 @@ local function check(slipbox)
       table.sort(has_empty_link_target)
 
       local messages = {"The notes below contain links with an empty target."}
-      local template = "%d. %s."
+      local template = "%d. %s in '%s'."
       for _, id in ipairs(has_empty_link_target) do
-        local title = (slipbox.notes[id] or {}).title
-        if title then
-          local message = template:format(id, title)
+        local note = slipbox.notes[id] or {}
+        local title = note.title
+        local filename = note.filename
+        if title and filename then
+          local message = template:format(id, title, filename)
           table.insert(messages, message)
         end
       end
