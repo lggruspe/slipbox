@@ -325,6 +325,26 @@ def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys):
     assert not stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+def test_scan_with_non_text_titles(mock_db, tmp_path, capsys):
+    """Notes with non-text titles in the header must still be recognized."""
+    file_a = tmp_path/"a.md"
+    file_b = tmp_path/"b.md"
+    file_c = tmp_path/"c.md"
+    file_a.write_text("# 0 $1 + 1 = 2$\n\nTest.\n")
+    file_b.write_text("# 1 [Note 0](#0)\n\nTest.\n")
+    file_c.write_text("# 2 `print('Title')`\n\nTest.\n")
+
+    scan.scan(mock_db, [file_a, file_b, file_c], "", False)
+    result = list(mock_db.execute("SELECT id, title FROM Notes ORDER BY id"))
+
+    assert len(result) == 3
+    assert result == [(0, "1 + 1 = 2"), (1, "Note 0"), (2, "print('Title')")]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 

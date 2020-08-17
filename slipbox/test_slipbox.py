@@ -113,11 +113,9 @@ def test_purge(tmp_path, sbox):
         assert path.samefile(filename)
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_suggest_edits_backlinks(tmp_path, sbox):
+def test_suggest_edits_backlinks(files_abc, sbox):
     """slipbox.suggest_edits must include backlinks of outdated notes."""
-    file_a = tmp_path/"a.md"
-    file_b = tmp_path/"b.md"
-    file_c = tmp_path/"c.md"
+    file_a, file_b, file_c = files_abc
     file_a.write_text("# 0 A\n\nA.\n[B](#1 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
@@ -134,11 +132,9 @@ def test_suggest_edits_backlinks(tmp_path, sbox):
     assert suggestions == [(1, "B", file_b)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_suggest_edits_aliases(tmp_path, sbox):
+def test_suggest_edits_aliases(files_abc, sbox):
     """slipbox.suggest_edits must include alias owners of outdated notes."""
-    file_a = tmp_path/"a.md"
-    file_b = tmp_path/"b.md"
-    file_c = tmp_path/"c.md"
+    file_a, file_b, file_c = files_abc
     file_a.write_text("# 0 A\n\nA.\n[B](#1 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
@@ -155,11 +151,9 @@ def test_suggest_edits_aliases(tmp_path, sbox):
     assert suggestions == [(0, "A", file_a)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_suggest_edits_exclude_deleted_notes(tmp_path, sbox):
+def test_suggest_edits_exclude_deleted_notes(files_abc, sbox):
     """slipbox.suggest_edits must exclude deleted notes."""
-    file_a = tmp_path/"a.md"
-    file_b = tmp_path/"b.md"
-    file_c = tmp_path/"c.md"
+    file_a, file_b, file_c = files_abc
     file_a.write_text("# 0 A\n\nA.\n[B](#2 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")
@@ -178,11 +172,9 @@ def test_suggest_edits_exclude_deleted_notes(tmp_path, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_run(tmp_path, capsys, sbox):
+def test_run(files_abc, capsys, sbox):
     """There must be no suggestions when running for the first time."""
-    file_a = tmp_path/"a.md"
-    file_b = tmp_path/"b.md"
-    file_c = tmp_path/"c.md"
+    file_a, file_b, file_c = files_abc
     file_a.write_text("# 0 A\n\nA.\n[B](#2 '/a').\n")
     file_b.write_text("# 1 B\n\nB.\n[C](#2).\n")
     file_c.write_text("# 2 C\n\nC.\n")

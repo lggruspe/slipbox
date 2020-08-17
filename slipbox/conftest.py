@@ -1,8 +1,9 @@
 # type: ignore
 """Functions for mocking the database."""
 
+from pathlib import Path
 import sqlite3
-from typing import Iterable
+from typing import Iterable, List
 
 import pytest
 
@@ -27,3 +28,11 @@ def sbox(tmp_path) -> Slipbox:
     config = Config(database=tmp_path/"slipbox.db", paths=(tmp_path,))
     with Slipbox(config) as slipbox:
         yield slipbox
+
+@pytest.fixture
+def files_abc(tmp_path) -> List[Path]:
+    """Create files in tmp_path: a.md, b.md, c.md."""
+    files = [tmp_path/"a.md", tmp_path/"b.md", tmp_path/"c.md"]
+    for path in files:
+        path.touch()
+    yield files
