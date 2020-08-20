@@ -12,6 +12,13 @@ filter.Header = function (elem) {
   assert(content != null)
   const { id, title } = parseHeaderText(content)
   console.error(id, title)
+  if (id != null && title != null) {
+    // TODO save
+    elem.identifier = String(id)
+    elem.attributes.title = title
+    elem.attributes.level = String(elem.level)
+    return elem
+  }
 }
 
 interact(toJSONFilter(filter))
