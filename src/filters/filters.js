@@ -39,9 +39,17 @@ function init (slipbox) {
   return { Header, Pandoc }
 }
 
+function collect (slipbox) {
+  function Pandoc (doc) {
+    console.error('Yay!')
+  }
+  return { Pandoc }
+}
+
 function main () {
   const slipbox = new Slipbox()
-  interact(toJSONFilter(init(slipbox)))
+  const filters = [init(slipbox), collect(slipbox)].map(toJSONFilter)
+  interact(...filters)
 }
 
 main()
