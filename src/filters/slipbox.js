@@ -1,3 +1,4 @@
+import { strict as assert } from 'assert'
 import fs from 'fs'
 
 import Database from 'better-sqlite3'
@@ -10,8 +11,12 @@ class Slipbox {
 
     const db = this.db
     this.insert = {
+      cite: db.prepare('INSERT INTO Citations (note, reference) VALUES (?, ?)'),
       file: db.prepare('INSERT OR IGNORE INTO Files (filename) VALUES (?)'),
-      note: db.prepare('INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)')
+      link: db.prepare('INSERT INTO Links (src, dest, annotation) VALUES (?, ?, ?)'),
+      note: db.prepare('INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)'),
+      bib: db.prepare('INSERT INTO Bibliography (key, text) VALUES (?, ?)'),
+      tag: db.prepare('INSERT INTO Tags (id, tag) VALUES (?, ?)')
     }
   }
 
@@ -30,16 +35,33 @@ class Slipbox {
     insertMany(notes)
   }
 
-  saveCitation (id, cite) {
+  saveCitations (cites) {
 
   }
 
-  saveLink (link) {
+  saveLinks (links) {
+    // TODO handle error if note has duplicate links to a note
+    const insertMany = this.db.transaction((links) => {
+      for (const { tag, src, dest, description } of links) {
+        if (tag === 'direct') {
+          this.insert.link.run([src, dest, description])
+        } else if (tag === 'sequence') {
 
+        } else {
+          assert(false)
+        }
+      }
+    })
+    insertMany(links)
   }
 
-  saveTag (id, tag) {
-
+  saveTags (tags) {
+    const insertMany = this.db.transaction((tags) => {
+      for (const [id, tag] of tags) {
+        this.insert.tag.run([id, tag])
+      }
+    })
+    insertMany(tags)
   }
 }
 

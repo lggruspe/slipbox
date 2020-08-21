@@ -16,10 +16,10 @@ function init (slipbox) {
     assert(content != null)
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
-      notes.push([id, title, '<temp>'])
       elem.identifier = String(id)
       elem.attributes.title = title
       elem.attributes.level = String(elem.level)
+      notes.push([elem.identifier, title, '<temp>'])
       return elem
     }
   }
@@ -39,6 +39,10 @@ function init (slipbox) {
 }
 
 function collect (slipbox) {
+  const cites = []
+  const links = []
+  const tags = []
+
   function Div (div) {
     if (!div.classes.includes('level1')) return
     if (!Number.isInteger(Number(div.identifier))) return
@@ -46,30 +50,35 @@ function collect (slipbox) {
 
     function Cite (elem) {
       for (const citation of Object.values(elem.citations)) {
-        console.error(div.identifier, citation.id)
-        slipbox.saveCitation(div.identifier, citation.id)
+        cites.push([div.identifier, citation.id])
       }
     }
 
     function Link (elem) {
       const link = parseLink(div.identifier, elem)
       if (link) {
-        console.error(link)
-        slipbox.saveLink(link)
+        links.push(link)
       }
     }
 
     function Str (elem) {
       if (hashtagPrefix(elem.text)) {
-        console.error(div.identifier, elem.text)
-        slipbox.saveTag(div.identifier, elem.text)
+        tags.push([div.identifier, elem.text])
       }
     }
+
     const filter = { Cite, Link, Str }
     const children = div.content.map(block => block.json)
     return walkAll(children, toJSONFilter(filter), true)
   }
-  return { Div }
+
+  function Pandoc (doc) {
+    slipbox.saveCitations(cites)
+    slipbox.saveLinks(links)
+    slipbox.saveTags(tags)
+  }
+
+  return { Div, Pandoc }
 }
 
 function main () {

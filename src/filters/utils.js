@@ -26,15 +26,20 @@ const TARGET_PATTERN = /^#\d+$/
 const TARGET_REGEX = new RegExp(TARGET_PATTERN)
 const SEQUENCE_PATTERN = /^[a-zA-Z][a-zA-Z0-9]*$/
 const SEQUENCE_REGEX = new RegExp(SEQUENCE_PATTERN)
+const NUMBER_PATTERN = /^\d+$/
+const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
 function parseLink (src, elem) {
   assert(typeof src === 'string')
   assert(elem instanceof Link)
 
-  if (TARGET_REGEX.exec(elem.target)) return
+  if (!NUMBER_REGEX.exec(src)) return
+  if (!TARGET_REGEX.exec(elem.target)) return
   const tag = SEQUENCE_REGEX.exec(elem.title) ? 'sequence' : 'direct'
-  const description = tag === 'sequence' ? elem.title : src + elem.title.slice(1)
+  const description = tag === 'direct' ? elem.title : src + elem.title.slice(1)
   const dest = elem.target.slice(1)
-  return { tag, src, dest, description }
+  if (NUMBER_REGEX.exec(dest)) {
+    return { tag, src, dest, description }
+  }
 }
 
 export {
