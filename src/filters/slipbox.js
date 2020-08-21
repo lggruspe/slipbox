@@ -1,13 +1,10 @@
 import { strict as assert } from 'assert'
-import fs from 'fs'
 
 import Database from 'better-sqlite3'
 
 class Slipbox {
   constructor () {
-    this.db = new Database('test.db')
-    // TODO assume db has been initialized using slipbox init
-    this.initializeSchema()
+    this.db = new Database('test.db', { fileMustExist: true })
 
     const db = this.db
     this.insert = {
@@ -15,14 +12,9 @@ class Slipbox {
       file: db.prepare('INSERT OR IGNORE INTO Files (filename) VALUES (?)'),
       link: db.prepare('INSERT INTO Links (src, dest, annotation) VALUES (?, ?, ?)'),
       note: db.prepare('INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)'),
-      bib: db.prepare('INSERT INTO Bibliography (key, text) VALUES (?, ?)'),
+      bib: db.prepare('INSERT OR IGNORE INTO Bibliography (key, text) VALUES (?, ?)'),
       tag: db.prepare('INSERT INTO Tags (id, tag) VALUES (?, ?)')
     }
-  }
-
-  initializeSchema () {
-    const script = fs.readFileSync('test.sql', { encoding: 'utf-8' })
-    this.db.exec(script)
   }
 
   saveNotes (notes) {
@@ -36,7 +28,15 @@ class Slipbox {
   }
 
   saveCitations (cites) {
-
+    const insertMany = this.db.transaction((cites) => {
+      for (const [id, _cites] of Object.entries(cites)) {
+        for (const cite of _cites) {
+          this.insert.bib.run([cite, '<temp>'])
+          this.insert.cite.run([id, cite])
+        }
+      }
+    })
+    insertMany(cites)
   }
 
   saveLinks (links) {

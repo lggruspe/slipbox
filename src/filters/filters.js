@@ -39,7 +39,7 @@ function init (slipbox) {
 }
 
 function collect (slipbox) {
-  const cites = []
+  const cites = {}
   const links = []
   const tags = []
 
@@ -50,7 +50,9 @@ function collect (slipbox) {
 
     function Cite (elem) {
       for (const citation of Object.values(elem.citations)) {
-        cites.push([div.identifier, citation.id])
+        const rec = cites[div.identifier] || new Set()
+        rec.add(citation.id)
+        cites[div.identifier] = rec
       }
     }
 
