@@ -1,10 +1,10 @@
 import { strict as assert } from 'assert'
 
-import { interact, toJSONFilter } from '../../../pandoc-tree/src/index.js'
+import { interact, toJSONFilter, walk } from '../../../pandoc-tree/src/index.js'
 import { Attr } from '../../../pandoc-tree/src/types.js'
 import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
 
-import { parseHeaderText } from './utils.js'
+import { parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
 import { Slipbox } from './slipbox.js'
 
 function init (slipbox) {
@@ -31,7 +31,6 @@ function init (slipbox) {
       return new Attr(header.identifier, classes, attrs)
     }
     doc.blocks = makeTopLevelSections(doc.blocks, f)
-    console.error(notes)
     slipbox.saveNotes(notes)
     return doc
   }
@@ -40,10 +39,42 @@ function init (slipbox) {
 }
 
 function collect (slipbox) {
-  function Pandoc (doc) {
-    console.error('Yay!')
+  function Div (div) {
+    assert(false)
+    if (!div.classes.includes('level1')) return
+    if (!Number.isInteger(Number(div.identifier))) return
+    // NOTE doesn't exclude numbers in scientific notation
+
+    function Cite (elem) {
+      assert(false)
+      for (const citation of Object.values(elem.citations)) {
+        console.error(div.identifier, citation)
+        slipbox.saveCitation(div.identifier, citation.id)
+      }
+    }
+
+    function Link (elem) {
+      assert(false)
+      const link = parseLink(div.identifier, elem)
+      if (link) {
+        console.error(link)
+        slipbox.saveLink(link)
+      }
+    }
+
+    function Str (elem) {
+      assert(false)
+      if (hashtagPrefix(elem.text)) {
+        console.error(div.identifier, elem.text)
+        slipbox.saveTag(div.identifier, elem.text)
+      }
+    }
+    const filter = { Cite, Link, Str }
+    const children = div.content.map(block => block.json)
+    console.error(children)
+    return walk(children, toJSONFilter(filter))
   }
-  return { Pandoc }
+  return { Div }
 }
 
 function main () {

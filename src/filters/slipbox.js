@@ -29,6 +29,18 @@ class Slipbox {
     })
     insertMany(notes)
   }
+
+  saveCitation (id, cite) {
+
+  }
+
+  saveLink (link) {
+
+  }
+
+  saveTag (id, tag) {
+
+  }
 }
 
 export { Slipbox }
