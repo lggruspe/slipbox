@@ -34,5 +34,8 @@
     "fuse.js": "^6.4.1",
     "mocha": "^8.1.1",
     "rollup": "^2.26.2"
+  },
+  "dependencies": {
+    "better-sqlite3": "^7.1.0"
   }
 }
