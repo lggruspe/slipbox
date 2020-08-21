@@ -5,7 +5,7 @@ import Database from 'better-sqlite3'
 class Slipbox {
   constructor () {
     this.db = new Database('test.db', { verbose: console.error })
-    // TODO assume schema has been initialized using slipbox init
+    // TODO assume db has been initialized using slipbox init
     this.initializeSchema()
 
     const db = this.db
@@ -20,9 +20,14 @@ class Slipbox {
     this.db.exec(script)
   }
 
-  saveNote (id, title, filename) {
-    this.insert.file.run(filename)
-    this.insert.note.run([id, title, filename])
+  saveNotes (notes) {
+    const insertMany = this.db.transaction((notes) => {
+      for (const note of notes) {
+        this.insert.file.run(note[2])
+        this.insert.note.run(note)
+      }
+    })
+    insertMany(notes)
   }
 }
 
