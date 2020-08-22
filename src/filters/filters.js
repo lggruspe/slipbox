@@ -18,19 +18,16 @@ function init (slipbox) {
     if (id != null && title != null) {
       elem.identifier = String(id)
       elem.attributes.title = title
-      elem.attributes.level = String(elem.level)
       notes.push([elem.identifier, title, '<temp>'])
       return elem
     }
   }
 
   function Pandoc (doc) {
-    function f (header) {
-      const classes = ['level1']
-      const attrs = { level: String(header.level) }
-      return new types.Attr(header.identifier, classes, attrs)
-    }
-    doc.blocks = makeTopLevelSections(doc.blocks, f)
+    doc.blocks = makeTopLevelSections(
+      doc.blocks,
+      header => new types.Attr(header.identifier, ['level1'])
+    )
     slipbox.saveNotes(notes)
     return doc
   }
@@ -124,12 +121,16 @@ function modify (slipbox) {
     const filter = { Link, Str }
     const children = div.content.map(block => block.json)
     walkAll(children, toJSONFilter(filter))
+    div.content = children.map(types.fromJSON)
 
     if (hasEmptyLinkTarget) {
       withEmptyLinkTargets.add(div.identifier)
     }
 
-    div.content = children.map(types.fromJSON)
+    // hide sections
+    if (div.classes.includes('level1')) {
+      div.attributes.style = 'display:none'
+    }
     return div
   }
 
