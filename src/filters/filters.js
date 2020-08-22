@@ -8,7 +8,7 @@ import { parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
 import { Slipbox } from './slipbox.js'
 
 function init (slipbox) {
-  const notes = []
+  const notes = {}
 
   function Header (elem) {
     if (elem.level !== 1) return
@@ -18,7 +18,7 @@ function init (slipbox) {
     if (id != null && title != null) {
       elem.identifier = String(id)
       elem.attributes.title = title
-      notes.push([elem.identifier, title, '<temp>'])
+      notes[elem.identifier] = { title, filename: '<temp>' }
       return elem
     }
   }

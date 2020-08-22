@@ -21,9 +21,10 @@ class Slipbox {
 
   saveNotes (notes) {
     const insertMany = this.db.transaction((notes) => {
-      for (const note of notes) {
-        this.insert.file.run(note[2])
-        this.insert.note.run(note)
+      for (const note of Object.entries(notes)) {
+        const [id, { title, filename }] = note
+        this.insert.file.run(filename)
+        this.insert.note.run([id, title, filename])
       }
     })
     insertMany(notes)
