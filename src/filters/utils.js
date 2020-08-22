@@ -18,7 +18,6 @@ function parseHeaderText (text) {
     HEADER_REGEX.lastIndex = 0
     return { id: Number(result[1]), title: result[2] }
   }
-  // HEADER_REGEX.lastIndex = 0
   return { id: null, title: null }
 }
 

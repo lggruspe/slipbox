@@ -118,13 +118,26 @@ function modify (slipbox) {
       }
     }
 
-    const filter = { Link, Str }
+    const footnotes = []
+    function Note (elem) {
+      footnotes.push(new types.Div(elem.content))
+      return new types.Superscript([new types.Str(String(footnotes.length))])
+    }
+
+    const filter = { Link, Note, Str }
     const children = div.content.map(block => block.json)
     walkAll(children, toJSONFilter(filter))
     div.content = children.map(types.fromJSON)
 
     if (hasEmptyLinkTarget) {
       withEmptyLinkTargets.add(div.identifier)
+    }
+
+    // insert footnotes into document
+    if (footnotes.length > 0) {
+      const ol = new types.OrderedList(footnotes.map(fn => [fn]))
+      div.content.push(new types.HorizontalRule())
+      div.content.push(ol)
     }
 
     // hide sections
