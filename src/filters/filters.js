@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 
 import { interact, toJSONFilter, walkAll } from '../../../pandoc-tree/src/index.js'
-import { Attr } from '../../../pandoc-tree/src/types.js'
+import { fromJSON, Attr, Div, Link, Str } from '../../../pandoc-tree/src/types.js'
 import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
 
 import { parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
@@ -71,7 +71,7 @@ function collect (slipbox) {
 
     const filter = { Cite, Link, Str }
     const children = div.content.map(block => block.json)
-    return walkAll(children, toJSONFilter(filter), true)
+    return walkAll(children, toJSONFilter(filter))
   }
 
   function Pandoc (doc) {
@@ -83,9 +83,69 @@ function collect (slipbox) {
   return { Div, Pandoc }
 }
 
+function modify (slipbox) {
+
+  const withEmptyLinkTargets = new Set()
+
+  function Div (div) {
+    if (!div.classes.includes('level1')) return
+    if (!Number.isInteger(Number(div.identifier))) return
+    // NOTE doesn't exclude numbers in scientific notation
+
+    let hasEmptyLinkTarget = false
+
+    function Link (elem) {
+      if (!elem.target) {
+        hasEmptyLinkTarget = true
+        return elem.content
+      }
+
+      const content = stringify(elem.content)
+      if (!content) {
+        return [
+          new Str(' ['),
+          new Link(
+            [new Str(elem.target)],
+            elem.target,
+            elem.title
+          ),
+          new Str(']')
+        ]
+      }
+    }
+
+    function Str (elem) {
+      if (hashtagPrefix(elem.text)) {
+        return new Link([elem], '#' + elem.text)
+      }
+    }
+
+    const filter = { Link, Str }
+    const children = div.content.map(block => block.json)
+    walkAll(children, toJSONFilter(filter))
+
+    if (hasEmptyLinkTarget) {
+      withEmptyLinkTargets.add(div.identifier)
+    }
+
+    div.content = children.map(fromJSON)
+    return div
+  }
+
+  function Pandoc (doc) {
+    // console.error('warning:', withEmptyLinkTargets)
+  }
+
+  return { Div, Pandoc }
+}
+
 function main () {
   const slipbox = new Slipbox()
-  const filters = [init(slipbox), collect(slipbox)].map(toJSONFilter)
+  const filters = [
+    init(slipbox),
+    collect(slipbox),
+    modify(slipbox)
+  ].map(toJSONFilter)
   interact(...filters)
 }
 
