@@ -71,7 +71,9 @@ function collect (slipbox) {
 
     const filter = { Cite, Link, Str }
     const children = div.content.map(block => block.json)
-    return walkAll(children, toJSONFilter(filter))
+    walkAll(children, toJSONFilter(filter))
+    div.content = children.map(types.fromJSON)
+    return div
   }
 
   function Pandoc (doc) {
