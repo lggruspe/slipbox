@@ -8,11 +8,13 @@ class Slipbox {
 
     const db = this.db
     this.insert = {
+      alias: db.prepare('INSERT INTO Aliases (id, owner, alias) VALUES (?, ?, ?)'),
+      bib: db.prepare('INSERT OR IGNORE INTO Bibliography (key, text) VALUES (?, ?)'),
       cite: db.prepare('INSERT INTO Citations (note, reference) VALUES (?, ?)'),
       file: db.prepare('INSERT OR IGNORE INTO Files (filename) VALUES (?)'),
       link: db.prepare('INSERT INTO Links (src, dest, annotation) VALUES (?, ?, ?)'),
       note: db.prepare('INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)'),
-      bib: db.prepare('INSERT OR IGNORE INTO Bibliography (key, text) VALUES (?, ?)'),
+      sequence: db.prepare('INSERT INTO Sequences (prev, next) VALUES (?, ?)'),
       tag: db.prepare('INSERT INTO Tags (id, tag) VALUES (?, ?)')
     }
   }
@@ -46,7 +48,7 @@ class Slipbox {
         if (tag === 'direct') {
           this.insert.link.run([src, dest, description])
         } else if (tag === 'sequence') {
-
+          this.insert.alias.run([dest, src, description])
         } else {
           assert(false)
         }
