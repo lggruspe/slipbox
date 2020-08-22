@@ -24,7 +24,7 @@ function parseHeaderText (text) {
 
 const TARGET_PATTERN = /^#\d+$/
 const TARGET_REGEX = new RegExp(TARGET_PATTERN)
-const SEQUENCE_PATTERN = /^[a-zA-Z][a-zA-Z0-9]*$/
+const SEQUENCE_PATTERN = /^\/[a-zA-Z][a-zA-Z0-9]*$/
 const SEQUENCE_REGEX = new RegExp(SEQUENCE_PATTERN)
 const NUMBER_PATTERN = /^\d+$/
 const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
