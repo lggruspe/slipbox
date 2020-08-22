@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 
 import { interact, toJSONFilter, walkAll } from '../../../pandoc-tree/src/index.js'
-import { fromJSON, Attr, Div, Link, Str } from '../../../pandoc-tree/src/types.js'
+import * as types from '../../../pandoc-tree/src/types.js'
 import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
 
 import { parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
@@ -28,7 +28,7 @@ function init (slipbox) {
     function f (header) {
       const classes = ['level1']
       const attrs = { level: String(header.level) }
-      return new Attr(header.identifier, classes, attrs)
+      return new types.Attr(header.identifier, classes, attrs)
     }
     doc.blocks = makeTopLevelSections(doc.blocks, f)
     slipbox.saveNotes(notes)
@@ -84,7 +84,6 @@ function collect (slipbox) {
 }
 
 function modify (slipbox) {
-
   const withEmptyLinkTargets = new Set()
 
   function Div (div) {
@@ -103,20 +102,20 @@ function modify (slipbox) {
       const content = stringify(elem.content)
       if (!content) {
         return [
-          new Str(' ['),
-          new Link(
-            [new Str(elem.target)],
+          new types.Str(' ['),
+          new types.Link(
+            [new types.Str(elem.target)],
             elem.target,
             elem.title
           ),
-          new Str(']')
+          new types.Str(']')
         ]
       }
     }
 
     function Str (elem) {
       if (hashtagPrefix(elem.text)) {
-        return new Link([elem], '#' + elem.text)
+        return new types.Link([elem], '#' + elem.text)
       }
     }
 
@@ -128,7 +127,7 @@ function modify (slipbox) {
       withEmptyLinkTargets.add(div.identifier)
     }
 
-    div.content = children.map(fromJSON)
+    div.content = children.map(types.fromJSON)
     return div
   }
 
