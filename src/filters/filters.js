@@ -101,7 +101,7 @@ function modify (slipbox) {
         return elem.content
       }
 
-      const content = stringify(elem.content)
+      const content = stringify(elem.json)
       if (!content) {
         return [
           new types.Str(' ['),
