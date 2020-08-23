@@ -99,6 +99,7 @@ function Modifier:new(div)
   return setmetatable({
     id = id,
     div = div,
+    footnotes = {},
     has_empty_link_target = false,
   }, self)
 end
@@ -123,6 +124,13 @@ function Modifier:Link(elem)
   end
 end
 
+function Modifier:Note(elem)
+  -- Collect footnotes.
+  table.insert(self.footnotes, pandoc.Div(elem.content))
+  local count = #self.footnotes
+  return pandoc.Superscript(pandoc.Str(tostring(count)))
+end
+
 function Modifier.Str(elem)
   -- Turn #tags into links.
   if utils.hashtag_prefix(elem.text) then
@@ -133,6 +141,7 @@ end
 function Modifier:filter()
   return {
     Link = function(elem) return self:Link(elem) end,
+    Note = function(elem) return self:Note(elem) end,
     Str = function(elem) return self.Str(elem) end,
   }
 end
@@ -147,6 +156,22 @@ local function modify(slipbox)
         if mod.has_empty_link_target then
           slipbox.invalid.has_empty_link_target[mod.id] = true
         end
+        if next(mod.footnotes) then
+          local ol = pandoc.OrderedList{}
+          for _, block in ipairs(mod.footnotes) do
+            table.insert(ol.content, {block})
+          end
+          table.insert(div.content, pandoc.HorizontalRule())
+          table.insert(div.content, ol)
+        end
+
+        if div.attributes.level then
+          if div.attributes.level == "1" then
+            div.attributes.style = "display:none"
+          end
+          div.attributes.level = nil
+        end
+
       end
       return div
     end
