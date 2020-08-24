@@ -7,6 +7,7 @@ local slipbox = require "filters/slipbox"
 local current_slipbox = slipbox.SlipBox:new()
 
 return {
+  filters.preprocess(),
   filters.init(current_slipbox),
   filters.collect(current_slipbox),
   filters.modify(current_slipbox),

@@ -6,6 +6,27 @@ pandoc.utils = require "pandoc.utils"
 local log = require "filters/log"
 local utils = require "filters/utils"
 
+local function preprocess()
+  -- Create filter that preprocesses headers by setting the filename
+  -- attribute of Headers to the name of the file.
+
+  local function Pandoc(doc)
+    local filename
+    for _, elem in ipairs(doc.blocks) do
+      if elem.tag == "RawBlock" then
+        filename = utils.parse_filename(elem)
+      elseif elem.tag == "Header" and elem.level == 1 and filename then
+        elem.attributes["filename"] = filename
+      end
+    end
+    return doc
+  end
+
+  return {
+    Pandoc = Pandoc,
+  }
+end
+
 local function init(slipbox)
   -- Create filter that preprocesses headers by splitting the document
   -- into sections.
@@ -224,6 +245,7 @@ local function check(slipbox)
 end
 
 return {
+  preprocess = preprocess,
   init = init,
   collect = collect,
   modify = modify,

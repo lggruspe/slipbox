@@ -81,11 +81,19 @@ local function write_text(filename, text)
   return true
 end
 
+local function parse_filename(elem)
+  assert(elem.tag == "RawBlock")
+  local pattern = '^<!%-%-#slipbox%-metadata\nfilename: (.-)\n%-%->$'
+  local filename, count = elem.text:gsub(pattern, '%1')
+  if count > 0 then return filename end
+end
+
 return {
   is_valid_alias = is_valid_alias,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
   parse_id_and_title = parse_id_and_title,
+  parse_filename = parse_filename,
   alias_parent = alias_parent,
   write_text = write_text,
   append_text = append_text,

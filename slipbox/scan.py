@@ -124,8 +124,7 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
     """Process inputs and store results in database."""
     convert_to_data_url = "1" if self_contained else ""
     for batch in group_by_file_extension(inputs):
-        files = list(batch)
-        scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
+        scan_input_list = " ".join(shlex.quote(str(p)) for p in batch)
 
         with utils.temporary_directory() as tempdir:
             html = tempdir/"temp.html"
