@@ -89,9 +89,7 @@ class Slipbox:
 
     def process(self, paths: Iterable[Path]) -> None:
         """Process input files."""
-        options = self.config.content_options
-        self_contained = self.config.convert_to_data_url
-        scan.scan(self.conn, list(set(paths)), options, self_contained)
+        scan.scan(self.conn, list(set(paths)), self.config)
 
     def compile(self) -> None:
         """Compile processed HTML into final output."""

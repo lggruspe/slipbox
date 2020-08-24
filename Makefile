@@ -17,7 +17,7 @@ check: bundle
 	npx eslint test --global describe --global it --global beforeEach --rule 'no-unused-vars: 0'
 	npm run lint
 	npm test
-	pylint slipbox --fail-under=10 -d R0903
+	pylint slipbox --fail-under=10 -d R0903 -d W0621
 	mypy -p slipbox
 	cd slipbox; pytest --cov=. --cov-fail-under=90 --cov-report=term-missing --cov-branch
 	@echo "Yay!"

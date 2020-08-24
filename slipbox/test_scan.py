@@ -129,20 +129,20 @@ def test_build_command_when_input_file_does_not_exist(tmp_path):
     scan.build_command(input_file, "output.html", "")
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan(mock_db, tmp_path):
+def test_scan(mock_db, tmp_path, mconfig):
     """Smoke test for scan."""
     input_file = tmp_path/"input.md"
     input_file.write_text("# 1 Test note\n\nHello, world!\n")
     assert not list(mock_db.execute("SELECT * FROM Html"))
-    scan.scan(mock_db, [input_file], "", False)
+    scan.scan(mock_db, [input_file], mconfig)
     assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_empty_file(mock_db, tmp_path):
+def test_scan_empty_file(mock_db, tmp_path, mconfig):
     """Scanned files that are empty shouldn't have entries in the database."""
     empty = tmp_path/"empty.md"
     empty.touch()
-    scan.scan(mock_db, [empty], "", False)
+    scan.scan(mock_db, [empty], mconfig)
     assert not list(mock_db.execute("SELECT * FROM Files"))
     assert not list(mock_db.execute("SELECT * FROM Notes"))
     assert not list(mock_db.execute("SELECT * FROM Tags"))
@@ -155,33 +155,33 @@ def test_scan_empty_file(mock_db, tmp_path):
     assert not list(mock_db.execute("SELECT * FROM Citations"))
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_filenames(mock_db, tmp_path):
+def test_scan_filenames(mock_db, tmp_path, mconfig):
     """Filenames must be scanned corretly."""
     markdown = tmp_path/"foo.md"
     skip = tmp_path/"bar.md"
     markdown.write_text("# 0 Note\n\nBody.\n")
     skip.write_text("# 0 Note\n\nBody.\n")
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
 
     result = list(mock_db.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
     assert markdown.samefile(result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_filenames0(mock_db, tmp_path):
+def test_scan_filenames0(mock_db, tmp_path, mconfig):
     """Filenames must be scanned correctly."""
     markdown = tmp_path/"bar.md"
     skip = tmp_path/"foo.md"
     markdown.write_text("# 0 Note\n\nBody.\n")
     skip.write_text("# 0 Note\n\nBody.\n")
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
 
     result = list(mock_db.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
     assert markdown.samefile(result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_non_level1_headers(mock_db, tmp_path):
+def test_scan_non_level1_headers(mock_db, tmp_path, mconfig):
     """Only level 1 headers must be considered as note headers."""
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Valid note header
@@ -192,13 +192,13 @@ Foo.
 
 Bar.
 """)
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
     result = [nid for nid, in mock_db.execute("SELECT id FROM Notes")]
     assert len(result) == 1
     assert result == [0]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
+def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys, mconfig):
     """scan must show a warning if a new note shares ID of an existing note.
 
     The warning message must show the filenames of both notes.
@@ -206,7 +206,7 @@ def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
     file_a = tmp_path/"a.md"
     file_a.write_text("# 0 Existing note\n\nTest.\n")
 
-    scan.scan(mock_db, [file_a], "", False)
+    scan.scan(mock_db, [file_a], mconfig)
     result = list(mock_db.execute("SELECT id, title FROM Notes"))
     assert len(result) == 1
     assert result == [(0, "Existing note")]
@@ -218,7 +218,7 @@ def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
     file_b = tmp_path/"b.md"
     file_b.write_text("# 0 Duplicate note\n\nTest.\n")
 
-    scan.scan(mock_db, [file_b], "", False)
+    scan.scan(mock_db, [file_b], mconfig)
     result = list(mock_db.execute("SELECT id, title FROM Notes"))
     assert len(result) == 1
     assert result == [(0, "Existing note")]
@@ -230,7 +230,7 @@ def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
     assert str(file_b) in stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_duplicate_ids_in_a_file(mock_db, tmp_path, capsys):
+def test_scan_with_duplicate_ids_in_a_file(mock_db, tmp_path, capsys, mconfig):
     """If there are duplicate IDs in a file, only the first one must be saved.
 
     scan must show a warning when this happens.
@@ -244,7 +244,7 @@ Foo.
 
 Bar.
 """)
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
     result = list(mock_db.execute("SELECT id, title FROM Notes"))
     assert len(result) == 1
     assert result == [(0, "First note")]
@@ -254,7 +254,7 @@ Bar.
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_missing_alias(mock_db, tmp_path, capsys):
+def test_scan_with_missing_alias(mock_db, tmp_path, capsys, mconfig):
     """scan must show a warning if there's a gap in an alias sequence."""
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Foo
@@ -270,13 +270,13 @@ Bar.
 
 Baz.
 """)
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_aliases(mock_db, tmp_path):
+def test_scan_aliases(mock_db, tmp_path, mconfig):
     """Only slash aliases must be saved."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -289,17 +289,17 @@ def test_scan_aliases(mock_db, tmp_path):
     file_b.write_text("# 1 B\n\nB")
     file_c.write_text("# 2 C\n\nC")
 
-    scan.scan(mock_db, [file_a, file_b, file_c], "", False)
+    scan.scan(mock_db, [file_a, file_b, file_c], mconfig)
     result = list(mock_db.execute("SELECT id, alias, owner FROM Aliases ORDER BY alias"))
     assert len(result) == 2
     assert result == [(0, '0', 0), (2, '0b', 0)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_empty_link_target(mock_db, tmp_path, capsys):
+def test_scan_with_empty_link_target(mock_db, tmp_path, capsys, mconfig):
     """scan must show a warning if there is a link with an empty target."""
     markdown = tmp_path/"test.md"
     markdown.write_text("# 0 Foo\n\n[Empty]().\n")
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
     result = list(mock_db.execute("SELECT * FROM Links"))
     assert not result
 
@@ -308,11 +308,11 @@ def test_scan_with_empty_link_target(mock_db, tmp_path, capsys):
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys):
+def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys, mconfig):
     """Headers with non-integer IDs should be ignored."""
     markdown = tmp_path/"test.md"
     markdown.write_text("# 1e1 Invalid note ID\n\nTest.\n")
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
 
     result = list(mock_db.execute("SELECT * FROM Notes"))
     assert not result
@@ -322,7 +322,7 @@ def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys):
     assert not stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_non_text_titles(mock_db, tmp_path, capsys):
+def test_scan_with_non_text_titles(mock_db, tmp_path, capsys, mconfig):
     """Notes with non-text titles in the header must still be recognized."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -331,7 +331,7 @@ def test_scan_with_non_text_titles(mock_db, tmp_path, capsys):
     file_b.write_text("# 1 [Note 0](#0)\n\nTest.\n")
     file_c.write_text("# 2 `print('Title')`\n\nTest.\n")
 
-    scan.scan(mock_db, [file_a, file_b, file_c], "", False)
+    scan.scan(mock_db, [file_a, file_b, file_c], mconfig)
     result = list(mock_db.execute("SELECT id, title FROM Notes ORDER BY id"))
 
     assert len(result) == 3
@@ -342,7 +342,7 @@ def test_scan_with_non_text_titles(mock_db, tmp_path, capsys):
     assert not stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
+def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys, mconfig):
     """If a note defines duplicate aliases, only the first one must be saved.
 
     scan must show a warning when this happens.
@@ -361,7 +361,7 @@ Bar.
 
 Baz.
 """)
-    scan.scan(mock_db, [markdown], "", False)
+    scan.scan(mock_db, [markdown], mconfig)
     result = list(mock_db.execute("SELECT id FROM Aliases WHERE alias = '0a'"))
     assert len(result) == 1
     assert result == [(1,)]

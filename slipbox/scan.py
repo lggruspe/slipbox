@@ -10,6 +10,7 @@ import sys
 from typing import Iterable, List, Set, Tuple, Union
 
 from . import data, utils
+from .config import Config
 from .preprocess import concatenate
 
 def initialize_database(conn: Connection) -> None:
@@ -120,15 +121,15 @@ def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> Non
         cur2.execute(insert, (row[0], lastrowid))
     conn.commit()
 
-def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained: bool) -> None:
+def scan(conn: Connection, inputs: List[Path], config: Config = Config()) -> None:
     """Process inputs and store results in database."""
-    convert_to_data_url = "1" if self_contained else ""
+    convert_to_data_url = "1" if config.convert_to_data_url else ""
     for batch in group_by_file_extension(inputs):
         with utils.temporary_directory() as tempdir:
             html = tempdir/"temp.html"
             preprocessed_input = tempdir/"input.md"
             concatenate(preprocessed_input, *batch)
-            cmd = build_command(preprocessed_input, str(html), scan_options)
+            cmd = build_command(preprocessed_input, str(html), config.content_options)
             retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
                                         CONVERT_TO_DATA_URL=convert_to_data_url)
             if retcode:

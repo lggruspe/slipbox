@@ -19,14 +19,19 @@ def mock_db() -> Iterable[sqlite3.Connection]:
         yield conn
 
 @pytest.fixture
-def sbox(tmp_path) -> Slipbox:
-    """Create automatically configured Slipbox object.
+def mconfig(tmp_path) -> Config:
+    """Create mock config object.
 
     - config.database is tmp_path/slipbox.db
     - config.paths consists of tmp_path
     """
-    config = Config(database=tmp_path/"slipbox.db", paths=(tmp_path,))
-    with Slipbox(config) as slipbox:
+    yield Config(database=tmp_path/"slipbox.db",
+                 paths=(tmp_path,))
+
+@pytest.fixture
+def sbox(mconfig) -> Slipbox:
+    """Create automatically configured Slipbox object."""
+    with Slipbox(mconfig) as slipbox:
         yield slipbox
 
 @pytest.fixture
