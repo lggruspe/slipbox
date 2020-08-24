@@ -4,11 +4,34 @@ import { interact, toJSONFilter, walkAll } from '../../../pandoc-tree/src/index.
 import * as types from '../../../pandoc-tree/src/types.js'
 import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
 
-import { parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
+import { parseFilename, parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
 import { Slipbox } from './slipbox.js'
+
+function preprocess () {
+  function Pandoc (doc) {
+    let filename
+    for (const elem of doc.blocks) {
+      if (elem instanceof types.RawBlock) {
+        filename = parseFilename(elem) || filename
+      } else if (elem instanceof types.Header) {
+        assert(filename && typeof filename === 'string')
+        elem.attributes.filename = filename
+      }
+    }
+    return doc
+  }
+
+  return { Pandoc }
+}
 
 function init (slipbox) {
   const notes = {}
+
+  function RawBlock (elem) {
+    if (elem.format === 'html' && parseFilename(elem)) {
+      return []
+    }
+  }
 
   function Header (elem) {
     if (elem.level !== 1) return
@@ -16,9 +39,12 @@ function init (slipbox) {
     assert(content != null)
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
+      const filename = elem.attributes.filename
+      assert(filename)
       elem.identifier = String(id)
       elem.attributes.title = title
-      notes[elem.identifier] = { title, filename: '<temp>' }
+      elem.attributes.filename = undefined
+      notes[elem.identifier] = { title, filename }
       return elem
     }
   }
@@ -32,7 +58,7 @@ function init (slipbox) {
     return doc
   }
 
-  return { Header, Pandoc }
+  return { Header, RawBlock, Pandoc }
 }
 
 function collect (slipbox) {
@@ -157,9 +183,12 @@ function modify (slipbox) {
 function main () {
   const slipbox = new Slipbox()
   const filters = [
+    preprocess(),
     init(slipbox),
     collect(slipbox),
     modify(slipbox)
+    // serialize(slipbox),
+    // check(slipbox)
   ].map(toJSONFilter)
   interact(...filters)
 }

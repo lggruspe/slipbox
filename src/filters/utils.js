@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert'
 
-import { Link } from '../../../pandoc-tree/src/types.js'
+import { Link, RawBlock } from '../../../pandoc-tree/src/types.js'
 
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
@@ -40,9 +40,19 @@ function parseLink (src, elem) {
     return { tag, src, dest, description }
   }
 }
+const RAWBLOCK_PATTERN = /^<!--#slipbox-metadata\nfilename: (.+?)\n-->$/
+const RAWBLOCK_REGEX = new RegExp(RAWBLOCK_PATTERN)
+function parseFilename (elem) {
+  assert(elem instanceof RawBlock)
+  const result = RAWBLOCK_REGEX.exec(elem.text)
+  if (result && result.length > 1) {
+    return result[1]
+  }
+}
 
 export {
   hashtagPrefix,
+  parseFilename,
   parseHeaderText,
   parseLink
 }
