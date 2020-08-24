@@ -124,23 +124,18 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
     """Process inputs and store results in database."""
     convert_to_data_url = "1" if self_contained else ""
     for batch in group_by_file_extension(inputs):
-        files = list(batch)
-        scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
-
         with utils.temporary_directory() as tempdir:
             html = tempdir/"temp.html"
 
             preprocessed_input = tempdir/"input.md"
-            concatenate(preprocessed_input, *files)
+            concatenate(preprocessed_input, *batch)
 
             cmd = build_command(
                 preprocessed_input,
                 str(html),
                 scan_options)
             proc = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
-                                     CONVERT_TO_DATA_URL=convert_to_data_url,
-                                     GREP=utils.grep(),
-                                     SCAN_INPUT_LIST=scan_input_list)
+                                     CONVERT_TO_DATA_URL=convert_to_data_url)
             if proc.stdout:
                 print(proc.stdout.decode())
             if proc.stderr:

@@ -13,13 +13,9 @@ def pandoc() -> str:
     """Pandoc location."""
     return os.environ.get("PANDOC", "pandoc")
 
-def grep() -> str:
-    """Grep location."""
-    return os.environ.get("GREP", "grep")
-
 def check_requirements() -> bool:
-    """Check if grep and pandoc are installed."""
-    return bool(shutil.which(pandoc()) and shutil.which(grep()))
+    """Check if pandoc is installed."""
+    return bool(shutil.which(pandoc()))
 
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""

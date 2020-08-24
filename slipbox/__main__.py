@@ -15,7 +15,7 @@ def main(config_: Config) -> None:
 
 if __name__ == "__main__":
     if not check_requirements():
-        sys.exit("[ERROR] pandoc and grep not found.")
+        sys.exit("[ERROR] pandoc not found.")
 
     config = Config()
 

@@ -239,7 +239,6 @@ end
 
 function SlipBox:write_data(basedir)
   -- Create sql statements from slipbox contents.
-  -- Must be called only after filenames have been grepped.
   local write = utils.write_text
   write(basedir .. "/files.csv", files_to_csv(self.notes))
   write(basedir .. "/notes.csv", notes_to_csv(self.notes))

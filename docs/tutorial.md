@@ -15,7 +15,7 @@ GitHub: <https://github.com/lggruspe/slipbox>
 1 Installation
 ==============
 
-Make sure you have `grep`, `pandoc` and `python` installed.
+Make sure you have `pandoc`, `pandoc-citeproc` and `python` installed.
 
 Then
 

@@ -215,12 +215,9 @@ local function serialize(slipbox)
   return {
     Pandoc = function()
       local tmpdir = os.getenv "SLIPBOX_TMPDIR"
-      local scan_input_list = os.getenv "SCAN_INPUT_LIST"
-      if not tmpdir or tmpdir == "" then return end
-
-      local scan = require "filters/scan"
-      scan.grep_filenames(slipbox, scan_input_list)
-      slipbox:write_data(tmpdir)
+      if tmpdir and tmpdir ~= "" then
+        slipbox:write_data(tmpdir)
+      end
     end
   }
 end

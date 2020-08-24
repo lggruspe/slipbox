@@ -128,7 +128,7 @@ def test_build_command_when_input_file_does_not_exist(tmp_path):
     input_file = tmp_path/"input.md"
     scan.build_command(input_file, "output.html", "")
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan(mock_db, tmp_path):
     """Smoke test for scan."""
     input_file = tmp_path/"input.md"
@@ -137,7 +137,7 @@ def test_scan(mock_db, tmp_path):
     scan.scan(mock_db, [input_file], "", False)
     assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_empty_file(mock_db, tmp_path):
     """Scanned files that are empty shouldn't have entries in the database."""
     empty = tmp_path/"empty.md"
@@ -154,9 +154,9 @@ def test_scan_empty_file(mock_db, tmp_path):
     assert not list(mock_db.execute("SELECT * FROM Bibliography"))
     assert not list(mock_db.execute("SELECT * FROM Citations"))
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_filenames(mock_db, tmp_path):
-    """Filenames must be grepped from input files only."""
+    """Filenames must be scanned corretly."""
     markdown = tmp_path/"foo.md"
     skip = tmp_path/"bar.md"
     markdown.write_text("# 0 Note\n\nBody.\n")
@@ -167,9 +167,9 @@ def test_scan_filenames(mock_db, tmp_path):
     assert len(result) == 1
     assert markdown.samefile(result[0][0])
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_filenames0(mock_db, tmp_path):
-    """Filenames must be grepped from input files only."""
+    """Filenames must be scanned correctly."""
     markdown = tmp_path/"bar.md"
     skip = tmp_path/"foo.md"
     markdown.write_text("# 0 Note\n\nBody.\n")
@@ -180,7 +180,7 @@ def test_scan_filenames0(mock_db, tmp_path):
     assert len(result) == 1
     assert markdown.samefile(result[0][0])
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_non_level1_headers(mock_db, tmp_path):
     """Only level 1 headers must be considered as note headers."""
     markdown = tmp_path/"test.md"
@@ -197,7 +197,7 @@ Bar.
     assert len(result) == 1
     assert result == [0]
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
     """scan must show a warning if a new note shares ID of an existing note.
 
@@ -229,7 +229,7 @@ def test_scan_with_duplicate_existing_id(mock_db, tmp_path, capsys):
     assert str(file_a) in stderr
     assert str(file_b) in stderr
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_duplicate_ids_in_a_file(mock_db, tmp_path, capsys):
     """If there are duplicate IDs in a file, only the first one must be saved.
 
@@ -253,7 +253,7 @@ Bar.
     assert not stdout
     assert stderr
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_missing_alias(mock_db, tmp_path, capsys):
     """scan must show a warning if there's a gap in an alias sequence."""
     markdown = tmp_path/"test.md"
@@ -275,18 +275,7 @@ Baz.
     assert not stdout
     assert stderr
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
-def test_scan_with_blank_grep(mock_db, tmp_path, capsys, monkeypatch):
-    """scan must ignore GREP="" variable setting."""
-    markdown = tmp_path/"test.md"
-    markdown.write_text("# 0 Test\n\nTest.\n")
-    monkeypatch.setenv("GREP", "")
-    scan.scan(mock_db, [markdown], "", False)
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert not stderr
-
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_aliases(mock_db, tmp_path):
     """Only slash aliases must be saved."""
     file_a = tmp_path/"a.md"
@@ -305,7 +294,7 @@ def test_scan_aliases(mock_db, tmp_path):
     assert len(result) == 2
     assert result == [(0, '0', 0), (2, '0b', 0)]
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_empty_link_target(mock_db, tmp_path, capsys):
     """scan must show a warning if there is a link with an empty target."""
     markdown = tmp_path/"test.md"
@@ -318,7 +307,7 @@ def test_scan_with_empty_link_target(mock_db, tmp_path, capsys):
     assert not stdout
     assert stderr
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys):
     """Headers with non-integer IDs should be ignored."""
     markdown = tmp_path/"test.md"
@@ -332,7 +321,7 @@ def test_scan_with_id_in_scientific_form(mock_db, tmp_path, capsys):
     assert not stdout
     assert not stderr
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_non_text_titles(mock_db, tmp_path, capsys):
     """Notes with non-text titles in the header must still be recognized."""
     file_a = tmp_path/"a.md"
@@ -352,7 +341,7 @@ def test_scan_with_non_text_titles(mock_db, tmp_path, capsys):
     assert not stdout
     assert not stderr
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_with_duplicate_aliases(mock_db, tmp_path, capsys):
     """If a note defines duplicate aliases, only the first one must be saved.
 

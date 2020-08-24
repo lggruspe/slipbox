@@ -21,7 +21,7 @@ def test_temporary_directory():
         assert temp.is_dir()
     assert not path.exists()
 
-@pytest.mark.skipif(not shutil.which(utils.grep()), reason="requires grep")
+@pytest.mark.skipif(not shutil.which("grep"), reason="requires grep")
 def test_run_command(tmp_path):
     """run_command must return stdout and stderr output."""
     first = tmp_path/"first.txt"

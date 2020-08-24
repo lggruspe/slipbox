@@ -19,7 +19,6 @@ Requirements
 - `pandoc`
 - `pandoc-citeproc`
 - `python3`
-- GNU `grep`
 
 Installation
 ------------

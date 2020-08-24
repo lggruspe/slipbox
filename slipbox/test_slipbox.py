@@ -112,7 +112,7 @@ def test_purge(tmp_path, sbox):
     for path, filename in zip(paths, remaining):
         assert path.samefile(filename)
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_suggest_edits_backlinks(files_abc, sbox):
     """slipbox.suggest_edits must include backlinks of outdated notes."""
     file_a, file_b, file_c = files_abc
@@ -131,7 +131,7 @@ def test_suggest_edits_backlinks(files_abc, sbox):
     suggestions = list(slipbox.suggest_edits(notes))
     assert suggestions == [(1, "B", file_b)]
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_suggest_edits_aliases(files_abc, sbox):
     """slipbox.suggest_edits must include alias owners of outdated notes."""
     file_a, file_b, file_c = files_abc
@@ -150,7 +150,7 @@ def test_suggest_edits_aliases(files_abc, sbox):
     suggestions = list(slipbox.suggest_edits(notes))
     assert suggestions == [(0, "A", file_a)]
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_suggest_edits_exclude_deleted_notes(files_abc, sbox):
     """slipbox.suggest_edits must exclude deleted notes."""
     file_a, file_b, file_c = files_abc
@@ -171,7 +171,7 @@ def test_suggest_edits_exclude_deleted_notes(files_abc, sbox):
     assert suggestions == [(1, "B", file_b)]
 
 
-@pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_run(files_abc, capsys, sbox):
     """There must be no suggestions when running for the first time."""
     file_a, file_b, file_c = files_abc
