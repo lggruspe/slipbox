@@ -110,15 +110,23 @@ def test_group_by_file_extension_on_the_same_type():
     assert len(groups) == 1
     assert files in groups
 
-def test_build_command():
+def test_build_command(tmp_path):
     """Sanity check for build_command."""
+    input_file = tmp_path/"input.md"
     output = "output.html"
     options = "--mathjax"
-    assert not scan.build_command("  ", output, options)
-    cmd = scan.build_command("cha1.md cha2.md", output, options)
-    assert "cha1.md cha2.md" in cmd
+    input_file.touch()
+
+    cmd = scan.build_command(input_file, output, options)
+    assert str(input_file) in cmd
     assert f"-o {output}" in cmd
     assert options in cmd
+
+@pytest.mark.xfail
+def test_build_command_when_input_file_does_not_exist(tmp_path):
+    """build_command must fail if input file does not exist."""
+    input_file = tmp_path/"input.md"
+    scan.build_command(input_file, "output.html", "")
 
 @pytest.mark.skipif(not check_requirements(), reason="requires grep and pandoc")
 def test_scan(mock_db, tmp_path):
@@ -286,11 +294,11 @@ def test_scan_aliases(mock_db, tmp_path):
     file_c = tmp_path/"c.md"
     file_a.write_text("""# 0 A
 
-[B](#1 '0a').
-[C](#2 '/b').
+[B](#1 '0a')
+[C](#2 '/b')
 """)
-    file_b.write_text("# 1 B\n\nB.")
-    file_c.write_text("# 2 C\n\nC.")
+    file_b.write_text("# 1 B\n\nB")
+    file_c.write_text("# 2 C\n\nC")
 
     scan.scan(mock_db, [file_a, file_b, file_c], "", False)
     result = list(mock_db.execute("SELECT id, alias, owner FROM Aliases ORDER BY alias"))

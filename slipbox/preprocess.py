@@ -8,9 +8,11 @@ def concatenate(dest: Path, *sources: Path) -> None:
     Each section is preceded by an HTML comment.
     """
 
-    comment = """<!--#slipbox-metadata
+    comment = """
+<!--#slipbox-metadata
 filename: {}
--->"""
+-->
+"""
     with dest.open("w") as file:
         for src in sources:
             print(comment.format(str(src)), file=file)

@@ -10,6 +10,7 @@ import sys
 from typing import Iterable, List, Set, Tuple, Union
 
 from . import data, utils
+from .preprocess import concatenate
 
 def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
@@ -83,20 +84,19 @@ def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
     groups = groupby(sorted(files, key=key), key=key)
     return map(lambda g: g[1], groups)
 
-def build_command(inputs: str, output: str, options: str = "") -> str:
+def build_command(input_: Path, output: str, options: str = "") -> str:
     """Construct a single pandoc command to run on inputs.
 
     inputs is a string of filenames separated by spaces.
     Each filename must be shlex.quoted if needed.
     Return an empty string if there are no input files.
     """
-    if not inputs.strip():
-        return ""
+    assert input_.exists()
     datadir = shlex.quote(str(Path(__file__).parent.resolve()))
     cmd = f"{utils.pandoc()} -Lzk.lua -Fpandoc-citeproc -Lrefs.lua --section-divs " \
             f"--data-dir {datadir} -Mlink-citations:true {options} " \
             "-o {} ".format(shlex.quote(output))
-    return cmd + ' ' + inputs
+    return cmd + ' ' + str(input_)
 
 def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
     """Insert Html and Sections entries for html and sources.
@@ -124,11 +124,19 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
     """Process inputs and store results in database."""
     convert_to_data_url = "1" if self_contained else ""
     for batch in group_by_file_extension(inputs):
-        scan_input_list = " ".join(shlex.quote(str(p)) for p in batch)
+        files = list(batch)
+        scan_input_list = " ".join(shlex.quote(str(p)) for p in files)
 
         with utils.temporary_directory() as tempdir:
             html = tempdir/"temp.html"
-            cmd = build_command(scan_input_list, str(html), scan_options)
+
+            preprocessed_input = tempdir/"input.md"
+            concatenate(preprocessed_input, *files)
+
+            cmd = build_command(
+                preprocessed_input,
+                str(html),
+                scan_options)
             proc = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
                                      CONVERT_TO_DATA_URL=convert_to_data_url,
                                      GREP=utils.grep(),
@@ -140,6 +148,7 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
             if proc.returncode:
                 print("Scan failed.", file=sys.stderr)
                 continue
+
             data.process_csvs(conn, tempdir)
             execute_script(conn, tempdir/"citations.sql")
             contents = html.read_text()

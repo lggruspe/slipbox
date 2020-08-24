@@ -13,10 +13,11 @@ local function preprocess()
   local function Pandoc(doc)
     local filename
     for _, elem in ipairs(doc.blocks) do
-      if elem.tag == "RawBlock" then
-        filename = utils.parse_filename(elem)
-      elseif elem.tag == "Header" and elem.level == 1 and filename then
-        elem.attributes["filename"] = filename
+      if elem.tag == "RawBlock" and elem.format == "html" then
+        filename = utils.parse_filename(elem) or filename
+      elseif elem.tag == "Header" and elem.level == 1 then
+        assert(filename)
+        elem.attributes.filename = filename
       end
     end
     return doc
@@ -31,6 +32,13 @@ local function init(slipbox)
   -- Create filter that preprocesses headers by splitting the document
   -- into sections.
 
+  local function RawBlock(elem)
+      -- Strip #slipbox-metadata.
+      if elem.format == "html" and utils.parse_filename(elem) then
+        return {}
+      end
+  end
+
   local function Header(elem)
     -- Only scan level 1 headers.
     if elem.level ~= 1 then return end
@@ -38,12 +46,14 @@ local function init(slipbox)
     local content = pandoc.utils.stringify(elem.content)
     local id, title = utils.parse_id_and_title(content)
     if id and title then
-      local err = slipbox:save_note(id, title)
+      local filename = elem.attributes.filename
+      local err = slipbox:save_note(id, title, filename)
       if err then log.warning(err) end
 
       elem.identifier = id
       elem.attributes.title = title
       elem.attributes.level = elem.level  -- Gets added to parent section
+      elem.attributes.filename = nil
       return elem
     end
   end
@@ -55,6 +65,7 @@ local function init(slipbox)
 
   return {
     Header = Header,
+    RawBlock = RawBlock,
     Pandoc = Pandoc,
   }
 end
