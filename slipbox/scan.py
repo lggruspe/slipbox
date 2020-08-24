@@ -126,25 +126,15 @@ def scan(conn: Connection, inputs: List[Path], scan_options: str, self_contained
     for batch in group_by_file_extension(inputs):
         with utils.temporary_directory() as tempdir:
             html = tempdir/"temp.html"
-
             preprocessed_input = tempdir/"input.md"
             concatenate(preprocessed_input, *batch)
-
-            cmd = build_command(
-                preprocessed_input,
-                str(html),
-                scan_options)
-            proc = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
-                                     CONVERT_TO_DATA_URL=convert_to_data_url)
-            if proc.stdout:
-                print(proc.stdout.decode())
-            if proc.stderr:
-                print(proc.stderr.decode(), file=sys.stderr)
-            if proc.returncode:
+            cmd = build_command(preprocessed_input, str(html), scan_options)
+            retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
+                                        CONVERT_TO_DATA_URL=convert_to_data_url)
+            if retcode:
                 print("Scan failed.", file=sys.stderr)
                 continue
 
+            store_html_sections(conn, html.read_text(), inputs)
             data.process_csvs(conn, tempdir)
             execute_script(conn, tempdir/"citations.sql")
-            contents = html.read_text()
-        store_html_sections(conn, contents, inputs)

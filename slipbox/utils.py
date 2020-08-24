@@ -6,6 +6,7 @@ from pathlib import Path
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 from typing import Any, Iterator
 
@@ -27,16 +28,20 @@ def temporary_directory() -> Iterator[Path]:
     with tempfile.TemporaryDirectory() as tempdir:
         yield Path(tempdir)
 
-def run_command(cmd: str, **kwargs: Any) -> subprocess.CompletedProcess:
+def run_command(cmd: str, **kwargs: Any) -> int:
     """Run command with environment variables in kwargs.
 
-    Returns stdout and stderr output.
+    Output stdout and stderr, and return the error code.
     """
     env = os.environ.copy()
     env.update(**kwargs)
     proc = subprocess.run(shlex.split(cmd), env=env, check=False,
                           capture_output=True)
-    return proc
+    if proc.stdout:
+        print(proc.stdout.decode())
+    if proc.stderr:
+        print(proc.stderr.decode(), file=sys.stderr)
+    return proc.returncode
 
 def insert_file_script(*files: Path) -> str:
     """Create SQL query string to insert into the Files table."""
