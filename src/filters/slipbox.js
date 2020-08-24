@@ -1,10 +1,12 @@
 import { strict as assert } from 'assert'
+import * as process from 'process'
 
 import Database from 'better-sqlite3'
 
 class Slipbox {
   constructor () {
-    this.db = new Database('test.db', { fileMustExist: true })
+    const path = process.env.SLIPBOX_DB || 'slipbox.db'
+    this.db = new Database(path, { fileMustExist: true })
 
     const db = this.db
     this.insert = {
