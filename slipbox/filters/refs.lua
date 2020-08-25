@@ -1,3 +1,4 @@
+local pandoc = require "pandoc"
 pandoc.utils = require "pandoc.utils"
 local utils = require "filters/utils"
 
@@ -44,4 +45,4 @@ local function Div(elem)
   end
 end
 
-return {{Div = Div}}
+return {Div = Div}
