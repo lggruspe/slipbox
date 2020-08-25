@@ -209,6 +209,15 @@ local function files_to_csv(notes)
   return w.data
 end
 
+local function bibliography_to_sql(refs)
+  local sql = ""
+  local template = "UPDATE Bibliography SET text = %s WHERE key = %s;\n"
+  for ref, text in pairs(refs) do
+    sql = sql..string.format(template, utils.sqlite_string(text), utils.sqlite_string(ref))
+  end
+  return sql
+end
+
 local function citations_to_sql(citations)
   local references = {}
   local values = ""
@@ -253,6 +262,7 @@ function SlipBox:write_data(basedir)
   write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
   write(basedir .. "/sequences.csv", sequences_to_csv(self.aliases))
   write(basedir .. "/citations.sql", citations_to_sql(self.citations))
+  utils.append_text(basedir .. "/citations.sql", bibliography_to_sql(self.bibliography))
 end
 
 return {

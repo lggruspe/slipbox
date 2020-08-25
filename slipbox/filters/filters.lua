@@ -210,6 +210,27 @@ local function modify(slipbox)
   }
 end
 
+local function citations(slipbox)
+  return {
+    Div = function(div)
+      -- Suppress bibliography and update SQL.
+      if div.identifier == "refs" then
+
+        local function Div(elem)
+          -- Save reference text.
+          if utils.is_reference_id(elem.identifier) then
+            slipbox:save_reference(elem.identifier, pandoc.utils.stringify(elem.content))
+            return {}
+          end
+        end
+
+        pandoc.walk_block(div, {Div = Div})
+        return {}
+      end
+    end
+  }
+end
+
 local function serialize(slipbox)
   -- Create filter to dump slipbox data into SLIPBOX_TMPDIR.
   return {
@@ -257,6 +278,7 @@ return {
   init = init,
   collect = collect,
   modify = modify,
+  citations = citations,
   serialize = serialize,
   check = check,
 }
