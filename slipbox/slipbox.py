@@ -68,7 +68,7 @@ class Slipbox:
         """.format(",".join(filenames))
         backlinks = self.conn.execute(sql)
 
-        affected = (str(nid) for nid, in chain(owners, backlinks))
+        affected = (repr(nid) for nid, in chain(owners, backlinks))
 
         sql = """
             SELECT id, title, filename FROM Notes

@@ -5,6 +5,7 @@ import { interact, toJSONFilter, walkAll } from '../../../pandoc-tree/src/index.
 import * as types from '../../../pandoc-tree/src/types.js'
 import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
 
+import { warning } from './log.js'
 import { parseFilename, parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
 import { Slipbox } from './slipbox.js'
 
@@ -40,12 +41,22 @@ function init (slipbox) {
     assert(content != null)
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
-      const filename = elem.attributes.filename
-      assert(filename)
+      const note = { title, filename: elem.attributes.filename }
+      assert(note.filename)
       elem.identifier = String(id)
       elem.attributes.title = title
       elem.attributes.filename = undefined
-      notes[elem.identifier] = { title, filename }
+
+      const existing = notes[elem.identifier]
+      if (existing == null) {
+        notes[elem.identifier] = note
+      } else {
+        warning([
+          `Duplicate ID: ${elem.identifier}`,
+          `Could not insert note '${title}'.`,
+          `Note '${existing.title} already uses the ID.'`
+        ])
+      }
       return elem
     }
   }
@@ -63,6 +74,7 @@ function init (slipbox) {
 }
 
 function collect (slipbox) {
+  const aliases = {}
   const cites = {}
   const links = []
   const tags = []
@@ -71,6 +83,8 @@ function collect (slipbox) {
     if (!div.classes.includes('level1')) return
     if (!Number.isInteger(Number(div.identifier))) return
     // NOTE doesn't exclude numbers in scientific notation
+
+    let hasEmptyLink = false
 
     function Cite (elem) {
       for (const citation of Object.values(elem.citations)) {
@@ -81,9 +95,28 @@ function collect (slipbox) {
     }
 
     function Link (elem) {
+      if (!elem.target) {
+        hasEmptyLink = true
+        return elem.content
+      }
+
       const link = parseLink(div.identifier, elem)
-      if (link) {
+      if (!link) return
+      if (link.tag === 'direct') {
         links.push(link)
+      } else if (link.tag === 'sequence') {
+        const alias = aliases[link.description]
+        if (alias && alias.id !== div.identifier) {
+          warning([
+            `Duplicate alias definition for '${link.description}' used by note ${alias.id}.`,
+            `It will not be used as an alias for note ${div.identifier}.`
+          ])
+          return
+        }
+        aliases[link.description] = {
+          id: link.dest,
+          owner: link.src
+        }
       }
     }
 
@@ -97,10 +130,14 @@ function collect (slipbox) {
     const children = div.content.map(block => block.json)
     walkAll(children, toJSONFilter(filter))
     div.content = children.map(types.fromJSON)
+    if (hasEmptyLink) {
+      warning([`Note ${div.identifier} contains a link with an empty target.`])
+    }
     return div
   }
 
   function Pandoc (doc) {
+    slipbox.saveAliases(aliases)
     slipbox.saveCitations(cites)
     slipbox.saveLinks(links)
     slipbox.saveTags(tags)
@@ -110,21 +147,12 @@ function collect (slipbox) {
 }
 
 function modify (slipbox) {
-  const withEmptyLinkTargets = new Set()
-
   function Div (div) {
     if (!div.classes.includes('level1')) return
     if (!Number.isInteger(Number(div.identifier))) return
     // NOTE doesn't exclude numbers in scientific notation
 
-    let hasEmptyLinkTarget = false
-
     function Link (elem) {
-      if (!elem.target) {
-        hasEmptyLinkTarget = true
-        return elem.content
-      }
-
       const content = stringify(elem.json)
       if (!content) {
         return [
@@ -156,10 +184,6 @@ function modify (slipbox) {
     walkAll(children, toJSONFilter(filter))
     div.content = children.map(types.fromJSON)
 
-    if (hasEmptyLinkTarget) {
-      withEmptyLinkTargets.add(div.identifier)
-    }
-
     // insert footnotes into document
     if (footnotes.length > 0) {
       const ol = new types.OrderedList(footnotes.map(fn => [fn]))
@@ -174,11 +198,7 @@ function modify (slipbox) {
     return div
   }
 
-  function Pandoc (doc) {
-    // console.error('warning:', withEmptyLinkTargets)
-  }
-
-  return { Div, Pandoc }
+  return { Div }
 }
 
 function main () {
@@ -188,8 +208,6 @@ function main () {
     init(slipbox),
     collect(slipbox),
     modify(slipbox)
-    // serialize(slipbox),
-    // check(slipbox)
   ].map(toJSONFilter)
   interact(...filters)
 }

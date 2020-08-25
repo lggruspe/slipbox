@@ -129,7 +129,7 @@ def test_suggest_edits_backlinks(files_abc, sbox):
 
     notes = slipbox.find_notes()
     suggestions = list(slipbox.suggest_edits(notes))
-    assert suggestions == [(1, "B", file_b)]
+    assert suggestions == [('1', "B", file_b)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_suggest_edits_aliases(files_abc, sbox):
@@ -148,7 +148,7 @@ def test_suggest_edits_aliases(files_abc, sbox):
 
     notes = slipbox.find_notes()
     suggestions = list(slipbox.suggest_edits(notes))
-    assert suggestions == [(0, "A", file_a)]
+    assert suggestions == [('0', "A", file_a)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_suggest_edits_exclude_deleted_notes(files_abc, sbox):
@@ -168,8 +168,7 @@ def test_suggest_edits_exclude_deleted_notes(files_abc, sbox):
 
     notes = slipbox.find_notes()
     suggestions = list(slipbox.suggest_edits(notes))
-    assert suggestions == [(1, "B", file_b)]
-
+    assert suggestions == [('1', "B", file_b)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_run(files_abc, capsys, sbox):
@@ -226,7 +225,7 @@ def test_process_filenames(tmp_path, sbox):
     skip.write_text("# 0 Note\n\nBody.\n")
     sbox.process([markdown])
 
-    result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = 0"))
+    result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = '0'"))
     assert len(result) == 1
     assert markdown.samefile(result[0][0])
 
@@ -238,7 +237,7 @@ def test_process_filenames0(tmp_path, sbox):
     markdown.write_text("# 0 Note\n\nBody.\n")
     skip.write_text("# 0 Note\n\nBody.\n")
     sbox.process([markdown])
-    result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = 0"))
+    result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = '0'"))
     assert len(result) == 1
     assert markdown.samefile(result[0][0])
 
@@ -257,7 +256,7 @@ Bar.
     sbox.process([markdown])
     result = [nid for nid, in sbox.conn.execute("SELECT id FROM Notes")]
     assert len(result) == 1
-    assert result == [0]
+    assert result == ['0']
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
@@ -272,7 +271,7 @@ def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
     sbox.process([file_a])
     result = list(sbox.conn.execute("SELECT id, title FROM Notes"))
     assert len(result) == 1
-    assert result == [(0, "Existing note")]
+    assert result == [('0', "Existing note")]
 
     stdout, stderr = capsys.readouterr()
     assert not stdout
@@ -284,7 +283,7 @@ def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
     sbox.process([file_b])
     result = list(sbox.conn.execute("SELECT id, title FROM Notes"))
     assert len(result) == 1
-    assert result == [(0, "Existing note")]
+    assert result == [('0', "Existing note")]
 
     stdout, stderr = capsys.readouterr()
     assert not stdout
@@ -310,7 +309,7 @@ Bar.
     sbox.process([markdown])
     result = list(sbox.conn.execute("SELECT id, title FROM Notes"))
     assert len(result) == 1
-    assert result == [(0, "First note")]
+    assert result == [('0', "First note")]
 
     stdout, stderr = capsys.readouterr()
     assert not stdout
@@ -355,7 +354,7 @@ def test_process_aliases(sbox, tmp_path):
     sbox.process([file_a, file_b, file_c])
     result = list(sbox.conn.execute("SELECT id, alias, owner FROM Aliases ORDER BY alias"))
     assert len(result) == 2
-    assert result == [(0, '0', 0), (2, '0b', 0)]
+    assert result == [('0', '0', '0'), ('2', '0b', '0')]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_empty_link_target(tmp_path, capsys, sbox):
@@ -398,7 +397,7 @@ def test_process_with_non_text_titles(tmp_path, capsys, sbox):
     result = list(sbox.conn.execute("SELECT id, title FROM Notes ORDER BY id"))
 
     assert len(result) == 3
-    assert result == [(0, "1 + 1 = 2"), (1, "Note 0"), (2, "print('Title')")]
+    assert result == [('0', "1 + 1 = 2"), ('1', "Note 0"), ('2', "print('Title')")]
 
     stdout, stderr = capsys.readouterr()
     assert not stdout
@@ -427,7 +426,7 @@ Baz.
     sbox.process([markdown])
     result = list(sbox.conn.execute("SELECT id FROM Aliases WHERE alias = '0a'"))
     assert len(result) == 1
-    assert result == [(1,)]
+    assert result == [('1',)]
 
     stdout, stderr = capsys.readouterr()
     assert not stdout

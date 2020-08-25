@@ -9,7 +9,7 @@ from sqlite3 import Connection
 import sys
 from typing import Iterable, List, Set, Tuple, Union
 
-from . import data, utils
+from . import utils
 from .config import Config
 from .preprocess import concatenate
 
@@ -81,8 +81,10 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
     Return an empty string if there are no input files.
     """
     assert input_.exists()
-    datadir = shlex.quote(str(Path(__file__).parent.resolve()))
-    cmd = f"{utils.pandoc()} -Fpandoc-citeproc -Lzk.lua --section-divs " \
+    datadir_path = Path(__file__).parent.parent.joinpath("src", "filters")
+    js_filter = shlex.quote(str(datadir_path.joinpath("filters.js").resolve()))
+    datadir = shlex.quote(str(datadir_path.resolve()))
+    cmd = f"{utils.pandoc()} -Fpandoc-citeproc -F{js_filter} --section-divs " \
             f"--data-dir {datadir} -Mlink-citations:true {options} " \
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + str(input_)
@@ -119,10 +121,10 @@ def process_batch(conn: Connection,
         concatenate(preprocessed_input, *batch)
         cmd = build_command(preprocessed_input, str(html), config.content_options)
         retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
-                                    CONVERT_TO_DATA_URL=convert_to_data_url)
+                                    CONVERT_TO_DATA_URL=convert_to_data_url,
+                                    SLIPBOX_DB=str(config.database.resolve()))
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return
-        data.process_csvs(conn, tempdir)
         store_html_sections(conn, html.read_text(), batch)
         conn.commit()

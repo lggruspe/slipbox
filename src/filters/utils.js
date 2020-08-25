@@ -33,12 +33,13 @@ function parseLink (src, elem) {
 
   if (!NUMBER_REGEX.exec(src)) return
   if (!TARGET_REGEX.exec(elem.target)) return
-  const tag = SEQUENCE_REGEX.exec(elem.title) ? 'sequence' : 'direct'
-  const description = tag === 'direct' ? elem.title : src + elem.title.slice(1)
   const dest = elem.target.slice(1)
-  if (NUMBER_REGEX.exec(dest)) {
-    return { tag, src, dest, description }
+  if (!NUMBER_REGEX.exec(dest)) return
+
+  if (!SEQUENCE_REGEX.exec(elem.title)) {
+    return { src, dest, tag: 'direct', description: elem.title }
   }
+  return { src, dest, tag: 'sequence', description: src + elem.title.slice(1) }
 }
 const RAWBLOCK_PATTERN = /^<!--#slipbox-metadata\nfilename: (.+?)\n-->$/
 const RAWBLOCK_REGEX = new RegExp(RAWBLOCK_PATTERN)
@@ -50,8 +51,26 @@ function parseFilename (elem) {
   }
 }
 
+const ALIAS_PATTERN_A = /^(\d+[\da-z]*?)[a-z]+$/
+const ALIAS_REGEX_A = new RegExp(ALIAS_PATTERN_A)
+const ALIAS_PATTERN_D = /^(\d+[\da-z]*?)\d+$/
+const ALIAS_REGEX_D = new RegExp(ALIAS_PATTERN_D)
+function parentAlias (alias) {
+  assert(typeof alias === 'string')
+  let result = ALIAS_REGEX_A.exec(alias)
+  if (result && result.length > 1) {
+    return result[1]
+  }
+  result = ALIAS_REGEX_D.exec(alias)
+  if (result && result.length > 1) {
+    return result[1]
+  }
+  return null
+}
+
 export {
   hashtagPrefix,
+  parentAlias,
   parseFilename,
   parseHeaderText,
   parseLink
