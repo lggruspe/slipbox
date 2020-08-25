@@ -11,6 +11,7 @@ function SlipBox:new()
     aliases = {},
     tags = {},
     citations = {},
+    bibliography = {},
 
     invalid = {
       has_empty_link_target = {},
@@ -24,6 +25,15 @@ function SlipBox:save_citation(id, citation)
   local citations = self.citations[id] or {}
   citations[citation] = true
   self.citations[id] = citations
+end
+
+function SlipBox:save_reference(id, text)
+  -- Save reference into slipbox.
+  assert(type(id) == "string")
+  assert(type(text) == "string")
+  assert(id ~= "")
+  assert(string ~= "")
+  self.bibliography[id] = text
 end
 
 function SlipBox:save_note(id, title, filename)
@@ -120,10 +130,6 @@ function SlipBox:save_tag(id, tag)
   self.tags[tag] = tags
 end
 
-local function sqlite_string(s)
-  return string.format("'%s'", s:gsub("'", "''"))
-end
-
 local function notes_to_csv(notes)
   -- Generate CSV data from slipbox notes.
   local w = csv.Writer:new{"id", "title", "filename"}
@@ -208,7 +214,7 @@ local function citations_to_sql(citations)
   local values = ""
   for id, cites in pairs(citations) do
     for cite in pairs(cites) do
-      local ref = sqlite_string("ref-"..cite)
+      local ref = utils.sqlite_string("ref-"..cite)
       references[ref] = true
       local value = string.format("(%d, %s)", id, ref)
       if values == "" then

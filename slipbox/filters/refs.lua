@@ -1,16 +1,10 @@
 pandoc.utils = require "pandoc.utils"
-
 local utils = require "filters/utils"
-
-local function is_reference_id(s)
-  -- Check if s is a reference identifier.
-  return s:match('^ref%-.+$') and true or false
-end
 
 local function section_filter(references)
   -- Create filter that transforms pandoc-citeproc bibliography.
   local function Div(elem)
-    if is_reference_id(elem.identifier) then
+    if utils.is_reference_id(elem.identifier) then
       references[elem.identifier] = pandoc.utils.stringify(elem.content)
       return {}
     end
@@ -18,16 +12,12 @@ local function section_filter(references)
   return {Div = Div}
 end
 
-local function sqlite_string(s)
-  return string.format("'%s'", s:gsub("'", "''"))
-end
-
 local function to_sql(refs)
   -- Create SQL statements for references.
   local sql = ""
   local template = "UPDATE Bibliography SET text = %s WHERE key = %s;\n"
   for ref, text in pairs(refs) do
-    sql = sql..string.format(template, sqlite_string(text), sqlite_string(ref))
+    sql = sql..string.format(template, utils.sqlite_string(text), utils.sqlite_string(ref))
   end
   return sql
 end

@@ -88,8 +88,18 @@ local function parse_filename(elem)
   if count > 0 then return filename end
 end
 
+local function is_reference_id(text)
+  -- Check if text (string) is a reference identifier.
+  return text:match('^ref%-.+$') and true or false
+end
+
+local function sqlite_string(s)
+  return string.format("'%s'", s:gsub("'", "''"))
+end
+
 return {
   is_valid_alias = is_valid_alias,
+  is_reference_id = is_reference_id,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
   parse_id_and_title = parse_id_and_title,
@@ -97,4 +107,5 @@ return {
   alias_parent = alias_parent,
   write_text = write_text,
   append_text = append_text,
+  sqlite_string = sqlite_string,
 }
