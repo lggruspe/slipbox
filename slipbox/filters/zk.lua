@@ -1,5 +1,3 @@
-local pandoc = require "pandoc"
-pandoc.utils = require "pandoc.utils"
 local filters = require "filters/filters"
 local images = require "filters/images"
 local slipbox = require "filters/slipbox"
