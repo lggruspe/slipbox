@@ -125,17 +125,17 @@ def scan(conn: Connection, inputs: List[Path], config: Config = Config()) -> Non
     """Process inputs and store results in database."""
     convert_to_data_url = "1" if config.convert_to_data_url else ""
     for batch in group_by_file_extension(inputs):
+        files = list(batch)
         with utils.temporary_directory() as tempdir:
             html = tempdir/"temp.html"
             preprocessed_input = tempdir/"input.md"
-            concatenate(preprocessed_input, *batch)
+            concatenate(preprocessed_input, *files)
             cmd = build_command(preprocessed_input, str(html), config.content_options)
             retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
                                         CONVERT_TO_DATA_URL=convert_to_data_url)
             if retcode:
                 print("Scan failed.", file=sys.stderr)
                 continue
-
-            store_html_sections(conn, html.read_text(), inputs)
             data.process_csvs(conn, tempdir)
             execute_script(conn, tempdir/"citations.sql")
+            store_html_sections(conn, html.read_text(), files)

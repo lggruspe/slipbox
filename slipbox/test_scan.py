@@ -134,8 +134,11 @@ def test_scan(mock_db, tmp_path, mconfig):
     input_file = tmp_path/"input.md"
     input_file.write_text("# 1 Test note\n\nHello, world!\n")
     assert not list(mock_db.execute("SELECT * FROM Html"))
+
     scan.scan(mock_db, [input_file], mconfig)
-    assert len(list(mock_db.execute("SELECT * FROM Html"))) == 1
+    result = list(mock_db.execute("SELECT * FROM Sections"))
+    # Check if the output HTML has sections.
+    assert len(result) == 1
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_scan_empty_file(mock_db, tmp_path, mconfig):
