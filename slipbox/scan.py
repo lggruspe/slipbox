@@ -108,21 +108,21 @@ def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> Non
     for row in cur.execute(query):
         cur2.execute(insert, (row[0], lastrowid))
 
-def scan(conn: Connection, inputs: List[Path], config: Config = Config()) -> None:
-    """Process inputs and store results in database."""
+def process_batch(conn: Connection,
+                  batch: List[Path],
+                  config: Config = Config()) -> None:
+    """Process batch of input notes."""
     convert_to_data_url = "1" if config.convert_to_data_url else ""
-    for batch in group_by_file_extension(inputs):
-        files = list(batch)
-        with utils.temporary_directory() as tempdir:
-            html = tempdir/"temp.html"
-            preprocessed_input = tempdir/"input.md"
-            concatenate(preprocessed_input, *files)
-            cmd = build_command(preprocessed_input, str(html), config.content_options)
-            retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
-                                        CONVERT_TO_DATA_URL=convert_to_data_url)
-            if retcode:
-                print("Scan failed.", file=sys.stderr)
-                continue
-            data.process_csvs(conn, tempdir)
-            store_html_sections(conn, html.read_text(), files)
-            conn.commit()
+    with utils.temporary_directory() as tempdir:
+        html = tempdir/"temp.html"
+        preprocessed_input = tempdir/"input.md"
+        concatenate(preprocessed_input, *batch)
+        cmd = build_command(preprocessed_input, str(html), config.content_options)
+        retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
+                                    CONVERT_TO_DATA_URL=convert_to_data_url)
+        if retcode:
+            print("Scan failed.", file=sys.stderr)
+            return
+        data.process_csvs(conn, tempdir)
+        store_html_sections(conn, html.read_text(), batch)
+        conn.commit()

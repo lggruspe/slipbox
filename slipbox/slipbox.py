@@ -89,7 +89,9 @@ class Slipbox:
 
     def process(self, paths: Iterable[Path]) -> None:
         """Process input files."""
-        scan.scan(self.conn, list(set(paths)), self.config)
+        inputs = list(set(paths))
+        for batch in scan.group_by_file_extension(inputs):
+            scan.process_batch(self.conn, list(batch), self.config)
 
     def compile(self) -> None:
         """Compile processed HTML into final output."""
