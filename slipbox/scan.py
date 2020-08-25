@@ -5,7 +5,7 @@ import fnmatch
 import os
 from pathlib import Path
 import shlex
-from sqlite3 import Connection, IntegrityError
+from sqlite3 import Connection
 import sys
 from typing import Iterable, List, Set, Tuple, Union
 
@@ -17,18 +17,6 @@ def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
     sql = Path(__file__).with_name("schema.sql").read_text()
     conn.executescript(sql)
-    conn.commit()
-
-def execute_script(conn: Connection, script: Path) -> None:
-    """Execute SQLite script."""
-    cur = conn.cursor()
-    with open(script) as file:
-        for line in file:
-            try:
-                cur.execute(line)
-            except IntegrityError as error:
-                print(line)
-                print(error)
     conn.commit()
 
 def fetch_files(conn: Connection) -> Iterable[Path]:
@@ -119,7 +107,6 @@ def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> Non
     cur2 = conn.cursor()
     for row in cur.execute(query):
         cur2.execute(insert, (row[0], lastrowid))
-    conn.commit()
 
 def scan(conn: Connection, inputs: List[Path], config: Config = Config()) -> None:
     """Process inputs and store results in database."""
@@ -137,5 +124,5 @@ def scan(conn: Connection, inputs: List[Path], config: Config = Config()) -> Non
                 print("Scan failed.", file=sys.stderr)
                 continue
             data.process_csvs(conn, tempdir)
-            execute_script(conn, tempdir/"citations.sql")
             store_html_sections(conn, html.read_text(), files)
+            conn.commit()

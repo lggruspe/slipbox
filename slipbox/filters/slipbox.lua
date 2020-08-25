@@ -196,6 +196,14 @@ local function sequences_to_csv(aliases)
   return w.data
 end
 
+local function bibliography_to_csv(refs)
+  local w = csv.Writer:new{"key", "text"}
+  for ref, text in pairs(refs) do
+    w:write{ref, text}
+  end
+  return w.data
+end
+
 local function files_to_csv(notes)
   local unique_filenames = {}
   for _, note in pairs(notes) do
@@ -209,47 +217,14 @@ local function files_to_csv(notes)
   return w.data
 end
 
-local function bibliography_to_sql(refs)
-  local sql = ""
-  local template = "UPDATE Bibliography SET text = %s WHERE key = %s;\n"
-  for ref, text in pairs(refs) do
-    sql = sql..string.format(template, utils.sqlite_string(text), utils.sqlite_string(ref))
-  end
-  return sql
-end
-
-local function citations_to_sql(citations)
-  local references = {}
-  local values = ""
+local function citations_to_csv(citations)
+  local w = csv.Writer:new{"note", "reference"}
   for id, cites in pairs(citations) do
     for cite in pairs(cites) do
-      local ref = utils.sqlite_string("ref-"..cite)
-      references[ref] = true
-      local value = string.format("(%d, %s)", id, ref)
-      if values == "" then
-        values = values .. ' ' .. value
-      else
-        values = values .. ", " .. value
-      end
+      w:write{id, cite}
     end
   end
-  local sql = ""
-  if values ~= "" then
-    local ref_sql = ""
-    for ref in pairs(references) do
-      if ref_sql == "" then
-        ref_sql = ref_sql .. string.format("(%s)", ref)
-      else
-        ref_sql = ref_sql .. string.format(", (%s)", ref)
-      end
-    end
-    sql = sql .. "INSERT OR IGNORE INTO Bibliography (key) VALUES " .. ref_sql ..
-      ";\n"
-    sql = sql .. "INSERT OR IGNORE INTO Citations (note, reference) VALUES " ..
-      values ..";\n"
-    return sql
-  end
-  return ""
+  return w.data
 end
 
 function SlipBox:write_data(basedir)
@@ -261,8 +236,8 @@ function SlipBox:write_data(basedir)
   write(basedir .. "/links.csv", links_to_csv(self.links))
   write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
   write(basedir .. "/sequences.csv", sequences_to_csv(self.aliases))
-  write(basedir .. "/citations.sql", citations_to_sql(self.citations))
-  utils.append_text(basedir .. "/citations.sql", bibliography_to_sql(self.bibliography))
+  write(basedir .. "/bibliography.csv", bibliography_to_csv(self.bibliography))
+  write(basedir .. "/citations.csv", citations_to_csv(self.citations))
 end
 
 return {

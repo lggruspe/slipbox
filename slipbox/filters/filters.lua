@@ -85,7 +85,7 @@ end
 
 function Collector:Cite(elem)
   for _, citation in pairs(elem.citations) do
-    self.slipbox:save_citation(self.id, citation.id)
+    self.slipbox:save_citation(self.id, "ref-" .. citation.id)
   end
 end
 

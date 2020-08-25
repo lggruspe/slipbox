@@ -93,10 +93,6 @@ local function is_reference_id(text)
   return text:match('^ref%-.+$') and true or false
 end
 
-local function sqlite_string(s)
-  return string.format("'%s'", s:gsub("'", "''"))
-end
-
 return {
   is_valid_alias = is_valid_alias,
   is_reference_id = is_reference_id,
@@ -107,5 +103,4 @@ return {
   alias_parent = alias_parent,
   write_text = write_text,
   append_text = append_text,
-  sqlite_string = sqlite_string,
 }
