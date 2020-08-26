@@ -54,7 +54,7 @@ function init (slipbox) {
         warning([
           `Duplicate ID: ${elem.identifier}`,
           `Could not insert note '${title}'.`,
-          `Note '${existing.title} already uses the ID.'`
+          `Note '${existing.title}' already uses the ID.`
         ])
       }
       return elem
@@ -109,7 +109,7 @@ function collect (slipbox) {
         if (alias && alias.id !== div.identifier) {
           warning([
             `Duplicate alias definition for '${link.description}' used by note ${alias.id}.`,
-            `It will not be used as an alias for note ${div.identifier}.`
+            `It will not be used as an alias for note ${link.dest}.`
           ])
           return
         }
