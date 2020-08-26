@@ -12,7 +12,7 @@ bundle:
 
 .PHONY:	check
 check: bundle
-	luacheck slipbox/filters/*.lua --globals describe it assert before_each
+	luacheck slipbox/filters/*.lua --std max+busted
 	cd slipbox; busted . -p '.*.test.lua'
 	npx eslint test --global describe --global it --global beforeEach --rule 'no-unused-vars: 0'
 	npm run lint
