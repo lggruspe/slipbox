@@ -6,7 +6,13 @@ import * as types from '../../../pandoc-tree/src/types.js'
 import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
 
 import { warning } from './log.js'
-import { parseFilename, parseHeaderText, parseLink, hashtagPrefix } from './utils.js'
+import {
+  parentAlias,
+  parseFilename,
+  parseHeaderText,
+  parseLink,
+  hashtagPrefix
+} from './utils.js'
 import { Slipbox } from './slipbox.js'
 
 function preprocess () {
@@ -137,7 +143,16 @@ function collect (slipbox) {
   }
 
   function Pandoc (doc) {
+    const sequences = []
+    for (const alias of Object.keys(aliases)) {
+      const parent = parentAlias(alias)
+      if (parent != null) {
+        sequences.push([parent, alias])
+      }
+    }
+
     slipbox.saveAliases(aliases)
+    slipbox.saveSequences(sequences)
     slipbox.saveCitations(cites)
     slipbox.saveLinks(links)
     slipbox.saveTags(tags)

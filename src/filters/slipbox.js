@@ -4,7 +4,6 @@ import * as process from 'process'
 import Database from 'better-sqlite3'
 
 import { warning } from './log.js'
-import { parentAlias } from './utils.js'
 
 class Slipbox {
   constructor () {
@@ -23,8 +22,10 @@ class Slipbox {
       tag: db.prepare('INSERT OR IGNORE INTO Tags (id, tag) VALUES (?, ?)')
     }
     this.select = {
-      alias: db.prepare('SELECT id, owner, alias FROM Aliases'),
-      note: db.prepare('SELECT id, title, filename FROM Notes WHERE id = ?')
+      note: db.prepare('SELECT id, title, filename FROM Notes WHERE id = ?'),
+      noteFromAlias: db.prepare(
+        'SELECT id, title, filename FROM Notes JOIN Aliases USING (id) WHERE alias = ?'
+      )
     }
   }
 
@@ -68,13 +69,31 @@ class Slipbox {
       for (const [alias, { id, owner }] of Object.entries(aliases)) {
         this.insert.alias.run([owner, owner, String(owner)])
         this.insert.alias.run([id, owner, alias])
-        const parent = parentAlias(alias)
-        if (parent != null) {
-          this.insert.sequence.run([parent, alias])
-        }
       }
     })
     insertMany(aliases)
+  }
+
+  saveSequences (sequences) {
+    const insertMany = this.db.transaction((sequences) => {
+      for (const [prev, next] of sequences) {
+        assert(prev && next)
+        try {
+          this.insert.sequence.run([prev, next])
+        } catch (error) {
+          // NOTE assume prev is the missing alias
+          console.error('prev', prev)
+          console.error('next', next)
+          const existing = this.select.noteFromAlias.get(next)
+          assert(existing)
+          warning([
+            `Missing note alias: '${prev}'.`,
+            `Note ${existing.id} with alias '${next}' will be unreachable.`
+          ])
+        }
+      }
+    })
+    insertMany(sequences)
   }
 
   saveLinks (links) {
