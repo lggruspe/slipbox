@@ -65,7 +65,7 @@ function init (slipbox: Slipbox): f.FilterSet {
       assert(note.filename)
       header.identifier = String(id)
       attr.attributes.title = title
-      attr.attributes.filename = undefined
+      attr.attributes.filename = ''
       attr.save()
 
       const existing = notes[header.identifier]
