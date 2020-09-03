@@ -1,7 +1,9 @@
 import { strict as assert } from 'assert'
 
-import { Link, RawBlock } from 'pandoc-tree/src/types.js'
-import * as wrap from 'pandoc-tree/src/wrap.js'
+import {
+  types as t,
+  wrap
+} from 'pandoc-tree'
 
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
@@ -28,7 +30,7 @@ const SEQUENCE_PATTERN = /^\/[a-zA-Z][a-zA-Z0-9]*$/
 const SEQUENCE_REGEX = new RegExp(SEQUENCE_PATTERN)
 const NUMBER_PATTERN = /^\d+$/
 const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
-function parseLink (src: string, elem: Link): { src: string, dest: string, tag: 'direct' | 'sequence', description: string } | undefined {
+function parseLink (src: string, elem: t.Link): { src: string, dest: string, tag: 'direct' | 'sequence', description: string } | undefined {
   const target = new wrap.Link(elem).src
 
   if (!NUMBER_REGEX.exec(src)) return
@@ -44,7 +46,7 @@ function parseLink (src: string, elem: Link): { src: string, dest: string, tag: 
 }
 const RAWBLOCK_PATTERN = /^<!--#slipbox-metadata\nfilename: (.+?)\n-->$/
 const RAWBLOCK_REGEX = new RegExp(RAWBLOCK_PATTERN)
-function parseFilename (elem: RawBlock): string | undefined {
+function parseFilename (elem: t.RawBlock): string | undefined {
   const result = RAWBLOCK_REGEX.exec(new wrap.RawBlock(elem).text)
   if (result && result.length > 1) {
     return result[1]

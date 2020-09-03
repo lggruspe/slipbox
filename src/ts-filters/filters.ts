@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 import { strict as assert } from 'assert'
 
-import { makeTopLevelSections, stringify } from 'pandoc-tree/src/utils.js'
+import {
+  create,
+  filter as f,
+  types as t,
+  utils,
+  wrap
+} from 'pandoc-tree'
 
-import * as t from 'pandoc-tree/src/types.js'
-import * as create from 'pandoc-tree/src/create.js'
-import * as wrap from 'pandoc-tree/src/wrap.js'
-import { interact, walkBlocks, FilterSet } from 'pandoc-tree/src/filter.js'
+const { makeTopLevelSections, stringify } = utils
+const { interact, walkBlocks } = f
 
 import { warning } from './log.js'
 import {
@@ -18,7 +22,7 @@ import {
 } from './utils.js'
 import { Slipbox } from './slipbox.js'
 
-function preprocess (): FilterSet {
+function preprocess (): f.FilterSet {
   function Pandoc (doc: t.Pandoc) {
     let filename
     for (const elem of doc.blocks) {
@@ -37,7 +41,7 @@ function preprocess (): FilterSet {
   return { Pandoc }
 }
 
-function init (slipbox: Slipbox): FilterSet {
+function init (slipbox: Slipbox): f.FilterSet {
   const notes: {
     [id: string]: { title: string, filename: string }
   } = {}
@@ -90,7 +94,7 @@ function init (slipbox: Slipbox): FilterSet {
   return { Header, RawBlock, Pandoc }
 }
 
-function collect (slipbox: Slipbox): FilterSet {
+function collect (slipbox: Slipbox): f.FilterSet {
   const aliases: { [alias: string]: { id: string, owner: string } } = {}
   const cites: { [id: string]: Set<string> } = {}
   const links: Array<{ tag: string, src: string, dest: string, description:string }> = []
@@ -176,7 +180,7 @@ function collect (slipbox: Slipbox): FilterSet {
   return { Div, Pandoc }
 }
 
-function modify (slipbox: Slipbox): FilterSet {
+function modify (slipbox: Slipbox): f.FilterSet {
   function Div (div: t.Div) {
     const wrappedDiv = new wrap.Div(div)
     if (!wrappedDiv.classes.includes('level1')) return
