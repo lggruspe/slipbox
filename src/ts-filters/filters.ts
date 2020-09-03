@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import { strict as assert } from 'assert'
 
-import { makeTopLevelSections, stringify } from '../../../pandoc-tree/src/utils.js'
+import { makeTopLevelSections, stringify } from 'pandoc-tree/src/utils.js'
 
-import * as t from '../../../pandoc-tree/src/types.js'
-import * as create from '../../../pandoc-tree/src/create.js'
-import * as wrap from '../../../pandoc-tree/src/wrap.js'
-import { interact, walkBlocks, FilterSet } from '../../../pandoc-tree/src/filter.js'
+import * as t from 'pandoc-tree/src/types.js'
+import * as create from 'pandoc-tree/src/create.js'
+import * as wrap from 'pandoc-tree/src/wrap.js'
+import { interact, walkBlocks, FilterSet } from 'pandoc-tree/src/filter.js'
 
 import { warning } from './log.js'
 import {

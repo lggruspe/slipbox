@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 
-import { Link, RawBlock } from '../../../pandoc-tree/src/types.js'
-import * as wrap from '../../../pandoc-tree/src/wrap.js'
+import { Link, RawBlock } from 'pandoc-tree/src/types.js'
+import * as wrap from 'pandoc-tree/src/wrap.js'
 
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
