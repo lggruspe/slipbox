@@ -35,10 +35,10 @@
     "eslint-plugin-standard": "^4.0.1",
     "fuse.js": "^6.4.1",
     "mocha": "^8.1.1",
+    "pandoc-tree": "file:../pandoc-tree",
     "rollup": "^2.26.2"
   },
   "dependencies": {
-    "better-sqlite3": "^7.1.0",
-    "pandoc-tree": "file:../pandoc-tree"
+    "better-sqlite3": "^7.1.0"
   }
 }
