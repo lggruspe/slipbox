@@ -9,7 +9,7 @@
   },
   "scripts": {
     "bundle": "rollup -c",
-    "lint": "eslint src",
+    "lint": "eslint src/*.js src/filters/*.js src/ts-filters/*.ts",
     "test": "mocha"
   },
   "type": "module",
@@ -25,18 +25,21 @@
   "homepage": "https://github.com/lggruspe/slipbox#readme",
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
-    "@types/node": "^14.6.3",
+    "@types/node": "^14.6.4",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
     "cytoscape": "^3.15.2",
-    "eslint": "^7.7.0",
+    "eslint": "^7.8.1",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "fuse.js": "^6.4.1",
-    "mocha": "^8.1.1",
+    "mocha": "^8.1.3",
     "pandoc-tree": "file:../pandoc-tree",
-    "rollup": "^2.26.2"
+    "rollup": "^2.26.10",
+    "typescript": "^4.0.2"
   },
   "dependencies": {
     "better-sqlite3": "^7.1.0"

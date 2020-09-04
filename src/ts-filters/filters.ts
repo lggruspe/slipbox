@@ -9,9 +9,6 @@ import {
   wrap
 } from 'pandoc-tree'
 
-const { makeTopLevelSections, stringify } = utils
-const { interact, walkBlocks } = f
-
 import { warning } from './log.js'
 import {
   parentAlias,
@@ -21,6 +18,9 @@ import {
   hashtagPrefix
 } from './utils.js'
 import { Slipbox } from './slipbox.js'
+
+const { makeTopLevelSections, stringify } = utils
+const { interact, walkBlocks } = f
 
 function preprocess (): f.FilterSet {
   function Pandoc (doc: t.Pandoc) {
