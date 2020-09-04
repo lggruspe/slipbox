@@ -9,7 +9,7 @@
   },
   "scripts": {
     "bundle": "rollup -c",
-    "lint": "eslint src/*.js src/filters/*.js src/ts-filters/*.ts",
+    "lint": "eslint src/*.js src/ts-filters/*.ts",
     "test": "mocha"
   },
   "type": "module",
