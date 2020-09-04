@@ -24,20 +24,24 @@ const { interact, walkBlocks } = f
 
 function preprocess (): f.FilterSet {
   function Pandoc (doc: t.Pandoc) {
-    let filename
+    let filename = ''
     for (const elem of doc.blocks) {
       if (elem.t === 'RawBlock') {
-        filename = parseFilename(elem) || filename
+        if (new wrap.RawBlock(elem).format === 'html') {
+          filename = parseFilename(elem) || filename
+        }
       } else if (elem.t === 'Header') {
-        assert(filename && typeof filename === 'string')
-        const attr = new wrap.Attr(new wrap.Header(elem).attr)
-        attr.attributes.filename = filename
-        attr.save()
+        const header = new wrap.Header(elem)
+        if (header.level === 1) {
+          assert(filename)
+          const attr = new wrap.Attr(header.attr)
+          attr.attributes.filename = filename
+          attr.save()
+        }
       }
     }
     return doc
   }
-
   return { Pandoc }
 }
 
@@ -65,7 +69,7 @@ function init (slipbox: Slipbox): f.FilterSet {
       assert(note.filename)
       header.identifier = String(id)
       attr.attributes.title = title
-      attr.attributes.filename = ''
+      delete attr.attributes.filename
       attr.save()
 
       const existing = notes[header.identifier]
