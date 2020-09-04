@@ -67,8 +67,15 @@ function parentAlias (alias: string): string | null {
   return null
 }
 
+const REFERENCE_ID_PATTERN = /^ref-.+$/
+const REFERENCE_ID_REGEX = new RegExp(REFERENCE_ID_PATTERN)
+function isReferenceId (id: string): boolean {
+  return REFERENCE_ID_REGEX.test(id)
+}
+
 export {
   hashtagPrefix,
+  isReferenceId,
   parentAlias,
   parseFilename,
   parseHeaderText,

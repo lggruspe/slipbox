@@ -15,6 +15,7 @@ import {
   parseFilename,
   parseHeaderText,
   parseLink,
+  isReferenceId,
   hashtagPrefix
 } from './utils.js'
 import { Slipbox } from './slipbox.js'
@@ -116,7 +117,7 @@ function collect (slipbox: Slipbox): f.FilterSet {
       const wrappedCite = new wrap.Cite(elem)
       for (const citation of Object.values(wrappedCite.citations)) {
         const rec = new Set(cites[wrappedDiv.identifier] || [])
-        rec.add(new wrap.Citation(citation).id)
+        rec.add('ref-' + new wrap.Citation(citation).id)
         cites[wrappedDiv.identifier] = rec
       }
     }
@@ -241,8 +242,30 @@ function modify (slipbox: Slipbox): f.FilterSet {
     }
     return div
   }
-
   return { Div }
+}
+
+function citations (slipbox: Slipbox): f.FilterSet {
+  const references: Array<[string, string]> = []
+  function Div (div: t.Div) {
+    const wrappedDiv = new wrap.Div(div)
+    if (wrappedDiv.identifier === 'refs') {
+      walkBlocks(wrappedDiv.content, {
+        Div: (elem: t.Div) => {
+          const id = new wrap.Div(elem).identifier
+          if (isReferenceId(id)) {
+            references.push([id, stringify(elem)])
+          }
+        }
+      })
+      return []
+    }
+  }
+  function Pandoc (doc: t.Pandoc) {
+    slipbox.saveReferences(references)
+    return doc
+  }
+  return { Div, Pandoc }
 }
 
 function main () {
@@ -251,7 +274,8 @@ function main () {
     preprocess(),
     init(slipbox),
     collect(slipbox),
-    modify(slipbox)
+    modify(slipbox),
+    citations(slipbox)
   ]
   interact(filters)
 }

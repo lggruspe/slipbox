@@ -8,6 +8,7 @@ import { warning } from './log.js'
 class Slipbox {
   db: Database.Database
   insert: { [key: string]: Database.Statement }
+  update: { [key: string]: Database.Statement }
   select: { [key: string]: Database.Statement }
   constructor () {
     const path = process.env.SLIPBOX_DB || 'slipbox.db'
@@ -23,6 +24,9 @@ class Slipbox {
       note: db.prepare('INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)'),
       sequence: db.prepare('INSERT OR IGNORE INTO Sequences (prev, next) VALUES (?, ?)'),
       tag: db.prepare('INSERT OR IGNORE INTO Tags (id, tag) VALUES (?, ?)')
+    }
+    this.update = {
+      bib: db.prepare('UPDATE Bibliography SET text = ? WHERE key = ?')
     }
     this.select = {
       note: db.prepare('SELECT id, title, filename FROM Notes WHERE id = ?'),
@@ -59,7 +63,7 @@ class Slipbox {
     const insertMany = this.db.transaction(() => {
       for (const [id, _cites] of Object.entries(cites)) {
         _cites.forEach(cite => {
-          this.insert.bib.run([cite, '<temp>'])
+          this.insert.bib.run([cite, ''])
           this.insert.cite.run([id, cite])
         })
       }
@@ -85,8 +89,6 @@ class Slipbox {
           this.insert.sequence.run([prev, next])
         } catch (error) {
           // NOTE assume prev is the missing alias
-          console.error('prev', prev)
-          console.error('next', next)
           const existing = this.select.noteFromAlias.get(next)
           assert(existing)
           warning([
@@ -114,6 +116,15 @@ class Slipbox {
     const insertMany = this.db.transaction(() => {
       for (const [id, tag] of tags) {
         this.insert.tag.run([id, tag])
+      }
+    })
+    insertMany()
+  }
+
+  saveReferences (references: Array<[string, string]>) {
+    const insertMany = this.db.transaction(() => {
+      for (const [key, text] of references) {
+        this.update.bib.run([text, key])
       }
     })
     insertMany()
