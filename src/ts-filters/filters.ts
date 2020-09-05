@@ -8,7 +8,7 @@ import {
   set,
   types as t,
   utils,
-  wrap
+  withAttributes
 } from 'pandoc-tree'
 
 import { warning } from './log.js'
@@ -62,13 +62,13 @@ function init (slipbox: Slipbox): f.FilterSet {
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
       set.identifier(elem, String(id))
-      const attr = new wrap.Attr(get.attr(elem))
-      const note = { title, filename: attr.attributes.filename }
+      const note = { title, filename: '' }
+      withAttributes(elem, attr => {
+        attr.title = title
+        note.filename = attr.filename
+        delete attr.filename
+      })
       assert(note.filename)
-      attr.attributes.title = title
-      delete attr.attributes.filename
-      attr.save()
-
       const identifier = get.identifier(elem)
       const existing = notes[identifier]
       if (existing == null) {
