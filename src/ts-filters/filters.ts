@@ -4,6 +4,7 @@ import { strict as assert } from 'assert'
 import {
   create,
   filter as f,
+  get,
   types as t,
   utils,
   wrap
@@ -28,16 +29,13 @@ function preprocess (): f.FilterSet {
     let filename = ''
     for (const elem of doc.blocks) {
       if (elem.t === 'RawBlock') {
-        if (new wrap.RawBlock(elem).format === 'html') {
+        if (get.format(elem) === 'html') {
           filename = parseFilename(elem) || filename
         }
       } else if (elem.t === 'Header') {
-        const header = new wrap.Header(elem)
-        if (header.level === 1) {
+        if (get.level(elem) === 1) {
           assert(filename)
-          const attr = new wrap.Attr(header.attr)
-          attr.attributes.filename = filename
-          attr.save()
+          get.attributes(elem).push(['filename', filename])
         }
       }
     }
@@ -52,32 +50,32 @@ function init (slipbox: Slipbox): f.FilterSet {
   } = {}
 
   function RawBlock (elem: t.RawBlock) {
-    const format = new wrap.RawBlock(elem).format
-    if (format === 'html' && parseFilename(elem)) {
+    if (get.format(elem) === 'html' && parseFilename(elem)) {
       return []
     }
   }
 
   function Header (elem: t.Header) {
-    const header = new wrap.Header(elem)
-    if (header.level !== 1) return
+    if (get.level(elem) !== 1) return
     const content = stringify(elem)
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
-      const attr = new wrap.Attr(header.attr)
+      const attr = new wrap.Attr(get.attr(elem))
       const note = { title, filename: attr.attributes.filename }
       assert(note.filename)
+      const header = new wrap.Header(elem)
       header.identifier = String(id)
       attr.attributes.title = title
       delete attr.attributes.filename
       attr.save()
 
-      const existing = notes[header.identifier]
+      const identifier = get.identifier(elem)
+      const existing = notes[identifier]
       if (existing == null) {
-        notes[header.identifier] = note
+        notes[identifier] = note
       } else {
         warning([
-          `Duplicate ID: ${header.identifier}.`,
+          `Duplicate ID: ${identifier}.`,
           `Could not insert note '${title}'.`,
           `Note '${existing.title}' already uses the ID.`
         ])
@@ -89,7 +87,7 @@ function init (slipbox: Slipbox): f.FilterSet {
   function Pandoc (doc: t.Pandoc) {
     doc.blocks = makeTopLevelSections(
       doc.blocks,
-      header => create.Attr(new wrap.Header(header).identifier, ['level1'])
+      header => create.Attr(get.identifier(header), ['level1'])
     )
     slipbox.saveNotes(notes)
     return doc
@@ -105,36 +103,35 @@ function collect (slipbox: Slipbox): f.FilterSet {
   const tags: Array<[string, string]> = []
 
   function Div (div: t.Div) {
-    const wrappedDiv = new wrap.Div(div)
-    if (!wrappedDiv.classes.includes('level1')) return
-    if (!Number.isInteger(Number(wrappedDiv.identifier))) return
+    if (!get.classes(div).includes('level1')) return
+    if (!Number.isInteger(Number(get.identifier(div)))) return
     // NOTE doesn't exclude numbers in scientific notation
 
     let hasEmptyLink = false
 
     function Cite (elem: t.Cite) {
-      const wrappedCite = new wrap.Cite(elem)
-      for (const citation of Object.values(wrappedCite.citations)) {
-        const rec = new Set(cites[wrappedDiv.identifier] || [])
-        rec.add('ref-' + new wrap.Citation(citation).id)
-        cites[wrappedDiv.identifier] = rec
+      for (const citation of Object.values(get.citations(elem))) {
+        const divID = get.identifier(div)
+        const rec = new Set(cites[divID] || [])
+        rec.add('ref-' + get.id(citation))
+        cites[divID] = rec
       }
     }
 
     function Link (elem: t.Link) {
-      const wrappedLink = new wrap.Link(elem)
-      if (!wrappedLink.target) {
+      if (!get.target(elem)) {
         hasEmptyLink = true
-        return wrappedLink.content
+        return get.content(elem)
       }
 
-      const link = parseLink(wrappedDiv.identifier, elem)
+      const identifier = get.identifier(div)
+      const link = parseLink(identifier, elem)
       if (!link) return
       if (link.tag === 'direct') {
         links.push(link)
       } else if (link.tag === 'sequence') {
         const alias = aliases[link.description]
-        if (alias && alias.id !== wrappedDiv.identifier) {
+        if (alias && alias.id !== identifier) {
           warning([
             `Duplicate alias definition for '${link.description}' used by note ${alias.id}.`,
             `It will not be used as an alias for note ${link.dest}.`
@@ -149,17 +146,18 @@ function collect (slipbox: Slipbox): f.FilterSet {
     }
 
     function Str (elem: t.Str) {
-      const text = new wrap.Str(elem).text
+      const text = get.text(elem)
       if (hashtagPrefix(text)) {
-        tags.push([wrappedDiv.identifier, text])
+        tags.push([get.identifier(div), text])
       }
     }
 
     const filter = { Cite, Link, Str }
-    wrappedDiv.content = walkBlocks(wrappedDiv.content, filter)
+    const wrappedDiv = new wrap.Div(div)
+    wrappedDiv.content = walkBlocks(get.content(div), filter)
 
     if (hasEmptyLink) {
-      warning([`Note ${wrappedDiv.identifier} contains a link with an empty target.`])
+      warning([`Note ${get.identifier(div)} contains a link with an empty target.`])
     }
     return div
   }
@@ -186,23 +184,20 @@ function collect (slipbox: Slipbox): f.FilterSet {
 
 function modify (slipbox: Slipbox): f.FilterSet {
   function Div (div: t.Div) {
-    const wrappedDiv = new wrap.Div(div)
-    if (!wrappedDiv.classes.includes('level1')) return
-    if (!Number.isInteger(Number(wrappedDiv.identifier))) return
+    if (!get.classes(div).includes('level1')) return
+    if (!Number.isInteger(Number(get.identifier(div)))) return
     // TODO should exclude numbers in scientific notation
 
     function Link (elem: t.Link) {
       const content = stringify(elem)
       if (!content) {
-        const wrappedLink = new wrap.Link(elem)
-        const target = wrappedLink.target
-        const title = wrappedLink.title
+        const target = get.target(elem)
         return [
           create.Str(' ['),
           create.Link(
             [create.Str(target)],
             target,
-            title
+            get.title(elem)
           ),
           create.Str(']')
         ]
@@ -210,7 +205,7 @@ function modify (slipbox: Slipbox): f.FilterSet {
     }
 
     function Str (elem: t.Str) {
-      const text = new wrap.Str(elem).text
+      const text = get.text(elem)
       if (hashtagPrefix(text)) {
         const src = '#' + text
         return create.Link([elem], src)
@@ -219,25 +214,23 @@ function modify (slipbox: Slipbox): f.FilterSet {
 
     const footnotes: Array<t.Block> = []
     function Note (elem: t.Note) {
-      const content = new wrap.Note(elem).content
-      footnotes.push(create.Div(content))
+      footnotes.push(create.Div(get.content(elem)))
       return create.Superscript([create.Str(String(footnotes.length))])
     }
 
     const filter = { Link, Note, Str }
-    wrappedDiv.content = walkBlocks(wrappedDiv.content, filter)
+    const wrappedDiv = new wrap.Div(div)
+    wrappedDiv.content = walkBlocks(get.content(div), filter)
 
     // insert footnotes into document
     if (footnotes.length > 0) {
-      wrappedDiv.content.push(create.HorizontalRule())
-      wrappedDiv.content.push(create.OrderedList(footnotes.map(fn => [fn])))
+      get.content(div).push(create.HorizontalRule())
+      get.content(div).push(create.OrderedList(footnotes.map(fn => [fn])))
     }
 
     // hide sections
-    if (wrappedDiv.classes.includes('level1')) {
-      const attr = new wrap.Attr(wrappedDiv.attr)
-      attr.attributes.style = 'display:none'
-      attr.save()
+    if (get.classes(div).includes('level1')) {
+      get.attributes(div).push(['style', 'display:none'])
     }
     return div
   }
@@ -247,11 +240,10 @@ function modify (slipbox: Slipbox): f.FilterSet {
 function citations (slipbox: Slipbox): f.FilterSet {
   const references: Array<[string, string]> = []
   function Div (div: t.Div) {
-    const wrappedDiv = new wrap.Div(div)
-    if (wrappedDiv.identifier === 'refs') {
-      walkBlocks(wrappedDiv.content, {
+    if (get.identifier(div) === 'refs') {
+      walkBlocks(get.content(div), {
         Div: (elem: t.Div) => {
-          const id = new wrap.Div(elem).identifier
+          const id = get.identifier(elem)
           if (isReferenceId(id)) {
             references.push([id, stringify(elem)])
           }

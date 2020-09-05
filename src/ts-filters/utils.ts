@@ -1,6 +1,6 @@
 import {
-  types as t,
-  wrap
+  get,
+  types as t
 } from 'pandoc-tree'
 
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
@@ -28,13 +28,13 @@ const SEQUENCE_REGEX = new RegExp(SEQUENCE_PATTERN)
 const NUMBER_PATTERN = /^\d+$/
 const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
 function parseLink (src: string, elem: t.Link): { src: string, dest: string, tag: 'direct' | 'sequence', description: string } | undefined {
-  const target = new wrap.Link(elem).target
+  const target = get.target(elem)
 
   if (!NUMBER_REGEX.exec(src)) return
   if (!TARGET_REGEX.exec(target)) return
   const dest = target.slice(1)
 
-  const title = new wrap.Link(elem).title
+  const title = get.title(elem)
   if (!SEQUENCE_REGEX.exec(title)) {
     return { src, dest, tag: 'direct', description: title }
   }
@@ -44,7 +44,7 @@ function parseLink (src: string, elem: t.Link): { src: string, dest: string, tag
 const RAWBLOCK_PATTERN = /^<!--#slipbox-metadata\nfilename: (.+?)\n-->$/
 const RAWBLOCK_REGEX = new RegExp(RAWBLOCK_PATTERN)
 function parseFilename (elem: t.RawBlock): string | undefined {
-  const result = RAWBLOCK_REGEX.exec(new wrap.RawBlock(elem).text)
+  const result = RAWBLOCK_REGEX.exec(get.text(elem))
   if (result && result.length > 1) {
     return result[1]
   }
