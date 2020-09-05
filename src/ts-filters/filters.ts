@@ -5,6 +5,7 @@ import {
   create,
   filter as f,
   get,
+  set,
   types as t,
   utils,
   wrap
@@ -60,11 +61,10 @@ function init (slipbox: Slipbox): f.FilterSet {
     const content = stringify(elem)
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
+      set.identifier(elem, String(id))
       const attr = new wrap.Attr(get.attr(elem))
       const note = { title, filename: attr.attributes.filename }
       assert(note.filename)
-      const header = new wrap.Header(elem)
-      header.identifier = String(id)
       attr.attributes.title = title
       delete attr.attributes.filename
       attr.save()
@@ -153,9 +153,7 @@ function collect (slipbox: Slipbox): f.FilterSet {
     }
 
     const filter = { Cite, Link, Str }
-    const wrappedDiv = new wrap.Div(div)
-    wrappedDiv.content = walkBlocks(get.content(div), filter)
-
+    set.content(div, walkBlocks(get.content(div), filter))
     if (hasEmptyLink) {
       warning([`Note ${get.identifier(div)} contains a link with an empty target.`])
     }
@@ -219,17 +217,14 @@ function modify (slipbox: Slipbox): f.FilterSet {
     }
 
     const filter = { Link, Note, Str }
-    const wrappedDiv = new wrap.Div(div)
-    wrappedDiv.content = walkBlocks(get.content(div), filter)
-
-    // insert footnotes into document
+    set.content(div, walkBlocks(get.content(div), filter))
     if (footnotes.length > 0) {
+      // insert footnotes into document
       get.content(div).push(create.HorizontalRule())
       get.content(div).push(create.OrderedList(footnotes.map(fn => [fn])))
     }
-
-    // hide sections
     if (get.classes(div).includes('level1')) {
+      // hide sections
       get.attributes(div).push(['style', 'display:none'])
     }
     return div
