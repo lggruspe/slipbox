@@ -62,7 +62,6 @@ function init (slipbox: Slipbox): f.FilterSet {
     const header = new wrap.Header(elem)
     if (header.level !== 1) return
     const content = stringify(elem)
-    assert(content != null)
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
       const attr = new wrap.Attr(header.attr)
@@ -78,7 +77,7 @@ function init (slipbox: Slipbox): f.FilterSet {
         notes[header.identifier] = note
       } else {
         warning([
-          `Duplicate ID: ${header.identifier}`,
+          `Duplicate ID: ${header.identifier}.`,
           `Could not insert note '${title}'.`,
           `Note '${existing.title}' already uses the ID.`
         ])
@@ -124,7 +123,7 @@ function collect (slipbox: Slipbox): f.FilterSet {
 
     function Link (elem: t.Link) {
       const wrappedLink = new wrap.Link(elem)
-      if (!wrappedLink.src) {
+      if (!wrappedLink.target) {
         hasEmptyLink = true
         return wrappedLink.content
       }
@@ -190,13 +189,13 @@ function modify (slipbox: Slipbox): f.FilterSet {
     const wrappedDiv = new wrap.Div(div)
     if (!wrappedDiv.classes.includes('level1')) return
     if (!Number.isInteger(Number(wrappedDiv.identifier))) return
-    // NOTE doesn't exclude numbers in scientific notation
+    // TODO should exclude numbers in scientific notation
 
     function Link (elem: t.Link) {
       const content = stringify(elem)
       if (!content) {
         const wrappedLink = new wrap.Link(elem)
-        const target = wrappedLink.src
+        const target = wrappedLink.target
         const title = wrappedLink.title
         return [
           create.Str(' ['),

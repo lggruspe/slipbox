@@ -7,8 +7,7 @@ const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
 function hashtagPrefix (text: string): string | null {
   const result = HASHTAG_REGEX.exec(text)
-  if (result == null) return null
-  return result[0]
+  return result == null ? null : result[0]
 }
 
 const HEADER_PATTERN = /^\s*(\d+)\s+(.+?)\s*$/
@@ -29,12 +28,11 @@ const SEQUENCE_REGEX = new RegExp(SEQUENCE_PATTERN)
 const NUMBER_PATTERN = /^\d+$/
 const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
 function parseLink (src: string, elem: t.Link): { src: string, dest: string, tag: 'direct' | 'sequence', description: string } | undefined {
-  const target = new wrap.Link(elem).src
+  const target = new wrap.Link(elem).target
 
   if (!NUMBER_REGEX.exec(src)) return
   if (!TARGET_REGEX.exec(target)) return
   const dest = target.slice(1)
-  if (!NUMBER_REGEX.exec(dest)) return
 
   const title = new wrap.Link(elem).title
   if (!SEQUENCE_REGEX.exec(title)) {
@@ -42,6 +40,7 @@ function parseLink (src: string, elem: t.Link): { src: string, dest: string, tag
   }
   return { src, dest, tag: 'sequence', description: src + title.slice(1) }
 }
+
 const RAWBLOCK_PATTERN = /^<!--#slipbox-metadata\nfilename: (.+?)\n-->$/
 const RAWBLOCK_REGEX = new RegExp(RAWBLOCK_PATTERN)
 function parseFilename (elem: t.RawBlock): string | undefined {
