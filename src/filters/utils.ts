@@ -12,6 +12,14 @@ function isTopLevelSection (div: t.Div): boolean {
   return NUMBER_REGEX.test(get.identifier(div)) && get.classes(div).includes('level1')
 }
 
+// TODO shouldn't the pattern be /^.+(\..+)$/
+const FILENAME_EXTENSION_PATTERN = /^.+(\..*)$/
+const FILENAME_EXTENSION_REGEX = new RegExp(FILENAME_EXTENSION_PATTERN)
+function fileExtension (filename: string): string {
+  const result = FILENAME_EXTENSION_REGEX.exec(filename)
+  return result == null ? '' : result[1].slice(1)
+}
+
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
 function hashtagPrefix (text: string): string | null {
@@ -88,6 +96,7 @@ function fileToBase64 (path: string): string {
 }
 
 export {
+  fileExtension,
   fileToBase64,
   hashtagPrefix,
   isReferenceId,

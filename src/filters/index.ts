@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { strict as assert } from 'assert'
+import { existsSync } from 'fs'
+import * as process from 'process'
 
 import {
   create,
@@ -13,6 +15,8 @@ import {
 
 import { warning } from './log.js'
 import {
+  fileExtension,
+  fileToBase64,
   parseFilename,
   parseHeaderText,
   parseLink,
@@ -209,6 +213,23 @@ function citations (slipbox: Slipbox): f.FilterSet {
   return { Div, Pandoc }
 }
 
+function images (): f.FilterSet {
+  const convert = process.env.CONVERT_TO_DATA_URL
+  if (!convert) return {}
+  return {
+    Image: function (elem) {
+      const src = get.src(elem)
+      if (!existsSync(src)) return
+      const ext = fileExtension(src)
+      if (ext) {
+        const base64 = fileToBase64(src)
+        set.src(elem, `data:image/${ext};base64,${base64}`)
+        return elem
+      }
+    }
+  }
+}
+
 function main () {
   const slipbox = new Slipbox()
   const filters = [
@@ -216,7 +237,8 @@ function main () {
     init(slipbox),
     collect(slipbox),
     modify(slipbox),
-    citations(slipbox)
+    citations(slipbox),
+    images()
   ]
   interact(filters)
 }
