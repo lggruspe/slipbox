@@ -10,7 +10,7 @@ import {
   Query,
   ReferenceError,
   Sequence
-} from '../src/model.js'
+} from '../src/frontend/model.js'
 
 import assert from 'assert'
 

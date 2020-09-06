@@ -1,4 +1,4 @@
-import { init } from '../src/search.js'
+import { init } from '../src/frontend/search.js'
 
 import assert from 'assert'
 

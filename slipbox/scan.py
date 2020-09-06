@@ -82,7 +82,7 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
     """
     assert input_.exists()
     datadir_path = Path(__file__).with_name("data").joinpath("filters")
-    js_filter = shlex.quote(str(datadir_path.joinpath("filters.js").resolve()))
+    js_filter = shlex.quote(str(datadir_path.joinpath("index.js").resolve()))
     datadir = shlex.quote(str(datadir_path.resolve()))
     cmd = f"{utils.pandoc()} -Fpandoc-citeproc -F{js_filter} --section-divs " \
             f"--data-dir {datadir} -Mlink-citations:true {options} " \

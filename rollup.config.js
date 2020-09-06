@@ -1,5 +1,5 @@
 export default {
-  input: 'src/index.js',
+  input: 'src/frontend/index.js',
   output: {
     file: 'slipbox/data/bundle.js',
     format: 'es',
