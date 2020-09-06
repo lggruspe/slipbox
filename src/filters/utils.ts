@@ -1,3 +1,5 @@
+import * as fs from 'fs'
+
 import {
   get,
   types as t
@@ -77,7 +79,16 @@ function isReferenceId (id: string): boolean {
   return REFERENCE_ID_REGEX.test(id)
 }
 
+const CACHE: { [path: string]: string } = {}
+function fileToBase64 (path: string): string {
+  if (CACHE[path] != null) return CACHE[path]
+  const content = fs.readFileSync(path, 'utf-8')
+  CACHE[path] = Buffer.from(content, 'utf-8').toString('base64')
+  return CACHE[path]
+}
+
 export {
+  fileToBase64,
   hashtagPrefix,
   isReferenceId,
   isTopLevelSection,
