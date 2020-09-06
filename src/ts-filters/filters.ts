@@ -13,7 +13,6 @@ import {
 
 import { warning } from './log.js'
 import {
-  parentAlias,
   parseFilename,
   parseHeaderText,
   parseLink,
@@ -46,10 +45,6 @@ function preprocess (): f.FilterSet {
 }
 
 function init (slipbox: Slipbox): f.FilterSet {
-  const notes: {
-    [id: string]: { title: string, filename: string }
-  } = {}
-
   function RawBlock (elem: t.RawBlock) {
     if (get.format(elem) === 'html' && parseFilename(elem)) {
       return []
@@ -62,24 +57,14 @@ function init (slipbox: Slipbox): f.FilterSet {
     const { id, title } = parseHeaderText(content)
     if (id != null && title != null) {
       set.identifier(elem, String(id))
-      const note = { title, filename: '' }
+      let filename = ''
       withAttributes(elem, attr => {
         attr.title = title
-        note.filename = attr.filename
+        filename = attr.filename
         delete attr.filename
       })
-      assert(note.filename)
-      const identifier = get.identifier(elem)
-      const existing = notes[identifier]
-      if (existing == null) {
-        notes[identifier] = note
-      } else {
-        warning([
-          `Duplicate ID: ${identifier}.`,
-          `Could not insert note '${title}'.`,
-          `Note '${existing.title}' already uses the ID.`
-        ])
-      }
+      assert(filename)
+      slipbox.saveNote(get.identifier(elem), title, filename)
       return elem
     }
   }
@@ -89,7 +74,7 @@ function init (slipbox: Slipbox): f.FilterSet {
       doc.blocks,
       header => create.Attr(get.identifier(header), ['level1'])
     )
-    slipbox.saveNotes(notes)
+    slipbox.saveNotes()
     return doc
   }
 
@@ -97,11 +82,6 @@ function init (slipbox: Slipbox): f.FilterSet {
 }
 
 function collect (slipbox: Slipbox): f.FilterSet {
-  const aliases: { [alias: string]: { id: string, owner: string } } = {}
-  const cites: { [id: string]: Set<string> } = {}
-  const links: Array<{ tag: string, src: string, dest: string, description:string }> = []
-  const tags: Array<[string, string]> = []
-
   function Div (div: t.Div) {
     if (!get.classes(div).includes('level1')) return
     if (!Number.isInteger(Number(get.identifier(div)))) return
@@ -111,10 +91,7 @@ function collect (slipbox: Slipbox): f.FilterSet {
 
     function Cite (elem: t.Cite) {
       for (const citation of Object.values(get.citations(elem))) {
-        const divID = get.identifier(div)
-        const rec = new Set(cites[divID] || [])
-        rec.add('ref-' + get.id(citation))
-        cites[divID] = rec
+        slipbox.saveCite(get.identifier(div), get.id(citation))
       }
     }
 
@@ -128,27 +105,16 @@ function collect (slipbox: Slipbox): f.FilterSet {
       const link = parseLink(identifier, elem)
       if (!link) return
       if (link.tag === 'direct') {
-        links.push(link)
+        slipbox.saveLink(link.src, link.dest, link.description)
       } else if (link.tag === 'sequence') {
-        const alias = aliases[link.description]
-        if (alias && alias.id !== identifier) {
-          warning([
-            `Duplicate alias definition for '${link.description}' used by note ${alias.id}.`,
-            `It will not be used as an alias for note ${link.dest}.`
-          ])
-          return
-        }
-        aliases[link.description] = {
-          id: link.dest,
-          owner: link.src
-        }
+        slipbox.saveAlias(link.description, link.dest, link.src)
       }
     }
 
     function Str (elem: t.Str) {
       const text = get.text(elem)
       if (hashtagPrefix(text)) {
-        tags.push([get.identifier(div), text])
+        slipbox.saveTag(get.identifier(div), text)
       }
     }
 
@@ -161,19 +127,11 @@ function collect (slipbox: Slipbox): f.FilterSet {
   }
 
   function Pandoc (doc: t.Pandoc) {
-    const sequences: Array<[string, string]> = []
-    for (const alias of Object.keys(aliases)) {
-      const parent = parentAlias(alias)
-      if (parent != null) {
-        sequences.push([parent, alias])
-      }
-    }
-
-    slipbox.saveAliases(aliases)
-    slipbox.saveSequences(sequences)
-    slipbox.saveCitations(cites)
-    slipbox.saveLinks(links)
-    slipbox.saveTags(tags)
+    slipbox.saveAliases()
+    slipbox.saveSequences()
+    slipbox.saveCitations()
+    slipbox.saveLinks()
+    slipbox.saveTags()
     return doc
   }
 

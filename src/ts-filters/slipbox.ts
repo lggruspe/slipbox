@@ -4,12 +4,21 @@ import * as process from 'process'
 import Database from 'better-sqlite3'
 
 import { warning } from './log.js'
+import { parentAlias } from './utils.js'
 
-class Slipbox {
+export class Slipbox {
   db: Database.Database
   insert: { [key: string]: Database.Statement }
   update: { [key: string]: Database.Statement }
   select: { [key: string]: Database.Statement }
+  notes: { [id: string]: { title: string, filename: string } } = {}
+  citations: { [id: string]: Set<string> } = {}
+  aliases: { [alias: string]: { id: string, owner: string } } = {}
+  sequences: Array<[string, string]> = []
+  links: Array<{ tag: string, src: string, dest: string, description: string }> = []
+  tags: Array<[string, string]> = []
+  references: Array<[string, string]> = []
+
   constructor () {
     const path = process.env.SLIPBOX_DB || 'slipbox.db'
     this.db = new Database(path, { fileMustExist: true })
@@ -36,9 +45,52 @@ class Slipbox {
     }
   }
 
-  saveNotes (notes: { [id: string]: { title: string, filename: string } }) {
+  saveNote (id: string, title: string, filename: string) {
+    const existing = this.notes[id]
+    if (existing == null) {
+      this.notes[id] = { title, filename }
+    } else {
+      warning([
+        `Duplicate ID: ${id}.`,
+        `Could not insert note '${title}'.`,
+        `Note '${existing.title}' already uses the ID.`
+      ])
+    }
+  }
+
+  saveCite (id: string, ref: string) {
+    const rec = new Set(this.citations[id] || [])
+    rec.add('ref-' + ref)
+    this.citations[id] = rec
+  }
+
+  saveAlias (alias: string, id: string, owner: string) {
+    const existing = this.aliases[alias]
+    if (existing && existing.id !== id) {
+      warning([
+        `Duplicate alias definition for '${alias}' used by note ${existing.id}.`,
+        `It will not be used as an alias for note ${id}.`
+      ])
+    } else {
+      this.aliases[alias] = { id, owner }
+      const prev = parentAlias(alias)
+      if (prev != null) {
+        this.sequences.push([prev, alias])
+      }
+    }
+  }
+
+  saveLink (src: string, dest: string, description: string) {
+    this.links.push({ tag: 'direct', src, dest, description })
+  }
+
+  saveTag (id: string, tag: string) {
+    this.tags.push([id, tag])
+  }
+
+  saveNotes () {
     const insertMany = this.db.transaction(() => {
-      for (const note of Object.entries(notes)) {
+      for (const note of Object.entries(this.notes)) {
         const [id, { title, filename }] = note
         this.insert.file.run(filename)
         try {
@@ -57,11 +109,12 @@ class Slipbox {
       }
     })
     insertMany()
+    this.notes = {} // ???
   }
 
-  saveCitations (cites: { [id: string]: Set<string> }) {
+  saveCitations () {
     const insertMany = this.db.transaction(() => {
-      for (const [id, _cites] of Object.entries(cites)) {
+      for (const [id, _cites] of Object.entries(this.citations)) {
         _cites.forEach(cite => {
           this.insert.bib.run([cite, ''])
           this.insert.cite.run([id, cite])
@@ -69,21 +122,23 @@ class Slipbox {
       }
     })
     insertMany()
+    this.citations = {} // ???
   }
 
-  saveAliases (aliases: { [alias: string]: { id: string, owner: string } }) {
+  saveAliases () {
     const insertMany = this.db.transaction(() => {
-      for (const [alias, { id, owner }] of Object.entries(aliases)) {
+      for (const [alias, { id, owner }] of Object.entries(this.aliases)) {
         this.insert.alias.run([owner, owner, String(owner)])
         this.insert.alias.run([id, owner, alias])
       }
     })
     insertMany()
+    this.aliases = {} // ???
   }
 
-  saveSequences (sequences: Array<[string, string]>) {
+  saveSequences () {
     const insertMany = this.db.transaction(() => {
-      for (const [prev, next] of sequences) {
+      for (const [prev, next] of this.sequences) {
         assert(prev && next)
         try {
           this.insert.sequence.run([prev, next])
@@ -99,26 +154,29 @@ class Slipbox {
       }
     })
     insertMany()
+    this.sequences = [] // ???
   }
 
-  saveLinks (links: Array<{ tag: string, src: string, dest: string, description: string }>) {
+  saveLinks () {
     // TODO handle error if note has duplicate links to a note
     const insertMany = this.db.transaction(() => {
-      for (const { tag, src, dest, description } of links) {
+      for (const { tag, src, dest, description } of this.links) {
         assert(tag === 'direct')
         this.insert.link.run([src, dest, description])
       }
     })
     insertMany()
+    this.links = [] // ???
   }
 
-  saveTags (tags: Array<[string, string]>) {
+  saveTags () {
     const insertMany = this.db.transaction(() => {
-      for (const [id, tag] of tags) {
+      for (const [id, tag] of this.tags) {
         this.insert.tag.run([id, tag])
       }
     })
     insertMany()
+    this.tags = [] // ???
   }
 
   saveReferences (references: Array<[string, string]>) {
@@ -130,5 +188,3 @@ class Slipbox {
     insertMany()
   }
 }
-
-export { Slipbox }
