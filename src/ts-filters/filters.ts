@@ -17,6 +17,7 @@ import {
   parseHeaderText,
   parseLink,
   isReferenceId,
+  isTopLevelSection,
   hashtagPrefix
 } from './utils.js'
 import { Slipbox } from './slipbox.js'
@@ -83,9 +84,7 @@ function init (slipbox: Slipbox): f.FilterSet {
 
 function collect (slipbox: Slipbox): f.FilterSet {
   function Div (div: t.Div) {
-    if (!get.classes(div).includes('level1')) return
-    if (!Number.isInteger(Number(get.identifier(div)))) return
-    // NOTE doesn't exclude numbers in scientific notation
+    if (!isTopLevelSection(div)) return
 
     let hasEmptyLink = false
 
@@ -140,9 +139,7 @@ function collect (slipbox: Slipbox): f.FilterSet {
 
 function modify (slipbox: Slipbox): f.FilterSet {
   function Div (div: t.Div) {
-    if (!get.classes(div).includes('level1')) return
-    if (!Number.isInteger(Number(get.identifier(div)))) return
-    // TODO should exclude numbers in scientific notation
+    if (!isTopLevelSection(div)) return
 
     function Link (elem: t.Link) {
       const content = stringify(elem)

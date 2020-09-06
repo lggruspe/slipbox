@@ -3,6 +3,13 @@ import {
   types as t
 } from 'pandoc-tree'
 
+const NUMBER_PATTERN = /^\d+$/
+const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
+
+function isTopLevelSection (div: t.Div): boolean {
+  return NUMBER_REGEX.test(get.identifier(div)) && get.classes(div).includes('level1')
+}
+
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
 function hashtagPrefix (text: string): string | null {
@@ -25,8 +32,6 @@ const TARGET_PATTERN = /^#\d+$/
 const TARGET_REGEX = new RegExp(TARGET_PATTERN)
 const SEQUENCE_PATTERN = /^\/[a-zA-Z][a-zA-Z0-9]*$/
 const SEQUENCE_REGEX = new RegExp(SEQUENCE_PATTERN)
-const NUMBER_PATTERN = /^\d+$/
-const NUMBER_REGEX = new RegExp(NUMBER_PATTERN)
 function parseLink (src: string, elem: t.Link): { src: string, dest: string, tag: 'direct' | 'sequence', description: string } | undefined {
   const target = get.target(elem)
 
@@ -75,6 +80,7 @@ function isReferenceId (id: string): boolean {
 export {
   hashtagPrefix,
   isReferenceId,
+  isTopLevelSection,
   parentAlias,
   parseFilename,
   parseHeaderText,
