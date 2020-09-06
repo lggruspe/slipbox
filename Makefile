@@ -6,8 +6,12 @@ init:
 	npm ci
 	pip install -r requirements.txt
 
+.PHONY:	build
+build:
+	npm run build
+
 .PHONY:	bundle
-bundle:
+bundle: build
 	npm run bundle
 
 .PHONY:	check

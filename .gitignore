@@ -6,4 +6,5 @@ dist/
 *.egg-info/
 node_modules/
 slipbox/data/bundle.js
+slipbox/data/filters/*.js
 *.pyc
