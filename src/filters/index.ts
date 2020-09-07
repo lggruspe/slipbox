@@ -13,7 +13,6 @@ import {
   withAttributes
 } from 'pandoc-tree'
 
-import { warning } from './log.js'
 import {
   fileExtension,
   fileToBase64,
@@ -124,7 +123,7 @@ function collect (slipbox: Slipbox): f.FilterSet {
     const filter = { Cite, Link, Str }
     set.content(div, walkBlocks(get.content(div), filter))
     if (hasEmptyLink) {
-      warning([`Note ${get.identifier(div)} contains a link with an empty target.`])
+      slipbox.hasEmptyLink(get.identifier(div))
     }
     return div
   }
@@ -230,6 +229,14 @@ function images (): f.FilterSet {
   }
 }
 
+function commit (slipbox: Slipbox): f.FilterSet {
+  function Pandoc (doc: t.Pandoc) {
+    slipbox.checkEmptyLinks()
+    return doc
+  }
+  return { Pandoc }
+}
+
 function main () {
   const slipbox = new Slipbox()
   const filters = [
@@ -238,7 +245,8 @@ function main () {
     collect(slipbox),
     modify(slipbox),
     citations(slipbox),
-    images()
+    images(),
+    commit(slipbox)
   ]
   interact(filters)
 }

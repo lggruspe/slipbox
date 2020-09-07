@@ -18,6 +18,9 @@ export class Slipbox {
   links: Array<{ tag: string, src: string, dest: string, description: string }> = []
   tags: Array<[string, string]> = []
   references: Array<[string, string]> = []
+  errors: {
+    hasEmptyLink: Set<string>
+  } = { hasEmptyLink: new Set() }
 
   constructor () {
     const path = process.env.SLIPBOX_DB || 'slipbox.db'
@@ -150,6 +153,8 @@ export class Slipbox {
             `Missing note alias: '${prev}'.`,
             `Note ${existing.id} with alias '${next}' will be unreachable.`
           ])
+          // TODO What if note with parent alias with be added in the
+          // next batch (i.e. has different file extension)?
         }
       }
     })
@@ -186,5 +191,26 @@ export class Slipbox {
       }
     })
     insertMany()
+  }
+
+  hasEmptyLink (id: string) {
+    this.errors.hasEmptyLink.add(id)
+  }
+
+  checkEmptyLinks () {
+    const ids = Array.from(this.errors.hasEmptyLink).map(x => `'${x}'`).join(', ')
+    const result = this.db.prepare(`
+      SELECT id, title, filename
+      FROM Notes
+      WHERE id IN (${ids})
+      ORDER BY id
+    `).all()
+    const messages = ['The notes below contain links with an empty target.']
+    for (const { id, title, filename } of result) {
+      messages.push(`${id}. ${title} in '${filename}'.`)
+    }
+    if (messages.length > 1) {
+      warning(messages)
+    }
   }
 }
