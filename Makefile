@@ -16,8 +16,6 @@ bundle: build
 
 .PHONY:	check
 check: bundle
-	luacheck slipbox/filters/*.lua --std max+busted
-	cd slipbox; busted . -p '.*.test.lua'
 	npx eslint test --global describe --global it --global beforeEach --rule 'no-unused-vars: 0'
 	npm run lint
 	npm test
