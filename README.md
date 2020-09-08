@@ -19,6 +19,8 @@ Requirements
 - `pandoc`
 - `pandoc-citeproc`
 - `python3`
+- `node`
+- `better-sqlite3`
 
 Installation
 ------------

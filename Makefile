@@ -12,7 +12,8 @@ build:
 
 .PHONY:	bundle
 bundle: build
-	npm run bundle
+	npx rollup -c rollup.config.frontend.js
+	npx rollup -c rollup.config.filters.js --banner '#!/usr/bin/env node'
 
 .PHONY:	check
 check: bundle

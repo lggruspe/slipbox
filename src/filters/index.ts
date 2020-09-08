@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { strict as assert } from 'assert'
 import { existsSync } from 'fs'
 import * as process from 'process'
