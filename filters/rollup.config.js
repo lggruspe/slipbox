@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs'
 export default {
   input: 'build/index.js',
   output: {
-    file: 'slipbox/data/filter.js',
+    file: 'dist/filter.mjs',
     format: 'es',
   },
   plugins: [resolve(), commonjs()],

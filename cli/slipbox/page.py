@@ -41,7 +41,7 @@ def generate_data(conn: Connection) -> Iterable[str]:
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""
     yield '<script type="module">'
-    bundle = Path(__file__).parent/"data"/"bundle.js"
+    bundle = Path(__file__).parent/"data"/"frontend.js"
     yield bundle.read_text().strip()
     yield '</script>'
     yield '<script type="text/javascript">'

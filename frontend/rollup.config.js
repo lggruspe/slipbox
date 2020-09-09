@@ -1,7 +1,7 @@
 export default {
-  input: 'src/frontend/index.js',
+  input: 'src/index.js',
   output: {
-    file: 'slipbox/data/bundle.js',
+    file: 'dist/frontend.js',
     format: 'es',
     paths: {
       cytoscape: 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.15.2/cytoscape.esm.min.js',

@@ -1,4 +1,4 @@
-import { init, getSectionFromHash } from '../src/frontend/toggle.js'
+import { init, getSectionFromHash } from '../src/toggle.js'
 
 import assert from 'assert'
 

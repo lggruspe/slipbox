@@ -1,4 +1,4 @@
-import { init } from '../src/frontend/graph.js'
+import { init } from '../src/graph.js'
 
 import assert from 'assert'
 
