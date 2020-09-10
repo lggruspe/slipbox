@@ -3,8 +3,11 @@ all:
 
 .PHONY:	init
 init:
+	git submodule update --init
+	cd pandoc-tree; npm ci; npm run build
 	cd filters; npm ci
 	cd frontend; npm ci
+	pip install --upgrade pip
 	cd cli; pip install -r requirements.txt
 
 .PHONY:	build

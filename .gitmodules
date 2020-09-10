@@ -1,0 +1,3 @@
+[submodule "pandoc-tree"]
+	path = pandoc-tree
+	url = https://github.com/lggruspe/pandoc-tree.git
