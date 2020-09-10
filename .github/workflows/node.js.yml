@@ -24,6 +24,17 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run lint
-    - run: npm test
+    - run: |
+        cd frontend; npm ci
+    - run: |
+        cd filters; npm ci
+    - run: |
+        cd filters; npm run build
+    - run: |
+        cd frontend; npm run lint
+    - run: |
+        cd filters; npm run lint
+    - run: |
+        cd frontend; npm test
+    - run: |
+        cd filters; npm test
