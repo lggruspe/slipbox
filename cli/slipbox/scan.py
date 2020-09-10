@@ -81,7 +81,7 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
     Return an empty string if there are no input files.
     """
     assert input_.exists()
-    js_filter = shlex.quote(str(Path(__file__).with_name("data").joinpath("filter.mjs")))
+    js_filter = shlex.quote(str(Path(__file__).with_name("data").joinpath("filter.js")))
     cmd = f"{utils.pandoc()} -Fpandoc-citeproc -F{js_filter} --section-divs " \
             f"-Mlink-citations:true {options} " \
             "-o {} ".format(shlex.quote(output))
