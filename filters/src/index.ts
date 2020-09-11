@@ -114,8 +114,9 @@ function collect (slipbox: Slipbox): f.FilterSet {
 
     function Str (elem: t.Str) {
       const text = get.text(elem)
-      if (hashtagPrefix(text)) {
-        slipbox.saveTag(get.identifier(div), text)
+      const prefix = hashtagPrefix(text)
+      if (prefix) {
+        slipbox.saveTag(get.identifier(div), prefix)
       }
     }
 
@@ -161,9 +162,11 @@ function modify (slipbox: Slipbox): f.FilterSet {
 
     function Str (elem: t.Str) {
       const text = get.text(elem)
-      if (hashtagPrefix(text)) {
-        const src = '#' + text
-        return create.Link([elem], src)
+      const prefix = hashtagPrefix(text)
+      if (prefix) {
+        const link = create.Link([create.Str(prefix)], '#' + prefix)
+        const suffix = text.slice(prefix.length)
+        return !suffix ? link : [link, create.Str(suffix)]
       }
     }
 

@@ -404,6 +404,19 @@ def test_process_with_non_text_titles(tmp_path, capsys, sbox):
     assert not stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
+    """If a hashtag has trailing invalid symbols, only the prefix must be saved."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("# 0 Test\n\n#tag.\n#tags.\n#0.\n")
+    sbox.process([markdown])
+    result = list(sbox.conn.execute("SELECT tag FROM Tags ORDER BY tag"))
+    assert result == [("#0",), ("#tag",), ("#tags",)]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_duplicate_aliases(tmp_path, capsys, sbox):
     """If a note defines duplicate aliases, only the first one must be saved.
 

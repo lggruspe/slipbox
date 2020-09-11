@@ -22,9 +22,9 @@ function fileExtension (filename: string): string {
 
 const HASHTAG_PATTERN = /^#+[-_a-zA-Z0-9]+/
 const HASHTAG_REGEX = new RegExp(HASHTAG_PATTERN)
-function hashtagPrefix (text: string): string | null {
+function hashtagPrefix (text: string): string {
   const result = HASHTAG_REGEX.exec(text)
-  return result == null ? null : result[0]
+  return result == null ? '' : result[0]
 }
 
 const HEADER_PATTERN = /^\s*(\d+)\s+(.+?)\s*$/
