@@ -19,14 +19,11 @@ Requirements
 - `pandoc` (should be compiled with `pandoc-types` 1.21)
 - `pandoc-citeproc`
 - `python3`
-- `node` (v10.20.1 or above)
-- `better-sqlite3`
 
 Installation
 ------------
 
 ```bash
-npm install -g better-sqlite3
 pip install slipbox
 ```
 
