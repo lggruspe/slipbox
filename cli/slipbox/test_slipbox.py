@@ -403,7 +403,6 @@ def test_process_with_non_text_titles(tmp_path, capsys, sbox):
     assert not stdout
     assert not stderr
 
-@pytest.mark.skipif(True, reason="revert to Lua filters")
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
     """If a hashtag has trailing invalid symbols, only the prefix must be saved."""
