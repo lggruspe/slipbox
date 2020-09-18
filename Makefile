@@ -3,30 +3,23 @@ all:
 
 .PHONY:	init
 init:
-	git submodule update --init
-	cd pandoc-tree; npm ci; npm run build
-	cd filters; npm ci
 	cd frontend; npm ci
 	pip install --upgrade pip
 	cd cli; pip install -r requirements.txt
 
-.PHONY:	build
-build:
-	cd filters; npm run build
-
 .PHONY:	bundle
-bundle: build
+bundle:
 	cd frontend; npm run bundle
-	cd filters; npm run bundle
 	mkdir -p cli/slipbox/data
-	cp frontend/dist/frontend.js filters/dist/filter.js cli/slipbox/data
+	cp frontend/dist/frontend.js cli/slipbox/data
 	chmod +x cli/slipbox/data/filter.js
 
 .PHONY:	check
 check: bundle
+	cd cli; luacheck slipbox/filters/*.lua --std max+busted
+	cd cli/slipbox; busted . -p '.*.test.lua'
 	cd frontend; npx eslint test --global describe --global it --global beforeEach --rule 'no-unused-vars: 0'
 	cd frontend; npm run lint
-	cd filters; npm run lint
 	cd frontend; npm test
 	cd cli; pylint slipbox --fail-under=10 -d R0903 -d W0621
 	cd cli; mypy -p slipbox

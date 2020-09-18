@@ -11,6 +11,7 @@ from typing import Iterable, List, Set, Tuple, Union
 
 from . import utils
 from .config import Config
+from .data import process_csvs
 from .preprocess import concatenate
 
 def initialize_database(conn: Connection) -> None:
@@ -81,9 +82,9 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
     Return an empty string if there are no input files.
     """
     assert input_.exists()
-    js_filter = shlex.quote(str(Path(__file__).with_name("data").joinpath("filter.js")))
-    cmd = f"{utils.pandoc()} -Fpandoc-citeproc -F{js_filter} --section-divs " \
-            f"-Mlink-citations:true {options} " \
+    data_dir = shlex.quote(str(Path(__file__).parent.resolve()))
+    cmd = f"{utils.pandoc()} -Fpandoc-citeproc -Lzk.lua --section-divs " \
+            f"--data-dir={data_dir} -Mlink-citations:true {options} " \
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + str(input_)
 
@@ -124,5 +125,6 @@ def process_batch(conn: Connection,
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return
+        process_csvs(conn, tempdir)
         store_html_sections(conn, html.read_text(), batch)
         conn.commit()
