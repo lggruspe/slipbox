@@ -13,4 +13,5 @@ return {
   images.make_image_filter(),
   filters.serialize(current_slipbox),
   filters.check(current_slipbox),
+  filters.cleanup(),
 }

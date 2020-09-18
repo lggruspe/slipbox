@@ -770,7 +770,6 @@
   window.addEventListener('DOMContentLoaded', () => {
   window.query.db.add(new Model.Note(0, 'slipbox', 'docs/tutorial.md'))
   window.query.db.add(new Model.Note(1, 'Installation', 'docs/tutorial.md'))
-  window.query.db.add(new Model.Note(10, 'Questions', 'docs/tutorial.md'))
   window.query.db.add(new Model.Note(2, 'Basic usage', 'docs/tutorial.md'))
   window.query.db.add(new Model.Note(3, 'How to organize notes', 'docs/tutorial.md'))
   window.query.db.add(new Model.Note(4, 'How to find related notes', 'docs/tutorial.md'))
@@ -779,10 +778,7 @@
   window.query.db.add(new Model.Note(7, 'Sequence links', 'docs/tutorial.md'))
   window.query.db.add(new Model.Note(8, 'Text search', 'docs/tutorial.md'))
   window.query.db.add(new Model.Note(9, 'Citations', 'docs/tutorial.md'))
-  window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(3), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(4), ''))
+  window.query.db.add(new Model.Note(10, 'Questions', 'docs/tutorial.md'))
   window.query.db.add(new Model.Link(
     window.query.note(3), window.query.note(7), ''))
   window.query.db.add(new Model.Link(
@@ -796,12 +792,14 @@
   window.query.db.add(new Model.Link(
     window.query.note(8), window.query.note(6), ''))
   window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(3), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(4), ''))
+  window.query.db.add(new Model.Link(
     window.query.note(10), window.query.note(7), ''))
   window.query.db.add(new Model.Alias(0, '0'))
   window.query.db.add(new Model.Alias(1, '0a'))
   window.query.db.add(new Model.Alias(1, '1'))
-  window.query.db.add(new Model.Alias(10, '0b'))
-  window.query.db.add(new Model.Alias(10, '6b'))
   window.query.db.add(new Model.Alias(2, '0a1'))
   window.query.db.add(new Model.Alias(2, '1a'))
   window.query.db.add(new Model.Alias(2, '2'))
@@ -815,6 +813,8 @@
   window.query.db.add(new Model.Alias(7, '4c'))
   window.query.db.add(new Model.Alias(8, '4d'))
   window.query.db.add(new Model.Alias(9, '4a1'))
+  window.query.db.add(new Model.Alias(10, '0b'))
+  window.query.db.add(new Model.Alias(10, '6b'))
   window.query.db.add(new Model.Sequence('0', '0a'))
   window.query.db.add(new Model.Sequence('0', '0b'))
   window.query.db.add(new Model.Sequence('0a', '0a1'))

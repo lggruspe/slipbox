@@ -273,6 +273,15 @@ local function check(slipbox)
   }
 end
 
+local function cleanup()
+  return {
+    Header = function(elem)
+      elem.attributes.level = nil
+      return elem
+    end
+  }
+end
+
 return {
   preprocess = preprocess,
   init = init,
@@ -281,4 +290,5 @@ return {
   citations = citations,
   serialize = serialize,
   check = check,
+  cleanup = cleanup,
 }
