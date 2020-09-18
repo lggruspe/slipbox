@@ -21,8 +21,8 @@ jobs:
         luarocks install luacheck
     - name: Lint with luacheck
       run: |
-        luacheck slipbox/filters/*.lua --globals describe it assert pandoc before_each
+        luacheck cli/slipbox/filters/*.lua --std max+busted
     - name: Test with busted
       run: |
-        cd slipbox
+        cd cli/slipbox
         busted . -p '.*.test.lua'

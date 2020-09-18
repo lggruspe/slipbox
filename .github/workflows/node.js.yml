@@ -25,28 +25,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: |
-        git submodule update --init
-        cd pandoc-tree
-        npm ci
-        npm run build
-    - run: |
         cd frontend
         npm ci
-    - run: |
-        cd filters
-        npm ci
-    - run: |
-        cd filters
-        npm run build
     - run: |
         cd frontend
         npm run lint
     - run: |
-        cd filters
-        npm run lint
-    - run: |
         cd frontend
-        npm test
-    - run: |
-        cd filters
         npm test
