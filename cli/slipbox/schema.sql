@@ -66,3 +66,11 @@ SELECT * FROM Aliases WHERE id IN (SELECT id FROM Notes);
 -- respects foreign key constraints
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
+
+CREATE VIEW IF NOT EXISTS NextId AS
+SELECT MIN(id) FROM
+(SELECT MAX(id) + 1 AS id FROM Notes
+UNION
+SELECT A.id AS id FROM Notes AS A JOIN Notes AS B
+WHERE A.id > B.id
+GROUP BY A.id HAVING A.id > COUNT(B.id));
