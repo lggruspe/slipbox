@@ -80,6 +80,7 @@ function Collector:new(slipbox, div)
     slipbox = slipbox,
     id = id,
     div = div,
+    has_empty_link_target = false,
   }, self)
 end
 
@@ -90,6 +91,9 @@ function Collector:Cite(elem)
 end
 
 function Collector:Link(elem)
+  if not elem.target or elem.target == "" then
+    self.has_empty_link_target = true
+  end
   local link = utils.get_link(self.id, elem)
   if link then
     self.slipbox:save_link(link)
@@ -118,29 +122,25 @@ local function collect(slipbox)
       local col = Collector:new(slipbox, div)
       if col then
         pandoc.walk_block(div, col:filter())
+        if col.has_empty_link_target then
+          slipbox.invalid.has_empty_link_target[col.id] = true
+        end
       end
     end
   }
 end
 
 local Modifier = {}
-function Modifier:new(div)
-  local id = tonumber(div.identifier)
-  if not id then return end
-
+function Modifier:new()
   self.__index = self
   return setmetatable({
-    id = id,
-    div = div,
     footnotes = {},
-    has_empty_link_target = false,
   }, self)
 end
 
-function Modifier:Link(elem)
+function Modifier.Link(elem)
   -- Rewrite links with empty targets/text.
   if not elem.target or elem.target == "" then
-    self.has_empty_link_target = true
     return elem.content
   end
 
@@ -174,38 +174,32 @@ end
 
 function Modifier:filter()
   return {
-    Link = function(elem) return self:Link(elem) end,
+    Link = function(elem) return self.Link(elem) end,
     Note = function(elem) return self:Note(elem) end,
     Str = function(elem) return self.Str(elem) end,
   }
 end
 
-local function modify(slipbox)
+local function modify()
   -- Create filter that modifies the document.
   return {
     Div = function(div)
-      local mod = Modifier:new(div)
-      if mod then
-        div = pandoc.walk_block(div, mod:filter())
-        if mod.has_empty_link_target then
-          slipbox.invalid.has_empty_link_target[mod.id] = true
+      local mod = Modifier:new()
+      div = pandoc.walk_block(div, mod:filter())
+      if next(mod.footnotes) then
+        local ol = pandoc.OrderedList{}
+        for _, block in ipairs(mod.footnotes) do
+          table.insert(ol.content, {block})
         end
-        if next(mod.footnotes) then
-          local ol = pandoc.OrderedList{}
-          for _, block in ipairs(mod.footnotes) do
-            table.insert(ol.content, {block})
-          end
-          table.insert(div.content, pandoc.HorizontalRule())
-          table.insert(div.content, ol)
-        end
+        table.insert(div.content, pandoc.HorizontalRule())
+        table.insert(div.content, ol)
+      end
 
-        if div.attributes.level then
-          if div.attributes.level == "1" then
-            div.attributes.style = "display:none"
-          end
-          div.attributes.level = nil
+      if div.attributes.level then
+        if div.attributes.level == "1" then
+          div.attributes.style = "display:none"
         end
-
+        div.attributes.level = nil
       end
       return div
     end

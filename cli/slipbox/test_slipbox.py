@@ -417,6 +417,48 @@ def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
     assert not stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_process_modify_non_notes(tmp_path, capsys, sbox):
+    """Modification filters must be applied on non-notes too.
+
+    But they shouldn't be saved in the database.
+    Expect modifications:
+
+    - Links with an empty target should be turned into plain text.
+    - Links with an empty text should use the target as the text,
+      surrounded by [brackets].
+    - Hashtags should be turned into links.
+    """
+    markdown = tmp_path/"test.md"
+    markdown.write_text("""# Not a note
+
+[Foo]()
+
+[](Bar)
+
+#Baz
+
+# 0 Note
+
+Bye.
+""")
+    sbox.process([markdown])
+    result = list(sbox.conn.execute("SELECT * FROM Notes"))
+    assert result == [(0, 'Note', str(markdown))]
+
+    html = list(sbox.conn.execute("SELECT body FROM Html"))
+    assert len(html) == 1
+    html = html[0][0]
+    assert html
+
+    assert "<p>Foo</p>" in html
+    assert '<p> [<a href="Bar">Bar</a>]</p>' in html
+    assert '<p><a href="##Baz">#Baz</a></p>' in html
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_duplicate_aliases(tmp_path, capsys, sbox):
     """If a note defines duplicate aliases, only the first one must be saved.
 
