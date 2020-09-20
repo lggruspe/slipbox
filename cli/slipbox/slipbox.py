@@ -2,9 +2,9 @@
 
 from collections import namedtuple
 from itertools import chain
-import os.path
 from pathlib import Path
 import sqlite3
+from time import time
 from typing import Iterable, Iterator, List, Optional, Tuple
 
 from . import scan, page
@@ -17,24 +17,45 @@ Notes = namedtuple("Notes", "added modified deleted")
 class Database:
     """Initialized sqlite3 database for slipbox data."""
     def __init__(self, database: Optional[Path] = None):
-        self.timestamp = 0.0
-        if isinstance(database, Path) and database.exists():
-            self.timestamp = os.path.getmtime(database)
         self.conn = sqlite3.connect(database or ":memory:")
         sql = Path(__file__).with_name("schema.sql").read_text()
         self.conn.executescript(sql)
+        self.conn.commit()
+
+    @property
+    def timestamp(self) -> float:
+        """Get timestamp from Meta table."""
+        cur = self.conn.cursor()
+        cur.execute("SELECT * FROM Meta WHERE key = 'timestamp'")
+        _, value = cur.fetchone()
+        return value
+
+    @timestamp.setter
+    def timestamp(self, value: float) -> None:
+        """Set timestamp in Meta table."""
+        self.conn.execute("UPDATE Meta SET value = ? WHERE key = 'timestamp'", (value,))
         self.conn.commit()
 
 class Slipbox:
     """Slipbox main functions."""
     def __init__(self, config: Config = Config()):
         self.config = config
-        database = Database(config.database)
-        self.timestamp = database.timestamp
-        self.conn = database.conn
+        self._database = Database(config.database)
+        self.conn = self._database.conn
+
+    @property
+    def timestamp(self) -> float:
+        """Get timestamp from Meta table."""
+        return self._database.timestamp
+
+    @timestamp.setter
+    def timestamp(self, value: float) -> None:
+        """Set timestamp in Meta table."""
+        self._database.timestamp = value
 
     def close(self) -> None:
         """Close database connection."""
+        self.timestamp = time()
         self.conn.close()
 
     def __enter__(self) -> "Slipbox":
