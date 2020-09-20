@@ -11,7 +11,8 @@ from .utils import check_requirements
 
 def main(config_: Config) -> None:
     """Compile notes into static page."""
-    with Slipbox(config_) as slipbox:
+    database = Path(".slipbox")/"data.db"
+    with Slipbox(config_, database) as slipbox:
         slipbox.run()
 
 if __name__ == "__main__":
@@ -21,8 +22,6 @@ if __name__ == "__main__":
     config = Config()
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")
-    parser.add_argument("-s", "--database", default=config.database, type=Path,
-                        help="filename of sqlite3 database")
     parser.add_argument("-P", "--paths", nargs='+', default=config.paths, type=Path,
                         help="list of files or directories that contain notes")
     parser.add_argument("-p", "--patterns", nargs='*', default=config.patterns,
