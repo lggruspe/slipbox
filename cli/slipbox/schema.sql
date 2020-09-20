@@ -59,6 +59,13 @@ CREATE TABLE IF NOT EXISTS Rescan (
     filename PRIMARY KEY REFERENCES Files
 );
 
+CREATE TABLE IF NOT EXISTS Meta (
+    key PRIMARY KEY,
+    value
+);
+
+INSERT OR IGNORE INTO Meta VALUES ('timestamp', 0.0), ('version', '0.0');
+
 -- respects foreign key constraints
 CREATE VIEW IF NOT EXISTS ValidAliases AS
 SELECT * FROM Aliases WHERE id IN (SELECT id FROM Notes);
