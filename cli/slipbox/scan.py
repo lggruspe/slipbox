@@ -14,12 +14,6 @@ from .config import Config
 from .data import process_csvs
 from .preprocess import concatenate
 
-def initialize_database(conn: Connection) -> None:
-    """Initialize database with schema.sql."""
-    sql = Path(__file__).with_name("schema.sql").read_text()
-    conn.executescript(sql)
-    conn.commit()
-
 def fetch_files(conn: Connection) -> Iterable[Path]:
     """Get files from the database."""
     return (Path(p) for p, in conn.execute("SELECT filename FROM Files"))
@@ -120,8 +114,7 @@ def process_batch(conn: Connection,
         concatenate(preprocessed_input, *batch)
         cmd = build_command(preprocessed_input, str(html), config.content_options)
         retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
-                                    CONVERT_TO_DATA_URL=convert_to_data_url,
-                                    SLIPBOX_DB=str(config.database.resolve()))
+                                    CONVERT_TO_DATA_URL=convert_to_data_url)
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return

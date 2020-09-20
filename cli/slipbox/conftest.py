@@ -7,15 +7,15 @@ from typing import Iterable, List
 
 import pytest
 
-from . import scan
 from .config import Config
+from .initializer import initialize_database
 from .slipbox import Slipbox
 
 @pytest.fixture
 def mock_db() -> Iterable[sqlite3.Connection]:
     """Create an empty mock database with all the necessary tables."""
     with sqlite3.connect(":memory:") as conn:
-        scan.initialize_database(conn)
+        initialize_database(conn)
         yield conn
 
 @pytest.fixture

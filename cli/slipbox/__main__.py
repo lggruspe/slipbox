@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 
 from .config import Config
+from .initializer import initialize
 from .slipbox import Slipbox
 from .utils import check_requirements
 
@@ -18,7 +19,6 @@ if __name__ == "__main__":
         sys.exit("[ERROR] pandoc not found.")
 
     config = Config()
-
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")
     parser.add_argument("-s", "--database", default=config.database, type=Path,
@@ -34,6 +34,15 @@ if __name__ == "__main__":
     parser.add_argument("--convert-to-data-url", action="store_true",
                         default=config.convert_to_data_url,
                         help="convert local image links to data URL")
-    parser.parse_args(namespace=config)
 
-    main(config)
+    subparsers = parser.add_subparsers(dest="command")
+    init = subparsers.add_parser("init", help="initialize notes directory")
+    args = parser.parse_args()
+
+    command = args.command
+    del args.command
+    config = Config(**vars(args))
+    if not command:
+        main(config)
+    elif command == "init":
+        initialize()
