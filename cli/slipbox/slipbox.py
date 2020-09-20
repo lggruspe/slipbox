@@ -5,7 +5,7 @@ from itertools import chain
 import os.path
 from pathlib import Path
 import sqlite3
-from typing import Iterable, Iterator, List, Tuple
+from typing import Iterable, Iterator, List, Optional, Tuple
 
 from . import scan, page
 from .config import Config
@@ -14,18 +14,24 @@ from .utils import sqlite_string
 
 Notes = namedtuple("Notes", "added modified deleted")
 
-class Slipbox:
-    """Slipbox main functions."""
-    def __init__(self, config: Config = Config()):
+class Database:
+    """Initialized sqlite3 database for slipbox data."""
+    def __init__(self, database: Optional[Path] = None):
         self.timestamp = 0.0
-        self.config = config
-        if config.database.exists():
-            self.timestamp = os.path.getmtime(config.database)
-        self.conn = sqlite3.connect(config.database)
-
+        if isinstance(database, Path) and database.exists():
+            self.timestamp = os.path.getmtime(database)
+        self.conn = sqlite3.connect(database or ":memory:")
         sql = Path(__file__).with_name("schema.sql").read_text()
         self.conn.executescript(sql)
         self.conn.commit()
+
+class Slipbox:
+    """Slipbox main functions."""
+    def __init__(self, config: Config = Config()):
+        self.config = config
+        database = Database(config.database)
+        self.timestamp = database.timestamp
+        self.conn = database.conn
 
     def close(self) -> None:
         """Close database connection."""
