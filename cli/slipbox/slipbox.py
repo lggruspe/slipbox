@@ -14,9 +14,10 @@ from .utils import sqlite_string
 
 Notes = namedtuple("Notes", "added modified deleted")
 
-class Database:
-    """Initialized sqlite3 database for slipbox data."""
-    def __init__(self, database: Optional[Path] = None):
+class Slipbox:
+    """Slipbox main functions."""
+    def __init__(self, config: Config = Config(), database: Optional[Path] = None):
+        self.config = config
         self.conn = sqlite3.connect(database or ":memory:")
         sql = Path(__file__).with_name("schema.sql").read_text()
         self.conn.executescript(sql)
@@ -35,23 +36,6 @@ class Database:
         """Set timestamp in Meta table."""
         self.conn.execute("UPDATE Meta SET value = ? WHERE key = 'timestamp'", (value,))
         self.conn.commit()
-
-class Slipbox:
-    """Slipbox main functions."""
-    def __init__(self, config: Config = Config()):
-        self.config = config
-        self._database = Database(config.database)
-        self.conn = self._database.conn
-
-    @property
-    def timestamp(self) -> float:
-        """Get timestamp from Meta table."""
-        return self._database.timestamp
-
-    @timestamp.setter
-    def timestamp(self, value: float) -> None:
-        """Set timestamp in Meta table."""
-        self._database.timestamp = value
 
     def close(self) -> None:
         """Close database connection."""
