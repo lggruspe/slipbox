@@ -7,7 +7,7 @@ import sys
 from .config import Config
 from .initializer import initialize
 from .slipbox import Slipbox
-from .utils import check_requirements
+from .utils import check_requirements, check_if_initialized
 
 def main(config_: Config) -> None:
     """Compile notes into static page."""
@@ -41,7 +41,10 @@ if __name__ == "__main__":
     command = args.command
     del args.command
     config = Config(**vars(args))
-    if not command:
-        main(config)
-    elif command == "init":
+    if command == "init":
         initialize()
+    elif check_if_initialized():
+        if not command:
+            main(config)
+    else:
+        sys.exit("could not find '.slipbox' in any parent directory.")

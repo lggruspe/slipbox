@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any, Iterator
+from typing import Any, Iterator, Optional
 
 def pandoc() -> str:
     """Pandoc location."""
@@ -17,6 +17,19 @@ def pandoc() -> str:
 def check_requirements() -> bool:
     """Check if pandoc is installed."""
     return bool(shutil.which(pandoc()))
+
+def check_database() -> Optional[Path]:
+    """Check if slipbox database has been initialized.
+
+    Return path if the database has been initialized,
+    None if not.
+    """
+    database = Path(".slipbox")/"data.db"
+    return database if database.exists() else None
+
+def check_if_initialized() -> bool:
+    """Check if .slipbox/ has been initialized."""
+    return check_database() is not None
 
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""
