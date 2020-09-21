@@ -28,10 +28,11 @@ check: bundle
 
 .PHONY:	docs
 docs:	bundle
+	cd docs; rm -rf .slipbox \
 	cd docs; PYTHONPATH=../cli python -m slipbox init \
 		-c '--bibliography tutorial.bib' \
 		-d '-o index.html -c basic.css'
-	cd docs; PYTHONPATH=../cli python -m slipbox
+	cd docs; PYTHONPATH=../cli python -m slipbox build
 
 .PHONY:	dist
 dist:	bundle check

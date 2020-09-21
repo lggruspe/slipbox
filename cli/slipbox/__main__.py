@@ -32,6 +32,10 @@ if __name__ == "__main__":
     init.add_argument("--convert-to-data-url", action="store_true",
                       default=defaults.getboolean("slipbox", "convert_to_data_url"),
                       help="convert local images links to data URL")
+
+
+    build = subparsers.add_parser("build", help="generate static site")
+
     args = parser.parse_args()
 
     command = args.command
@@ -42,7 +46,7 @@ if __name__ == "__main__":
         initialize(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif check_if_initialized():
-        if not command:
+        if command == "build":
             main()
     else:
         sys.exit("could not find '.slipbox' in any parent directory.")
