@@ -1,6 +1,8 @@
 """Initialize notes repository."""
 
+from configparser import ConfigParser
 from pathlib import Path
+from shlex import quote
 from sqlite3 import Connection, connect
 from typing import List, Sequence
 
@@ -10,10 +12,21 @@ def initialize_database(conn: Connection) -> None:
     conn.executescript(sql)
     conn.commit()
 
+def default_config() -> ConfigParser:
+    """Create ConfigParser object with default options."""
+    css = quote(str(Path(__file__).with_name("pandoc.css").resolve()))
+    config = ConfigParser()
+    config["slipbox"] = {
+        "content_options": "--mathjax",
+        "document_options": f"--mathjax -H {css}",
+        "convert_to_data_url": "False",
+    }
+    return config
+
 def initialize(parent: Path) -> None:
     """Create .slipbox directory if it doesn't exist.
 
-    Initializes .slipbox/data.db and .slipbox/patterns.
+    Initializes .slipbox/data.db, .slipbox/patterns and ./slipbox/config.cfg.
     """
     _slipbox = parent/".slipbox"
     if not _slipbox.exists():
@@ -21,6 +34,8 @@ def initialize(parent: Path) -> None:
         database = _slipbox.joinpath("data.db")
         with connect(database) as conn:
             initialize_database(conn)
+        with open(_slipbox/"config.cfg", "w") as config_file:
+            default_config().write(config_file)
         _slipbox.joinpath("patterns").write_text("*.md\n*.markdown\n")
 
 class DotSlipbox:
@@ -43,3 +58,10 @@ class DotSlipbox:
             for pattern in value:
                 if pattern:
                     print(pattern, file=file)
+
+    @property
+    def config(self) -> ConfigParser:
+        """Return ConfigParser object from .slipbox/config.cfg."""
+        config = ConfigParser()
+        config.read(self.path/"config.cfg")
+        return config
