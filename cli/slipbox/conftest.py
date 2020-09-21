@@ -7,7 +7,7 @@ from typing import Iterable, List
 
 import pytest
 
-from .initializer import initialize_database
+from .initializer import initialize_database, DotSlipbox
 from .slipbox import Slipbox
 
 @pytest.fixture
@@ -20,7 +20,8 @@ def mock_db() -> Iterable[sqlite3.Connection]:
 @pytest.fixture
 def sbox(tmp_path) -> Slipbox:
     """Create automatically configured Slipbox object."""
-    with Slipbox(basedir=tmp_path) as slipbox:
+    dot = DotSlipbox(tmp_path)
+    with Slipbox(dot=dot) as slipbox:
         yield slipbox
 
 @pytest.fixture

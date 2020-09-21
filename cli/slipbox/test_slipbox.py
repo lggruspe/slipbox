@@ -6,13 +6,14 @@ from time import time
 import pytest
 
 from .config import Config
+from .initializer import DotSlipbox
 from .slipbox import Slipbox, added_notes, modified_notes, deleted_notes
 from .utils import check_requirements, insert_file_script
 
 def test_added_notes_pattern(tmp_path, sbox):
     """added_notes must match the input pattern."""
     slipbox = sbox
-    slipbox.config.patterns = ('*.md', '*.txt')
+    slipbox.dot.patterns = ('*.md', '*.txt')
 
     directory = tmp_path/"directory"
     markdown = tmp_path/"input.md"
@@ -29,7 +30,6 @@ def test_added_notes_pattern(tmp_path, sbox):
 def test_added_notes_in_db(tmp_path, sbox):
     """added_notes must not already be in the database."""
     slipbox = sbox
-
     new = tmp_path/"new.md"
     skip = tmp_path/"skip.md"
     new.touch()
@@ -51,9 +51,10 @@ def test_slipbox_context_manager(tmp_path):
     """Test database timestamp."""
     config = Config()
     database = tmp_path/"slipbox.db"
-    with Slipbox(config=config, database=database) as slipbox:
+    dot = DotSlipbox(tmp_path)
+    with Slipbox(config=config, database=database, dot=dot) as slipbox:
         assert slipbox.timestamp == 0.0
-    with Slipbox(config=config, database=database) as slipbox:
+    with Slipbox(config=config, database=database, dot=dot) as slipbox:
         print(slipbox.timestamp)
         assert slipbox.timestamp != 0.0
 

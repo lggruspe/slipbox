@@ -10,6 +10,7 @@ from typing import Iterable, Iterator, List, Optional, Tuple
 from . import scan, page
 from .config import Config
 from .data import warning
+from .initializer import DotSlipbox
 from .utils import sqlite_string
 
 Notes = namedtuple("Notes", "added modified deleted")
@@ -18,15 +19,16 @@ class Slipbox:
     """Slipbox main functions."""
     def __init__(self,
                  *,
+                 dot: DotSlipbox,
                  config: Config = Config(),
-                 database: Optional[Path] = None,
-                 basedir: Path = Path()):
+                 database: Optional[Path] = None):
         self.config = config
         self.conn = sqlite3.connect(database or ":memory:")
         sql = Path(__file__).with_name("schema.sql").read_text()
         self.conn.executescript(sql)
         self.conn.commit()
-        self.path = basedir
+        self.dot = dot
+        self.path = dot.parent
 
     @property
     def timestamp(self) -> float:
@@ -130,7 +132,7 @@ class Slipbox:
 
 def added_notes(slipbox: Slipbox) -> List[Path]:
     """Return list of newly added notes."""
-    patterns = slipbox.config.patterns
+    patterns = slipbox.dot.patterns
     added = scan.find_new_files(slipbox.conn, [slipbox.path], patterns)
     return list(added)
 

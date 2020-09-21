@@ -5,14 +5,15 @@ from pathlib import Path
 import sys
 
 from .config import Config
-from .initializer import initialize
+from .initializer import initialize, DotSlipbox
 from .slipbox import Slipbox
 from .utils import check_requirements, check_if_initialized
 
 def main(config_: Config) -> None:
     """Compile notes into static page."""
     database = Path(".slipbox")/"data.db"
-    with Slipbox(config=config_, database=database) as slipbox:
+    dot = DotSlipbox()
+    with Slipbox(config=config_, database=database, dot=dot) as slipbox:
         slipbox.run()
 
 if __name__ == "__main__":
@@ -22,8 +23,6 @@ if __name__ == "__main__":
     config = Config()
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")
-    parser.add_argument("-p", "--patterns", nargs='*', default=config.patterns,
-                        help="list of glob patterns")
     parser.add_argument("-c", "--content-options", default=config.content_options,
                         help="pandoc options for the content")
     parser.add_argument("-d", "--document-options", default=config.document_options,
@@ -40,7 +39,9 @@ if __name__ == "__main__":
     del args.command
     config = Config(**vars(args))
     if command == "init":
-        initialize()
+        parent = Path()
+        initialize(parent)
+        print(f"Initialized .slipbox/ in {parent!r}.")
     elif check_if_initialized():
         if not command:
             main(config)
