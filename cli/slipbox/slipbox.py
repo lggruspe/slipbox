@@ -4,13 +4,14 @@ from collections import namedtuple
 from itertools import chain
 from pathlib import Path
 import sqlite3
+import sys
 from time import time
 from typing import Iterable, Iterator, List, Tuple
 
 from . import scan, page
 from .data import warning
 from .initializer import DotSlipbox
-from .utils import sqlite_string
+from .utils import sqlite_string, check_options
 
 Notes = namedtuple("Notes", "added modified deleted")
 
@@ -21,6 +22,9 @@ class Slipbox:
         self.dot = dot
         self.path = dot.parent
         self.config = dot.config
+        if not check_options(self.config.get("slipbox", "content_options")):
+            config_path = dot.path/"config.cfg"
+            sys.exit(f"invalid content_options value in {config_path.resolve()!s}")
 
     @property
     def timestamp(self) -> float:
