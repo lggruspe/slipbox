@@ -8,7 +8,6 @@ from time import time
 from typing import Iterable, Iterator, List, Tuple
 
 from . import scan, page
-from .config import Config
 from .data import warning
 from .initializer import DotSlipbox
 from .utils import sqlite_string
@@ -17,11 +16,11 @@ Notes = namedtuple("Notes", "added modified deleted")
 
 class Slipbox:
     """Slipbox main functions."""
-    def __init__(self, *, dot: DotSlipbox, config: Config = Config()):
-        self.config = config
+    def __init__(self, dot: DotSlipbox):
         self.conn = sqlite3.connect(dot.path/"data.db")
         self.dot = dot
         self.path = dot.parent
+        self.config = dot.config
 
     @property
     def timestamp(self) -> float:
@@ -106,7 +105,8 @@ class Slipbox:
 
     def compile(self) -> None:
         """Compile processed HTML into final output."""
-        page.generate_complete_html(self.conn, self.config.document_options)
+        options = self.config.get("slipbox", "document_options")
+        page.generate_complete_html(self.conn, options)
 
     def run(self) -> None:
         """Run all steps needed to compile output."""

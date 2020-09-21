@@ -21,7 +21,7 @@ def mock_db() -> Iterable[sqlite3.Connection]:
 def sbox(tmp_path) -> Slipbox:
     """Create automatically configured Slipbox object."""
     dot = DotSlipbox(tmp_path)
-    with Slipbox(dot=dot) as slipbox:
+    with Slipbox(dot) as slipbox:
         yield slipbox
 
 @pytest.fixture

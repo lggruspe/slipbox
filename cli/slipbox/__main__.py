@@ -4,45 +4,45 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 
-from .config import Config
-from .initializer import initialize, DotSlipbox
+from .initializer import initialize, DotSlipbox, default_config
 from .slipbox import Slipbox
 from .utils import check_requirements, check_if_initialized
 
-def main(config_: Config) -> None:
+def main() -> None:
     """Compile notes into static page."""
     dot = DotSlipbox()
-    with Slipbox(config=config_, dot=dot) as slipbox:
+    with Slipbox(dot) as slipbox:
         slipbox.run()
 
 if __name__ == "__main__":
     if not check_requirements():
         sys.exit("[ERROR] pandoc not found.")
 
-    config = Config()
-    parser = ArgumentParser(
-        description="Generate a single-page HTML from your notes.")
-    parser.add_argument("-c", "--content-options", default=config.content_options,
-                        help="pandoc options for the content")
-    parser.add_argument("-d", "--document-options", default=config.document_options,
-                        help="pandoc options for the final HTML output")
-    parser.add_argument("--convert-to-data-url", action="store_true",
-                        default=config.convert_to_data_url,
-                        help="convert local image links to data URL")
-
+    parser = ArgumentParser(description="Generate a single-page HTML from your notes.")
     subparsers = parser.add_subparsers(dest="command")
+
+    defaults = default_config()
     init = subparsers.add_parser("init", help="initialize notes directory")
+    init.add_argument("-c", "--content-options",
+                      default=defaults.get("slipbox", "content_options"),
+                      help="pandoc options for the content")
+    init.add_argument("-d", "--document-options",
+                      default=defaults.get("slipbox", "document_options"),
+                      help="pandoc options for the output")
+    init.add_argument("--convert-to-data-url", action="store_true",
+                      default=defaults.getboolean("slipbox", "convert_to_data_url"),
+                      help="convert local images links to data URL")
     args = parser.parse_args()
 
     command = args.command
     del args.command
-    config = Config(**vars(args))
     if command == "init":
+        args.convert_to_data_url = str(args.convert_to_data_url)
         parent = Path()
-        initialize(parent)
+        initialize(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif check_if_initialized():
         if not command:
-            main(config)
+            main()
     else:
         sys.exit("could not find '.slipbox' in any parent directory.")

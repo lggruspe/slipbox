@@ -5,7 +5,6 @@ from time import time
 
 import pytest
 
-from .config import Config
 from .initializer import DotSlipbox
 from .slipbox import Slipbox, added_notes, modified_notes, deleted_notes
 from .utils import check_requirements, insert_file_script
@@ -49,11 +48,10 @@ def test_added_notes_recursive(tmp_path, sbox):
 
 def test_slipbox_context_manager(tmp_path):
     """Test database timestamp."""
-    config = Config()
     dot = DotSlipbox(tmp_path)
-    with Slipbox(config=config, dot=dot) as slipbox:
+    with Slipbox(dot) as slipbox:
         assert slipbox.timestamp == 0.0
-    with Slipbox(config=config, dot=dot) as slipbox:
+    with Slipbox(dot) as slipbox:
         print(slipbox.timestamp)
         assert slipbox.timestamp != 0.0
 

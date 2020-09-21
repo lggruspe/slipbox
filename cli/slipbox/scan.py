@@ -1,5 +1,6 @@
 """Look for files that must be compiled."""
 
+from configparser import ConfigParser
 from itertools import groupby
 import fnmatch
 import os
@@ -10,7 +11,6 @@ import sys
 from typing import Iterable, List, Set, Tuple, Union
 
 from . import utils
-from .config import Config
 from .data import process_csvs
 from .preprocess import concatenate
 
@@ -105,14 +105,17 @@ def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> Non
 
 def process_batch(conn: Connection,
                   batch: List[Path],
-                  config: Config = Config()) -> None:
+                  config: ConfigParser) -> None:
     """Process batch of input notes."""
-    convert_to_data_url = "1" if config.convert_to_data_url else ""
+    convert_to_data_url = "1" \
+        if config.getboolean("slipbox", "convert_to_data_url") \
+        else ""
     with utils.temporary_directory() as tempdir:
         html = tempdir/"temp.html"
         preprocessed_input = tempdir/"input.md"
         concatenate(preprocessed_input, *batch)
-        cmd = build_command(preprocessed_input, str(html), config.content_options)
+        cmd = build_command(preprocessed_input, str(html),
+                            config.get("slipbox", "content_options"))
         retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
                                     CONVERT_TO_DATA_URL=convert_to_data_url)
         if retcode:
