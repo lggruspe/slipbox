@@ -5,7 +5,7 @@ from itertools import chain
 from pathlib import Path
 import sqlite3
 from time import time
-from typing import Iterable, Iterator, List, Optional, Tuple
+from typing import Iterable, Iterator, List, Tuple
 
 from . import scan, page
 from .config import Config
@@ -17,16 +17,9 @@ Notes = namedtuple("Notes", "added modified deleted")
 
 class Slipbox:
     """Slipbox main functions."""
-    def __init__(self,
-                 *,
-                 dot: DotSlipbox,
-                 config: Config = Config(),
-                 database: Optional[Path] = None):
+    def __init__(self, *, dot: DotSlipbox, config: Config = Config()):
         self.config = config
-        self.conn = sqlite3.connect(database or ":memory:")
-        sql = Path(__file__).with_name("schema.sql").read_text()
-        self.conn.executescript(sql)
-        self.conn.commit()
+        self.conn = sqlite3.connect(dot.path/"data.db")
         self.dot = dot
         self.path = dot.parent
 

@@ -11,9 +11,8 @@ from .utils import check_requirements, check_if_initialized
 
 def main(config_: Config) -> None:
     """Compile notes into static page."""
-    database = Path(".slipbox")/"data.db"
     dot = DotSlipbox()
-    with Slipbox(config=config_, database=database, dot=dot) as slipbox:
+    with Slipbox(config=config_, dot=dot) as slipbox:
         slipbox.run()
 
 if __name__ == "__main__":
@@ -41,7 +40,7 @@ if __name__ == "__main__":
     if command == "init":
         parent = Path()
         initialize(parent)
-        print(f"Initialized .slipbox/ in {parent!r}.")
+        print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif check_if_initialized():
         if not command:
             main(config)

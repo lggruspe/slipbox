@@ -50,11 +50,10 @@ def test_added_notes_recursive(tmp_path, sbox):
 def test_slipbox_context_manager(tmp_path):
     """Test database timestamp."""
     config = Config()
-    database = tmp_path/"slipbox.db"
     dot = DotSlipbox(tmp_path)
-    with Slipbox(config=config, database=database, dot=dot) as slipbox:
+    with Slipbox(config=config, dot=dot) as slipbox:
         assert slipbox.timestamp == 0.0
-    with Slipbox(config=config, database=database, dot=dot) as slipbox:
+    with Slipbox(config=config, dot=dot) as slipbox:
         print(slipbox.timestamp)
         assert slipbox.timestamp != 0.0
 
