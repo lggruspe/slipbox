@@ -9,7 +9,6 @@ _CSS = Path(__file__).with_name("pandoc.css")
 @dataclass
 class Config:
     """Slipbox config object."""
-    paths: Sequence[Path] = (Path(),)
     patterns: Sequence[str] = ('*.md',)
     content_options: str = "--mathjax"
     document_options: str = "--mathjax -H {}".format(_CSS.resolve())

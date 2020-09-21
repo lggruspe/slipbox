@@ -16,12 +16,17 @@ Notes = namedtuple("Notes", "added modified deleted")
 
 class Slipbox:
     """Slipbox main functions."""
-    def __init__(self, config: Config = Config(), database: Optional[Path] = None):
+    def __init__(self,
+                 *,
+                 config: Config = Config(),
+                 database: Optional[Path] = None,
+                 basedir: Path = Path()):
         self.config = config
         self.conn = sqlite3.connect(database or ":memory:")
         sql = Path(__file__).with_name("schema.sql").read_text()
         self.conn.executescript(sql)
         self.conn.commit()
+        self.path = basedir
 
     @property
     def timestamp(self) -> float:
@@ -125,9 +130,8 @@ class Slipbox:
 
 def added_notes(slipbox: Slipbox) -> List[Path]:
     """Return list of newly added notes."""
-    paths = slipbox.config.paths
     patterns = slipbox.config.patterns
-    added = scan.find_new_files(slipbox.conn, paths, patterns)
+    added = scan.find_new_files(slipbox.conn, [slipbox.path], patterns)
     return list(added)
 
 def modified_notes(slipbox: Slipbox) -> List[Path]:

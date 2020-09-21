@@ -12,7 +12,7 @@ from .utils import check_requirements, check_if_initialized
 def main(config_: Config) -> None:
     """Compile notes into static page."""
     database = Path(".slipbox")/"data.db"
-    with Slipbox(config_, database) as slipbox:
+    with Slipbox(config=config_, database=database) as slipbox:
         slipbox.run()
 
 if __name__ == "__main__":
@@ -22,8 +22,6 @@ if __name__ == "__main__":
     config = Config()
     parser = ArgumentParser(
         description="Generate a single-page HTML from your notes.")
-    parser.add_argument("-P", "--paths", nargs='+', default=config.paths, type=Path,
-                        help="list of files or directories that contain notes")
     parser.add_argument("-p", "--patterns", nargs='*', default=config.patterns,
                         help="list of glob patterns")
     parser.add_argument("-c", "--content-options", default=config.content_options,

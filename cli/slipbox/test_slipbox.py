@@ -51,9 +51,9 @@ def test_slipbox_context_manager(tmp_path):
     """Test database timestamp."""
     config = Config()
     database = tmp_path/"slipbox.db"
-    with Slipbox(config, database) as slipbox:
+    with Slipbox(config=config, database=database) as slipbox:
         assert slipbox.timestamp == 0.0
-    with Slipbox(config, database) as slipbox:
+    with Slipbox(config=config, database=database) as slipbox:
         print(slipbox.timestamp)
         assert slipbox.timestamp != 0.0
 

@@ -7,7 +7,6 @@ from typing import Iterable, List
 
 import pytest
 
-from .config import Config
 from .initializer import initialize_database
 from .slipbox import Slipbox
 
@@ -19,17 +18,9 @@ def mock_db() -> Iterable[sqlite3.Connection]:
         yield conn
 
 @pytest.fixture
-def mconfig(tmp_path) -> Config:
-    """Create mock config object.
-
-    - config.paths consists of tmp_path
-    """
-    yield Config(paths=(tmp_path,))
-
-@pytest.fixture
-def sbox(mconfig) -> Slipbox:
+def sbox(tmp_path) -> Slipbox:
     """Create automatically configured Slipbox object."""
-    with Slipbox(mconfig) as slipbox:
+    with Slipbox(basedir=tmp_path) as slipbox:
         yield slipbox
 
 @pytest.fixture

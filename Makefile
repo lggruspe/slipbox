@@ -28,7 +28,7 @@ check: bundle
 
 .PHONY:	docs
 docs:	bundle
-	cd docs; PYTHONPATH=../cli python -m slipbox -P *.md \
+	cd docs; PYTHONPATH=../cli python -m slipbox \
 		-c ' --bibliography tutorial.bib' \
 		-d ' -o index.html -c basic.css'
 
