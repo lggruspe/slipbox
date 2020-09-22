@@ -23,10 +23,11 @@ def generate_active_htmls(conn: Connection) -> Iterable[str]:
     """
     return (body for body, in conn.execute(sql))
 
-def generate_data(conn: Connection) -> Iterable[str]:
+def generate_data(conn: Connection, basedir: Path) -> Iterable[str]:
     """Generate slipbox data in javascript."""
     for nid, title, filename in conn.execute("SELECT id, title, filename FROM Notes ORDER BY id"):
-        yield f"window.query.db.add(new Model.Note({nid}, {title!r}, {filename!r}))"
+        path = str(Path(filename).relative_to(basedir))
+        yield f"window.query.db.add(new Model.Note({nid}, {title!r}, {path!r}))"
     sql = "SELECT src, dest, annotation FROM ValidLinks"
     for src, dest, annotation in conn.execute(sql):
         yield f"""window.query.db.add(new Model.Link(
@@ -38,7 +39,7 @@ def generate_data(conn: Connection) -> Iterable[str]:
     for prev, next_ in conn.execute(sql):
         yield f"window.query.db.add(new Model.Sequence({prev!r}, {next_!r}))"
 
-def generate_javascript(conn: Connection) -> Iterable[str]:
+def generate_javascript(conn: Connection, basedir: Path) -> Iterable[str]:
     """Generate slipbox javascript code."""
     yield '<script type="module">'
     bundle = Path(__file__).parent/"data"/"frontend.js"
@@ -46,7 +47,7 @@ def generate_javascript(conn: Connection) -> Iterable[str]:
     yield '</script>'
     yield '<script type="text/javascript">'
     yield "window.addEventListener('DOMContentLoaded', () => {"
-    yield from generate_data(conn)
+    yield from generate_data(conn, basedir)
     yield "window.initSlipbox()"
     yield "})"
     yield "</script>"
@@ -157,7 +158,7 @@ def create_reference_pages(conn: Connection) -> str:
     references = (row[0] for row in rows)
     return '\n'.join(create_reference_page(conn, ref) for ref in references)
 
-def generate_complete_html(conn: Connection, options: str) -> None:
+def generate_complete_html(conn: Connection, options: str, basedir: Path) -> None:
     """Create final HTML file with javascript."""
     with temporary_directory() as tempdir:
         script = tempdir/"script.js"
@@ -165,7 +166,7 @@ def generate_complete_html(conn: Connection, options: str) -> None:
         extra = tempdir/"extra.html"
         dummy = tempdir/"Slipbox.md"
         dummy.write_text(DUMMY_MARKDOWN)
-        script.write_text('\n'.join(generate_javascript(conn)))
+        script.write_text('\n'.join(generate_javascript(conn, basedir)))
         html.write_text('\n'.join(generate_active_htmls(conn)))
         with open(extra, "w") as file:
             print(create_tag_pages(conn), file=file)

@@ -44,7 +44,7 @@ if __name__ == "__main__":
         initialize(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif dot_slipbox is not None:
-        dot = DotSlipbox(dot_slipbox.parent.relative_to(Path().resolve()))
+        dot = DotSlipbox(dot_slipbox.parent)
         if command == "build":
             main(dot)
         elif command == "info":

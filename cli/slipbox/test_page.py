@@ -119,7 +119,7 @@ def test_create_reference_page(mock_db):
 </section>"""
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_generate_complete_html(mock_db):
+def test_generate_complete_html(mock_db, tmp_path):
     """Sanity check."""
     options = ""
-    page.generate_complete_html(mock_db, options)
+    page.generate_complete_html(mock_db, options, tmp_path)
