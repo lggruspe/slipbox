@@ -4,16 +4,9 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 
-from .app import show_info
+from .app import main, show_info
 from .initializer import initialize, DotSlipbox, default_config
-from .slipbox import Slipbox
 from .utils import check_requirements, check_if_initialized
-
-def main() -> None:
-    """Compile notes into static page."""
-    dot = DotSlipbox()
-    with Slipbox(dot) as slipbox:
-        slipbox.run()
 
 if __name__ == "__main__":
     if not check_requirements():
@@ -49,9 +42,10 @@ if __name__ == "__main__":
         initialize(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif check_if_initialized():
+        dot = DotSlipbox()
         if command == "build":
-            main()
+            main(dot)
         elif command == "info":
-            show_info(args.id)
+            show_info(dot, args.id)
     else:
         sys.exit("could not find '.slipbox' in any parent directory.")

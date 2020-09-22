@@ -1,7 +1,7 @@
 # type: ignore
 """Test slipbox.py."""
 
-from time import time
+from time import time, sleep
 
 import pytest
 
@@ -51,8 +51,8 @@ def test_slipbox_context_manager(tmp_path):
     dot = DotSlipbox(tmp_path)
     with Slipbox(dot) as slipbox:
         assert slipbox.timestamp == 0.0
+        slipbox.timestamp = time()
     with Slipbox(dot) as slipbox:
-        print(slipbox.timestamp)
         assert slipbox.timestamp != 0.0
 
 def test_modified_notes(tmp_path, sbox):
@@ -125,6 +125,8 @@ def test_suggest_edits_backlinks(files_abc, sbox):
 
     slipbox.process([file_a, file_b, file_c])
 
+    sleep(1)
+
     file_c.touch()
 
     notes = slipbox.find_notes()
@@ -144,6 +146,8 @@ def test_suggest_edits_aliases(files_abc, sbox):
 
     slipbox.process([file_a, file_b, file_c])
 
+    sleep(1)
+
     file_b.touch()
 
     notes = slipbox.find_notes()
@@ -162,6 +166,8 @@ def test_suggest_edits_exclude_deleted_notes(files_abc, sbox):
     slipbox.timestamp = time()
 
     slipbox.process([file_a, file_b, file_c])
+
+    sleep(1)
 
     file_c.touch()
     file_a.unlink()

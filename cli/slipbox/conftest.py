@@ -31,3 +31,10 @@ def files_abc(tmp_path) -> List[Path]:
     for path in files:
         path.touch()
     yield files
+
+@pytest.fixture
+def mnote(tmp_path) -> Path:
+    """Mock markdown note in tmp_path/test.md."""
+    path = tmp_path/"test.md"
+    path.write_text("# 0 Test\n\nTest note.\n")
+    yield path
