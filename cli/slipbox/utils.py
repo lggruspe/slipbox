@@ -22,18 +22,22 @@ def check_options(options: str) -> bool:
     """Check if options can be passed to pandoc."""
     return "--strip-comments" not in options
 
-def check_database() -> Optional[Path]:
-    """Check if slipbox database has been initialized.
+def find_dot_slipbox(path: Path = Path()) -> Optional[Path]:
+    """Find .slipbox in parent directories of path, or None.
 
-    Return path if the database has been initialized,
-    None if not.
+    Input path must be absolute.
     """
-    database = Path(".slipbox")/"data.db"
-    return database if database.exists() else None
-
-def check_if_initialized() -> bool:
-    """Check if .slipbox/ has been initialized."""
-    return check_database() is not None
+    assert path.is_absolute()
+    while not path.is_dir():
+        path = path.parent
+    parent = path.parent
+    while parent != path:
+        dot = path/".slipbox"
+        if dot.is_dir():
+            return dot
+        path = parent
+        parent = path.parent
+    return None
 
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""

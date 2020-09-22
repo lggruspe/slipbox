@@ -6,7 +6,7 @@ import sys
 
 from .app import main, show_info
 from .initializer import initialize, DotSlipbox, default_config
-from .utils import check_requirements, check_if_initialized
+from .utils import check_requirements, find_dot_slipbox
 
 if __name__ == "__main__":
     if not check_requirements():
@@ -34,6 +34,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    dot_slipbox = find_dot_slipbox(Path().resolve())
+
     command = args.command
     del args.command
     if command == "init":
@@ -41,8 +43,8 @@ if __name__ == "__main__":
         parent = Path()
         initialize(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
-    elif check_if_initialized():
-        dot = DotSlipbox()
+    elif dot_slipbox is not None:
+        dot = DotSlipbox(dot_slipbox.parent.relative_to(Path().resolve()))
         if command == "build":
             main(dot)
         elif command == "info":
