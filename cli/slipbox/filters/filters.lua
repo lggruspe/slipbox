@@ -101,9 +101,13 @@ function Collector:Link(elem)
 end
 
 function Collector:Str(elem)
-  local prefix = utils.hashtag_prefix(elem.text)
-  if prefix then
-    self.slipbox:save_tag(self.id, prefix)
+  local tag, dest = utils.cluster_link_prefix(elem.text)
+  if tag then
+    if dest ~= nil then
+      self.slipbox:save_cluster(tag, self.id, dest)
+    else
+      self.slipbox:save_tag(self.id, tag)
+    end
   end
 end
 
@@ -166,9 +170,19 @@ end
 
 function Modifier.Str(elem)
   -- Turn #tags into links.
-  local prefix = utils.hashtag_prefix(elem.text)
-  if prefix then
-    return pandoc.Link({elem}, '#' .. prefix)
+  local tag, dest = utils.cluster_link_prefix(elem.text)
+  if tag then
+    if dest ~= nil then
+      return {
+        pandoc.Str " [",
+        pandoc.Link(
+          {pandoc.Str('#' .. dest)},
+          '#' .. dest),
+        pandoc.Str "]",
+      }
+    else
+      return pandoc.Link({elem}, '#' .. tag)
+    end
   end
 end
 

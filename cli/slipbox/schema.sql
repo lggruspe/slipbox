@@ -34,6 +34,13 @@ CREATE TABLE IF NOT EXISTS Sequences (
     PRIMARY KEY(prev, next)
 );
 
+CREATE TABLE IF NOT EXISTS Clusters (
+    tag NOT NULL,
+    src NOT NULL REFERENCES Notes ON DELETE CASCADE,
+    dest NOT NULL,  -- see Links.dest
+    PRIMARY KEY (tag, src, dest)
+);
+
 CREATE TABLE IF NOT EXISTS Html (
     id INTEGER PRIMARY KEY,
     body DEFAULT NULL

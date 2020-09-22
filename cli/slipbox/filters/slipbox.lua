@@ -12,6 +12,7 @@ function SlipBox:new()
     tags = {},
     citations = {},
     bibliography = {},
+    clusters = {},
 
     invalid = {
       has_empty_link_target = {},
@@ -130,6 +131,34 @@ function SlipBox:save_tag(id, tag)
   self.tags[tag] = tags
 end
 
+function SlipBox:save_cluster(tag, src, dest)
+  assert(type(tag) == "string")
+  assert(type(src) == "number")
+  assert(type(dest) == "number")
+  assert(tag ~= "")
+
+  local cluster = self.clusters[tag] or {}
+  local dests = cluster[src] or {}
+  dests[dest] = true
+  cluster[src] = dests
+  self.clusters[tag] = cluster
+end
+
+local function clusters_to_csv(clusters)
+  local w = csv.Writer:new{"tag", "src", "dest"}
+  for tag, cluster in pairs(clusters) do
+    assert(type(tag) == "string")
+    for src, dests in pairs(cluster) do
+      assert(type(src) == "number")
+      for dest in pairs(dests) do
+        assert(type(dest) == "number")
+        w:write{tag, src, dest}
+      end
+    end
+  end
+  return w.data
+end
+
 local function notes_to_csv(notes)
   -- Generate CSV data from slipbox notes.
   local w = csv.Writer:new{"id", "title", "filename"}
@@ -236,6 +265,7 @@ function SlipBox:write_data(basedir)
   write(basedir .. "/links.csv", links_to_csv(self.links))
   write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
   write(basedir .. "/sequences.csv", sequences_to_csv(self.aliases))
+  write(basedir .. "/clusters.csv", clusters_to_csv(self.clusters))
   write(basedir .. "/bibliography.csv", bibliography_to_csv(self.bibliography))
   write(basedir .. "/citations.csv", citations_to_csv(self.citations))
 end

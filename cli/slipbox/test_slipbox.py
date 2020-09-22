@@ -217,6 +217,15 @@ def test_process_empty_file(tmp_path, sbox):
     assert not list(sbox.conn.execute("SELECT * FROM Citations"))
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_process_clusters(tmp_path, sbox):
+    """Check if clusters are stored in db."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("# 0 Test\n\n#test/1.\n\n# 1 Dest\n\nTest.\n")
+    sbox.process([markdown])
+    result = list(sbox.conn.execute("SELECT * FROM Clusters"))
+    assert result == [('#test', 0, 1)]
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_filenames(tmp_path, sbox):
     """Filenames must be scanned correctly."""
     markdown = tmp_path/"foo.md"

@@ -21,6 +21,20 @@ local function hashtag_prefix(s)
   return s:match '^#+[-_a-zA-Z0-9]+'
 end
 
+local function cluster_link_prefix(s)
+  local tag_pattern = '^#[-_a-zA-Z0-9]+'
+  local tag = s:match(tag_pattern)
+  if tag then
+    local link_pattern = '^/[0-9]+'
+    local link = s:sub(#tag + 1):match(link_pattern)
+    if link then
+      return tag, tonumber(link:sub(2))
+    end
+    return tag
+  end
+  return nil, nil
+end
+
 local function get_link(src, link)
   assert(link.tag == "Link")
   assert(type(src) == "number")
@@ -103,4 +117,5 @@ return {
   alias_parent = alias_parent,
   write_text = write_text,
   append_text = append_text,
+  cluster_link_prefix = cluster_link_prefix,
 }
