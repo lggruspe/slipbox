@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 
+from .app import show_info
 from .initializer import initialize, DotSlipbox, default_config
 from .slipbox import Slipbox
 from .utils import check_requirements, check_if_initialized
@@ -21,6 +22,11 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Generate a single-page HTML from your notes.")
     subparsers = parser.add_subparsers(dest="command")
 
+    build = subparsers.add_parser("build", help="generate static site")
+
+    info = subparsers.add_parser("info", help="show information about note")
+    info.add_argument("id", type=int, help="note ID")
+
     defaults = default_config()
     init = subparsers.add_parser("init", help="initialize notes directory")
     init.add_argument("-c", "--content-options",
@@ -32,9 +38,6 @@ if __name__ == "__main__":
     init.add_argument("--convert-to-data-url", action="store_true",
                       default=defaults.getboolean("slipbox", "convert_to_data_url"),
                       help="convert local images links to data URL")
-
-
-    build = subparsers.add_parser("build", help="generate static site")
 
     args = parser.parse_args()
 
@@ -48,5 +51,7 @@ if __name__ == "__main__":
     elif check_if_initialized():
         if command == "build":
             main()
+        elif command == "info":
+            show_info(args.id)
     else:
         sys.exit("could not find '.slipbox' in any parent directory.")
