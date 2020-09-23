@@ -51,7 +51,7 @@ def test_run_command(tmp_path, capsys):
 def test_run_command_with_kwargs(capsys):
     """Keyword arguments to run_command must be used as environment variables.
     """
-    retcode = utils.run_command("env", ZZZZZZZZZZ="ZZZZZZZZZZ")
+    retcode = utils.run_command("env", dict(ZZZZZZZZZZ="ZZZZZZZZZZ"))
     stdout, stderr = capsys.readouterr()
     assert not stderr
     assert not retcode

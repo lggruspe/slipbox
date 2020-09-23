@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any, Iterator, Optional
+from typing import Any, Dict, Iterator, Optional
 
 def pandoc() -> str:
     """Pandoc location."""
@@ -32,15 +32,21 @@ def temporary_directory() -> Iterator[Path]:
     with tempfile.TemporaryDirectory() as tempdir:
         yield Path(tempdir)
 
-def run_command(cmd: str, **kwargs: Any) -> int:
-    """Run command with environment variables in kwargs.
+def run_command(cmd: str,
+                variables: Optional[Dict[str, str]] = None,
+                **kwargs: Any) -> int:
+    """Run command with additional environment variables in variables.
 
     Output stdout and stderr, and return the error code.
+
+    kwargs
+    : Additional arguments to subprocess.run
     """
     env = os.environ.copy()
-    env.update(**kwargs)
+    if variables is not None:
+        env.update(variables)
     proc = subprocess.run(shlex.split(cmd), env=env, check=False,
-                          capture_output=True)
+                          capture_output=True, **kwargs)
     if proc.stdout:
         print(proc.stdout.decode())
     if proc.stderr:

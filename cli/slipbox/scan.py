@@ -81,7 +81,8 @@ def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> Non
 
 def process_batch(conn: Connection,
                   batch: List[Path],
-                  config: ConfigParser) -> None:
+                  config: ConfigParser,
+                  basedir: Path) -> None:
     """Process batch of input notes."""
     convert_to_data_url = "1" \
         if config.getboolean("slipbox", "convert_to_data_url") \
@@ -92,8 +93,9 @@ def process_batch(conn: Connection,
         concatenate(preprocessed_input, *batch)
         cmd = build_command(preprocessed_input, str(html),
                             config.get("slipbox", "content_options"))
-        retcode = utils.run_command(cmd, SLIPBOX_TMPDIR=str(tempdir),
-                                    CONVERT_TO_DATA_URL=convert_to_data_url)
+        retcode = utils.run_command(cmd, dict(SLIPBOX_TMPDIR=str(tempdir),
+                                              CONVERT_TO_DATA_URL=convert_to_data_url),
+                                    cwd=basedir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return

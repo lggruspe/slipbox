@@ -178,4 +178,4 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
             html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
             title="--metadata title=Slipbox")
-        subprocess.run(shlex.split(cmd), check=False)
+        subprocess.run(shlex.split(cmd), check=False, cwd=basedir)
