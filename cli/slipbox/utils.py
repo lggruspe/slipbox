@@ -18,10 +18,6 @@ def check_requirements() -> bool:
     """Check if pandoc is installed."""
     return bool(shutil.which(pandoc()))
 
-def check_options(options: str) -> bool:
-    """Check if options can be passed to pandoc."""
-    return "--strip-comments" not in options
-
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""
     return "'{}'".format(text.replace("'", "''"))

@@ -5,6 +5,7 @@ from configparser import ConfigParser
 from pathlib import Path
 from shlex import quote
 from sqlite3 import Connection, connect
+import sys
 from typing import List, Sequence, Optional
 
 def initialize_database(conn: Connection) -> None:
@@ -30,7 +31,9 @@ class DotSlipbox:
         """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
+        self.existing = True
         if not self.path.exists():
+            self.existing = False
             self.path.mkdir()
             database = self.path.joinpath("data.db")
             with connect(database) as conn:
@@ -41,6 +44,7 @@ class DotSlipbox:
             with open(self.path/"config.cfg", "w") as config_file:
                 config.write(config_file)
             self.path.joinpath("patterns").write_text("*.md\n*.markdown\n")
+        self.check_config()
 
     @property
     def patterns(self) -> List[str]:
@@ -84,3 +88,14 @@ class DotSlipbox:
     def database(self) -> Connection:
         """Create connection to .slipbox/data.db."""
         return connect(self.path/"data.db")
+
+    def check_config(self) -> None:
+        """Check .slipbox/config.cfg."""
+        content_options = self.config.get("slipbox", "content_options")
+        if "--strip-comments" in content_options:
+            config_path = self.path.joinpath("config.cfg").resolve()
+            if not self.existing:
+                for path in self.path.iterdir():
+                    path.unlink()
+                self.path.rmdir()
+            sys.exit(f"invalid content_options value in {config_path!s}")

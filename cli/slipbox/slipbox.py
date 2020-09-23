@@ -2,13 +2,11 @@
 
 from itertools import chain
 from pathlib import Path
-import sys
 from time import time
 from typing import Iterable, List, Tuple
 
 from . import scan, page
 from .initializer import DotSlipbox
-from .utils import check_options
 
 class Slipbox:
     """Slipbox main functions."""
@@ -16,9 +14,6 @@ class Slipbox:
         self.conn = dot.database()
         self.dot = dot
         self.config = dot.config
-        if not check_options(self.config.get("slipbox", "content_options")):
-            config_path = dot.path/"config.cfg"
-            sys.exit(f"invalid content_options value in {config_path.resolve()!s}")
 
     @property
     def basedir(self) -> Path:
