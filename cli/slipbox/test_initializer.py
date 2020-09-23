@@ -1,14 +1,29 @@
 # type: ignore
 """Test initializer.py."""
 
-from .initializer import initialize
+from .initializer import DotSlipbox
 
 def test_initialize(tmp_path):
     """Must initialize .slipbox in the parent directory."""
-    initialize(tmp_path)
-    dot = tmp_path/".slipbox"
-    assert dot.exists() and dot.is_dir()
-    data = dot/"data.db"
-    assert data.exists() and data.is_file()
-    patterns = dot/"patterns"
-    assert patterns.exists() and patterns.is_file()
+    dot = DotSlipbox(tmp_path).path
+    assert dot.is_dir()
+    assert dot.joinpath("data.db").is_file()
+    assert dot.joinpath("config.cfg").is_file()
+    assert dot.joinpath("patterns").is_file()
+
+def test_dot_slipbox_locate(tmp_path):
+    """find_dot_slipbox must look for .slipbox in parent directories."""
+    assert DotSlipbox.locate(tmp_path) is None
+
+    dot = DotSlipbox(tmp_path)
+    assert DotSlipbox.locate(tmp_path).path == dot.path
+
+    child = tmp_path/"child"
+    child.mkdir()
+    assert DotSlipbox.locate(child).path == dot.path
+
+    for file in dot.path.iterdir():
+        file.unlink()
+    dot.path.rmdir()
+    assert DotSlipbox.locate(child) is None
+    assert DotSlipbox.locate(tmp_path) is None

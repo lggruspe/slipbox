@@ -7,7 +7,6 @@ import shutil
 import pytest
 
 from . import utils
-from .initializer import initialize
 
 def test_sqlite_string():
     """Single quotes must be escaped properly."""
@@ -57,21 +56,3 @@ def test_run_command_with_kwargs(capsys):
     assert not stderr
     assert not retcode
     assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in stdout
-
-def test_find_dot_slipbox(tmp_path):
-    """find_dot_slipbox must look for .slipbox in parent directories."""
-    assert utils.find_dot_slipbox(tmp_path) is None
-
-    dot = tmp_path.joinpath(".slipbox")
-    initialize(tmp_path)
-    assert utils.find_dot_slipbox(tmp_path) == dot
-
-    child = tmp_path/"child"
-    child.mkdir()
-    assert utils.find_dot_slipbox(child) == dot
-
-    for file in dot.iterdir():
-        file.unlink()
-    dot.rmdir()
-    assert utils.find_dot_slipbox(child) is None
-    assert utils.find_dot_slipbox(tmp_path) is None

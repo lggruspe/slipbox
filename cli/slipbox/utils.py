@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator
 
 def pandoc() -> str:
     """Pandoc location."""
@@ -21,23 +21,6 @@ def check_requirements() -> bool:
 def check_options(options: str) -> bool:
     """Check if options can be passed to pandoc."""
     return "--strip-comments" not in options
-
-def find_dot_slipbox(path: Path = Path()) -> Optional[Path]:
-    """Find .slipbox in parent directories of path, or None.
-
-    Input path must be absolute.
-    """
-    assert path.is_absolute()
-    while not path.is_dir():
-        path = path.parent
-    parent = path.parent
-    while parent != path:
-        dot = path/".slipbox"
-        if dot.is_dir():
-            return dot
-        path = parent
-        parent = path.parent
-    return None
 
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""

@@ -24,30 +24,23 @@ def default_config() -> ConfigParser:
     }
     return config
 
-def initialize(parent: Path, args: Optional[Namespace] = None) -> None:
-    """Create .slipbox directory if it doesn't exist.
-
-    Initializes .slipbox/data.db, .slipbox/patterns and ./slipbox/config.cfg.
-    """
-    _slipbox = parent/".slipbox"
-    if not _slipbox.exists():
-        _slipbox.mkdir()
-        database = _slipbox.joinpath("data.db")
-        with connect(database) as conn:
-            initialize_database(conn)
-        config = default_config()
-        if args is not None:
-            config["slipbox"].update(vars(args))
-        with open(_slipbox/"config.cfg", "w") as config_file:
-            config.write(config_file)
-        _slipbox.joinpath("patterns").write_text("*.md\n*.markdown\n")
-
 class DotSlipbox:
     """Initialized .slipbox/ directory."""
-    def __init__(self, parent: Path = Path()):
-        initialize(parent)
+    def __init__(self, parent: Path, args: Optional[Namespace] = None):
+        """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
+        if not self.path.exists():
+            self.path.mkdir()
+            database = self.path.joinpath("data.db")
+            with connect(database) as conn:
+                initialize_database(conn)
+            config = default_config()
+            if args is not None:
+                config["slipbox"].update(vars(args))
+            with open(self.path/"config.cfg", "w") as config_file:
+                config.write(config_file)
+            self.path.joinpath("patterns").write_text("*.md\n*.markdown\n")
 
     @property
     def patterns(self) -> List[str]:
@@ -69,3 +62,21 @@ class DotSlipbox:
         config = ConfigParser()
         config.read(self.path/"config.cfg")
         return config
+
+    @staticmethod
+    def locate(path: Path) -> Optional["DotSlipbox"]:
+        """Find .slipbox in parent directories of path, or None.
+
+        Input path must be absolute.
+        """
+        assert path.is_absolute()
+        while not path.is_dir():
+            path = path.parent
+        parent = path.parent
+        while parent != path:
+            dot = path/".slipbox"
+            if dot.is_dir():
+                return DotSlipbox(path)
+            path = parent
+            parent = path.parent
+        return None

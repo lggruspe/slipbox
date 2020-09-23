@@ -5,8 +5,8 @@ from pathlib import Path
 import sys
 
 from .app import main, show_info
-from .initializer import initialize, DotSlipbox, default_config
-from .utils import check_requirements, find_dot_slipbox
+from .initializer import DotSlipbox, default_config
+from .utils import check_requirements
 
 if __name__ == "__main__":
     if not check_requirements():
@@ -34,20 +34,19 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    dot_slipbox = find_dot_slipbox(Path().resolve())
+    dot_slipbox = DotSlipbox.locate(Path().resolve())
 
     command = args.command
     del args.command
     if command == "init":
         args.convert_to_data_url = str(args.convert_to_data_url)
         parent = Path()
-        initialize(parent, args)
+        DotSlipbox(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif dot_slipbox is not None:
-        dot = DotSlipbox(dot_slipbox.parent)
         if command == "build":
-            main(dot)
+            main(dot_slipbox)
         elif command == "info":
-            show_info(dot, args.id)
+            show_info(dot_slipbox, args.id)
     else:
         sys.exit("could not find '.slipbox' in any parent directory.")
