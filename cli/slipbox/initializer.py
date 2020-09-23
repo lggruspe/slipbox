@@ -80,3 +80,7 @@ class DotSlipbox:
             path = parent
             parent = path.parent
         return None
+
+    def database(self) -> Connection:
+        """Create connection to .slipbox/data.db."""
+        return connect(self.path/"data.db")

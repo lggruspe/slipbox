@@ -8,15 +8,11 @@ from pathlib import Path
 import shlex
 from sqlite3 import Connection
 import sys
-from typing import Iterable, List, Set, Tuple, Union
+from typing import Iterable, List, Tuple, Union
 
 from . import utils
 from .data import process_csvs
 from .preprocess import concatenate
-
-def fetch_files(conn: Connection) -> Iterable[Path]:
-    """Get files from the database."""
-    return (Path(p) for p, in conn.execute("SELECT filename FROM Files"))
 
 def is_recently_modified(timestamp: float, filename: Union[Path, str]) -> bool:
     """Check if file has been modified after the timestamp."""
@@ -36,26 +32,6 @@ def has_valid_pattern(filename: Path, patterns: Iterable[str]) -> bool:
         if fnmatch.fnmatch(str(filename), pattern):
             return True
     return False
-
-def glob_files(paths: Iterable[Path]) -> Set[Path]:
-    """Recursively glob files in every path in paths."""
-    new_files: Set[Path] = set()
-    for path in paths:
-        if path.is_file():
-            new_files.add(path)
-        elif path.is_dir():
-            new_files.update(filter(os.path.isfile, path.rglob('*')))
-    return new_files
-
-def find_new_files(
-        conn: Connection,
-        paths: Iterable[Path],
-        patterns: Iterable[str] = ("*.md",)
-    ) -> Iterable[Path]:
-    """Look for files that are not yet in the database."""
-    condition = lambda x: x.is_file() and not is_file_in_db(x, conn) and \
-            has_valid_pattern(x, patterns)
-    return filter(condition, glob_files(paths))
 
 def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
     """Generate an iterator for each file extension.

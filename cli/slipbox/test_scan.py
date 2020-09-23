@@ -43,57 +43,11 @@ def test_has_valid_pattern():
     assert not scan.has_valid_pattern("a.tex", patterns)
     assert not scan.has_valid_pattern("a.md", (".md"))
 
-def test_glob_files(tmp_path):
-    """glob_files should return set of files in the given set of paths."""
-    directory = tmp_path/"directory"
-    directory.mkdir()
-    directory.joinpath("subdirectory").mkdir()
-
-    file_a = tmp_path/"a.md"
-    file_b = tmp_path/"b.md"
-    file_c = tmp_path/"directory"/"c.md"
-    file_d = tmp_path/"directory"/"d.md"
-    file_e = tmp_path/"directory"/"subdirectory"/"e.md"
-
-    file_a.touch()
-    file_b.touch()
-    file_c.touch()
-    file_d.touch()
-    file_e.touch()
-
-    inputs = [file_a, file_b, directory]
-    files = scan.glob_files(inputs)
-    assert len(files) == 5
-    assert file_a in files
-    assert file_b in files
-    assert file_c in files
-    assert file_d in files
-    assert file_e in files
-
-def test_find_new_files(mock_db, tmp_path):
-    """find_new_files must only return existing files that aren't yet in the
-    database and match the input patterns (*.md by default).
-    """
-    conn = mock_db
-    present = tmp_path/"present.md"
-    absent = tmp_path/"absent.md"
-    directory = tmp_path/"directory"
-    txt = tmp_path/"ignore.txt"
-    present.touch()
-    absent.touch()
-    directory.mkdir()
-    txt.touch()
-
-    conn.executescript(insert_file_script(present))
-    new_files = list(scan.find_new_files(conn, [tmp_path]))
-    assert new_files == [absent]
-
 def test_group_by_file_extension():
     """group_by_file_extension should split by file type.
 
     Files with no extension should be considered their own type.
     """
-
     files = ["a.md", "b.md", ".md", "c.tex", ".tex", ""]
     groups = list(map(list, scan.group_by_file_extension(files)))
     assert len(groups) == 5

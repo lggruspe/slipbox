@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any, Iterator
+from typing import Any, Iterator, Optional
 
 def pandoc() -> str:
     """Pandoc location."""
@@ -47,8 +47,11 @@ def run_command(cmd: str, **kwargs: Any) -> int:
         print(proc.stderr.decode(), file=sys.stderr)
     return proc.returncode
 
-def insert_file_script(*files: Path) -> str:
+def insert_file_script(*files: Path, basedir: Optional[Path] = None) -> str:
     """Create SQL query string to insert into the Files table."""
     sql = "INSERT INTO Files (filename) VALUES ({})"
-    filenames = (sqlite_string(str(p)) for p in files)
+    filenames = (sqlite_string(str(p \
+                                   if basedir is None \
+                                   else p.relative_to(basedir))) \
+                 for p in files)
     return sql.format("), (".join(filenames))
