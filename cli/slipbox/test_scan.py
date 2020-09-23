@@ -30,7 +30,7 @@ def test_is_file_in_db(mock_db, tmp_path):
     conn = mock_db
     present = tmp_path/"present"
     absent = tmp_path/"absent"
-    conn.executescript(insert_file_script(present.name))
+    conn.executescript(insert_file_script(present, basedir=tmp_path))
     assert scan.is_file_in_db(present.name, conn)
     assert not scan.is_file_in_db(absent.name, conn)
 

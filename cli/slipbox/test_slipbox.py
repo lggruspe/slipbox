@@ -22,7 +22,7 @@ def test_find_new_notes(tmp_path, sbox):
     directory.mkdir()
     txt.touch()
 
-    sbox.conn.executescript(insert_file_script(present))
+    sbox.conn.executescript(insert_file_script(present, basedir=sbox.basedir))
     assert list(sbox.find_new_notes()) == [absent]
 
 def test_added_notes_pattern(tmp_path, sbox):
@@ -44,7 +44,7 @@ def test_added_notes_in_db(tmp_path, sbox):
     skip = tmp_path/"skip.md"
     new.touch()
     skip.touch()
-    sbox.conn.executescript(insert_file_script(skip))
+    sbox.conn.executescript(insert_file_script(skip, basedir=sbox.basedir))
     assert list(sbox.find_new_notes()) == [new]
 
 def test_added_notes_recursive(tmp_path, sbox):
@@ -71,7 +71,7 @@ def test_modified_notes(tmp_path, sbox):
     not_modified = tmp_path/"not_modified.md"
     added = tmp_path/"added.md"
 
-    sbox.conn.executescript(insert_file_script(modified, not_modified))
+    sbox.conn.executescript(insert_file_script(modified, not_modified, basedir=sbox.basedir))
     sbox.timestamp = time()
     sleep(1)
 

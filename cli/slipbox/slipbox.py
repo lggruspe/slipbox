@@ -49,7 +49,7 @@ class Slipbox:
         patterns = self.dot.patterns
         for path in self.basedir.rglob('*'):
             if path.is_file() and scan.has_valid_pattern(path, patterns) \
-                    and not scan.is_file_in_db(path, self.conn):
+                    and not scan.is_file_in_db(path.relative_to(self.basedir), self.conn):
                 yield path
 
     def purge(self) -> Tuple[List[Path], List[Path]]:

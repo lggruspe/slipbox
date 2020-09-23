@@ -49,11 +49,8 @@ def run_command(cmd: str,
         print(proc.stderr.decode(), file=sys.stderr)
     return proc.returncode
 
-def insert_file_script(*files: Path, basedir: Optional[Path] = None) -> str:
+def insert_file_script(*files: Path, basedir: Path) -> str:
     """Create SQL query string to insert into the Files table."""
     sql = "INSERT INTO Files (filename) VALUES ({})"
-    filenames = (sqlite_string(str(p \
-                                   if basedir is None \
-                                   else p.relative_to(basedir))) \
-                 for p in files)
+    filenames = (sqlite_string(str(p.relative_to(basedir))) for p in files)
     return sql.format("), (".join(filenames))
