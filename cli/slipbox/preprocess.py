@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-def concatenate(dest: Path, *sources: Path) -> None:
+def concatenate(dest: Path, *sources: Path, basedir: Path) -> None:
     """Write contents of sources into dest.
 
     Each section is preceded by an HTML comment.
@@ -15,5 +15,6 @@ filename: {}
 """
     with dest.open("w") as file:
         for src in sources:
-            print(comment.format(str(src)), file=file)
+            filename = str(src.relative_to(basedir))
+            print(comment.format(filename), file=file)
             print(src.read_text(), file=file)

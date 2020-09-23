@@ -162,7 +162,7 @@ def test_process_filenames(tmp_path, sbox):
 
     result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
-    assert markdown.samefile(result[0][0])
+    assert markdown.samefile(sbox.basedir/result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_filenames0(tmp_path, sbox):
@@ -174,7 +174,7 @@ def test_process_filenames0(tmp_path, sbox):
     sbox.process([markdown])
     result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
-    assert markdown.samefile(result[0][0])
+    assert markdown.samefile(sbox.basedir/result[0][0])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_non_level1_headers(tmp_path, sbox):
@@ -223,8 +223,8 @@ def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr
-    assert str(file_a) in stderr
-    assert str(file_b) in stderr
+    assert str(file_a.relative_to(sbox.basedir)) in stderr
+    assert str(file_b.relative_to(sbox.basedir)) in stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_duplicate_ids_in_a_file(tmp_path, capsys, sbox):
@@ -378,7 +378,7 @@ Bye.
 """)
     sbox.process([markdown])
     result = list(sbox.conn.execute("SELECT * FROM Notes"))
-    assert result == [(0, 'Note', str(markdown))]
+    assert result == [(0, 'Note', str(markdown.relative_to(sbox.basedir)))]
 
     html = list(sbox.conn.execute("SELECT body FROM Html"))
     assert len(html) == 1

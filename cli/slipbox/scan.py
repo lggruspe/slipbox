@@ -58,7 +58,7 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + str(input_)
 
-def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
+def store_html_sections(conn: Connection, html: str, sources: List[Path], basedir: Path) -> None:
     """Insert Html and Sections entries for html and sources.
 
     html
@@ -73,7 +73,8 @@ def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> Non
     cur.execute("INSERT INTO Html(body) VALUES (?)", (html,))
     lastrowid = cur.lastrowid
     query = "SELECT DISTINCT id FROM Notes WHERE filename IN ({})".format(
-        ", ".join(utils.sqlite_string(str(source)) for source in sources))
+        ", ".join(utils.sqlite_string(str(source.relative_to(basedir))) \
+                  for source in sources))
     insert = "INSERT OR IGNORE INTO Sections(note, html) VALUES (?, ?)"
     cur2 = conn.cursor()
     for row in cur.execute(query):
@@ -90,7 +91,7 @@ def process_batch(conn: Connection,
     with utils.temporary_directory() as tempdir:
         html = tempdir/"temp.html"
         preprocessed_input = tempdir/"input.md"
-        concatenate(preprocessed_input, *batch)
+        concatenate(preprocessed_input, *batch, basedir=basedir)
         cmd = build_command(preprocessed_input, str(html),
                             config.get("slipbox", "content_options"))
         retcode = utils.run_command(cmd, dict(SLIPBOX_TMPDIR=str(tempdir),
@@ -100,5 +101,5 @@ def process_batch(conn: Connection,
             print("Scan failed.", file=sys.stderr)
             return
         process_csvs(conn, tempdir)
-        store_html_sections(conn, html.read_text(), batch)
+        store_html_sections(conn, html.read_text(), batch, basedir)
         conn.commit()
