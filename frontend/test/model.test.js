@@ -1,15 +1,16 @@
 import {
   Alias,
-  aliasParent,
+  Cluster,
   Database,
   DomainError,
-  isNumber,
-  isSequence,
   Link,
   Note,
   Query,
   ReferenceError,
-  Sequence
+  Sequence,
+  aliasParent,
+  isNumber,
+  isSequence
 } from '../src/model.js'
 
 import assert from 'assert'
@@ -87,6 +88,33 @@ describe('Alias', function () {
       assert(alias instanceof Alias)
       assert(alias.id === 53)
       assert(alias.alias === '104e1')
+    })
+  })
+})
+
+describe('Cluster', function () {
+  describe('with invalid tag', function () {
+    it('should raise DomainError', function () {
+      assert.throws(() => new Cluster(null, 0, 0), DomainError)
+      assert.throws(() => new Cluster('', 0, 0), DomainError)
+    })
+  })
+
+  describe('with invalid src or dest', function () {
+    it('should raise DomainError', function () {
+      assert.throws(() => new Cluster('#tag', null, 0), DomainError)
+      assert.throws(() => new Cluster('#tag', '0', 0), DomainError)
+      assert.throws(() => new Cluster('#tag', 0, null), DomainError)
+      assert.throws(() => new Cluster('#tag', 0, '0'), DomainError)
+    })
+  })
+
+  describe('with valid arguments', function () {
+    it('should create Cluster object', function () {
+      const cluster = new Cluster('#tag', 0, 0)
+      assert.strictEqual(cluster.tag, '#tag')
+      assert.strictEqual(cluster.src, 0)
+      assert.strictEqual(cluster.dest, 0)
     })
   })
 })
@@ -236,6 +264,49 @@ describe('Database', function () {
       assert(db.data.aliases['2b1'].id === 1)
       assert(db.data.aliases['2b1'].children.length === 0)
       assert(db.data.aliases['2b1'].parent === '2b')
+    })
+  })
+
+  describe('add Cluster', function () {
+    let notes = []
+    beforeEach(function () {
+      notes = []
+      for (let i = 0; i < 4; i++) {
+        notes.push(db.add(new Note(i, String(i), 'test.md')))
+      }
+    })
+
+    describe('with non-existent notes', function () {
+      it('should return Reference error', function () {
+        const cluster = new Cluster('#test', 9000, 9000)
+        assert(db.add(cluster) instanceof ReferenceError)
+      })
+    })
+
+    it('should add cluster', function () {
+      db.add(new Cluster('#test', 0, 1))
+      db.add(new Cluster('#test', 1, 2))
+      db.add(new Cluster('#foo', 2, 3))
+
+      const clusters = db.data.clusters
+      const tags = Object.keys(clusters)
+      assert.strictEqual(tags.length, 2)
+      assert(tags.includes('#test'))
+      assert(tags.includes('#foo'))
+
+      const test = clusters['#test']
+      assert(test.forward[0].includes(1))
+      assert(test.forward[1].includes(2))
+      assert(test.reverse[1].includes(0))
+      assert(test.reverse[2].includes(1))
+      assert.strictEqual(test.forward[0].length, 1)
+      assert.strictEqual(test.forward[1].length, 1)
+      assert.strictEqual(test.reverse[1].length, 1)
+      assert.strictEqual(test.reverse[2].length, 1)
+
+      const foo = clusters['#foo']
+      assert(foo.forward[2].includes(3))
+      assert(foo.reverse[3].includes(2))
     })
   })
 

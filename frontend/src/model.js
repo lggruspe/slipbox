@@ -45,6 +45,16 @@ class Database {
   //   aliases: {
   //     <alias:str>: { id: <int>, children: [<str>], parent: <str> }
   //   },
+  //   clusters: {
+  //     [tag: string]: {
+  //       forward: {
+  //         [src: number]: Array<number>
+  //       },
+  //       reverse: {
+  //         [dest: number]: Array<number>
+  //       }
+  //     }
+  //   }
   //   notes: [
   //     {
   //       title: <str>,
@@ -57,7 +67,7 @@ class Database {
   // }
 
   constructor () {
-    this.data = { aliases: {}, notes: [] }
+    this.data = { aliases: {}, notes: [], clusters: {} }
   }
 
   add (record) {
@@ -93,7 +103,8 @@ class Note {
       filename: this.filename,
       aliases: [],
       links: [],
-      backlinks: []
+      backlinks: [],
+      clusters: {}
     }
   }
 
@@ -194,6 +205,36 @@ class Link {
     }
     src.links.push(link)
     dest.backlinks.push(link)
+  }
+}
+
+class Cluster {
+  constructor (tag, src, dest) {
+    check(typeof tag === 'string', 'non-string Cluster.tag')
+    check(tag, 'invalid Cluster.tag')
+    check(typeof src === 'number', 'non-number Cluster.src')
+    check(typeof dest === 'number', 'non-number Cluster.dest')
+    this.tag = tag
+    this.src = src
+    this.dest = dest
+  }
+
+  addTo (db) {
+    const src = this.src
+    const dest = this.dest
+    if (!db.data.notes[src]) return new ReferenceError('Cluster.src')
+    if (!db.data.notes[dest]) return new ReferenceError('Cluster.dest')
+    const result = db.data.clusters[this.tag] || {
+      forward: {},
+      reverse: {}
+    }
+    const forward = result.forward[src] || []
+    const reverse = result.reverse[dest] || []
+    forward.push(dest)
+    reverse.push(src)
+    result.forward[src] = forward
+    result.reverse[dest] = reverse
+    db.data.clusters[this.tag] = result
   }
 }
 
@@ -311,14 +352,15 @@ class Query {
 
 export {
   Alias,
-  aliasParent,
+  Cluster,
   Database,
   DomainError,
-  isNumber,
-  isSequence,
   Link,
   Note,
   Query,
   ReferenceError,
-  Sequence
+  Sequence,
+  aliasParent,
+  isNumber,
+  isSequence
 }

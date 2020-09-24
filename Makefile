@@ -12,7 +12,6 @@ bundle:
 	cd frontend; npm run bundle
 	mkdir -p cli/slipbox/data
 	cp frontend/dist/frontend.js cli/slipbox/data
-	chmod +x cli/slipbox/data/filter.js
 
 .PHONY:	check
 check: bundle
