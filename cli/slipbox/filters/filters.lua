@@ -103,11 +103,8 @@ end
 function Collector:Str(elem)
   local tag, dest = utils.cluster_link_prefix(elem.text)
   if tag then
-    if dest ~= nil then
-      self.slipbox:save_cluster(tag, self.id, dest)
-    else
-      self.slipbox:save_tag(self.id, tag)
-    end
+    dest = dest or self.id
+    self.slipbox:save_cluster(tag, self.id, dest)
   end
 end
 

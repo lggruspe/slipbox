@@ -8,12 +8,6 @@ CREATE TABLE IF NOT EXISTS Notes (
     filename NOT NULL REFERENCES Files ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Tags (
-    id NOT NULL REFERENCES Notes ON DELETE CASCADE,
-    tag NOT NULL,
-    PRIMARY KEY(id, tag)
-);
-
 CREATE TABLE IF NOT EXISTS Links (
     src NOT NULL REFERENCES Notes ON DELETE CASCADE,
     dest NOT NULL,  -- not an fk to keep backlink when dest gets deleted
@@ -88,3 +82,13 @@ UNION
 SELECT A.id AS id FROM Notes AS A JOIN Notes AS B
 WHERE A.id > B.id
 GROUP BY A.id HAVING A.id > COUNT(B.id));
+
+CREATE VIEW IF NOT EXISTS Tags AS
+SELECT * FROM (
+    SELECT tag, src AS id FROM Clusters
+    UNION
+    SELECT tag, dest AS id FROM Clusters
+)
+WHERE id in (
+    SELECT id FROM Notes
+);

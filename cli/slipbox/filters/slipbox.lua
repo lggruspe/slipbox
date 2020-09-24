@@ -9,7 +9,6 @@ function SlipBox:new()
     notes = {},
     links = {},
     aliases = {},
-    tags = {},
     citations = {},
     bibliography = {},
     clusters = {},
@@ -120,17 +119,6 @@ function SlipBox:save_link(link)
   end
 end
 
-function SlipBox:save_tag(id, tag)
-  -- Insert id into self:tags[tag].
-  assert(type(id) == "number")
-  assert(type(tag) == "string")
-  assert(tag ~= "")
-
-  local tags = self.tags[tag] or {}
-  table.insert(tags, id)
-  self.tags[tag] = tags
-end
-
 function SlipBox:save_cluster(tag, src, dest)
   assert(type(tag) == "string")
   assert(type(src) == "number")
@@ -168,18 +156,6 @@ local function notes_to_csv(notes)
       -- TODO show warning if note.filename is nil
       -- This occurs when the title in the header contains other symbols
       -- (ex: links, references, equations, etc.).
-    end
-  end
-  return w.data
-end
-
-local function tags_to_csv(tags)
-  -- Generate CSV data from tags in slipbox.
-  local w = csv.Writer:new{"tag", "id"}
-  for tag, ids in pairs(tags) do
-    for _, id in ipairs(ids) do
-      assert(id and id == tonumber(id))
-      w:write{tag, id}
     end
   end
   return w.data
@@ -261,7 +237,6 @@ function SlipBox:write_data(basedir)
   local write = utils.write_text
   write(basedir .. "/files.csv", files_to_csv(self.notes))
   write(basedir .. "/notes.csv", notes_to_csv(self.notes))
-  write(basedir .. "/tags.csv", tags_to_csv(self.tags))
   write(basedir .. "/links.csv", links_to_csv(self.links))
   write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
   write(basedir .. "/sequences.csv", sequences_to_csv(self.aliases))

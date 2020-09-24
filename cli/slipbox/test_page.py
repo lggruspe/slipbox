@@ -12,10 +12,10 @@ SQL = """
         (0, '0', 'test.md'),
         (1, '1', 'test.md'),
         (2, '2', 'test.md');
-    INSERT INTO Tags (id, tag) VALUES
-        (0, '#test'),
-        (1, '#test'),
-        (2, '##test');
+    INSERT INTO Clusters (tag, src, dest) VALUES
+        ('#test', 0, 0),
+        ('#test', 1, 1),
+        ('##test', 2, 2);
     INSERT INTO Bibliography (key, text) VALUES
         ('ref-test', 'Reference text.');
     INSERT INTO Citations (note, reference) VALUES
