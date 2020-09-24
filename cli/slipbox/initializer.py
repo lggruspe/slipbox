@@ -27,7 +27,7 @@ def default_config() -> ConfigParser:
 
 class DotSlipbox:
     """Initialized .slipbox/ directory."""
-    def __init__(self, parent: Path, args: Optional[Namespace] = None):
+    def __init__(self, parent: Path, args: Optional[Namespace] = None, *, exit_: bool = True):
         """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
@@ -44,7 +44,7 @@ class DotSlipbox:
             with open(self.path/"config.cfg", "w") as config_file:
                 config.write(config_file)
             self.path.joinpath("patterns").write_text("*.md\n*.markdown\n")
-        self.check_config()
+        self.check_config(exit_)
 
     @property
     def patterns(self) -> List[str]:
@@ -89,7 +89,7 @@ class DotSlipbox:
         """Create connection to .slipbox/data.db."""
         return connect(self.path/"data.db")
 
-    def check_config(self) -> None:
+    def check_config(self, exit_: bool = True) -> bool:
         """Check .slipbox/config.cfg."""
         content_options = self.config.get("slipbox", "content_options")
         if "--strip-comments" in content_options:
@@ -98,4 +98,7 @@ class DotSlipbox:
                 for path in self.path.iterdir():
                     path.unlink()
                 self.path.rmdir()
-            sys.exit(f"invalid content_options value in {config_path!s}")
+            if exit_:
+                sys.exit(f"invalid content_options value in {config_path!s}")
+            return False
+        return True
