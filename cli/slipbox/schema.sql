@@ -16,18 +16,6 @@ CREATE TABLE IF NOT EXISTS Links (
     PRIMARY KEY(src, dest, annotation)
 );
 
-CREATE TABLE IF NOT EXISTS Aliases (
-    id NOT NULL,    -- references notes
-    owner NOT NULL REFERENCES Notes ON DELETE CASCADE,
-    alias PRIMARY KEY
-);
-
-CREATE TABLE IF NOT EXISTS Sequences (
-    prev NOT NULL REFERENCES Aliases ON DELETE CASCADE,
-    next NOT NULL REFERENCES Aliases ON DELETE CASCADE,
-    PRIMARY KEY(prev, next)
-);
-
 CREATE TABLE IF NOT EXISTS Clusters (
     tag NOT NULL,
     src NOT NULL REFERENCES Notes ON DELETE CASCADE,
@@ -67,11 +55,6 @@ CREATE TABLE IF NOT EXISTS Meta (
 
 INSERT OR IGNORE INTO Meta VALUES ('timestamp', 0.0), ('version', '0.0');
 
--- respects foreign key constraints
-CREATE VIEW IF NOT EXISTS ValidAliases AS
-SELECT * FROM Aliases WHERE id IN (SELECT id FROM Notes);
-
--- respects foreign key constraints
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
 

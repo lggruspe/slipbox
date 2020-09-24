@@ -55,16 +55,6 @@ def process_links(conn: Connection, path: Path) -> None:
     sql = "INSERT OR IGNORE INTO Links (src, dest, annotation) VALUES (?, ?, ?)"
     run_sql_on_csv(conn, path, sql, (int, int, str))
 
-def process_aliases(conn: Connection, path: Path) -> None:
-    """Process Aliases data in path."""
-    sql = "INSERT OR IGNORE INTO Aliases (id, alias, owner) VALUES (?, ?, ?)"
-    run_sql_on_csv(conn, path, sql, (int, str, int))
-
-def process_sequences(conn: Connection, path: Path) -> None:
-    """Process Sequences data in path."""
-    sql = "INSERT OR IGNORE INTO Sequences (prev, next) VALUES (?, ?)"
-    run_sql_on_csv(conn, path, sql, (str, str))
-
 def process_bibliography(conn: Connection, path: Path) -> None:
     """Process Bibliography data in path."""
     sql = "INSERT OR IGNORE INTO Bibliography (key, text) VALUES (?, ?)"
@@ -85,8 +75,6 @@ def process_csvs(conn: Connection, basedir: Path) -> None:
     process_files(conn, basedir/"files.csv")
     process_notes(conn, basedir/"notes.csv")
     process_links(conn, basedir/"links.csv")
-    process_aliases(conn, basedir/"aliases.csv")
-    process_sequences(conn, basedir/"sequences.csv")
     process_clusters(conn, basedir/"clusters.csv")
     process_bibliography(conn, basedir/"bibliography.csv")
     process_citations(conn, basedir/"citations.csv")

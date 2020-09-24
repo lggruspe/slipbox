@@ -135,8 +135,6 @@ def test_process_empty_file(tmp_path, sbox):
     assert not list(sbox.conn.execute("SELECT * FROM Notes"))
     assert not list(sbox.conn.execute("SELECT * FROM Tags"))
     assert not list(sbox.conn.execute("SELECT * FROM Links"))
-    assert not list(sbox.conn.execute("SELECT * FROM Aliases"))
-    assert not list(sbox.conn.execute("SELECT * FROM Sequences"))
     assert not list(sbox.conn.execute("SELECT * FROM Html"))
     assert not list(sbox.conn.execute("SELECT * FROM Sections"))
     assert not list(sbox.conn.execute("SELECT * FROM Bibliography"))
@@ -251,47 +249,6 @@ Bar.
     assert stderr
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_missing_alias(tmp_path, capsys, sbox):
-    """slipbox.process must show a warning if there's a gap in an alias sequence."""
-    markdown = tmp_path/"test.md"
-    markdown.write_text("""# 0 Foo
-
-[Bar](#1 '/a')
-[Baz](#2 '/a1a')
-
-# 1 Bar
-
-Bar.
-
-# 2 Baz
-
-Baz.
-""")
-    sbox.process([markdown])
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert stderr
-
-@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_aliases(sbox, tmp_path):
-    """Only slash aliases must be saved."""
-    file_a = tmp_path/"a.md"
-    file_b = tmp_path/"b.md"
-    file_c = tmp_path/"c.md"
-    file_a.write_text("""# 0 A
-
-[B](#1 '0a')
-[C](#2 '/b')
-""")
-    file_b.write_text("# 1 B\n\nB")
-    file_c.write_text("# 2 C\n\nC")
-
-    sbox.process([file_a, file_b, file_c])
-    result = list(sbox.conn.execute("SELECT id, alias, owner FROM Aliases ORDER BY alias"))
-    assert len(result) == 2
-    assert result == [(0, '0', 0), (2, '0b', 0)]
-
-@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_empty_link_target(tmp_path, capsys, sbox):
     """slipbox.process must show a warning if there is a link with an empty target."""
     markdown = tmp_path/"test.md"
@@ -392,32 +349,3 @@ Bye.
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
-
-@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_duplicate_aliases(tmp_path, capsys, sbox):
-    """If a note defines duplicate aliases, only the first one must be saved.
-
-    slipbox.process must show a warning when this happens.
-    """
-    markdown = tmp_path/"test.md"
-    markdown.write_text("""# 0 Foo
-
-[Bar](#1 '/a')
-[Baz](#2 '/a')
-
-# 1 Bar
-
-Bar.
-
-# 2 Baz
-
-Baz.
-""")
-    sbox.process([markdown])
-    result = list(sbox.conn.execute("SELECT id FROM Aliases WHERE alias = '0a'"))
-    assert len(result) == 1
-    assert result == [(1,)]
-
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert stderr

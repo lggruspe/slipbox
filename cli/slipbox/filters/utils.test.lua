@@ -91,10 +91,6 @@ local function make_direct_link()
   return mock_link({make_sample_str()}, "#5", "Description")
 end
 
-local function make_sequence_link()
-  return mock_link({make_sample_str()}, "#5", "/a")
-end
-
 local function make_tag_link()
   return mock_link({make_sample_str()}, "##tag")
 end
@@ -107,26 +103,6 @@ describe("get_link", function()
       assert.truthy(result)
       assert.truthy(result.description)
       assert.are_not.equal(result.description, "")
-    end)
-  end)
-
-  describe("on a sequence Link", function()
-    it("should return an object with an alias description.", function()
-      local link = make_sequence_link()
-      local result = utils.get_link(0, link)
-      assert.truthy(result)
-      assert.truthy(result.description)
-      assert.truthy(result.description:match('^%d+%a[%d%a]*$'))
-      assert.is_equal(result.tag, "sequence")
-    end)
-
-    describe("with an integer alias", function()
-      it("should return a direct link", function()
-        local link = mock_link({make_sample_str()}, "#5", "5")
-        local result = utils.get_link(0, link)
-        assert.truthy(result)
-        assert.is_equal(result.tag, "direct")
-      end)
     end)
   end)
 
@@ -151,38 +127,6 @@ it("hashtag_prefix", function()
     local output = utils.hashtag_prefix(input)
     assert.are.equal(output, expected)
   end
-end)
-
-describe("alias_parent", function()
-  assert.are.equal(utils.alias_parent("1a"), "1")
-  assert.are.equal(utils.alias_parent(nil), nil)
-  assert.are_equal(utils.alias_parent(""), nil)
-  assert.are.equal(utils.alias_parent("2"), nil)
-
-  it("should drop the last sequence of digits or letters", function()
-    local cases = {
-      ["10a"] = "10",
-      ["10a1"] = "10a",
-      ["10a1a1"] = "10a1a",
-      ["10a1a2"] = "10a1a",
-      ["10a1a3"] = "10a1a",
-      ["10a1a1a"] = "10a1a1",
-    }
-    for i, o in pairs(cases) do
-      local result = utils.alias_parent(i)
-      assert.are.equal(o, result)
-    end
-  end)
-end)
-
-it("is_valid_alias", function()
-  assert.truthy(utils.is_valid_alias(nil))
-  assert.truthy(utils.is_valid_alias("0"))
-  assert.truthy(utils.is_valid_alias("1a"))
-
-  assert.falsy(utils.is_valid_alias(1))
-  assert.falsy(utils.is_valid_alias("b"))
-  assert.falsy(utils.is_valid_alias(""))
 end)
 
 describe("parse_id_and_title", function()

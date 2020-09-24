@@ -1,5 +1,4 @@
 local csv = require "filters/csv"
-local log = require "filters/log"
 local utils = require "filters/utils"
 
 local SlipBox = {}
@@ -8,7 +7,6 @@ function SlipBox:new()
   return setmetatable({
     notes = {},
     links = {},
-    aliases = {},
     citations = {},
     bibliography = {},
     clusters = {},
@@ -57,65 +55,11 @@ function SlipBox:save_note(id, title, filename)
   self.notes[id] = {title = title, filename = filename}
 end
 
-function SlipBox:save_alias(id, alias, owner)
-  -- Save alias record in the slipbox.
-  -- Return list of error messages if the alias is already used by a
-  -- different note.
-  assert(type(id) == "number")
-  assert(utils.is_valid_alias(alias))
-  assert(alias)
-
-  local record = self.aliases[alias]
-  if record and record.id ~= id then
-    return {
-      string.format("Duplicate alias definition for '%s' used by note %d.",
-        alias, record.id),
-      string.format("It will not be used as an alias for note %d.", id),
-    }
-  end
-
-  self.aliases[alias] = {
-    id = id,
-    owner = owner,
-  }
-end
-
-function SlipBox:save_sequence(link)
-  -- Set aliases table for sequence/folgezettel notes.
-  -- Return list of error messages if source of sequence link is not the
-  -- same as the root of the sequence.
-  -- Also return list of error messages if note aliases can't be defined.
-  assert(link ~= nil)
-  assert(type(link.dest) == "number")
-  assert(link.tag == "sequence" and link.description)
-  assert(link.description ~= "")
-
-  local owner = tostring(link.src)
-  local err = self:save_alias(link.dest, link.description, owner)
-  if err then return err end
-
-  local parent = utils.alias_parent(link.description)
-  if parent == tostring(link.src) then
-    err = self:save_alias(link.src, parent, owner)
-    if err then return err end
-  end
-
-  -- TODO does this work even if dest or parent are not going to be scanned?
-end
-
 function SlipBox:save_link(link)
   if link and link.src then
-    if link.tag == "direct" or link.tag == "sequence" then
-      local links = self.links[link.src] or {}
-      table.insert(links, link)
-      self.links[link.src] = links
-    end
-    if link.tag == "sequence" then
-      local err = self:save_sequence(link)
-      if err then
-        log.warning(err)
-      end
-    end
+    local links = self.links[link.src] or {}
+    table.insert(links, link)
+    self.links[link.src] = links
   end
 end
 
@@ -163,39 +107,10 @@ end
 
 local function links_to_csv(links)
   -- Create CSV data from direct links in slipbox.
-  -- Ignores sequence links.
   local w = csv.Writer:new{"src", "dest", "annotation"}
   for src, dests in pairs(links) do
     for _, dest in ipairs(dests) do
-      if dest.tag == "direct" then
-        w:write{src, dest.dest, dest.description}
-      end
-    end
-  end
-  return w.data
-end
-
-local function aliases_to_csv(aliases)
-  local w = csv.Writer:new{"id", "alias", "owner"}
-  for alias, rec in pairs(aliases) do
-    w:write{rec.id, alias, rec.owner}
-  end
-  return w.data
-end
-
-local function sequences_to_csv(aliases)
-  local w = csv.Writer:new{"prev", "next"}
-  for alias, rec in pairs(aliases) do
-    local parent = utils.alias_parent(alias)
-    if parent then
-      if not aliases[parent] then
-        log.warning {
-          string.format("Missing note alias: '%s'.", parent),
-          string.format("Note %d with alias '%s' will be unreachable.", rec.id, alias),
-        }
-      else
-        w:write{parent, alias}
-      end
+      w:write{src, dest.dest, dest.description}
     end
   end
   return w.data
@@ -238,8 +153,6 @@ function SlipBox:write_data(basedir)
   write(basedir .. "/files.csv", files_to_csv(self.notes))
   write(basedir .. "/notes.csv", notes_to_csv(self.notes))
   write(basedir .. "/links.csv", links_to_csv(self.links))
-  write(basedir .. "/aliases.csv", aliases_to_csv(self.aliases))
-  write(basedir .. "/sequences.csv", sequences_to_csv(self.aliases))
   write(basedir .. "/clusters.csv", clusters_to_csv(self.clusters))
   write(basedir .. "/bibliography.csv", bibliography_to_csv(self.bibliography))
   write(basedir .. "/citations.csv", citations_to_csv(self.citations))

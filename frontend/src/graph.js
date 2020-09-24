@@ -71,26 +71,6 @@ function * neighborElements (query, note) {
     yield noteElement(link.dest)
     yield linkElement('direct', note.id, link.dest.id)
   }
-  for (const parent of note.parents()) {
-    yield noteElement(parent.note)
-    yield linkElement('sequence', parent.note.id, note.id)
-  }
-  for (const child of note.children()) {
-    yield noteElement(child.note)
-    yield linkElement('sequence', note.id, child.note.id)
-  }
-  for (const alias of note.aliases()) {
-    for (const ancestor of query.ancestors(alias)) {
-      yield noteElement(ancestor.note)
-      yield noteElement(query.note(ancestor.childID))
-      yield linkElement('sequence', ancestor.note.id, ancestor.childID)
-    }
-    for (const descendant of query.descendants(alias)) {
-      yield noteElement(descendant.note)
-      yield noteElement(query.note(descendant.parentID))
-      yield linkElement('sequence', descendant.parentID, descendant.note.id)
-    }
-  }
   for (const [src, dest] of traverse(query, note.id)) {
     yield noteElement(query.note(src))
     yield noteElement(query.note(dest))

@@ -31,12 +31,6 @@ def generate_data(conn: Connection) -> Iterable[str]:
     for src, dest, annotation in conn.execute(sql):
         yield f"""window.query.db.add(new Model.Link(
   window.query.note({src}), window.query.note({dest}), {annotation!r}))"""
-    sql = "SELECT id, alias FROM ValidAliases ORDER BY id, alias"
-    for nid, alias in conn.execute(sql):
-        yield f"window.query.db.add(new Model.Alias({nid}, {alias!r}))"
-    sql = "SELECT prev, next FROM Sequences ORDER BY prev, next"
-    for prev, next_ in conn.execute(sql):
-        yield f"window.query.db.add(new Model.Sequence({prev!r}, {next_!r}))"
     sql = "SELECT tag, src, dest FROM Clusters ORDER BY tag, src, dest"
     for tag, src, dest in conn.execute(sql):
         yield f"window.query.db.add(new Model.Cluster({tag!r}, {src}, {dest}))"
@@ -80,28 +74,6 @@ def create_tags(conn: Connection) -> str:
                    Elem("ul", *items),
                    id="tags",
                    title="Tags",
-                   style="display:none",
-                   **{"class": "level1"})
-    return render(section)
-
-def create_entrypoints(conn: Connection) -> str:
-    """Create HTML section for entrypoints.
-
-    This contains all notes that starts a sequence.
-    """
-    query = """
-        SELECT id, title FROM Aliases JOIN Notes USING (id)
-            WHERE CAST(id AS STRING) = alias
-                ORDER BY title
-    """
-    entrypoints = conn.execute(query)
-    items = (Elem("li", Elem("a", title, href=f"#{nid}"))
-             for nid, title in entrypoints)
-    section = Elem("section",
-                   Elem("h1", "Entrypoints"),
-                   Elem("ul", *items),
-                   id="entrypoints",
-                   title="Entrypoints",
                    style="display:none",
                    **{"class": "level1"})
     return render(section)
@@ -175,7 +147,6 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-            print(create_entrypoints(conn), file=file)
         cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
             html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
