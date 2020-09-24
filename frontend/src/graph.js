@@ -33,6 +33,33 @@ function linkElement (type, source, target) {
   }
 }
 
+function dfs (graph, src) {
+  if (!graph[src]) return []
+  const edges = []
+  const done = new Set()
+  const stack = [src]
+  while (stack.length > 0) {
+    const top = stack.pop()
+    if (done.has(top)) continue
+    const children = graph[top] || []
+    for (const child of children) {
+      edges.push([top, child])
+      stack.push(child)
+    }
+    done.add(top)
+  }
+  return edges
+}
+
+function traverse (query, id) {
+  const edges = []
+  for (const { forward, reverse } of Object.values(query.db.data.clusters)) {
+    edges.push(...dfs(forward, id))
+    edges.push(...dfs(reverse, id).map(([a, b]) => [b, a]))
+  }
+  return Array.from(new Set(edges.filter(([a, b]) => a !== b)))
+}
+
 function * neighborElements (query, note) {
   yield noteElement(note, true)
 
@@ -63,6 +90,11 @@ function * neighborElements (query, note) {
       yield noteElement(query.note(descendant.parentID))
       yield linkElement('sequence', descendant.parentID, descendant.note.id)
     }
+  }
+  for (const [src, dest] of traverse(query, note.id)) {
+    yield noteElement(query.note(src))
+    yield noteElement(query.note(dest))
+    yield linkElement('sequence', src, dest)
   }
 }
 

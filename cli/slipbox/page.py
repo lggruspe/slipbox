@@ -37,6 +37,9 @@ def generate_data(conn: Connection) -> Iterable[str]:
     sql = "SELECT prev, next FROM Sequences ORDER BY prev, next"
     for prev, next_ in conn.execute(sql):
         yield f"window.query.db.add(new Model.Sequence({prev!r}, {next_!r}))"
+    sql = "SELECT tag, src, dest FROM Clusters ORDER BY tag, src, dest"
+    for tag, src, dest in conn.execute(sql):
+        yield f"window.query.db.add(new Model.Cluster({tag!r}, {src}, {dest}))"
 
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""
