@@ -22,6 +22,7 @@ if __name__ == "__main__":
 
     defaults = default_config()
     init = subparsers.add_parser("init", help="initialize notes directory")
+    init.add_argument("directory", nargs='?', type=Path, default=Path())
     init.add_argument("-c", "--content-options",
                       default=defaults.get("slipbox", "content_options"),
                       help="pandoc options for the content")
@@ -40,7 +41,9 @@ if __name__ == "__main__":
     del args.command
     if command == "init":
         args.convert_to_data_url = str(args.convert_to_data_url)
-        parent = Path()
+        parent = args.directory
+        del args.directory
+        parent.mkdir(parents=True, exist_ok=True)
         DotSlipbox(parent, args)
         print(f"Initialized .slipbox in {parent.resolve()!s}.")
     elif dot_slipbox is not None:

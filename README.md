@@ -7,7 +7,7 @@ Features
 --------
 
 - Citations via `pandoc-citeproc`
-- Stores notes data in an sqlite database
+- Stores notes data in an sqlite3 database
 - Single-page HTML output with backlinks and Folgezettel links
 - Incremental compilation
 - Fuzzy text search
@@ -20,28 +20,19 @@ Requirements
 - `pandoc-citeproc`
 - `python3`
 
-Installation
-------------
+Installation and usage
+----------------------
 
 ```bash
 pip install slipbox
+slipbox init my-slipbox
+cd my-slipbox
+# ...add notes
+python -m slipbox build
 ```
 
-Usage
------
-
-```bash
-python -m slipbox notes.db notes -d ' -o notes.html'
-```
-
-This command create an HTML out of your markdown notes in the `notes` directory.
-
-- `notes.db` is the filename of the sqlite database.
-- `notes` is your notes directory, must be visible from the working directory.
-- ` -o notes.html` can be replaced with any pandoc option.
-    + Take note of the quotes and the leading space.
-
-See [docs/](https://lggruspe.github.io/slipbox) for examples.
+See [docs/index.md](https://github.com/lggruspe/slipbox/blob/master/docs/index.md)
+and <https://lggruspe.github.io/slipbox>.
 
 License
 -------

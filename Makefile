@@ -29,7 +29,7 @@ check: bundle
 docs:	bundle
 	cd docs; rm -rf .slipbox \
 	cd docs; PYTHONPATH=../cli python -m slipbox init \
-		-c '--bibliography tutorial.bib' \
+		-c '--bibliography example.bib' \
 		-d '-o index.html -c basic.css'
 	cd docs; PYTHONPATH=../cli python -m slipbox build
 
