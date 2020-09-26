@@ -398,14 +398,24 @@
   }
 
   class Cluster {
-    constructor (tag, src, dest) {
+    constructor (tag, src, dest, destType = 'N') {
       check(typeof tag === 'string', 'non-string Cluster.tag');
       check(tag, 'invalid Cluster.tag');
       check(typeof src === 'number', 'non-number Cluster.src');
-      check(typeof dest === 'number', 'non-number Cluster.dest');
+      switch (destType) {
+        case 'N':
+          check(typeof dest === 'number', 'non-number Cluster.dest');
+          break
+        case 'T':
+          check(typeof dest === 'string', 'non-string Cluster.dest');
+          break
+        default:
+          throw new DomainError('invalid Cluster.destType')
+      }
       this.tag = tag;
       this.src = src;
       this.dest = dest;
+      this.destType = destType;
     }
 
     addTo (db) {
@@ -685,21 +695,21 @@
     window.query.note(8), window.query.note(13), ''))
   window.query.db.add(new Model.Link(
     window.query.note(8), window.query.note(14), ''))
-  window.query.db.add(new Model.Cluster('#connections', 8, 8))
-  window.query.db.add(new Model.Cluster('#connections', 9, 9))
-  window.query.db.add(new Model.Cluster('#connections', 10, 10))
-  window.query.db.add(new Model.Cluster('#connections', 11, 11))
-  window.query.db.add(new Model.Cluster('#connections', 12, 12))
-  window.query.db.add(new Model.Cluster('#entrypoints', 0, 1))
-  window.query.db.add(new Model.Cluster('#example', 12, 11))
-  window.query.db.add(new Model.Cluster('#getting-started', 1, 2))
-  window.query.db.add(new Model.Cluster('#initialization', 3, 7))
-  window.query.db.add(new Model.Cluster('#tagged-links', 9, 12))
-  window.query.db.add(new Model.Cluster('#usage', 2, 3))
-  window.query.db.add(new Model.Cluster('#usage', 2, 5))
-  window.query.db.add(new Model.Cluster('#usage', 3, 4))
-  window.query.db.add(new Model.Cluster('#usage', 5, 4))
-  window.query.db.add(new Model.Cluster('#usage', 5, 6))
+  window.query.db.add(new Model.Cluster('#connections', 8, 8, 'N'))
+  window.query.db.add(new Model.Cluster('#connections', 9, 9, 'N'))
+  window.query.db.add(new Model.Cluster('#connections', 10, 10, 'N'))
+  window.query.db.add(new Model.Cluster('#connections', 11, 11, 'N'))
+  window.query.db.add(new Model.Cluster('#connections', 12, 12, 'N'))
+  window.query.db.add(new Model.Cluster('#entrypoints', 0, 1, 'N'))
+  window.query.db.add(new Model.Cluster('#example', 12, 11, 'N'))
+  window.query.db.add(new Model.Cluster('#getting-started', 1, 2, 'N'))
+  window.query.db.add(new Model.Cluster('#initialization', 3, 7, 'N'))
+  window.query.db.add(new Model.Cluster('#tagged-links', 9, 12, 'N'))
+  window.query.db.add(new Model.Cluster('#usage', 2, 3, 'N'))
+  window.query.db.add(new Model.Cluster('#usage', 2, 5, 'N'))
+  window.query.db.add(new Model.Cluster('#usage', 3, 4, 'N'))
+  window.query.db.add(new Model.Cluster('#usage', 5, 4, 'N'))
+  window.query.db.add(new Model.Cluster('#usage', 5, 6, 'N'))
   window.initSlipbox()
   })
   </script>

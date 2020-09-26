@@ -31,9 +31,12 @@ def generate_data(conn: Connection) -> Iterable[str]:
     for src, dest, annotation in conn.execute(sql):
         yield f"""window.query.db.add(new Model.Link(
   window.query.note({src}), window.query.note({dest}), {annotation!r}))"""
-    sql = "SELECT tag, src, dest FROM Clusters ORDER BY tag, src, dest"
-    for tag, src, dest in conn.execute(sql):
-        yield f"window.query.db.add(new Model.Cluster({tag!r}, {src}, {dest}))"
+    sql = "SELECT tag, src, dest, destType FROM Clusters ORDER BY tag, src, dest, destType"
+    for tag, src, dest, dest_type in conn.execute(sql):
+        if dest_type == "N":
+            yield f"window.query.db.add(new Model.Cluster({tag!r}, {src}, {dest}, {dest_type!r}))"
+        elif dest_type == "T":
+            yield f"window.query.db.add(new Model.Cluster({tag!r}, {src}, {dest!r}, {dest_type!r}))"
 
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""

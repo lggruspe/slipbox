@@ -45,6 +45,15 @@ describe('Cluster', function () {
       assert.throws(() => new Cluster('#tag', '0', 0), DomainError)
       assert.throws(() => new Cluster('#tag', 0, null), DomainError)
       assert.throws(() => new Cluster('#tag', 0, '0'), DomainError)
+      assert.throws(() => new Cluster('#tag', 0, '#test', 'N'))
+      assert.throws(() => new Cluster('#tag', 0, 1, 'T'))
+    })
+  })
+
+  describe('with invalid destType', function () {
+    it('should raise DomainError', function () {
+      assert.throws(() => new Cluster('#tag', 0, 1, 'n'))
+      assert.throws(() => new Cluster('#tag', 0, '#test', 't'))
     })
   })
 
@@ -54,6 +63,13 @@ describe('Cluster', function () {
       assert.strictEqual(cluster.tag, '#tag')
       assert.strictEqual(cluster.src, 0)
       assert.strictEqual(cluster.dest, 0)
+      assert.strictEqual(cluster.destType, 'N')
+
+      const clusterT = new Cluster('#tag', 0, '#test', 'T')
+      assert.strictEqual(clusterT.tag, '#tag')
+      assert.strictEqual(clusterT.src, 0)
+      assert.strictEqual(clusterT.dest, '#test')
+      assert.strictEqual(clusterT.destType, 'T')
     })
   })
 })

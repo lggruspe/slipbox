@@ -97,14 +97,24 @@ class Link {
 }
 
 class Cluster {
-  constructor (tag, src, dest) {
+  constructor (tag, src, dest, destType = 'N') {
     check(typeof tag === 'string', 'non-string Cluster.tag')
     check(tag, 'invalid Cluster.tag')
     check(typeof src === 'number', 'non-number Cluster.src')
-    check(typeof dest === 'number', 'non-number Cluster.dest')
+    switch (destType) {
+      case 'N':
+        check(typeof dest === 'number', 'non-number Cluster.dest')
+        break
+      case 'T':
+        check(typeof dest === 'string', 'non-string Cluster.dest')
+        break
+      default:
+        throw new DomainError('invalid Cluster.destType')
+    }
     this.tag = tag
     this.src = src
     this.dest = dest
+    this.destType = destType
   }
 
   addTo (db) {
