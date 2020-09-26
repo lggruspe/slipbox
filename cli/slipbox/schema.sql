@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS Clusters (
     tag NOT NULL,
     src NOT NULL REFERENCES Notes ON DELETE CASCADE,
     dest NOT NULL,  -- see Links.dest
+    destType NOT NULL CHECK(destType IN ('N', 'T')) DEFAULT 'N', -- Note or Tag
     PRIMARY KEY (tag, src, dest)
 );
 

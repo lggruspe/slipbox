@@ -146,8 +146,17 @@ def test_process_clusters(tmp_path, sbox):
     markdown = tmp_path/"test.md"
     markdown.write_text("# 0 Test\n\n#test/1.\n\n# 1 Dest\n\nTest.\n")
     sbox.process([markdown])
-    result = list(sbox.conn.execute("SELECT * FROM Clusters"))
-    assert result == [('#test', 0, 1)]
+    result = list(sbox.conn.execute("SELECT tag, src, dest, destType FROM Clusters"))
+    assert result == [('#test', 0, 1, 'N')]
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_process_clusters_nested(tmp_path, sbox):
+    """Check if tag hierarchies get saved."""
+    test_md = tmp_path/"test.md"
+    test_md.write_text("# 0 Foo\n#foobar/1.\n\n# 1 Bar\nBar.\n\n# 2 Baz\n#foobarbaz/foobar.\n")
+    sbox.process([test_md])
+    result = sbox.conn.execute("SELECT tag, src, dest, destType FROM Clusters")
+    assert sorted(result) == [('#foobar', 0, 1, 'N'), ('#foobarbaz', 2, '#foobar', 'T')]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_filenames(tmp_path, sbox):

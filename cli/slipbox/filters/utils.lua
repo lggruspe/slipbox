@@ -9,11 +9,16 @@ local function cluster_link_prefix(s)
     local link_pattern = '^/[0-9]+'
     local link = s:sub(#tag + 1):match(link_pattern)
     if link then
-      return tag, tonumber(link:sub(2))
+      return tag, tonumber(link:sub(2)), 'N'
+    else
+      local child_pattern = '^/[-_a-zA-Z0-9]+'
+      local child = s:sub(#tag + 1):match(child_pattern)
+      if child then
+        return tag, '#' .. child:sub(2), 'T'
+      end
+      return tag
     end
-    return tag
   end
-  return nil, nil
 end
 
 local function get_link(src, link)

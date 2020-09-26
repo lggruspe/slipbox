@@ -63,11 +63,16 @@ function SlipBox:save_link(link)
   end
 end
 
-function SlipBox:save_cluster(tag, src, dest)
+function SlipBox:save_cluster(tag, src, dest, type_)
   assert(type(tag) == "string")
   assert(type(src) == "number")
-  assert(type(dest) == "number")
   assert(tag ~= "")
+  if type_ == "N" then
+    assert(type(dest) == "number")
+  else
+    assert(type_ == "T")
+    assert(type(dest) == "string")
+  end
 
   local cluster = self.clusters[tag] or {}
   local dests = cluster[src] or {}
@@ -77,14 +82,18 @@ function SlipBox:save_cluster(tag, src, dest)
 end
 
 local function clusters_to_csv(clusters)
-  local w = csv.Writer:new{"tag", "src", "dest"}
+  local w = csv.Writer:new{"tag", "src", "dest", "destType"}
   for tag, cluster in pairs(clusters) do
     assert(type(tag) == "string")
     for src, dests in pairs(cluster) do
       assert(type(src) == "number")
       for dest in pairs(dests) do
-        assert(type(dest) == "number")
-        w:write{tag, src, dest}
+        if type(dest) == "number" then
+          w:write{tag, src, dest, "N"}
+        else
+          assert(type(dest) == "string")
+          w:write{tag, src, dest, "T"}
+        end
       end
     end
   end
