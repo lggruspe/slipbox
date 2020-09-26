@@ -7,6 +7,7 @@ function graphArea () {
   div.style.position = 'relative'
   div.style.top = '0px'
   div.style.left = '0px'
+  div.innerHTML = '<hr><div class="info-container"></div>'
   return div
 }
 
@@ -60,6 +61,20 @@ function traverse (query, id) {
   return Array.from(new Set(edges.filter(([a, b]) => a !== b)))
 }
 
+function * clusterElements (query, tag) {
+  const cluster = query.db.data.clusters[tag] || { forward: [] }
+  for (const [src, dests] of Object.entries(cluster.forward)) {
+    const source = Number(src)
+    yield noteElement(query.note(source))
+    for (const dest of dests) {
+      if (source !== dest) {
+        yield noteElement(query.note(dest))
+        yield linkElement('sequence', source, dest)
+      }
+    }
+  }
+}
+
 function * neighborElements (query, note) {
   yield noteElement(note, true)
 
@@ -79,7 +94,7 @@ function * neighborElements (query, note) {
 }
 
 function createCytoscape (container, elements) {
-  return cytoscape({
+  const cy = cytoscape({
     directed: true,
     multigraph: true,
     container: container,
@@ -120,6 +135,22 @@ function createCytoscape (container, elements) {
       }
     ]
   })
+  cy.layout({
+    name: 'breadthfirst',
+    spacingFactor: 1.0,
+    fit: true,
+    directed: true,
+    avoidOverlap: true,
+    nodeDimensionsIncludeLabels: true
+  }).run()
+  cy.reset()
+  cy.center()
+
+  const infoContainer = container.querySelector('div.info-container')
+  const [show, hide] = hoverHandlers(infoContainer)
+  cy.on('select', 'node', show)
+  cy.on('unselect', 'node', hide)
+  return cy
 }
 
 function noteInfoDiv () {
@@ -161,38 +192,23 @@ function hoverHandlers (container) {
 
 function init (query) {
   let container = graphArea()
-  let infoContainer = document.createElement('div')
-  const hr = document.createElement('hr')
 
   function resetGraph () {
-    hr.remove()
     container.remove()
-    infoContainer.remove()
-
     const id = Number(window.location.hash.slice(1))
-    if (!Number.isInteger(id)) return
-
-    const note = query.note(id)
     const elements = []
-    if (note != null) {
-      elements.push(...neighborElements(query, note))
+    if (Number.isInteger(id)) {
+      const note = query.note(id)
+      if (note != null) {
+        elements.push(...neighborElements(query, note))
+      }
+      if (elements.length < 2) return
+    } else {
+      elements.push(...clusterElements(query, window.location.hash.slice(1)))
+      if (elements.length === 0) return
     }
-    if (elements.length < 2) return
-
-    container = graphArea()
-    infoContainer = document.createElement('div')
-    document.body.appendChild(hr)
-    document.body.appendChild(infoContainer)
-    document.body.appendChild(container)
-
-    const cy = createCytoscape(container, elements)
-    cy.layout({ name: 'cose' }).run()
-    cy.reset()
-    cy.center()
-
-    const [show, hide] = hoverHandlers(infoContainer)
-    cy.on('select', 'node', show)
-    cy.on('unselect', 'node', hide)
+    container = document.body.appendChild(graphArea())
+    createCytoscape(container, elements)
   }
 
   resetGraph()

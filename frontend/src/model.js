@@ -40,6 +40,7 @@ function check (condition, message) {
 
 class Note {
   constructor (id, title, filename) {
+    check(typeof id === 'number', 'non-number Note.id')
     check(Number.isInteger(id), 'invalid Note.id')
     check(typeof title === 'string', 'invalid Note.title')
     check(typeof filename === 'string', 'invalid Note.filename')
