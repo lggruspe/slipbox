@@ -121,7 +121,7 @@ class Cluster {
     const src = this.src
     const dest = this.dest
     if (!db.data.notes[src]) return new ReferenceError('Cluster.src')
-    if (!db.data.notes[dest]) return new ReferenceError('Cluster.dest')
+    if (typeof dest === 'number' && !db.data.notes[dest]) return new ReferenceError('Cluster.dest')
     const result = db.data.clusters[this.tag] || {
       forward: {},
       reverse: {}

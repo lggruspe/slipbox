@@ -11,6 +11,18 @@ function graphArea () {
   return div
 }
 
+function tagElement (tag) {
+  return {
+    data: {
+      id: tag,
+      title: tag,
+      label: tag,
+      color: 'black',
+      bgColor: 'gold'
+    }
+  }
+}
+
 function noteElement (note, currentNote = false) {
   return {
     data: {
@@ -68,7 +80,9 @@ function * clusterElements (query, tag) {
     yield noteElement(query.note(source))
     for (const dest of dests) {
       if (source !== dest) {
-        yield noteElement(query.note(dest))
+        yield typeof dest === 'number'
+          ? noteElement(query.note(dest))
+          : tagElement(dest)
         yield linkElement('sequence', source, dest)
       }
     }
@@ -88,7 +102,9 @@ function * neighborElements (query, note) {
   }
   for (const [src, dest] of traverse(query, note.id)) {
     yield noteElement(query.note(src))
-    yield noteElement(query.note(dest))
+    yield typeof dest === 'number'
+      ? noteElement(query.note(dest))
+      : tagElement(dest)
     yield linkElement('sequence', src, dest)
   }
 }

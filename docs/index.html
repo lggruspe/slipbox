@@ -95,6 +95,18 @@
     return div
   }
 
+  function tagElement (tag) {
+    return {
+      data: {
+        id: tag,
+        title: tag,
+        label: tag,
+        color: 'black',
+        bgColor: 'gold'
+      }
+    }
+  }
+
   function noteElement (note, currentNote = false) {
     return {
       data: {
@@ -152,7 +164,9 @@
       yield noteElement(query.note(source));
       for (const dest of dests) {
         if (source !== dest) {
-          yield noteElement(query.note(dest));
+          yield typeof dest === 'number'
+            ? noteElement(query.note(dest))
+            : tagElement(dest);
           yield linkElement('sequence', source, dest);
         }
       }
@@ -172,7 +186,9 @@
     }
     for (const [src, dest] of traverse(query, note.id)) {
       yield noteElement(query.note(src));
-      yield noteElement(query.note(dest));
+      yield typeof dest === 'number'
+        ? noteElement(query.note(dest))
+        : tagElement(dest);
       yield linkElement('sequence', src, dest);
     }
   }
@@ -422,7 +438,7 @@
       const src = this.src;
       const dest = this.dest;
       if (!db.data.notes[src]) return new ReferenceError('Cluster.src')
-      if (!db.data.notes[dest]) return new ReferenceError('Cluster.dest')
+      if (typeof dest === 'number' && !db.data.notes[dest]) return new ReferenceError('Cluster.dest')
       const result = db.data.clusters[this.tag] || {
         forward: {},
         reverse: {}
