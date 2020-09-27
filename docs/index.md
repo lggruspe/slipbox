@@ -16,7 +16,7 @@ Source: <https://github.com/lggruspe/slipbox/blob/master/docs/index.md>
 
 ---
 
-- Start here #entrypoints/1
+- Start here #slipbox/1
 
 1 Installation
 ==============

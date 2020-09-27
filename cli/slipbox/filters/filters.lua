@@ -172,14 +172,16 @@ function Modifier.Str(elem)
   if tag then
     if dest ~= nil then
       return {
-        pandoc.Str " [",
-        pandoc.Link(
-          {pandoc.Str('#' .. dest)},
-          '#' .. dest),
-        pandoc.Str "]",
+        pandoc.Link({pandoc.Str(tag)}, '#' .. tag),
+        pandoc.Str '/',
+        pandoc.Link({pandoc.Str(tostring(dest))}, '#' .. dest),
+        pandoc.Str(elem.text:sub(#tag + 1 + #tostring(dest) + 1)),
       }
     else
-      return pandoc.Link({elem}, '#' .. tag)
+      return {
+        pandoc.Link({elem}, '#' .. tag),
+        pandoc.Str(elem.text:sub(#tag + 1)),
+      }
     end
   end
 end

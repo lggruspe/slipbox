@@ -716,10 +716,10 @@
   window.query.db.add(new Model.Cluster('#connections', 10, 10, 'N'))
   window.query.db.add(new Model.Cluster('#connections', 11, 11, 'N'))
   window.query.db.add(new Model.Cluster('#connections', 12, 12, 'N'))
-  window.query.db.add(new Model.Cluster('#entrypoints', 0, 1, 'N'))
   window.query.db.add(new Model.Cluster('#example', 12, 11, 'N'))
   window.query.db.add(new Model.Cluster('#getting-started', 1, 2, 'N'))
   window.query.db.add(new Model.Cluster('#initialization', 3, 7, 'N'))
+  window.query.db.add(new Model.Cluster('#slipbox', 0, 1, 'N'))
   window.query.db.add(new Model.Cluster('#tagged-links', 9, 12, 'N'))
   window.query.db.add(new Model.Cluster('#usage', 2, 3, 'N'))
   window.query.db.add(new Model.Cluster('#usage', 2, 5, 'N'))
@@ -745,7 +745,7 @@
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
 <hr />
 <ul>
-<li>Start here  [<a href="#1">#1</a>]</li>
+<li>Start here <a href="##slipbox">#slipbox</a>/<a href="#1">1</a></li>
 </ul>
 </section>
 <section id="1" class="level1" title="Installation" style="display:none">
@@ -754,7 +754,7 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <hr />
 <ul>
-<li>Usage  [<a href="#2">#2</a>]</li>
+<li>Usage <a href="##getting-started">#getting-started</a>/<a href="#2">2</a></li>
 </ul>
 </section>
 <section id="2" class="level1" title="Usage" style="display:none">
@@ -765,8 +765,8 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
 <hr />
 <ul>
-<li>Initialize slipbox  [<a href="#3">#3</a>]</li>
-<li>Note format  [<a href="#5">#5</a>]</li>
+<li>Initialize slipbox <a href="##usage">#usage</a>/<a href="#3">3</a></li>
+<li>Note format <a href="##usage">#usage</a>/<a href="#5">5</a></li>
 </ul>
 </section>
 <section id="3" class="level1" title="Initializing slipbox with slipbox init" style="display:none">
@@ -776,8 +776,8 @@
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a configuration file, an sqlite3 database and a patterns file.</p>
 <hr />
 <ul>
-<li>Compile notes  [<a href="#4">#4</a>]</li>
-<li>Configuring slipbox  [<a href="#7">#7</a>]</li>
+<li>Compile notes <a href="##usage">#usage</a>/<a href="#4">4</a></li>
+<li>Configuring slipbox <a href="##initialization">#initialization</a>/<a href="#7">7</a></li>
 </ul>
 </section>
 <section id="4" class="level1" title="Compiling notes with slipbox build" style="display:none">
@@ -791,8 +791,8 @@
 <p>You can navigate to a specific note in the browser by replacing the URL hash with the ID of the note.</p>
 <hr />
 <ul>
-<li>Compiling notes  [<a href="#4">#4</a>]</li>
-<li>Images and external links  [<a href="#6">#6</a>]</li>
+<li>Compiling notes <a href="##usage">#usage</a>/<a href="#4">4</a></li>
+<li>Images and external links <a href="##usage">#usage</a>/<a href="#6">6</a></li>
 </ul>
 </section>
 <section id="6" class="level1" title="Linking to external files/images" style="display:none">
@@ -846,7 +846,7 @@ convert_to_data_url = False</code></pre>
 <p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
 <hr />
 <ul>
-<li>Tagged links  [<a href="#12">#12</a>]</li>
+<li>Tagged links <a href="##tagged-links">#tagged-links</a>/<a href="#12">12</a></li>
 </ul>
 </section>
 <section id="10" class="level1" title="Direct links" style="display:none">
@@ -870,7 +870,7 @@ convert_to_data_url = False</code></pre>
 <section id="12" class="level1" title="Tagged links" style="display:none">
 <h1 title="Tagged links">12 Tagged links</h1>
 <p><a href="##connections">#connections</a></p>
-<p>A tagged link is a hashtag followed by a slash and a note ID. Example:  [<a href="#11">#11</a>]</p>
+<p>A tagged link is a hashtag followed by a slash and a note ID. Example: <a href="##example">#example</a>/<a href="#11">11</a>.</p>
 <p>This connects the current note to the linked note.</p>
 <p>The purpose of the tag is to distinguish between different levels of sequences.</p>
 <ul>
@@ -925,27 +925,6 @@ convert_to_data_url = False</code></pre>
       [12] 
       <a href='#12'>
         Tagged links
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#entrypoints' title='#entrypoints' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #entrypoints
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [0] 
-      <a href='#0'>
-        slipbox
-      </a>
-    </li>
-    <li>
-      [1] 
-      <a href='#1'>
-        Installation
       </a>
     </li>
   </ul>
@@ -1009,6 +988,27 @@ convert_to_data_url = False</code></pre>
       [7] 
       <a href='#7'>
         .slipbox/config.cfg
+      </a>
+    </li>
+  </ul>
+</section>
+<section id='#slipbox' title='#slipbox' style='display:none' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #slipbox
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [0] 
+      <a href='#0'>
+        slipbox
+      </a>
+    </li>
+    <li>
+      [1] 
+      <a href='#1'>
+        Installation
       </a>
     </li>
   </ul>
@@ -1084,11 +1084,6 @@ convert_to_data_url = False</code></pre>
       </a>
     </li>
     <li>
-      <a href='##entrypoints'>
-        #entrypoints
-      </a>
-    </li>
-    <li>
       <a href='##example'>
         #example
       </a>
@@ -1101,6 +1096,11 @@ convert_to_data_url = False</code></pre>
     <li>
       <a href='##initialization'>
         #initialization
+      </a>
+    </li>
+    <li>
+      <a href='##slipbox'>
+        #slipbox
       </a>
     </li>
     <li>
