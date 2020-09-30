@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 
-from .app import main, show_info
+from .app import check_notes, main, show_info
 from .initializer import DotSlipbox, default_config
 from .utils import check_requirements
 
@@ -16,6 +16,8 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="command")
 
     build = subparsers.add_parser("build", help="generate static site")
+
+    check = subparsers.add_parser("check", help="check slipbox links")
 
     info = subparsers.add_parser("info", help="show information about note")
     info.add_argument("id", type=int, help="note ID")
@@ -49,6 +51,8 @@ if __name__ == "__main__":
     elif dot_slipbox is not None:
         if command == "build":
             main(dot_slipbox)
+        elif command == "check":
+            check_notes(dot_slipbox)
         elif command == "info":
             show_info(dot_slipbox, args.id)
     else:

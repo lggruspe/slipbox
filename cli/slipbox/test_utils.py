@@ -56,3 +56,20 @@ def test_run_command_with_kwargs(capsys):
     assert not stderr
     assert not retcode
     assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in stdout
+
+def test_print_sequence_empty(capsys):
+    """print_sequence must not print anything if sequence is empty."""
+    utils.print_sequence("error", [])
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+def test_print_sequence_not_empty(capsys):
+    """print_sequence must print header if sequence is not empty."""
+    utils.print_sequence("hello", ["world", "!"])
+    stdout, stderr = capsys.readouterr()
+    assert stdout
+    assert "hello" in stdout
+    assert "world" in stdout
+    assert "!" in stdout
+    assert not stderr

@@ -38,3 +38,8 @@ def mnote(tmp_path) -> Path:
     path = tmp_path/"test.md"
     path.write_text("# 0 Test\n\nTest note.\n")
     yield path
+
+@pytest.fixture
+def test_md(tmp_path) -> Path:
+    """Empty test file (tmp_path/test.md)."""
+    yield Path(tmp_path)/"test.md"

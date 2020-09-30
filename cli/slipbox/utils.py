@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any, Dict, Iterator, Optional
+from typing import Any, Dict, Iterable, Iterator, Optional
 
 def pandoc() -> str:
     """Pandoc location."""
@@ -54,3 +54,14 @@ def insert_file_script(*files: Path, basedir: Path) -> str:
     sql = "INSERT INTO Files (filename) VALUES ({})"
     filenames = (sqlite_string(str(p.relative_to(basedir))) for p in files)
     return sql.format("), (".join(filenames))
+
+def print_sequence(header: str, sequence: Iterable[str]) -> None:
+    """Print header and sequence of items if sequence is not empty."""
+    empty = True
+    for item in sequence:
+        if empty:
+            empty = False
+            print(header)
+        print(item)
+    if not empty:
+        print()
