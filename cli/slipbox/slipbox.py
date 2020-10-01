@@ -53,7 +53,10 @@ class Slipbox:
                 yield path
 
     def purge(self) -> Tuple[List[Path], List[Path]]:
-        """Purge outdated/missing files from database."""
+        """Purge outdated/missing files from database.
+
+        Also delete old sections.
+        """
         modified = []
         deleted = []
         sql = "SELECT filename FROM Files"
@@ -68,6 +71,9 @@ class Slipbox:
                 modified.append(filename)
         cur.executemany("DELETE FROM Files WHERE filename IN (?)",
                         ((filename,) for filename in chain(modified, deleted)))
+
+        # Delete unused html content
+        cur.execute("DELETE FROM Html WHERE id NOT IN (SELECT html FROM Sections)")
         self.conn.commit()
         return modified, deleted
 
