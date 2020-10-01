@@ -2,12 +2,20 @@ import cytoscape from 'cytoscape'
 
 function graphArea () {
   const div = document.createElement('div')
-  div.style.width = '100%'
-  div.style.height = '80vh'
-  div.style.position = 'relative'
-  div.style.top = '0px'
-  div.style.left = '0px'
-  div.innerHTML = '<hr><div class="info-container"></div>'
+  div.appendChild(document.createElement('hr'))
+
+  const cy = document.createElement('div')
+  cy.classList.add('cytoscape-container')
+  cy.style.width = '100%'
+  cy.style.height = '80vh'
+  cy.style.position = 'relative'
+  cy.style.top = '0px'
+  cy.style.left = '0px'
+  div.appendChild(cy)
+
+  const info = document.createElement('div')
+  info.classList.add('info-container')
+  div.appendChild(info)
   return div
 }
 
@@ -113,7 +121,7 @@ function createCytoscape (container, elements) {
   const cy = cytoscape({
     directed: true,
     multigraph: true,
-    container: container,
+    container: container.querySelector('div.cytoscape-container'),
     elements: elements,
     selectionType: 'additive',
     style: [

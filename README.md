@@ -25,7 +25,7 @@ Installation and usage
 
 ```bash
 pip install slipbox
-slipbox init my-slipbox
+python -m slipbox init my-slipbox
 cd my-slipbox
 # ...add notes
 python -m slipbox build
