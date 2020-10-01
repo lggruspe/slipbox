@@ -3,7 +3,7 @@ import cytoscape from 'cytoscape'
 function graphArea () {
   const div = document.createElement('div')
   div.style.width = '100%'
-  div.style.height = '60vh'
+  div.style.height = '80vh'
   div.style.position = 'relative'
   div.style.top = '0px'
   div.style.left = '0px'
@@ -29,7 +29,7 @@ function noteElement (note, currentNote = false) {
       id: note.id,
       title: note.title,
       filename: note.filename,
-      label: note.id,
+      label: note.title,
       color: 'white',
       bgColor: currentNote ? 'black' : 'gray'
     }
@@ -191,17 +191,16 @@ function hoverHandlers (container) {
   container.appendChild(infoDiv)
 
   const show = event => {
-    const title = event.target.data('title')
-    const filename = event.target.data('filename')
-    a.textContent = title
-    a.href = '#' + event.target.data('id')
-    p.textContent = filename
-    event.target.data('label', title)
+    const id = event.target.data('id')
+    a.textContent = event.target.data('title')
+    a.href = '#' + id
+    p.textContent = event.target.data('filename')
+    event.target.data('label', id)
   }
   const hide = event => {
-    event.target.data('label', event.target.data('id'))
     a.textContent = ''
     p.textContent = ''
+    event.target.data('label', event.target.data('title'))
   }
   return [show, hide]
 }
