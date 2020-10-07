@@ -52,7 +52,8 @@ if __name__ == "__main__":
         if command == "build":
             main(dot_slipbox)
         elif command == "check":
-            check_notes(dot_slipbox)
+            if not check_notes(dot_slipbox):
+                sys.exit(65)
         elif command == "info":
             show_info(dot_slipbox, args.id)
     else:
