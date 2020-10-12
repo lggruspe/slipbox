@@ -49,7 +49,7 @@ class DotSlipbox:
     @property
     def patterns(self) -> List[str]:
         """Return list of glob patterns."""
-        text = self.path.joinpath("patterns").read_text()
+        text = self.path.joinpath("patterns").read_text(encoding="utf-8")
         return [pat for pat in text.split('\n') if pat]
 
     @patterns.setter

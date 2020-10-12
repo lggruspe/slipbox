@@ -140,9 +140,9 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
         html = tempdir/"cached.html"
         extra = tempdir/"extra.html"
         dummy = tempdir/"Slipbox.md"
-        dummy.write_text(DUMMY_MARKDOWN)
-        script.write_text('\n'.join(generate_javascript(conn)))
-        html.write_text('\n'.join(generate_active_htmls(conn)))
+        dummy.write_text(DUMMY_MARKDOWN, encoding="utf-8")
+        script.write_text('\n'.join(generate_javascript(conn)), encoding="utf-8")
+        html.write_text('\n'.join(generate_active_htmls(conn)), encoding="utf-8")
         with open(extra, "w") as file:
             print(create_tag_pages(conn), file=file)
             print(create_tags(conn), file=file)

@@ -13,8 +13,8 @@ def concatenate(dest: Path, *sources: Path, basedir: Path) -> None:
 filename: {}
 -->
 """
-    with dest.open("w") as file:
+    with dest.open("w", encoding="utf-8") as file:
         for src in sources:
             filename = str(src.relative_to(basedir))
             print(comment.format(filename), file=file)
-            print(src.read_text(), file=file)
+            print(src.read_text(encoding="utf-8"), file=file)
