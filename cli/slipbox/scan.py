@@ -57,7 +57,7 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
     cmd = f"{utils.pandoc()} {options} -Lzk.lua --section-divs " \
             f"--data-dir={data_dir} -Mlink-citations:true " \
             "-o {} ".format(shlex.quote(output))
-    return cmd + ' ' + str(input_)
+    return cmd + ' ' + shlex.quote(str(input_.resolve()))
 
 def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
     """Insert HTML sections into Notes table."""
