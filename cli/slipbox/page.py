@@ -112,6 +112,7 @@ def create_reference_page(conn: Connection, reference: str) -> str:
             JOIN Notes ON Citations.note = Notes.id
                 JOIN Bibliography ON Bibliography.key = Citations.reference
                     WHERE reference = ?
+                        ORDER BY note
     """
     items = []
     text = ""
