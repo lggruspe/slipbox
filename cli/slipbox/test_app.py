@@ -50,7 +50,6 @@ def test_show_info_stdout(tmp_path, capsys, mnote, sbox):
     assert stdout
     assert not stderr
 
-
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_check_notes_empty(capsys, tmp_path):
     """check_notes must not output anything if there are no errors.

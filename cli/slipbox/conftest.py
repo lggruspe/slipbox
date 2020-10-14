@@ -42,4 +42,18 @@ def mnote(tmp_path) -> Path:
 @pytest.fixture
 def test_md(tmp_path) -> Path:
     """Empty test file (tmp_path/test.md)."""
-    yield Path(tmp_path)/"test.md"
+    yield tmp_path/"test.md"
+
+@pytest.fixture
+def test_bib(tmp_path) -> Path:
+    """Test bibliography."""
+    path = tmp_path/"test.bib"
+    path.write_text("""
+@book{test_2020,
+    title = {Title},
+    language = {English},
+    author = {Author},
+    year = {2020}
+}
+""")
+    yield path

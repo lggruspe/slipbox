@@ -27,17 +27,22 @@ def check_notes(dot: DotSlipbox) -> bool:
 
     Returns false is errors are found.
     """
-    fail = False
     with Slipbox(dot) as slipbox:
+        format_note = lambda note: f"  {note[0]}. {note[1]} in {note[2]!r}."
         format_link = lambda x: f"  {x[0][0]}. {x[0][1]} in {x[0][2]!r} -> {x[1]}."
         invalid_links = check.invalid_links(slipbox)
-        fail = fail or print_sequence("The following notes link to non-existent notes.",
-                                      map(format_link, invalid_links))
         invalid_clusters = check.invalid_clusters(slipbox)
-        fail = fail or print_sequence("The following notes tag non-existent notes.",
-                                      map(format_link, invalid_clusters))
-        format_note = lambda note: f"  {note[0]}. {note[1]} in {note[2]!r}."
         isolated_notes = check.isolated_notes(slipbox)
-        fail = fail or print_sequence("The following notes are not connected to other notes.",
-                                      map(format_note, isolated_notes))
-    return not fail
+        unsourced_notes = check.unsourced_notes(slipbox)
+
+        errors = [
+            print_sequence("The following notes link to non-existent notes.",
+                           map(format_link, invalid_links)),
+            print_sequence("The following notes tag non-existent notes.",
+                           map(format_link, invalid_clusters)),
+            print_sequence("The following notes are not connected to other notes.",
+                           map(format_note, isolated_notes)),
+            print_sequence("The following notes have missing citations.",
+                           map(format_note, unsourced_notes)),
+        ]
+        return not any(errors)

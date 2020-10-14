@@ -39,3 +39,13 @@ def isolated_notes(slipbox: Slipbox) -> Iterator[_Note]:
             SELECT src FROM Clusters UNION SELECT dest FROM Clusters
         )
     """)
+
+def unsourced_notes(slipbox: Slipbox) -> Iterator[_Note]:
+    """Generate notes that need citations (only if there's a bibliography)."""
+    if "--bibliography" in slipbox.config["slipbox"]["content_options"]:
+        yield from slipbox.conn.execute("""
+            SELECT DISTINCT id, title, filename FROM Notes
+            WHERE id NOT IN (
+                SELECT note FROM Citations
+            )
+        """)
