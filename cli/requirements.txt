@@ -1,12 +1,15 @@
 astroid==2.4.2
 attrs==19.3.0
 bleach==3.1.5
+cached-property==1.5.2
 certifi==2020.4.5.2
 cffi==1.14.0
 chardet==3.0.4
 coverage==5.1
 cryptography==2.9.2
 docutils==0.16
+frozendict==1.2
+genanki==0.8.1
 idna==2.9
 isort==4.3.21
 jeepney==0.4.3
@@ -24,8 +27,10 @@ pycparser==2.20
 Pygments==2.6.1
 pylint==2.5.3
 pyparsing==2.4.7
+pystache==0.5.4
 pytest==5.4.3
 pytest-cov==2.10.0
+PyYAML==5.3.1
 readme-renderer==26.0
 requests==2.24.0
 requests-toolbelt==0.9.1

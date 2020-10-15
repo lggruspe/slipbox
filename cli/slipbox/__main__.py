@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 
-from .app import check_notes, main, show_info
+from .app import check_notes, generate_flashcards, main, show_info
 from .initializer import DotSlipbox, default_config
 from .utils import check_requirements
 
@@ -18,6 +18,9 @@ if __name__ == "__main__":
     build = subparsers.add_parser("build", help="generate static site")
 
     check = subparsers.add_parser("check", help="check slipbox links")
+
+    flashcards = subparsers.add_parser("flashcards", help="generate anki flashcards from notes")
+    flashcards.add_argument("output", type=Path, help="output file")
 
     info = subparsers.add_parser("info", help="show information about note")
     info.add_argument("id", type=int, help="note ID")
@@ -54,6 +57,8 @@ if __name__ == "__main__":
         elif command == "check":
             if not check_notes(dot_slipbox):
                 sys.exit(65)
+        elif command == "flashcards":
+            generate_flashcards(dot_slipbox, args.output)
         elif command == "info":
             show_info(dot_slipbox, args.id)
     else:

@@ -1,5 +1,8 @@
 """slipbox CLI commands."""
 
+from pathlib import Path
+import sys
+
 from . import check
 from .initializer import DotSlipbox
 from .slipbox import Slipbox
@@ -46,3 +49,11 @@ def check_notes(dot: DotSlipbox) -> bool:
                            map(format_note, unsourced_notes)),
         ]
         return not any(errors)
+
+def generate_flashcards(dot: DotSlipbox, output: Path) -> None:
+    """Generate flash cards from notes."""
+    try:
+        import genanki
+    except ImportError:
+        sys.exit("could not import genanki")
+    print("Generating flashcards.", output, genanki, dot)
