@@ -90,5 +90,5 @@ def process_batch(conn: Connection,
             print("Scan failed.", file=sys.stderr)
             return
         process_csvs(conn, tempdir)
-        store_html_sections(conn, html.read_text(), batch)
+        store_html_sections(conn, html.read_text(encoding="utf-8"), batch)
         conn.commit()
