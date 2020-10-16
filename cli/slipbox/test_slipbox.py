@@ -118,12 +118,11 @@ def test_process(tmp_path, sbox):
     """Smoke test for slipbox.process."""
     input_file = tmp_path/"input.md"
     input_file.write_text("# 1 Test note\n\nHello, world!\n")
-    assert not list(sbox.conn.execute("SELECT * FROM Html"))
+    assert not list(sbox.conn.execute("SELECT * FROM Notes WHERE html IS NOT NULL"))
 
     sbox.process([input_file])
-    result = list(sbox.conn.execute("SELECT * FROM Sections"))
-    # Check if the output HTML has sections.
-    assert len(result) == 1
+    result = list(sbox.conn.execute("SELECT * FROM Notes WHERE html IS NOT NULL"))
+    assert result
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_empty_file(tmp_path, sbox):
@@ -135,8 +134,6 @@ def test_process_empty_file(tmp_path, sbox):
     assert not list(sbox.conn.execute("SELECT * FROM Notes"))
     assert not list(sbox.conn.execute("SELECT * FROM Tags"))
     assert not list(sbox.conn.execute("SELECT * FROM Links"))
-    assert not list(sbox.conn.execute("SELECT * FROM Html"))
-    assert not list(sbox.conn.execute("SELECT * FROM Sections"))
     assert not list(sbox.conn.execute("SELECT * FROM Bibliography"))
     assert not list(sbox.conn.execute("SELECT * FROM Citations"))
 
@@ -330,25 +327,27 @@ def test_process_modify_non_notes(tmp_path, capsys, sbox):
     - Hashtags should be turned into links.
     """
     markdown = tmp_path/"test.md"
-    markdown.write_text("""# Not a note
+    markdown.write_text("""# 0 Note
+
+Bye.
+
+# Not a note
 
 [Foo]()
 
 [](Bar)
 
 #Baz
-
-# 0 Note
-
-Bye.
 """)
     sbox.process([markdown])
-    result = list(sbox.conn.execute("SELECT * FROM Notes"))
+    result = list(sbox.conn.execute("SELECT id, title, filename FROM Notes"))
     assert result == [(0, 'Note', str(markdown.relative_to(sbox.basedir)))]
 
-    html = list(sbox.conn.execute("SELECT body FROM Html"))
-    assert len(html) == 1
-    html = html[0][0]
+    html = ""
+    for section, in sbox.conn.execute("SELECT html FROM Notes WHERE html IS NOT NULL"):
+        assert isinstance(section, str)
+        assert section
+        html += section
     assert html
 
     assert "<p>Foo</p>" in html

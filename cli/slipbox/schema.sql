@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS Files (
 CREATE TABLE IF NOT EXISTS Notes (
     id PRIMARY KEY,
     title NOT NULL,
-    filename NOT NULL REFERENCES Files ON DELETE CASCADE
+    filename NOT NULL REFERENCES Files ON DELETE CASCADE,
+    html
 );
 
 CREATE TABLE IF NOT EXISTS Links (
@@ -22,16 +23,6 @@ CREATE TABLE IF NOT EXISTS Clusters (
     dest NOT NULL,  -- see Links.dest
     destType NOT NULL CHECK(destType IN ('N', 'T')) DEFAULT 'N', -- Note or Tag
     PRIMARY KEY (tag, src, dest)
-);
-
-CREATE TABLE IF NOT EXISTS Html (
-    id INTEGER PRIMARY KEY,
-    body DEFAULT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Sections (
-    note PRIMARY KEY REFERENCES Notes ON DELETE CASCADE,
-    html NOT NULL REFERENCES Html ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Bibliography (

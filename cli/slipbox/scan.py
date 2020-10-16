@@ -13,6 +13,7 @@ from typing import Iterable, List, Tuple, Union
 from . import utils
 from .data import process_csvs
 from .preprocess import concatenate
+from .secparse import parse_sections, SectionParser
 
 def is_recently_modified(timestamp: float, filename: Union[Path, str]) -> bool:
     """Check if file has been modified after the timestamp."""
@@ -58,27 +59,15 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + str(input_)
 
-def store_html_sections(conn: Connection, html: str, sources: List[Path], basedir: Path) -> None:
-    """Insert Html and Sections entries for html and sources.
-
-    html
-    : HTML body text.
-    sources
-    : List of source files from which the html was generated.
-    """
+def store_html_sections(conn: Connection, html: str, sources: List[Path]) -> None:
+    """Insert HTML sections into Notes table."""
     if not html.strip() or not sources:
         return
     cur = conn.cursor()
-    cur.execute("PRAGMA foreign_keys=ON")
-    cur.execute("INSERT INTO Html(body) VALUES (?)", (html,))
-    lastrowid = cur.lastrowid
-    query = "SELECT DISTINCT id FROM Notes WHERE filename IN ({})".format(
-        ", ".join(utils.sqlite_string(str(source.relative_to(basedir))) \
-                  for source in sources))
-    insert = "INSERT OR IGNORE INTO Sections(note, html) VALUES (?, ?)"
-    cur2 = conn.cursor()
-    for row in cur.execute(query):
-        cur2.execute(insert, (row[0], lastrowid))
+    def callback(this: SectionParser) -> None:
+        """Callback for parse_sections."""
+        cur.execute("UPDATE Notes SET html = ? WHERE id = ?", (this.section, this.id_))
+    parse_sections(html, callback)
 
 def process_batch(conn: Connection,
                   batch: List[Path],
@@ -101,5 +90,5 @@ def process_batch(conn: Connection,
             print("Scan failed.", file=sys.stderr)
             return
         process_csvs(conn, tempdir)
-        store_html_sections(conn, html.read_text(), batch, basedir)
+        store_html_sections(conn, html.read_text(), batch)
         conn.commit()

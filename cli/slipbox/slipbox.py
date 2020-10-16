@@ -71,9 +71,6 @@ class Slipbox:
                 modified.append(filename)
         cur.executemany("DELETE FROM Files WHERE filename IN (?)",
                         ((filename,) for filename in chain(modified, deleted)))
-
-        # Delete unused html content
-        cur.execute("DELETE FROM Html WHERE id NOT IN (SELECT html FROM Sections)")
         self.conn.commit()
         return modified, deleted
 

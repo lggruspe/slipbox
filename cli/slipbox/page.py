@@ -17,11 +17,8 @@ $\,$
 
 def generate_active_htmls(conn: Connection) -> Iterable[str]:
     """Get HTML stored in the database for active sections."""
-    sql = """
-        SELECT body FROM Html WHERE id IN (SELECT html FROM Sections)
-            ORDER BY id DESC
-    """
-    return (body for body, in conn.execute(sql))
+    sql = "SELECT html FROM Notes WHERE html IS NOT NULL ORDER BY id ASC"
+    return (html.strip() for html, in conn.execute(sql))
 
 def generate_data(conn: Connection) -> Iterable[str]:
     """Generate slipbox data in javascript."""
