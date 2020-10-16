@@ -19,7 +19,7 @@ def run_sql_on_csv(conn: Connection,
                    callback: Callable = None) -> None:
     """Run SQl query on CSV data."""
     cur = conn.cursor()
-    with open(path) as file:
+    with open(path, encoding="utf-8") as file:
         reader = csv.reader(file)
         for row in reader:
             args = [t(a) for t, a in zip(types, row)]
@@ -70,7 +70,7 @@ def process_clusters(conn: Connection, path: Path) -> None:
     sql = "INSERT OR IGNORE INTO Clusters (tag, src, dest, destType) VALUES (?, ?, ?, ?)"
     types = (str, int, str, str)
     cur = conn.cursor()
-    with open(path) as file:
+    with open(path, encoding="utf-8") as file:
         reader = csv.reader(file)
         for row in reader:
             args = [t(a) for t, a in zip(types, row)]
