@@ -12,6 +12,7 @@ Features
 - Incremental compilation
 - Fuzzy text search
 - Interactive visualization of Folgezettels
+- Anki generator
 
 Requirements
 ------------
@@ -19,6 +20,7 @@ Requirements
 - `pandoc` (should be compiled with `pandoc-types` 1.21)
 - `pandoc-citeproc`
 - `python3`
+- `genanki` (only needed for generating Anki cards)
 
 Installation and usage
 ----------------------

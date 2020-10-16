@@ -53,7 +53,33 @@ def check_notes(dot: DotSlipbox) -> bool:
 def generate_flashcards(dot: DotSlipbox, output: Path) -> None:
     """Generate flash cards from notes."""
     try:
-        import genanki
+        import genanki #type: ignore
     except ImportError:
         sys.exit("could not import genanki")
-    print("Generating flashcards.", output, genanki, dot)
+    model = genanki.Model(
+        1635490798, # model ID
+        "Note",
+        fields=[
+            {"name": "Question"},
+            {"name": "Answer"},
+        ],
+        templates=[
+            {
+                "name": "Card",
+                "qfmt": "<h1>{{Question}}</h1>",
+                "afmt": "{{Answer}}",
+            },
+        ],
+    )
+    deck = genanki.Deck(1843743983, # deck ID
+                        "Slipbox")
+    with Slipbox(dot) as slipbox:
+        sql = "SELECT title, html FROM Notes"
+        for title, html in slipbox.conn.execute(sql):
+            note = genanki.Note(model=model,
+                                fields=[
+                                    title,
+                                    html.replace(' style="display:none"', "")
+                                ])
+            deck.add_note(note)
+    genanki.Package(deck).write_to_file(output)
