@@ -18,9 +18,9 @@ Requirements
 ------------
 
 - `pandoc` (should be compiled with `pandoc-types` 1.21)
-- `pandoc-citeproc`
 - `python3`
-- `genanki` (only needed for generating Anki cards)
+- `pandoc-citeproc` (only needed when using citations)
+- `genanki` (only needed when generating Anki cards)
 
 Installation and usage
 ----------------------

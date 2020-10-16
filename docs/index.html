@@ -757,7 +757,7 @@
 </section>
 <section id="1" class="level1" title="Installation" style="display:none">
 <h1 title="Installation">1 Installation</h1>
-<p>Make sure you have <code>pandoc</code>, <code>pandoc-citeproc</code> and <code>python</code> installed.</p>
+<p>Make sure you have <code>pandoc</code> and <code>python</code> installed.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <hr />
 <ul>
@@ -821,7 +821,7 @@
 <p>The config file gets created when you run <code>slipbox init</code>. Here’s a sample config file that uses <code>mathjax</code> and <code>citeproc</code>.</p>
 <pre><code>// .slipbox/config.cfg
 [slipbox]
-content_options = --mathjax --bibliography my-bib.bib
+content_options = --mathjax --bibliography my-bib.bib -F pandoc-citeproc
 document_options = --mathjax --o output.html -c my-css.css
 convert_to_data_url = False</code></pre>
 <p><code>content_options</code> and <code>document_options</code> are both passed to Pandoc.</p>
@@ -894,7 +894,7 @@ convert_to_data_url = False</code></pre>
 <h1 title="Citations">14 Citations</h1>
 <p><code>slipbox</code> uses <code>pandoc-citeproc</code> for citations. Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
 <p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
-<p>To activate this feature, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
+<p>To activate this feature, you need to specify a bibliography file in the <a href="#7">config file</a>. You also need to have <code>pandoc-citeproc</code> installed.</p>
 <p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
 </section>
 <section id='#connections' title='#connections' style='display:none' class='level1'>

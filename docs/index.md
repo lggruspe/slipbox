@@ -21,7 +21,7 @@ Source: <https://github.com/lggruspe/slipbox/blob/master/docs/index.md>
 1 Installation
 ==============
 
-Make sure you have `pandoc`, `pandoc-citeproc` and `python` installed.
+Make sure you have `pandoc` and `python` installed.
 
 ```bash
 pip install slipbox
@@ -120,7 +120,7 @@ Here's a sample config file that uses `mathjax` and `citeproc`.
 ```
 // .slipbox/config.cfg
 [slipbox]
-content_options = --mathjax --bibliography my-bib.bib
+content_options = --mathjax --bibliography my-bib.bib -F pandoc-citeproc
 document_options = --mathjax --o output.html -c my-css.css
 convert_to_data_url = False
 ```
@@ -218,5 +218,6 @@ Here's how a citation looks: [@cite2020].
 
 To activate this feature, you need to specify a bibliography file in the
 [config file](#7).
+You also need to have `pandoc-citeproc` installed.
 
 The [`#references`](#references) page contains a list of all cited references.

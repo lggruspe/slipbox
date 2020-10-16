@@ -54,8 +54,8 @@ def build_command(input_: Path, output: str, options: str = "") -> str:
     """
     assert input_.exists()
     data_dir = shlex.quote(str(Path(__file__).parent.resolve()))
-    cmd = f"{utils.pandoc()} -Fpandoc-citeproc -Lzk.lua --section-divs " \
-            f"--data-dir={data_dir} -Mlink-citations:true {options} " \
+    cmd = f"{utils.pandoc()} {options} -Lzk.lua --section-divs " \
+            f"--data-dir={data_dir} -Mlink-citations:true " \
             "-o {} ".format(shlex.quote(output))
     return cmd + ' ' + str(input_)
 
