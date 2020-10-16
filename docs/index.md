@@ -7,6 +7,7 @@
 - [Usage](#2)
 - [Note format](#5)
 - [Connecting notes](#8)
+- [CLI subcommands](#15)
 
 GitHub: <https://github.com/lggruspe/slipbox>
 
@@ -201,6 +202,10 @@ sequences.
 
 These links show up in the [interactive graph](#11) as dashed lines.
 
+---
+
+It's also possible to tag a [cluster](#19) of notes. #connections/clusters
+
 13 Text search
 ==============
 
@@ -221,3 +226,65 @@ To activate this feature, you need to specify a bibliography file in the
 You also need to have `pandoc-citeproc` installed.
 
 The [`#references`](#references) page contains a list of all cited references.
+
+15 CLI subcommands
+==================
+
+- [build](#4)
+- [check](#17)
+- [flashcards](#16)
+- [info](#18)
+- [init](#3)
+
+16 Generating flashcards with `slipbox flashcards`
+==================================================
+
+```bash
+python -m slipbox flashcards out.apkg
+```
+
+This command generates Anki flashcards from your slipbox notes and saves
+it to `out.apkg`.
+
+### Requirements
+
+This feature requires `genanki`.
+Installing `genanki`:
+
+```bash
+pip install genanki
+```
+
+17 `slipbox check`
+==================
+
+```bash
+python -m slipbox check
+```
+
+This command checks for:
+
+- notes that tag/link to non-existent notes
+- isolated notes
+
+If a bibliography is specified in the [config file](#7), it also checks
+for notes that lack citations.
+
+18 `slipbox info`
+=================
+
+`python -m slipbox info` prints information about a note, given its ID.
+
+Ex:
+
+```bash
+python -m slipbox info 18   # prints title and filename of note #18
+```
+
+19 Clusters of notes
+====================
+#connections
+
+A tag names a cluster of notes.
+
+You can tag a cluster of notes: #clusters/connections.

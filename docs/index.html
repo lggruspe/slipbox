@@ -688,6 +688,11 @@
   window.query.db.add(new Model.Note(12, 'Tagged links', 'index.md'))
   window.query.db.add(new Model.Note(13, 'Text search', 'index.md'))
   window.query.db.add(new Model.Note(14, 'Citations', 'index.md'))
+  window.query.db.add(new Model.Note(15, 'CLI subcommands', 'index.md'))
+  window.query.db.add(new Model.Note(16, 'Generating flashcards with slipbox flashcards', 'index.md'))
+  window.query.db.add(new Model.Note(17, 'slipbox check', 'index.md'))
+  window.query.db.add(new Model.Note(18, 'slipbox info', 'index.md'))
+  window.query.db.add(new Model.Note(19, 'Clusters of notes', 'index.md'))
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(1), ''))
   window.query.db.add(new Model.Link(
@@ -697,17 +702,11 @@
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(8), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(11), ''))
+    window.query.note(0), window.query.note(15), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(10), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(12), ''))
+    window.query.note(17), window.query.note(7), ''))
   window.query.db.add(new Model.Link(
     window.query.note(4), window.query.note(5), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(11), ''))
-  window.query.db.add(new Model.Link(
-    window.query.note(14), window.query.note(7), ''))
   window.query.db.add(new Model.Link(
     window.query.note(8), window.query.note(9), ''))
   window.query.db.add(new Model.Link(
@@ -718,11 +717,36 @@
     window.query.note(8), window.query.note(13), ''))
   window.query.db.add(new Model.Link(
     window.query.note(8), window.query.note(14), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(10), window.query.note(11), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(11), window.query.note(10), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(11), window.query.note(12), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(12), window.query.note(11), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(12), window.query.note(19), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(14), window.query.note(7), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(4), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(17), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(16), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(18), ''))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(3), ''))
+  window.query.db.add(new Model.Cluster('#clusters', 19, '#connections', 'T'))
   window.query.db.add(new Model.Cluster('#connections', 8, 8, 'N'))
   window.query.db.add(new Model.Cluster('#connections', 9, 9, 'N'))
   window.query.db.add(new Model.Cluster('#connections', 10, 10, 'N'))
   window.query.db.add(new Model.Cluster('#connections', 11, 11, 'N'))
   window.query.db.add(new Model.Cluster('#connections', 12, 12, 'N'))
+  window.query.db.add(new Model.Cluster('#connections', 12, '#clusters', 'T'))
+  window.query.db.add(new Model.Cluster('#connections', 19, 19, 'N'))
   window.query.db.add(new Model.Cluster('#example', 12, 11, 'N'))
   window.query.db.add(new Model.Cluster('#getting-started', 1, 2, 'N'))
   window.query.db.add(new Model.Cluster('#initialization', 3, 7, 'N'))
@@ -746,6 +770,7 @@
 <li><a href="#2">Usage</a></li>
 <li><a href="#5">Note format</a></li>
 <li><a href="#8">Connecting notes</a></li>
+<li><a href="#15">CLI subcommands</a></li>
 </ul>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
@@ -885,6 +910,8 @@ convert_to_data_url = False</code></pre>
 <li>Tagged links make it possible to distinguish between different types of sequences.</li>
 </ul>
 <p>These links show up in the <a href="#11">interactive graph</a> as dashed lines.</p>
+<hr />
+<p>It’s also possible to tag a <a href="#19">cluster</a> of notes. <a href="##connections">#connections</a>/<a href="##clusters">#clusters</a></p>
 </section>
 <section id="13" class="level1" title="Text search" style="display:none">
 <h1 title="Text search">13 Text search</h1>
@@ -896,6 +923,63 @@ convert_to_data_url = False</code></pre>
 <p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
 <p>To activate this feature, you need to specify a bibliography file in the <a href="#7">config file</a>. You also need to have <code>pandoc-citeproc</code> installed.</p>
 <p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
+</section>
+<section id="15" class="level1" title="CLI subcommands" style="display:none">
+<h1 title="CLI subcommands">15 CLI subcommands</h1>
+<ul>
+<li><a href="#4">build</a></li>
+<li><a href="#17">check</a></li>
+<li><a href="#16">flashcards</a></li>
+<li><a href="#18">info</a></li>
+<li><a href="#3">init</a></li>
+</ul>
+</section>
+<section id="16" class="level1" title="Generating flashcards with slipbox flashcards" style="display:none">
+<h1 title="Generating flashcards with slipbox flashcards">16 Generating flashcards with <code>slipbox flashcards</code></h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox flashcards out.apkg</span></code></pre></div>
+<p>This command generates Anki flashcards from your slipbox notes and saves it to <code>out.apkg</code>.</p>
+<section id="requirements" class="level3">
+<h3>Requirements</h3>
+<p>This feature requires <code>genanki</code>. Installing <code>genanki</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
+</section>
+</section>
+<section id="17" class="level1" title="slipbox check" style="display:none">
+<h1 title="slipbox check">17 <code>slipbox check</code></h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox check</span></code></pre></div>
+<p>This command checks for:</p>
+<ul>
+<li>notes that tag/link to non-existent notes</li>
+<li>isolated notes</li>
+</ul>
+<p>If a bibliography is specified in the <a href="#7">config file</a>, it also checks for notes that lack citations.</p>
+</section>
+<section id="18" class="level1" title="slipbox info" style="display:none">
+<h1 title="slipbox info">18 <code>slipbox info</code></h1>
+<p><code>python -m slipbox info</code> prints information about a note, given its ID.</p>
+<p>Ex:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox info 18   # prints title and filename of note #18</span></code></pre></div>
+</section>
+<section id="19" class="level1" title="Clusters of notes" style="display:none">
+<h1 title="Clusters of notes">19 Clusters of notes</h1>
+<p><a href="##connections">#connections</a></p>
+<p>A tag names a cluster of notes.</p>
+<p>You can tag a cluster of notes: <a href="##clusters">#clusters</a>/<a href="##connections">#connections</a></p>
+</section>
+<section id='#clusters' title='#clusters' style='display:none' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #clusters
+    </a>
+  </h1>
+  <ul>
+    <li>
+      [19] 
+      <a href='#19'>
+        Clusters of notes
+      </a>
+    </li>
+  </ul>
 </section>
 <section id='#connections' title='#connections' style='display:none' class='level1'>
   <h1>
@@ -932,6 +1016,12 @@ convert_to_data_url = False</code></pre>
       [12] 
       <a href='#12'>
         Tagged links
+      </a>
+    </li>
+    <li>
+      [19] 
+      <a href='#19'>
+        Clusters of notes
       </a>
     </li>
   </ul>
@@ -1085,6 +1175,11 @@ convert_to_data_url = False</code></pre>
     Tags
   </h1>
   <ul>
+    <li>
+      <a href='##clusters'>
+        #clusters
+      </a>
+    </li>
     <li>
       <a href='##connections'>
         #connections
