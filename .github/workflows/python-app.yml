@@ -30,7 +30,7 @@ jobs:
         if [ -f cli/requirements.txt ]; then pip install -r cli/requirements.txt; fi
     - name: Lint with pylint
       run: |
-        cd cli; pylint --fail-under=10 slipbox -d R0903 -d W0621
+        cd cli; pylint --fail-under=10 slipbox -d R0903 -d W0621 -d C0415
     - name: Run mypy
       run: |
         cd cli; mypy -p slipbox
