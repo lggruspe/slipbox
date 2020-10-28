@@ -7,7 +7,7 @@ cffi==1.14.3
 chardet==3.0.4
 colorama==0.4.4
 coverage==5.3
-cryptography==3.1.1
+cryptography==3.2
 docutils==0.16
 frozendict==1.2
 genanki==0.8.1
