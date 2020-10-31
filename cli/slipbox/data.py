@@ -67,19 +67,8 @@ def process_citations(conn: Connection, path: Path) -> None:
 
 def process_clusters(conn: Connection, path: Path) -> None:
     """Process Clusters data in path."""
-    sql = "INSERT OR IGNORE INTO Clusters (tag, src, dest, destType) VALUES (?, ?, ?, ?)"
-    types = (str, int, str, str)
-    cur = conn.cursor()
-    with open(path, encoding="utf-8") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            args = [t(a) for t, a in zip(types, row)]
-            if args[3] == 'N':
-                args[2] = int(args[2])
-            try:
-                cur.execute(sql, args)
-            except IntegrityError:
-                pass
+    sql = "INSERT OR IGNORE INTO Clusters (tag, src, dest) VALUES (?, ?, ?)"
+    run_sql_on_csv(conn, path, sql, (str, int, int))
 
 def process_csvs(conn: Connection, basedir: Path) -> None:
     """Process CSV data in basedir."""

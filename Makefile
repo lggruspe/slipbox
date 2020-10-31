@@ -29,8 +29,8 @@ check: bundle
 docs:	bundle
 	cd docs; rm -rf .slipbox \
 	cd docs; PYTHONPATH=../cli python -m slipbox init \
-		-c "--bibliography example.bib -Fpandoc-citeproc" \
-		-d "-o index.html -c basic.css"
+		-c "--bibliography example.bib --citeproc" \
+		-d "-o index.html -s"
 	cd docs; PYTHONPATH=../cli python -m slipbox build
 
 .PHONY:	dist

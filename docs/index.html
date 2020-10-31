@@ -6,6 +6,112 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Slipbox</title>
   <style>
+    html {
+      line-height: 1.7;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 40em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin-top: 1.7em;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.7em;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1.7em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1.7em 0 1.7em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      font-style: italic;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      background-color: #f0f0f0;
+      font-size: 85%;
+      margin: 0;
+      padding: .2em .4em;
+    }
+    pre {
+      line-height: 1.5em;
+      padding: 1em;
+      background-color: #f0f0f0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin-top: 1.7em;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+    }
+    th, td {
+      border-bottom: 1px solid lightgray;
+      padding: 1em 3em 1em 0;
+    }
+    header {
+      margin-bottom: 6em;
+      text-align: center;
+    }
+    nav a:not(:hover) {
+      text-decoration: none;
+    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     span.underline{text-decoration: underline;}
@@ -76,7 +182,6 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="basic.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -692,7 +797,6 @@
   window.query.db.add(new Model.Note(16, 'Generating flashcards with slipbox flashcards', 'index.md'))
   window.query.db.add(new Model.Note(17, 'slipbox check', 'index.md'))
   window.query.db.add(new Model.Note(18, 'slipbox info', 'index.md'))
-  window.query.db.add(new Model.Note(19, 'Clusters of notes', 'index.md'))
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(1), ''))
   window.query.db.add(new Model.Link(
@@ -726,8 +830,6 @@
   window.query.db.add(new Model.Link(
     window.query.note(12), window.query.note(11), ''))
   window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(19), ''))
-  window.query.db.add(new Model.Link(
     window.query.note(14), window.query.note(7), ''))
   window.query.db.add(new Model.Link(
     window.query.note(15), window.query.note(4), ''))
@@ -739,24 +841,21 @@
     window.query.note(15), window.query.note(18), ''))
   window.query.db.add(new Model.Link(
     window.query.note(15), window.query.note(3), ''))
-  window.query.db.add(new Model.Cluster('#clusters', 19, '#connections', 'T'))
-  window.query.db.add(new Model.Cluster('#connections', 8, 8, 'N'))
-  window.query.db.add(new Model.Cluster('#connections', 9, 9, 'N'))
-  window.query.db.add(new Model.Cluster('#connections', 10, 10, 'N'))
-  window.query.db.add(new Model.Cluster('#connections', 11, 11, 'N'))
-  window.query.db.add(new Model.Cluster('#connections', 12, 12, 'N'))
-  window.query.db.add(new Model.Cluster('#connections', 12, '#clusters', 'T'))
-  window.query.db.add(new Model.Cluster('#connections', 19, 19, 'N'))
-  window.query.db.add(new Model.Cluster('#example', 12, 11, 'N'))
-  window.query.db.add(new Model.Cluster('#getting-started', 1, 2, 'N'))
-  window.query.db.add(new Model.Cluster('#initialization', 3, 7, 'N'))
-  window.query.db.add(new Model.Cluster('#slipbox', 0, 1, 'N'))
-  window.query.db.add(new Model.Cluster('#tagged-links', 9, 12, 'N'))
-  window.query.db.add(new Model.Cluster('#usage', 2, 3, 'N'))
-  window.query.db.add(new Model.Cluster('#usage', 2, 5, 'N'))
-  window.query.db.add(new Model.Cluster('#usage', 3, 4, 'N'))
-  window.query.db.add(new Model.Cluster('#usage', 5, 4, 'N'))
-  window.query.db.add(new Model.Cluster('#usage', 5, 6, 'N'))
+  window.query.db.add(new Model.Cluster('#connections', 8, 8))
+  window.query.db.add(new Model.Cluster('#connections', 9, 9))
+  window.query.db.add(new Model.Cluster('#connections', 10, 10))
+  window.query.db.add(new Model.Cluster('#connections', 11, 11))
+  window.query.db.add(new Model.Cluster('#connections', 12, 12))
+  window.query.db.add(new Model.Cluster('#example', 12, 11))
+  window.query.db.add(new Model.Cluster('#getting-started', 1, 2))
+  window.query.db.add(new Model.Cluster('#initialization', 3, 7))
+  window.query.db.add(new Model.Cluster('#slipbox', 0, 1))
+  window.query.db.add(new Model.Cluster('#tagged-links', 9, 12))
+  window.query.db.add(new Model.Cluster('#usage', 2, 3))
+  window.query.db.add(new Model.Cluster('#usage', 2, 5))
+  window.query.db.add(new Model.Cluster('#usage', 3, 4))
+  window.query.db.add(new Model.Cluster('#usage', 5, 4))
+  window.query.db.add(new Model.Cluster('#usage', 5, 6))
   window.initSlipbox()
   })
   </script>
@@ -783,7 +882,7 @@
 <section id="1" class="level1" title="Installation" style="display:none">
 <h1 title="Installation">1 Installation</h1>
 <p>Make sure you have <code>pandoc</code> and <code>python</code> installed.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <hr />
 <ul>
 <li>Usage <a href="##getting-started">#getting-started</a>/<a href="#2">2</a></li>
@@ -791,10 +890,10 @@
 </section>
 <section id="2" class="level1" title="Usage" style="display:none">
 <h1 title="Usage">2 Usage</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co"># ...add notes</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...add notes</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
 <hr />
 <ul>
 <li>Initialize slipbox <a href="##usage">#usage</a>/<a href="#3">3</a></li>
@@ -803,8 +902,8 @@
 </section>
 <section id="3" class="level1" title="Initializing slipbox with slipbox init" style="display:none">
 <h1 title="Initializing slipbox with slipbox init">3 Initializing slipbox with <code>slipbox init</code></h1>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="bu">cd</span> my-slipbox</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span></code></pre></div>
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a configuration file, an sqlite3 database and a patterns file.</p>
 <hr />
 <ul>
@@ -830,16 +929,16 @@
 <section id="6" class="level1" title="Linking to external files/images" style="display:none">
 <h1 title="Linking to external files/images">6 Linking to external files/images</h1>
 <p>Links must either be absolute or relative to the output HTML. Suppose your slipbox directory has the following structure.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">.slipbox/</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="ex">notes/input.md</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="ex">output.html</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="ex">images/image.png</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">.slipbox/</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">notes/input.md</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">output.html</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">images/image.png</span></span></code></pre></div>
 <p>Example:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="co">&lt;!--</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="co">Link from notes/input.md to images/image.png is relative to output.html</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="co">--&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="al">![](images/image.png)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">Link from notes/input.md to images/image.png is relative to output.html</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">--&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/image.png)</span></span></code></pre></div>
 </section>
 <section id="7" class="level1" title=".slipbox/config.cfg" style="display:none">
 <h1 title=".slipbox/config.cfg">7 <code>.slipbox/config.cfg</code></h1>
@@ -910,8 +1009,6 @@ convert_to_data_url = False</code></pre>
 <li>Tagged links make it possible to distinguish between different types of sequences.</li>
 </ul>
 <p>These links show up in the <a href="#11">interactive graph</a> as dashed lines.</p>
-<hr />
-<p>It’s also possible to tag a <a href="#19">cluster</a> of notes. <a href="##connections">#connections</a>/<a href="##clusters">#clusters</a></p>
 </section>
 <section id="13" class="level1" title="Text search" style="display:none">
 <h1 title="Text search">13 Text search</h1>
@@ -920,7 +1017,7 @@ convert_to_data_url = False</code></pre>
 <section id="14" class="level1" title="Citations" style="display:none">
 <h1 title="Citations">14 Citations</h1>
 <p><code>slipbox</code> uses <code>pandoc-citeproc</code> for citations. Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
-<p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(Author <a href="#ref-cite2020" role="doc-biblioref">2020</a>)</span>.</p>
+<p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(<a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
 <p>To activate this feature, you need to specify a bibliography file in the <a href="#7">config file</a>. You also need to have <code>pandoc-citeproc</code> installed.</p>
 <p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
 </section>
@@ -936,17 +1033,17 @@ convert_to_data_url = False</code></pre>
 </section>
 <section id="16" class="level1" title="Generating flashcards with slipbox flashcards" style="display:none">
 <h1 title="Generating flashcards with slipbox flashcards">16 Generating flashcards with <code>slipbox flashcards</code></h1>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox flashcards out.apkg</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox flashcards out.apkg</span></code></pre></div>
 <p>This command generates Anki flashcards from your slipbox notes and saves it to <code>out.apkg</code>.</p>
 <section id="requirements" class="level3">
 <h3>Requirements</h3>
 <p>This feature requires <code>genanki</code>. Installing <code>genanki</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
 </section>
 </section>
 <section id="17" class="level1" title="slipbox check" style="display:none">
 <h1 title="slipbox check">17 <code>slipbox check</code></h1>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox check</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox check</span></code></pre></div>
 <p>This command checks for:</p>
 <ul>
 <li>notes that tag/link to non-existent notes</li>
@@ -958,28 +1055,7 @@ convert_to_data_url = False</code></pre>
 <h1 title="slipbox info">18 <code>slipbox info</code></h1>
 <p><code>python -m slipbox info</code> prints information about a note, given its ID.</p>
 <p>Ex:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">python</span> -m slipbox info 18   # prints title and filename of note #18</span></code></pre></div>
-</section>
-<section id="19" class="level1" title="Clusters of notes" style="display:none">
-<h1 title="Clusters of notes">19 Clusters of notes</h1>
-<p><a href="##connections">#connections</a></p>
-<p>A tag names a cluster of notes.</p>
-<p>You can tag a cluster of notes: <a href="##clusters">#clusters</a>/<a href="##connections">#connections</a></p>
-</section>
-<section id='#clusters' title='#clusters' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #clusters
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [19] 
-      <a href='#19'>
-        Clusters of notes
-      </a>
-    </li>
-  </ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox info 18   # prints title and filename of note #18</span></code></pre></div>
 </section>
 <section id='#connections' title='#connections' style='display:none' class='level1'>
   <h1>
@@ -1016,12 +1092,6 @@ convert_to_data_url = False</code></pre>
       [12] 
       <a href='#12'>
         Tagged links
-      </a>
-    </li>
-    <li>
-      [19] 
-      <a href='#19'>
-        Clusters of notes
       </a>
     </li>
   </ul>
@@ -1175,11 +1245,6 @@ convert_to_data_url = False</code></pre>
     Tags
   </h1>
   <ul>
-    <li>
-      <a href='##clusters'>
-        #clusters
-      </a>
-    </li>
     <li>
       <a href='##connections'>
         #connections

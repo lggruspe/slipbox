@@ -202,10 +202,6 @@ sequences.
 
 These links show up in the [interactive graph](#11) as dashed lines.
 
----
-
-It's also possible to tag a [cluster](#19) of notes. #connections/clusters
-
 13 Text search
 ==============
 
@@ -280,11 +276,3 @@ Ex:
 ```bash
 python -m slipbox info 18   # prints title and filename of note #18
 ```
-
-19 Clusters of notes
-====================
-#connections
-
-A tag names a cluster of notes.
-
-You can tag a cluster of notes: #clusters/connections.

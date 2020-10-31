@@ -101,11 +101,10 @@ function Collector:Link(elem)
 end
 
 function Collector:Str(elem)
-  local tag, dest, type_ = utils.cluster_link_prefix(elem.text)
+  local tag, dest = utils.cluster_link_prefix(elem.text)
   if tag then
     dest = dest or self.id
-    type_ = type_ or 'N'
-    self.slipbox:save_cluster(tag, self.id, dest, type_)
+    self.slipbox:save_cluster(tag, self.id, dest)
   end
 end
 
