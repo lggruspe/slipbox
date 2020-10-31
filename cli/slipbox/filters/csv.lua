@@ -16,7 +16,11 @@ function Writer:record(fields)
   -- Create CSV record.
   local record = quoted(fields[1])
   for i = 2, self.columns do
-    record = record .. ',' .. quoted(fields[i])
+    if not fields[i] then
+      record = record .. ','
+    else
+      record = record .. ',' .. quoted(fields[i])
+    end
   end
   return record
 end

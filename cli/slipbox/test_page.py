@@ -12,7 +12,7 @@ SQL = """
         (0, '0', 'test.md'),
         (1, '1', 'test.md'),
         (2, '2', 'test.md');
-    INSERT INTO Clusters (tag, src, dest) VALUES
+    INSERT INTO Links (tag, src, dest) VALUES
         ('#test', 0, 0),
         ('#test', 1, 1),
         ('##test', 2, 2);

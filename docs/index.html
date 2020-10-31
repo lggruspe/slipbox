@@ -444,7 +444,7 @@
     //     {
     //       title: <str>,
     //       filename: <str>,
-    //       links: [{ src: <int>, dest: <int>, annotation: <str> }],
+    //       links: [{ src: <int>, dest: <int>, tag: <str> }],
     //       backlinks: [<link>]
     //     }
     //   ]
@@ -498,14 +498,13 @@
   }
 
   class Link {
-    constructor (src, dest, annotation) {
+    constructor (src, dest, tag) {
       check(src instanceof Note, 'invalid src Note');
       check(dest instanceof Note, 'invalid dest Note');
-      check(typeof annotation === 'string', 'non-string Link.annotation');
-
+      check(tag === null || typeof tag === 'string', 'invalid Link.tag');
       this.src = src;
       this.dest = dest;
-      this.annotation = annotation;
+      this.tag = tag;
     }
 
     addTo (db) {
@@ -518,7 +517,7 @@
       const link = {
         src: this.src,
         dest: this.dest,
-        annotation: this.annotation
+        tag: this.tag
       };
       src.links.push(link);
       dest.backlinks.push(link);
@@ -798,71 +797,75 @@
   window.query.db.add(new Model.Note(17, 'slipbox check', 'index.md'))
   window.query.db.add(new Model.Note(18, 'slipbox info', 'index.md'))
   window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(1), ''))
+    window.query.note(1), window.query.note(1), '#getting-started'))
   window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(2), ''))
+    window.query.note(2), window.query.note(2), '#usage'))
   window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(5), ''))
+    window.query.note(3), window.query.note(3), '#usage'))
   window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(8), ''))
+    window.query.note(3), window.query.note(3), '#initialization'))
   window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(15), ''))
+    window.query.note(4), window.query.note(5), null))
   window.query.db.add(new Model.Link(
-    window.query.note(17), window.query.note(7), ''))
+    window.query.note(5), window.query.note(5), '#usage'))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(5), ''))
+    window.query.note(8), window.query.note(8), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(9), ''))
+    window.query.note(8), window.query.note(9), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(10), ''))
+    window.query.note(8), window.query.note(10), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(12), ''))
+    window.query.note(8), window.query.note(12), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(13), ''))
+    window.query.note(8), window.query.note(13), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(14), ''))
+    window.query.note(8), window.query.note(14), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(11), ''))
+    window.query.note(9), window.query.note(9), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(10), ''))
+    window.query.note(9), window.query.note(9), '#tagged-links'))
   window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(12), ''))
+    window.query.note(10), window.query.note(10), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(11), ''))
+    window.query.note(10), window.query.note(11), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(14), window.query.note(7), ''))
+    window.query.note(11), window.query.note(11), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(4), ''))
+    window.query.note(11), window.query.note(10), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(17), ''))
+    window.query.note(11), window.query.note(12), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(16), ''))
+    window.query.note(12), window.query.note(12), '#connections'))
   window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(18), ''))
+    window.query.note(12), window.query.note(12), '#example'))
   window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(3), ''))
-  window.query.db.add(new Model.Cluster('#connections', 8, 8))
-  window.query.db.add(new Model.Cluster('#connections', 8, 9))
-  window.query.db.add(new Model.Cluster('#connections', 8, 10))
-  window.query.db.add(new Model.Cluster('#connections', 8, 12))
-  window.query.db.add(new Model.Cluster('#connections', 8, 13))
-  window.query.db.add(new Model.Cluster('#connections', 8, 14))
-  window.query.db.add(new Model.Cluster('#connections', 9, 9))
-  window.query.db.add(new Model.Cluster('#connections', 10, 10))
-  window.query.db.add(new Model.Cluster('#connections', 10, 11))
-  window.query.db.add(new Model.Cluster('#connections', 11, 10))
-  window.query.db.add(new Model.Cluster('#connections', 11, 11))
-  window.query.db.add(new Model.Cluster('#connections', 11, 12))
-  window.query.db.add(new Model.Cluster('#connections', 12, 12))
-  window.query.db.add(new Model.Cluster('#example', 12, 11))
-  window.query.db.add(new Model.Cluster('#example', 12, 12))
-  window.query.db.add(new Model.Cluster('#getting-started', 1, 1))
-  window.query.db.add(new Model.Cluster('#initialization', 3, 3))
-  window.query.db.add(new Model.Cluster('#slipbox', 0, 0))
-  window.query.db.add(new Model.Cluster('#tagged-links', 9, 9))
-  window.query.db.add(new Model.Cluster('#usage', 2, 2))
-  window.query.db.add(new Model.Cluster('#usage', 3, 3))
-  window.query.db.add(new Model.Cluster('#usage', 5, 5))
+    window.query.note(12), window.query.note(11), '#example'))
+  window.query.db.add(new Model.Link(
+    window.query.note(14), window.query.note(7), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(4), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(17), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(16), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(18), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(15), window.query.note(3), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(1), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(2), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(5), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(8), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(15), null))
+  window.query.db.add(new Model.Link(
+    window.query.note(0), window.query.note(0), '#slipbox'))
+  window.query.db.add(new Model.Link(
+    window.query.note(17), window.query.note(7), null))
   window.initSlipbox()
   })
   </script>

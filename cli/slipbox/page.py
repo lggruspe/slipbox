@@ -24,13 +24,11 @@ def generate_data(conn: Connection) -> Iterable[str]:
     """Generate slipbox data in javascript."""
     for nid, title, filename in conn.execute("SELECT id, title, filename FROM Notes ORDER BY id"):
         yield f"window.query.db.add(new Model.Note({nid}, {title!r}, {filename!r}))"
-    sql = "SELECT src, dest, annotation FROM ValidLinks"
-    for src, dest, annotation in conn.execute(sql):
+    sql = "SELECT src, dest, tag FROM ValidLinks"
+    for src, dest, tag in conn.execute(sql):
+        tag = "null" if not tag else repr(tag)
         yield f"""window.query.db.add(new Model.Link(
-  window.query.note({src}), window.query.note({dest}), {annotation!r}))"""
-    sql = "SELECT tag, src, dest FROM Clusters ORDER BY tag, src, dest"
-    for tag, src, dest in conn.execute(sql):
-        yield f"window.query.db.add(new Model.Cluster({tag!r}, {src}, {dest}))"
+  window.query.note({src}), window.query.note({dest}), {tag}))"""
 
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""

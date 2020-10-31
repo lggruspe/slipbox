@@ -3,7 +3,7 @@
 
 import pytest
 
-from .check import invalid_links, invalid_clusters, isolated_notes, unsourced_notes
+from .check import invalid_links, isolated_notes, unsourced_notes
 from .utils import check_requirements
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
@@ -12,26 +12,6 @@ def test_invalid_links(sbox, test_md):
     test_md.write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
     sbox.process([test_md])
     result = list(invalid_links(sbox))
-    assert result == [((0, "Test", "test.md"), 1)]
-
-@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_invalid_clusters(sbox, test_md):
-    """invalid_clusters must return note and invalid ID."""
-    test_md.write_text("""# 0 Test
-
-#test
-
-[](#1)
-
-# 2 Test
-
-#test
-
-[](#0)
-
-""")
-    sbox.process([test_md])
-    result = list(invalid_clusters(sbox))
     assert result == [((0, "Test", "test.md"), 1)]
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

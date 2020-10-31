@@ -13,15 +13,8 @@ CREATE TABLE IF NOT EXISTS Links (
     src NOT NULL REFERENCES Notes ON DELETE CASCADE,
     dest NOT NULL,  -- not an fk to keep backlink when dest gets deleted
                     -- and to allow notes to get scanned incrementally
-    annotation,
-    PRIMARY KEY(src, dest, annotation)
-);
-
-CREATE TABLE IF NOT EXISTS Clusters (
-    tag NOT NULL,
-    src NOT NULL REFERENCES Notes ON DELETE CASCADE,
-    dest NOT NULL,  -- see Links.dest
-    PRIMARY KEY (tag, src, dest)
+    tag,
+    PRIMARY KEY(src, dest, tag)
 );
 
 CREATE TABLE IF NOT EXISTS Bibliography (
@@ -57,9 +50,9 @@ WHERE result NOT IN (
 
 CREATE VIEW IF NOT EXISTS Tags AS
 SELECT * FROM (
-    SELECT tag, src AS id FROM Clusters
+    SELECT tag, src AS id FROM Links WHERE tag IS NOT NULL AND tag != ''
     UNION
-    SELECT tag, dest AS id FROM Clusters
+    SELECT tag, dest AS id FROM Links WHERE tag IS NOT NULL AND tag != ''
 )
 WHERE id in (
     SELECT id FROM Notes

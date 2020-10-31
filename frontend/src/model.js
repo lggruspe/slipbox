@@ -15,7 +15,7 @@ class Database {
   //     {
   //       title: <str>,
   //       filename: <str>,
-  //       links: [{ src: <int>, dest: <int>, annotation: <str> }],
+  //       links: [{ src: <int>, dest: <int>, tag: <str> }],
   //       backlinks: [<link>]
   //     }
   //   ]
@@ -69,14 +69,13 @@ class Note {
 }
 
 class Link {
-  constructor (src, dest, annotation) {
+  constructor (src, dest, tag) {
     check(src instanceof Note, 'invalid src Note')
     check(dest instanceof Note, 'invalid dest Note')
-    check(typeof annotation === 'string', 'non-string Link.annotation')
-
+    check(tag === null || typeof tag === 'string', 'invalid Link.tag')
     this.src = src
     this.dest = dest
-    this.annotation = annotation
+    this.tag = tag
   }
 
   addTo (db) {
@@ -89,7 +88,7 @@ class Link {
     const link = {
       src: this.src,
       dest: this.dest,
-      annotation: this.annotation
+      tag: this.tag
     }
     src.links.push(link)
     dest.backlinks.push(link)

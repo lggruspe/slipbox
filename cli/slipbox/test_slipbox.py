@@ -152,7 +152,7 @@ def test_process_clusters_from_context(tmp_path, sbox):
 Test.
 """)
     sbox.process([markdown])
-    result = sorted(sbox.conn.execute("SELECT tag, src, dest FROM Clusters"))
+    result = sorted(sbox.conn.execute("SELECT tag, src, dest FROM Links"))
     assert result == sorted([('#test', 0, 0), ('#test', 0, 1)])
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

@@ -181,15 +181,15 @@ describe('Database', function () {
       })
     })
 
-    describe('with annotation', function () {
+    describe('with tag', function () {
       it('should generate backlink', function () {
         const n0 = db.add(new Note(0, 'src', 'test.md'))
         const n1 = db.add(new Note(1, 'dest', 'test.md'))
-        db.add(new Link(n0, n1, 'annotation'))
+        db.add(new Link(n0, n1, 'tag'))
 
         assert(db.data.notes[0].links.length === 1)
         assert(db.data.notes[0].links[0].dest === n1)
-        assert(db.data.notes[0].links[0].annotation === 'annotation')
+        assert(db.data.notes[0].links[0].tag === 'tag')
 
         assert(db.data.notes[1].links.length === 0)
 
@@ -202,7 +202,7 @@ describe('Database', function () {
       })
     })
 
-    describe('without annotation', function () {
+    describe('without tag', function () {
       it('should also generate backlink', function () {
         const n0 = db.add(new Note(0, 'src', 'test.md'))
         const n1 = db.add(new Note(1, 'dest', 'test.md'))
@@ -210,7 +210,7 @@ describe('Database', function () {
 
         assert(db.data.notes[0].links.length === 1)
         assert(db.data.notes[0].links[0].dest === n1)
-        assert(db.data.notes[0].links[0].annotation === '')
+        assert(db.data.notes[0].links[0].tag === '')
 
         assert(db.data.notes[0].backlinks.length === 0)
         assert(db.data.notes[1].backlinks.length === 1)

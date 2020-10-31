@@ -52,7 +52,7 @@ def process_notes(conn: Connection, path: Path) -> None:
 
 def process_links(conn: Connection, path: Path) -> None:
     """Process Links data in path."""
-    sql = "INSERT OR IGNORE INTO Links (src, dest, annotation) VALUES (?, ?, ?)"
+    sql = "INSERT OR IGNORE INTO Links (src, dest, tag) VALUES (?, ?, ?)"
     run_sql_on_csv(conn, path, sql, (int, int, str))
 
 def process_bibliography(conn: Connection, path: Path) -> None:
@@ -65,16 +65,10 @@ def process_citations(conn: Connection, path: Path) -> None:
     sql = "INSERT OR IGNORE INTO Citations (note, reference) VALUES (?, ?)"
     run_sql_on_csv(conn, path, sql, (int, str))
 
-def process_clusters(conn: Connection, path: Path) -> None:
-    """Process Clusters data in path."""
-    sql = "INSERT OR IGNORE INTO Clusters (tag, src, dest) VALUES (?, ?, ?)"
-    run_sql_on_csv(conn, path, sql, (str, int, int))
-
 def process_csvs(conn: Connection, basedir: Path) -> None:
     """Process CSV data in basedir."""
     process_files(conn, basedir/"files.csv")
     process_notes(conn, basedir/"notes.csv")
     process_links(conn, basedir/"links.csv")
-    process_clusters(conn, basedir/"clusters.csv")
     process_bibliography(conn, basedir/"bibliography.csv")
     process_citations(conn, basedir/"citations.csv")

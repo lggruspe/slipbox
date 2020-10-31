@@ -97,17 +97,15 @@ function Collector:Link(elem)
   end
   local link = utils.get_link(self.id, elem)
   if link then
+    link.tag = self.current_tag
     self.slipbox:save_link(link)
-    if self.current_tag then
-      self.slipbox:save_cluster(self.current_tag, self.id, link.dest)
-    end
   end
 end
 
 function Collector:Str(elem)
   local tag = utils.hashtag_prefix(elem.text)
   if tag then
-    self.slipbox:save_cluster(tag, self.id, self.id)
+    self.slipbox:save_link { src = self.id, dest = self.id, tag = tag }
     self.current_tag = tag
   end
 end
