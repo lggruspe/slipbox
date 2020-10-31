@@ -120,9 +120,7 @@ it("hashtag_prefix", function()
     ["# "]  = nil,
     ["## "] = nil,
     ["#tag."] = "#tag",
-    ["##Hash-Tag_0-9!"] = "##Hash-Tag_0-9",
   }
-
   for input, expected in pairs(examples) do
     local output = utils.hashtag_prefix(input)
     assert.are.equal(output, expected)

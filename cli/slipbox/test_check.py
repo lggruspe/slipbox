@@ -17,7 +17,19 @@ def test_invalid_links(sbox, test_md):
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_invalid_clusters(sbox, test_md):
     """invalid_clusters must return note and invalid ID."""
-    test_md.write_text("# 0 Test\n#test/1\n\n# 2 Test\n#test/0\n")
+    test_md.write_text("""# 0 Test
+
+#test
+
+[](#1)
+
+# 2 Test
+
+#test
+
+[](#0)
+
+""")
     sbox.process([test_md])
     result = list(invalid_clusters(sbox))
     assert result == [((0, "Test", "test.md"), 1)]
@@ -25,7 +37,16 @@ def test_invalid_clusters(sbox, test_md):
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_isolated_notes(sbox, test_md):
     """isolated_notes must return untagged notes only."""
-    test_md.write_text("# 0 Foo\n#test/1\n\n# 1 Bar\n\n# 2 Baz\n")
+    test_md.write_text("""# 0 Foo
+
+#test
+
+[](#1)
+
+# 1 Bar
+
+# 2 Baz
+""")
     sbox.process([test_md])
     result = list(isolated_notes(sbox))
     assert result == [(2, "Baz", "test.md")]

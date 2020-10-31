@@ -842,20 +842,27 @@
   window.query.db.add(new Model.Link(
     window.query.note(15), window.query.note(3), ''))
   window.query.db.add(new Model.Cluster('#connections', 8, 8))
+  window.query.db.add(new Model.Cluster('#connections', 8, 9))
+  window.query.db.add(new Model.Cluster('#connections', 8, 10))
+  window.query.db.add(new Model.Cluster('#connections', 8, 12))
+  window.query.db.add(new Model.Cluster('#connections', 8, 13))
+  window.query.db.add(new Model.Cluster('#connections', 8, 14))
   window.query.db.add(new Model.Cluster('#connections', 9, 9))
   window.query.db.add(new Model.Cluster('#connections', 10, 10))
+  window.query.db.add(new Model.Cluster('#connections', 10, 11))
+  window.query.db.add(new Model.Cluster('#connections', 11, 10))
   window.query.db.add(new Model.Cluster('#connections', 11, 11))
+  window.query.db.add(new Model.Cluster('#connections', 11, 12))
   window.query.db.add(new Model.Cluster('#connections', 12, 12))
   window.query.db.add(new Model.Cluster('#example', 12, 11))
-  window.query.db.add(new Model.Cluster('#getting-started', 1, 2))
-  window.query.db.add(new Model.Cluster('#initialization', 3, 7))
-  window.query.db.add(new Model.Cluster('#slipbox', 0, 1))
-  window.query.db.add(new Model.Cluster('#tagged-links', 9, 12))
-  window.query.db.add(new Model.Cluster('#usage', 2, 3))
-  window.query.db.add(new Model.Cluster('#usage', 2, 5))
-  window.query.db.add(new Model.Cluster('#usage', 3, 4))
-  window.query.db.add(new Model.Cluster('#usage', 5, 4))
-  window.query.db.add(new Model.Cluster('#usage', 5, 6))
+  window.query.db.add(new Model.Cluster('#example', 12, 12))
+  window.query.db.add(new Model.Cluster('#getting-started', 1, 1))
+  window.query.db.add(new Model.Cluster('#initialization', 3, 3))
+  window.query.db.add(new Model.Cluster('#slipbox', 0, 0))
+  window.query.db.add(new Model.Cluster('#tagged-links', 9, 9))
+  window.query.db.add(new Model.Cluster('#usage', 2, 2))
+  window.query.db.add(new Model.Cluster('#usage', 3, 3))
+  window.query.db.add(new Model.Cluster('#usage', 5, 5))
   window.initSlipbox()
   })
   </script>
@@ -876,7 +883,7 @@
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
 <hr />
 <ul>
-<li>Start here <a href="##slipbox">#slipbox</a>/<a href="#1">1</a></li>
+<li>Start here <a href="##slipbox">#slipbox</a>/1</li>
 </ul>
 </section>
 <section id="1" class="level1" title="Installation" style="display:none">
@@ -885,7 +892,7 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <hr />
 <ul>
-<li>Usage <a href="##getting-started">#getting-started</a>/<a href="#2">2</a></li>
+<li>Usage <a href="##getting-started">#getting-started</a>/2</li>
 </ul>
 </section>
 <section id="2" class="level1" title="Usage" style="display:none">
@@ -896,8 +903,8 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
 <hr />
 <ul>
-<li>Initialize slipbox <a href="##usage">#usage</a>/<a href="#3">3</a></li>
-<li>Note format <a href="##usage">#usage</a>/<a href="#5">5</a></li>
+<li>Initialize slipbox <a href="##usage">#usage</a>/3</li>
+<li>Note format <a href="##usage">#usage</a>/5</li>
 </ul>
 </section>
 <section id="3" class="level1" title="Initializing slipbox with slipbox init" style="display:none">
@@ -907,8 +914,8 @@
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a configuration file, an sqlite3 database and a patterns file.</p>
 <hr />
 <ul>
-<li>Compile notes <a href="##usage">#usage</a>/<a href="#4">4</a></li>
-<li>Configuring slipbox <a href="##initialization">#initialization</a>/<a href="#7">7</a></li>
+<li>Compile notes <a href="##usage">#usage</a>/4</li>
+<li>Configuring slipbox <a href="##initialization">#initialization</a>/7</li>
 </ul>
 </section>
 <section id="4" class="level1" title="Compiling notes with slipbox build" style="display:none">
@@ -922,8 +929,8 @@
 <p>You can navigate to a specific note in the browser by replacing the URL hash with the ID of the note.</p>
 <hr />
 <ul>
-<li>Compiling notes <a href="##usage">#usage</a>/<a href="#4">4</a></li>
-<li>Images and external links <a href="##usage">#usage</a>/<a href="#6">6</a></li>
+<li>Compiling notes <a href="##usage">#usage</a>/4</li>
+<li>Images and external links <a href="##usage">#usage</a>/6</li>
 </ul>
 </section>
 <section id="6" class="level1" title="Linking to external files/images" style="display:none">
@@ -977,7 +984,7 @@ convert_to_data_url = False</code></pre>
 <p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
 <hr />
 <ul>
-<li>Tagged links <a href="##tagged-links">#tagged-links</a>/<a href="#12">12</a></li>
+<li>Tagged links <a href="##tagged-links">#tagged-links</a>/12</li>
 </ul>
 </section>
 <section id="10" class="level1" title="Direct links" style="display:none">
@@ -1001,7 +1008,7 @@ convert_to_data_url = False</code></pre>
 <section id="12" class="level1" title="Tagged links" style="display:none">
 <h1 title="Tagged links">12 Tagged links</h1>
 <p><a href="##connections">#connections</a></p>
-<p>A tagged link is a hashtag followed by a slash and a note ID. Example: <a href="##example">#example</a>/<a href="#11">11</a>.</p>
+<p>A tagged link is a hashtag followed by a slash and a note ID. Example: <a href="##example">#example</a>/11.</p>
 <p>This connects the current note to the linked note.</p>
 <p>The purpose of the tag is to distinguish between different levels of sequences.</p>
 <ul>
@@ -1094,6 +1101,18 @@ convert_to_data_url = False</code></pre>
         Tagged links
       </a>
     </li>
+    <li>
+      [13] 
+      <a href='#13'>
+        Text search
+      </a>
+    </li>
+    <li>
+      [14] 
+      <a href='#14'>
+        Citations
+      </a>
+    </li>
   </ul>
 </section>
 <section id='#example' title='#example' style='display:none' class='level1'>
@@ -1130,12 +1149,6 @@ convert_to_data_url = False</code></pre>
         Installation
       </a>
     </li>
-    <li>
-      [2] 
-      <a href='#2'>
-        Usage
-      </a>
-    </li>
   </ul>
 </section>
 <section id='#initialization' title='#initialization' style='display:none' class='level1'>
@@ -1149,12 +1162,6 @@ convert_to_data_url = False</code></pre>
       [3] 
       <a href='#3'>
         Initializing slipbox with slipbox init
-      </a>
-    </li>
-    <li>
-      [7] 
-      <a href='#7'>
-        .slipbox/config.cfg
       </a>
     </li>
   </ul>
@@ -1172,12 +1179,6 @@ convert_to_data_url = False</code></pre>
         slipbox
       </a>
     </li>
-    <li>
-      [1] 
-      <a href='#1'>
-        Installation
-      </a>
-    </li>
   </ul>
 </section>
 <section id='#tagged-links' title='#tagged-links' style='display:none' class='level1'>
@@ -1191,12 +1192,6 @@ convert_to_data_url = False</code></pre>
       [9] 
       <a href='#9'>
         Tags
-      </a>
-    </li>
-    <li>
-      [12] 
-      <a href='#12'>
-        Tagged links
       </a>
     </li>
   </ul>
@@ -1221,21 +1216,9 @@ convert_to_data_url = False</code></pre>
       </a>
     </li>
     <li>
-      [4] 
-      <a href='#4'>
-        Compiling notes with slipbox build
-      </a>
-    </li>
-    <li>
       [5] 
       <a href='#5'>
         Note format
-      </a>
-    </li>
-    <li>
-      [6] 
-      <a href='#6'>
-        Linking to external files/images
       </a>
     </li>
   </ul>

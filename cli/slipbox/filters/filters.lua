@@ -80,6 +80,7 @@ function Collector:new(slipbox, div)
     slipbox = slipbox,
     id = id,
     div = div,
+    current_tag = nil,
     has_empty_link_target = false,
   }, self)
 end
@@ -97,14 +98,17 @@ function Collector:Link(elem)
   local link = utils.get_link(self.id, elem)
   if link then
     self.slipbox:save_link(link)
+    if self.current_tag then
+      self.slipbox:save_cluster(self.current_tag, self.id, link.dest)
+    end
   end
 end
 
 function Collector:Str(elem)
-  local tag, dest = utils.cluster_link_prefix(elem.text)
+  local tag = utils.hashtag_prefix(elem.text)
   if tag then
-    dest = dest or self.id
-    self.slipbox:save_cluster(tag, self.id, dest)
+    self.slipbox:save_cluster(tag, self.id, self.id)
+    self.current_tag = tag
   end
 end
 
@@ -167,21 +171,12 @@ end
 
 function Modifier.Str(elem)
   -- Turn #tags into links.
-  local tag, dest = utils.cluster_link_prefix(elem.text)
+  local tag = utils.hashtag_prefix(elem.text)
   if tag then
-    if dest ~= nil then
-      return {
-        pandoc.Link({pandoc.Str(tag)}, '#' .. tag),
-        pandoc.Str '/',
-        pandoc.Link({pandoc.Str(tostring(dest))}, '#' .. dest),
-        pandoc.Str(elem.text:sub(#tag + 1 + #tostring(dest) + 1)),
-      }
-    else
-      return {
-        pandoc.Link({elem}, '#' .. tag),
-        pandoc.Str(elem.text:sub(#tag + 1)),
-      }
-    end
+    return {
+      pandoc.Link({pandoc.Str(tag)}, '#' .. tag),
+      pandoc.Str(elem.text:sub(#tag + 1)),
+    }
   end
 end
 
