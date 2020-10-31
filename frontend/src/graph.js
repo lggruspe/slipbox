@@ -19,18 +19,6 @@ function graphArea () {
   return div
 }
 
-function tagElement (tag) {
-  return {
-    data: {
-      id: tag,
-      title: tag,
-      label: tag,
-      color: 'black',
-      bgColor: 'gold'
-    }
-  }
-}
-
 function noteElement (note, currentNote = false) {
   return {
     data: {
@@ -44,13 +32,9 @@ function noteElement (note, currentNote = false) {
   }
 }
 
-function linkElement (type, source, target) {
-  console.assert(['backlink', 'direct', 'sequence'].includes(type))
-  const id = type.slice(0, 1) + `${source}-${target}`
-  const style = type === 'sequence' ? 'dashed' : 'solid'
-  const color = 'black'
+function linkElement (source, target) {
   return {
-    data: { id, source, target, arrow: 'triangle', style, color }
+    data: { id: `${source}-${target}`, source, target, arrow: 'triangle', style: 'solid', color: 'black' }
   }
 }
 
@@ -88,10 +72,8 @@ function * clusterElements (query, tag) {
     yield noteElement(query.note(source))
     for (const dest of dests) {
       if (source !== dest) {
-        yield typeof dest === 'number'
-          ? noteElement(query.note(dest))
-          : tagElement(dest)
-        yield linkElement('sequence', source, dest)
+        yield noteElement(query.note(dest))
+        yield linkElement(source, dest)
       }
     }
   }
@@ -102,18 +84,16 @@ function * neighborElements (query, note) {
 
   for (const backlink of note.backlinks()) {
     yield noteElement(backlink.src)
-    yield linkElement('backlink', backlink.src.id, note.id)
+    yield linkElement(backlink.src.id, note.id)
   }
   for (const link of note.links()) {
     yield noteElement(link.dest)
-    yield linkElement('direct', note.id, link.dest.id)
+    yield linkElement(note.id, link.dest.id)
   }
   for (const [src, dest] of traverse(query, note.id)) {
     yield noteElement(query.note(src))
-    yield typeof dest === 'number'
-      ? noteElement(query.note(dest))
-      : tagElement(dest)
-    yield linkElement('sequence', src, dest)
+    yield noteElement(query.note(dest))
+    yield linkElement(src, dest)
   }
 }
 

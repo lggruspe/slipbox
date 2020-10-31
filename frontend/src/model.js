@@ -1,6 +1,16 @@
 class Database {
   // Schema
   // {
+  //   clusters: {
+  //     [tag: string]: {
+  //       forward: {
+  //         [src: number]: Array<number>
+  //       },
+  //       reverse: {
+  //         [dest: number]: Array<number>
+  //       }
+  //     }
+  //   }
   //   notes: [
   //     {
   //       title: <str>,
@@ -12,7 +22,7 @@ class Database {
   // }
 
   constructor () {
-    this.data = { notes: [] }
+    this.data = { notes: [], clusters: [] }
   }
 
   add (record) {
@@ -36,7 +46,6 @@ class Note {
     check(typeof filename === 'string', 'invalid Note.filename')
     check(title, 'empty Note.title')
     check(filename, 'missing Note.filename')
-
     this.id = id
     this.title = title
     this.filename = filename
@@ -79,8 +88,23 @@ class Link {
       dest: this.dest,
       tag: this.tag
     }
-    src.links.push(link)
-    dest.backlinks.push(link)
+    if (this.src.id !== this.dest.id) {
+      src.links.push(link)
+      dest.backlinks.push(link)
+    }
+    if (this.tag) {
+      const result = db.data.clusters[this.tag] || {
+        forward: {},
+        reverse: {}
+      }
+      const forward = result.forward[this.src.id] || []
+      const reverse = result.reverse[this.dest.id] || []
+      forward.push(this.dest.id)
+      reverse.push(this.src.id)
+      result.forward[this.src.id] = forward
+      result.reverse[this.dest.id] = reverse
+      db.data.clusters[this.tag] = result
+    }
   }
 }
 
@@ -92,9 +116,7 @@ class Query {
   note (id) {
     const record = this.db.data.notes[id]
     if (!record) return null
-
     const note = new Note(id, record.title, record.filename)
-
     note.links = () => this.links(note)
     note.backlinks = () => this.backlinks(note)
     return note

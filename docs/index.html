@@ -208,18 +208,6 @@
     return div
   }
 
-  function tagElement (tag) {
-    return {
-      data: {
-        id: tag,
-        title: tag,
-        label: tag,
-        color: 'black',
-        bgColor: 'gold'
-      }
-    }
-  }
-
   function noteElement (note, currentNote = false) {
     return {
       data: {
@@ -233,13 +221,9 @@
     }
   }
 
-  function linkElement (type, source, target) {
-    console.assert(['backlink', 'direct', 'sequence'].includes(type));
-    const id = type.slice(0, 1) + `${source}-${target}`;
-    const style = type === 'sequence' ? 'dashed' : 'solid';
-    const color = 'black';
+  function linkElement (source, target) {
     return {
-      data: { id, source, target, arrow: 'triangle', style, color }
+      data: { id: `${source}-${target}`, source, target, arrow: 'triangle', style: 'solid', color: 'black' }
     }
   }
 
@@ -277,10 +261,8 @@
       yield noteElement(query.note(source));
       for (const dest of dests) {
         if (source !== dest) {
-          yield typeof dest === 'number'
-            ? noteElement(query.note(dest))
-            : tagElement(dest);
-          yield linkElement('sequence', source, dest);
+          yield noteElement(query.note(dest));
+          yield linkElement(source, dest);
         }
       }
     }
@@ -291,18 +273,16 @@
 
     for (const backlink of note.backlinks()) {
       yield noteElement(backlink.src);
-      yield linkElement('backlink', backlink.src.id, note.id);
+      yield linkElement(backlink.src.id, note.id);
     }
     for (const link of note.links()) {
       yield noteElement(link.dest);
-      yield linkElement('direct', note.id, link.dest.id);
+      yield linkElement(note.id, link.dest.id);
     }
     for (const [src, dest] of traverse(query, note.id)) {
       yield noteElement(query.note(src));
-      yield typeof dest === 'number'
-        ? noteElement(query.note(dest))
-        : tagElement(dest);
-      yield linkElement('sequence', src, dest);
+      yield noteElement(query.note(dest));
+      yield linkElement(src, dest);
     }
   }
 
@@ -430,6 +410,16 @@
   class Database {
     // Schema
     // {
+    //   clusters: {
+    //     [tag: string]: {
+    //       forward: {
+    //         [src: number]: Array<number>
+    //       },
+    //       reverse: {
+    //         [dest: number]: Array<number>
+    //       }
+    //     }
+    //   }
     //   notes: [
     //     {
     //       title: <str>,
@@ -441,7 +431,7 @@
     // }
 
     constructor () {
-      this.data = { notes: [] };
+      this.data = { notes: [], clusters: [] };
     }
 
     add (record) {
@@ -465,7 +455,6 @@
       check(typeof filename === 'string', 'invalid Note.filename');
       check(title, 'empty Note.title');
       check(filename, 'missing Note.filename');
-
       this.id = id;
       this.title = title;
       this.filename = filename;
@@ -508,8 +497,23 @@
         dest: this.dest,
         tag: this.tag
       };
-      src.links.push(link);
-      dest.backlinks.push(link);
+      if (this.src.id !== this.dest.id) {
+        src.links.push(link);
+        dest.backlinks.push(link);
+      }
+      if (this.tag) {
+        const result = db.data.clusters[this.tag] || {
+          forward: {},
+          reverse: {}
+        };
+        const forward = result.forward[this.src.id] || [];
+        const reverse = result.reverse[this.dest.id] || [];
+        forward.push(this.dest.id);
+        reverse.push(this.src.id);
+        result.forward[this.src.id] = forward;
+        result.reverse[this.dest.id] = reverse;
+        db.data.clusters[this.tag] = result;
+      }
     }
   }
 
@@ -521,9 +525,7 @@
     note (id) {
       const record = this.db.data.notes[id];
       if (!record) return null
-
       const note = new Note(id, record.title, record.filename);
-
       note.links = () => this.links(note);
       note.backlinks = () => this.backlinks(note);
       return note
