@@ -1,16 +1,6 @@
 class Database {
   // Schema
   // {
-  //   clusters: {
-  //     [tag: string]: {
-  //       forward: {
-  //         [src: number]: Array<number>
-  //       },
-  //       reverse: {
-  //         [dest: number]: Array<number>
-  //       }
-  //     }
-  //   }
   //   notes: [
   //     {
   //       title: <str>,
@@ -22,7 +12,7 @@ class Database {
   // }
 
   constructor () {
-    this.data = { notes: [], clusters: {} }
+    this.data = { notes: [] }
   }
 
   add (record) {
@@ -58,8 +48,7 @@ class Note {
       title: this.title,
       filename: this.filename,
       links: [],
-      backlinks: [],
-      clusters: {}
+      backlinks: []
     }
   }
 
@@ -95,46 +84,6 @@ class Link {
   }
 }
 
-class Cluster {
-  constructor (tag, src, dest, destType = 'N') {
-    check(typeof tag === 'string', 'non-string Cluster.tag')
-    check(tag, 'invalid Cluster.tag')
-    check(typeof src === 'number', 'non-number Cluster.src')
-    switch (destType) {
-      case 'N':
-        check(typeof dest === 'number', 'non-number Cluster.dest')
-        break
-      case 'T':
-        check(typeof dest === 'string', 'non-string Cluster.dest')
-        break
-      default:
-        throw new DomainError('invalid Cluster.destType')
-    }
-    this.tag = tag
-    this.src = src
-    this.dest = dest
-    this.destType = destType
-  }
-
-  addTo (db) {
-    const src = this.src
-    const dest = this.dest
-    if (!db.data.notes[src]) return new ReferenceError('Cluster.src')
-    if (typeof dest === 'number' && !db.data.notes[dest]) return new ReferenceError('Cluster.dest')
-    const result = db.data.clusters[this.tag] || {
-      forward: {},
-      reverse: {}
-    }
-    const forward = result.forward[src] || []
-    const reverse = result.reverse[dest] || []
-    forward.push(dest)
-    reverse.push(src)
-    result.forward[src] = forward
-    result.reverse[dest] = reverse
-    db.data.clusters[this.tag] = result
-  }
-}
-
 class Query {
   constructor (db) {
     this.db = db
@@ -167,7 +116,6 @@ class Query {
 }
 
 export {
-  Cluster,
   Database,
   DomainError,
   Link,
