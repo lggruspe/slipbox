@@ -728,94 +728,43 @@
   <script type="text/javascript">
   window.addEventListener('DOMContentLoaded', () => {
   window.query.db.add(new Model.Note(0, 'slipbox', 'index.md'))
-  window.query.db.add(new Model.Note(1, 'Installation', 'index.md'))
-  window.query.db.add(new Model.Note(2, 'Usage', 'index.md'))
-  window.query.db.add(new Model.Note(3, 'Initializing slipbox with slipbox init', 'index.md'))
-  window.query.db.add(new Model.Note(4, 'Compiling notes with slipbox build', 'index.md'))
-  window.query.db.add(new Model.Note(5, 'Note format', 'index.md'))
-  window.query.db.add(new Model.Note(6, 'Linking to external files/images', 'index.md'))
+  window.query.db.add(new Model.Note(1, 'Getting started', 'index.md'))
+  window.query.db.add(new Model.Note(2, 'Note format', 'index.md'))
+  window.query.db.add(new Model.Note(3, 'Linking notes', 'index.md'))
+  window.query.db.add(new Model.Note(4, 'Linking to external files/images', 'index.md'))
+  window.query.db.add(new Model.Note(5, 'Tags', 'index.md'))
+  window.query.db.add(new Model.Note(6, 'Citations', 'index.md'))
   window.query.db.add(new Model.Note(7, '.slipbox/config.cfg', 'index.md'))
-  window.query.db.add(new Model.Note(8, 'Note connections', 'index.md'))
-  window.query.db.add(new Model.Note(9, 'Tags', 'index.md'))
-  window.query.db.add(new Model.Note(10, 'Direct links', 'index.md'))
-  window.query.db.add(new Model.Note(11, 'Note graph', 'index.md'))
-  window.query.db.add(new Model.Note(12, 'Tagged links', 'index.md'))
-  window.query.db.add(new Model.Note(13, 'Text search', 'index.md'))
-  window.query.db.add(new Model.Note(14, 'Citations', 'index.md'))
-  window.query.db.add(new Model.Note(15, 'CLI subcommands', 'index.md'))
-  window.query.db.add(new Model.Note(16, 'Generating flashcards with slipbox flashcards', 'index.md'))
-  window.query.db.add(new Model.Note(17, 'slipbox check', 'index.md'))
-  window.query.db.add(new Model.Note(18, 'slipbox info', 'index.md'))
   window.query.db.add(new Model.Link(
-    window.query.note(1), window.query.note(1), '#getting-started'))
+    window.query.note(1), window.query.note(7), null))
   window.query.db.add(new Model.Link(
-    window.query.note(2), window.query.note(2), '#usage'))
+    window.query.note(1), window.query.note(1), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(3), window.query.note(3), '#usage'))
+    window.query.note(1), window.query.note(2), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(3), window.query.note(3), '#initialization'))
+    window.query.note(1), window.query.note(6), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(4), window.query.note(5), null))
+    window.query.note(2), window.query.note(2), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(5), window.query.note(5), '#usage'))
+    window.query.note(2), window.query.note(3), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(8), '#connections'))
+    window.query.note(3), window.query.note(4), null))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(9), '#connections'))
+    window.query.note(3), window.query.note(3), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(10), '#connections'))
+    window.query.note(3), window.query.note(5), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(12), '#connections'))
+    window.query.note(5), window.query.note(5), '#slipbox'))
   window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(13), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(8), window.query.note(14), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(9), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(9), window.query.note(9), '#tagged-links'))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(10), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(10), window.query.note(11), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(11), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(10), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(11), window.query.note(12), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(12), '#connections'))
-  window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(12), '#example'))
-  window.query.db.add(new Model.Link(
-    window.query.note(12), window.query.note(11), '#example'))
-  window.query.db.add(new Model.Link(
-    window.query.note(14), window.query.note(7), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(4), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(17), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(16), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(18), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(15), window.query.note(3), null))
+    window.query.note(6), window.query.note(7), null))
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(1), null))
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(2), null))
   window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(5), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(8), null))
-  window.query.db.add(new Model.Link(
-    window.query.note(0), window.query.note(15), null))
+    window.query.note(0), window.query.note(3), null))
   window.query.db.add(new Model.Link(
     window.query.note(0), window.query.note(0), '#slipbox'))
-  window.query.db.add(new Model.Link(
-    window.query.note(17), window.query.note(7), null))
   window.initSlipbox()
   })
   </script>
@@ -825,90 +774,92 @@
 <h1 title="slipbox">0 slipbox</h1>
 <p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
 <ul>
-<li><a href="#1">Installation</a></li>
-<li><a href="#2">Usage</a></li>
-<li><a href="#5">Note format</a></li>
-<li><a href="#8">Connecting notes</a></li>
-<li><a href="#15">CLI subcommands</a></li>
+<li><a href="#1">Getting started</a></li>
+<li><a href="#2">Note format</a></li>
+<li><a href="#3">Connecting notes</a></li>
 </ul>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
-<hr />
-<ul>
-<li>Start here <a href="##slipbox">#slipbox</a>/1</li>
-</ul>
+<p><a href="##slipbox">#slipbox</a></p>
 </section>
-<section id="1" class="level1" title="Installation" style="display:none">
-<h1 title="Installation">1 Installation</h1>
+<section id="1" class="level1" title="Getting started" style="display:none">
+<h1 title="Getting started">1 Getting started</h1>
 <p>Make sure you have <code>pandoc</code> and <code>python</code> installed.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
-<hr />
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install genanki to generate Anki flashcards from your notes.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This step is optional.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
+<p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a <a href="#7">configuration file</a>, an sqlite3 database and a patterns file.</p>
+<section id="see-also" class="level3">
+<h3>See also</h3>
+<p><a href="##slipbox"><a href="##slipbox">#slipbox</a></a></p>
 <ul>
-<li>Usage <a href="##getting-started">#getting-started</a>/2</li>
+<li><a href="#2">Note format</a></li>
+<li><a href="#6">Citations</a></li>
 </ul>
 </section>
-<section id="2" class="level1" title="Usage" style="display:none">
-<h1 title="Usage">2 Usage</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...add notes</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
-<hr />
+</section>
+<section id="2" class="level1" title="Note format" style="display:none">
+<h1 title="Note format">2 Note format</h1>
+<p>Slipbox notes begin with a level 1 header. The header text must contain an ID (number) and a title.</p>
+<p>You can store each note in a separate file, or you can put multiple notes in one file.</p>
+<section id="see-also-1" class="level3">
+<h3>See also</h3>
+<p><a href="##slipbox"><a href="##slipbox">#slipbox</a></a></p>
 <ul>
-<li>Initialize slipbox <a href="##usage">#usage</a>/3</li>
-<li>Note format <a href="##usage">#usage</a>/5</li>
+<li><a href="#3">Linking notes</a></li>
 </ul>
 </section>
-<section id="3" class="level1" title="Initializing slipbox with slipbox init" style="display:none">
-<h1 title="Initializing slipbox with slipbox init">3 Initializing slipbox with <code>slipbox init</code></h1>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span></code></pre></div>
-<p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a configuration file, an sqlite3 database and a patterns file.</p>
-<hr />
+</section>
+<section id="3" class="level1" title="Linking notes" style="display:none">
+<h1 title="Linking notes">3 Linking notes</h1>
+<p>To link to a note in the slipbox, use the note’s ID as the link target.</p>
+<p><a href="#4">Example</a>.</p>
+<p>The links can be seen in the interactive graph below.</p>
+<section id="see-also-2" class="level3">
+<h3>See also</h3>
+<p><a href="##slipbox"><a href="##slipbox">#slipbox</a></a></p>
 <ul>
-<li>Compile notes <a href="##usage">#usage</a>/4</li>
-<li>Configuring slipbox <a href="##initialization">#initialization</a>/7</li>
+<li><a href="#5">Tags</a></li>
 </ul>
 </section>
-<section id="4" class="level1" title="Compiling notes with slipbox build" style="display:none">
-<h1 title="Compiling notes with slipbox build">4 Compiling notes with <code>slipbox build</code></h1>
-<p><code>slipbox build</code> searches the slipbox directory for notes recursively. It considers every file in the directory that matches the glob patterns in <code>.slipbox/patterns</code>.</p>
-<p>You can store each note in a separate file, or you can put multiple notes together in one file (a slipbox note is just a <a href="#5">section in a document</a>).</p>
 </section>
-<section id="5" class="level1" title="Note format" style="display:none">
-<h1 title="Note format">5 Note format</h1>
-<p>Slipbox notes begin with a level 1 header. The header text must contain an ID and a title.</p>
-<p>You can navigate to a specific note in the browser by replacing the URL hash with the ID of the note.</p>
-<hr />
-<ul>
-<li>Compiling notes <a href="##usage">#usage</a>/4</li>
-<li>Images and external links <a href="##usage">#usage</a>/6</li>
-</ul>
+<section id="4" class="level1" title="Linking to external files/images" style="display:none">
+<h1 title="Linking to external files/images">4 Linking to external files/images</h1>
+<p>Links must either be absolute or relative to the output HTML.</p>
+<figure>
+<img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
+</figure>
 </section>
-<section id="6" class="level1" title="Linking to external files/images" style="display:none">
-<h1 title="Linking to external files/images">6 Linking to external files/images</h1>
-<p>Links must either be absolute or relative to the output HTML. Suppose your slipbox directory has the following structure.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">.slipbox/</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">notes/input.md</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">output.html</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">images/image.png</span></span></code></pre></div>
-<p>Example:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">Link from notes/input.md to images/image.png is relative to output.html</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">--&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/image.png)</span></span></code></pre></div>
+<section id="5" class="level1" title="Tags" style="display:none">
+<h1 title="Tags">5 Tags</h1>
+<p><a href="##slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
+<p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
+</section>
+<section id="6" class="level1" title="Citations" style="display:none">
+<h1 title="Citations">6 Citations</h1>
+<p>Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
+<p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
+<p>To use this feature, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
+<p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
 </section>
 <section id="7" class="level1" title=".slipbox/config.cfg" style="display:none">
 <h1 title=".slipbox/config.cfg">7 <code>.slipbox/config.cfg</code></h1>
-<p>The config file gets created when you run <code>slipbox init</code>. Here’s a sample config file that uses <code>mathjax</code> and <code>citeproc</code>.</p>
-<pre><code>// .slipbox/config.cfg
-[slipbox]
-content_options = --mathjax --bibliography my-bib.bib -F pandoc-citeproc
+<p>The config file is <code>.slipbox/config.cfg</code> inside the slipbox directory. Here’s a sample config file.</p>
+<pre><code>[slipbox]
+content_options = --mathjax --bibliography my-bib.bib --citeproc
 document_options = --mathjax --o output.html -c my-css.css
 convert_to_data_url = False</code></pre>
-<p><code>content_options</code> and <code>document_options</code> are both passed to Pandoc.</p>
 <dl>
 <dt><code>content_options</code></dt>
 <dd>Used when Pandoc converts new notes into HTML sections.
@@ -917,207 +868,6 @@ convert_to_data_url = False</code></pre>
 <dd>Used when Pandoc compiles every section into one file.
 </dd>
 </dl>
-</section>
-<section id="8" class="level1" title="Note connections" style="display:none">
-<h1 title="Note connections">8 Note connections</h1>
-<p><a href="##connections">#connections</a></p>
-<p><code>slipbox</code> provides multiple ways of connecting notes.</p>
-<ul>
-<li><a href="#9">Tags</a></li>
-<li><a href="#10">Links/backlinks</a></li>
-<li><a href="#12">Tagged links</a></li>
-<li><a href="#13">Text search</a></li>
-<li><a href="#14">Citations</a></li>
-</ul>
-</section>
-<section id="9" class="level1" title="Tags" style="display:none">
-<h1 title="Tags">9 Tags</h1>
-<p><a href="##connections">#connections</a></p>
-<p>slipbox uses a Pandoc filter to convert hashtags into tags. You can click on tags to get a list of other notes that have the same tag.</p>
-<p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
-<hr />
-<ul>
-<li>Tagged links <a href="##tagged-links">#tagged-links</a>/12</li>
-</ul>
-</section>
-<section id="10" class="level1" title="Direct links" style="display:none">
-<h1 title="Direct links">10 Direct links</h1>
-<p><a href="##connections">#connections</a></p>
-<p>To link to a note in the slipbox, use the note’s ID as the link target. slipbox automatically creates backlinks from direct links.</p>
-<p>The links can be seen in the interactive graph below.  [<a href="#11">#11</a>]</p>
-</section>
-<section id="11" class="level1" title="Note graph" style="display:none">
-<h1 title="Note graph">11 Note graph</h1>
-<p><a href="##connections">#connections</a></p>
-<p>Note pages contain a graph of notes related to the current note at the bottom of the page.</p>
-<p>It shows</p>
-<ul>
-<li>the current note (black)</li>
-<li>related notes (gray)</li>
-<li><a href="#10">links and backlinks</a> (solid lines)</li>
-<li><a href="#12">tagged links</a> (dashed lines).</li>
-</ul>
-</section>
-<section id="12" class="level1" title="Tagged links" style="display:none">
-<h1 title="Tagged links">12 Tagged links</h1>
-<p><a href="##connections">#connections</a></p>
-<p>A tagged link is a hashtag followed by a slash and a note ID. Example: <a href="##example">#example</a>/11.</p>
-<p>This connects the current note to the linked note.</p>
-<p>The purpose of the tag is to distinguish between different levels of sequences.</p>
-<ul>
-<li>In a book, there’s a sequence of chapters, a sequence of sections, etc.</li>
-<li>Tagged links make it possible to distinguish between different types of sequences.</li>
-</ul>
-<p>These links show up in the <a href="#11">interactive graph</a> as dashed lines.</p>
-</section>
-<section id="13" class="level1" title="Text search" style="display:none">
-<h1 title="Text search">13 Text search</h1>
-<p>There’s a search bar at the top of the page that you can use to look for notes.</p>
-</section>
-<section id="14" class="level1" title="Citations" style="display:none">
-<h1 title="Citations">14 Citations</h1>
-<p><code>slipbox</code> uses <code>pandoc-citeproc</code> for citations. Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
-<p>Here’s how a citation looks: <span class="citation" data-cites="cite2020">(<a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
-<p>To activate this feature, you need to specify a bibliography file in the <a href="#7">config file</a>. You also need to have <code>pandoc-citeproc</code> installed.</p>
-<p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
-</section>
-<section id="15" class="level1" title="CLI subcommands" style="display:none">
-<h1 title="CLI subcommands">15 CLI subcommands</h1>
-<ul>
-<li><a href="#4">build</a></li>
-<li><a href="#17">check</a></li>
-<li><a href="#16">flashcards</a></li>
-<li><a href="#18">info</a></li>
-<li><a href="#3">init</a></li>
-</ul>
-</section>
-<section id="16" class="level1" title="Generating flashcards with slipbox flashcards" style="display:none">
-<h1 title="Generating flashcards with slipbox flashcards">16 Generating flashcards with <code>slipbox flashcards</code></h1>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox flashcards out.apkg</span></code></pre></div>
-<p>This command generates Anki flashcards from your slipbox notes and saves it to <code>out.apkg</code>.</p>
-<section id="requirements" class="level3">
-<h3>Requirements</h3>
-<p>This feature requires <code>genanki</code>. Installing <code>genanki</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
-</section>
-</section>
-<section id="17" class="level1" title="slipbox check" style="display:none">
-<h1 title="slipbox check">17 <code>slipbox check</code></h1>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox check</span></code></pre></div>
-<p>This command checks for:</p>
-<ul>
-<li>notes that tag/link to non-existent notes</li>
-<li>isolated notes</li>
-</ul>
-<p>If a bibliography is specified in the <a href="#7">config file</a>, it also checks for notes that lack citations.</p>
-</section>
-<section id="18" class="level1" title="slipbox info" style="display:none">
-<h1 title="slipbox info">18 <code>slipbox info</code></h1>
-<p><code>python -m slipbox info</code> prints information about a note, given its ID.</p>
-<p>Ex:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox info 18   # prints title and filename of note #18</span></code></pre></div>
-</section>
-<section id='#connections' title='#connections' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #connections
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [8] 
-      <a href='#8'>
-        Note connections
-      </a>
-    </li>
-    <li>
-      [9] 
-      <a href='#9'>
-        Tags
-      </a>
-    </li>
-    <li>
-      [10] 
-      <a href='#10'>
-        Direct links
-      </a>
-    </li>
-    <li>
-      [11] 
-      <a href='#11'>
-        Note graph
-      </a>
-    </li>
-    <li>
-      [12] 
-      <a href='#12'>
-        Tagged links
-      </a>
-    </li>
-    <li>
-      [13] 
-      <a href='#13'>
-        Text search
-      </a>
-    </li>
-    <li>
-      [14] 
-      <a href='#14'>
-        Citations
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#example' title='#example' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #example
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [11] 
-      <a href='#11'>
-        Note graph
-      </a>
-    </li>
-    <li>
-      [12] 
-      <a href='#12'>
-        Tagged links
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#getting-started' title='#getting-started' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #getting-started
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [1] 
-      <a href='#1'>
-        Installation
-      </a>
-    </li>
-  </ul>
-</section>
-<section id='#initialization' title='#initialization' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #initialization
-    </a>
-  </h1>
-  <ul>
-    <li>
-      [3] 
-      <a href='#3'>
-        Initializing slipbox with slipbox init
-      </a>
-    </li>
-  </ul>
 </section>
 <section id='#slipbox' title='#slipbox' style='display:none' class='level1'>
   <h1>
@@ -1132,46 +882,34 @@ convert_to_data_url = False</code></pre>
         slipbox
       </a>
     </li>
-  </ul>
-</section>
-<section id='#tagged-links' title='#tagged-links' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #tagged-links
-    </a>
-  </h1>
-  <ul>
     <li>
-      [9] 
-      <a href='#9'>
-        Tags
+      [1] 
+      <a href='#1'>
+        Getting started
       </a>
     </li>
-  </ul>
-</section>
-<section id='#usage' title='#usage' style='display:none' class='level1'>
-  <h1>
-    <a href='#tags' title='List of tags'>
-      #usage
-    </a>
-  </h1>
-  <ul>
     <li>
       [2] 
       <a href='#2'>
-        Usage
+        Note format
       </a>
     </li>
     <li>
       [3] 
       <a href='#3'>
-        Initializing slipbox with slipbox init
+        Linking notes
       </a>
     </li>
     <li>
       [5] 
       <a href='#5'>
-        Note format
+        Tags
+      </a>
+    </li>
+    <li>
+      [6] 
+      <a href='#6'>
+        Citations
       </a>
     </li>
   </ul>
@@ -1182,38 +920,8 @@ convert_to_data_url = False</code></pre>
   </h1>
   <ul>
     <li>
-      <a href='##connections'>
-        #connections
-      </a>
-    </li>
-    <li>
-      <a href='##example'>
-        #example
-      </a>
-    </li>
-    <li>
-      <a href='##getting-started'>
-        #getting-started
-      </a>
-    </li>
-    <li>
-      <a href='##initialization'>
-        #initialization
-      </a>
-    </li>
-    <li>
       <a href='##slipbox'>
         #slipbox
-      </a>
-    </li>
-    <li>
-      <a href='##tagged-links'>
-        #tagged-links
-      </a>
-    </li>
-    <li>
-      <a href='##usage'>
-        #usage
       </a>
     </li>
   </ul>
@@ -1229,8 +937,8 @@ convert_to_data_url = False</code></pre>
   </p>
   <ul>
     <li>
-      [14] 
-      <a href='#14'>
+      [6] 
+      <a href='#6'>
         Citations
       </a>
     </li>

@@ -6,20 +6,15 @@ slipbox
 Features
 --------
 
-- Citations via `pandoc-citeproc`
-- Stores notes data in an sqlite3 database
-- Single-page HTML output with backlinks and Folgezettel links
-- Incremental compilation
-- Fuzzy text search
-- Interactive visualization of Folgezettels
+- Interactive graph of notes and links
+- Text search
 - Anki generator
 
 Requirements
 ------------
 
-- `pandoc` (should be compiled with `pandoc-types` 1.21)
+- `pandoc` (should be compiled with `pandoc-types` 1.22)
 - `python3`
-- `pandoc-citeproc` (only needed when using citations)
 - `genanki` (only needed when generating Anki cards)
 
 Installation and usage
@@ -40,8 +35,3 @@ License
 -------
 
 MIT.
-
-Credits
--------
-
-This project includes [pandoc.css](https://gist.github.com/killercup/5917178).

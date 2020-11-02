@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     build = subparsers.add_parser("build", help="generate static site")
 
-    check = subparsers.add_parser("check", help="check slipbox links")
+    check = subparsers.add_parser("check", help="check for invalid links and isolated notes")
 
     flashcards = subparsers.add_parser("flashcards", help="generate anki flashcards from notes")
     flashcards.add_argument("output", type=Path, help="output file")

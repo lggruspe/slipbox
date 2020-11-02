@@ -5,7 +5,7 @@ with open("../README.md") as fp:
 
 setuptools.setup(
     name="slipbox",
-    version="0.12.5",
+    version="0.13.0",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
     description="Static-site generator for Zettelkasten notes",
@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/lggruspe/slipbox",
     packages=setuptools.find_packages(),
     package_data={
-        "slipbox": ["data/frontend.js", "filters/*.lua", "*.sql", "pandoc.css"],
+        "slipbox": ["data/frontend.js", "filters/*.lua", "*.sql"],
     },
     classifiers=[
         "Programming Language :: Python :: 3",

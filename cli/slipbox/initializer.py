@@ -3,7 +3,6 @@
 from argparse import Namespace
 from configparser import ConfigParser
 from pathlib import Path
-from shlex import quote
 from sqlite3 import Connection, connect
 import sys
 from typing import List, Sequence, Optional
@@ -16,11 +15,10 @@ def initialize_database(conn: Connection) -> None:
 
 def default_config() -> ConfigParser:
     """Create ConfigParser object with default options."""
-    css = quote(str(Path(__file__).with_name("pandoc.css").resolve()))
     config = ConfigParser()
     config["slipbox"] = {
         "content_options": "--mathjax",
-        "document_options": f"--mathjax -H {css} -o index.html",
+        "document_options": "--mathjax -s -o index.html",
         "convert_to_data_url": "False",
     }
     return config
