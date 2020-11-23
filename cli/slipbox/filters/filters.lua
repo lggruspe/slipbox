@@ -53,7 +53,6 @@ local function init(slipbox)
       elem.identifier = id
       elem.attributes.title = title
       elem.attributes.level = elem.level  -- Gets added to parent section
-      elem.attributes.filename = nil
       return elem
     end
   end
@@ -204,6 +203,7 @@ local function modify()
       if div.attributes.level then
         if div.attributes.level == "1" then
           div.attributes.style = "display:none"
+          table.insert(div.classes, "slipbox-note")
         end
         div.attributes.level = nil
       end

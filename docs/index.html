@@ -727,14 +727,9 @@
   </script>
   <script type="text/javascript">
   window.addEventListener('DOMContentLoaded', () => {
-  window.query.db.add(new Model.Note(0, 'slipbox', 'index.md'))
-  window.query.db.add(new Model.Note(1, 'Getting started', 'index.md'))
-  window.query.db.add(new Model.Note(2, 'Note format', 'index.md'))
-  window.query.db.add(new Model.Note(3, 'Linking notes', 'index.md'))
-  window.query.db.add(new Model.Note(4, 'Linking to external files/images', 'index.md'))
-  window.query.db.add(new Model.Note(5, 'Tags', 'index.md'))
-  window.query.db.add(new Model.Note(6, 'Citations', 'index.md'))
-  window.query.db.add(new Model.Note(7, '.slipbox/config.cfg', 'index.md'))
+  for (const sec of document.querySelectorAll('section.slipbox-note')) {
+    window.query.db.add(new Model.Note(Number(sec.id), sec.title, sec.getAttribute('data-filename')))
+  }
   window.query.db.add(new Model.Link(
     window.query.note(1), window.query.note(7), null))
   window.query.db.add(new Model.Link(
@@ -770,8 +765,8 @@
   </script>
 </head>
 <body>
-<section id="0" class="level1" title="slipbox" style="display:none">
-<h1 title="slipbox">0 slipbox</h1>
+<section id="0" class="level1 slipbox-note" data-filename="index.md" title="slipbox" style="display:none">
+<h1 data-filename="index.md" title="slipbox">0 slipbox</h1>
 <p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
 <ul>
 <li><a href="#1">Getting started</a></li>
@@ -783,8 +778,8 @@
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
 <p><a href="##slipbox">#slipbox</a></p>
 </section>
-<section id="1" class="level1" title="Getting started" style="display:none">
-<h1 title="Getting started">1 Getting started</h1>
+<section id="1" class="level1 slipbox-note" data-filename="index.md" title="Getting started" style="display:none">
+<h1 data-filename="index.md" title="Getting started">1 Getting started</h1>
 <p>Make sure you have <code>pandoc</code> and <code>python</code> installed.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span>
@@ -809,8 +804,8 @@
 </ul>
 </section>
 </section>
-<section id="2" class="level1" title="Note format" style="display:none">
-<h1 title="Note format">2 Note format</h1>
+<section id="2" class="level1 slipbox-note" data-filename="index.md" title="Note format" style="display:none">
+<h1 data-filename="index.md" title="Note format">2 Note format</h1>
 <p>Slipbox notes begin with a level 1 header. The header text must contain an ID (number) and a title.</p>
 <p>You can store each note in a separate file, or you can put multiple notes in one file.</p>
 <section id="see-also-1" class="level3">
@@ -821,8 +816,8 @@
 </ul>
 </section>
 </section>
-<section id="3" class="level1" title="Linking notes" style="display:none">
-<h1 title="Linking notes">3 Linking notes</h1>
+<section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes" style="display:none">
+<h1 data-filename="index.md" title="Linking notes">3 Linking notes</h1>
 <p>To link to a note in the slipbox, use the note’s ID as the link target.</p>
 <p><a href="#4">Example</a>.</p>
 <p>The links can be seen in the interactive graph below.</p>
@@ -834,27 +829,27 @@
 </ul>
 </section>
 </section>
-<section id="4" class="level1" title="Linking to external files/images" style="display:none">
-<h1 title="Linking to external files/images">4 Linking to external files/images</h1>
+<section id="4" class="level1 slipbox-note" data-filename="index.md" title="Linking to external files/images" style="display:none">
+<h1 data-filename="index.md" title="Linking to external files/images">4 Linking to external files/images</h1>
 <p>Links must either be absolute or relative to the output HTML.</p>
 <figure>
 <img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
 </figure>
 </section>
-<section id="5" class="level1" title="Tags" style="display:none">
-<h1 title="Tags">5 Tags</h1>
+<section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags" style="display:none">
+<h1 data-filename="index.md" title="Tags">5 Tags</h1>
 <p><a href="##slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
 <p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
 </section>
-<section id="6" class="level1" title="Citations" style="display:none">
-<h1 title="Citations">6 Citations</h1>
+<section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations" style="display:none">
+<h1 data-filename="index.md" title="Citations">6 Citations</h1>
 <p>Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
 <p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
 <p>To use this feature, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
 <p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
 </section>
-<section id="7" class="level1" title=".slipbox/config.cfg" style="display:none">
-<h1 title=".slipbox/config.cfg">7 <code>.slipbox/config.cfg</code></h1>
+<section id="7" class="level1 slipbox-note" data-filename="index.md" title=".slipbox/config.cfg" style="display:none">
+<h1 data-filename="index.md" title=".slipbox/config.cfg">7 <code>.slipbox/config.cfg</code></h1>
 <p>The config file is <code>.slipbox/config.cfg</code> inside the slipbox directory. Here’s a sample config file.</p>
 <pre><code>[slipbox]
 content_options = --mathjax --bibliography my-bib.bib --citeproc
