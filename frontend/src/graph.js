@@ -2,20 +2,11 @@ import cytoscape from 'cytoscape'
 
 function graphArea () {
   const div = document.createElement('div')
-  div.appendChild(document.createElement('hr'))
-
-  const cy = document.createElement('div')
-  cy.classList.add('cytoscape-container')
-  cy.style.width = '100%'
-  cy.style.height = '80vh'
-  cy.style.position = 'relative'
-  cy.style.top = '0px'
-  cy.style.left = '0px'
-  div.appendChild(cy)
-
-  const info = document.createElement('div')
-  info.classList.add('info-container')
-  div.appendChild(info)
+  div.innerHTML = `
+    <hr>
+    <div class="cytoscape-container" style="width: 100%; height: 80vh; position: relative; top: 0px; left: 0px;"></div>
+    <div class="info-container"></div>
+  `
   return div
 }
 
@@ -194,23 +185,26 @@ function hoverHandlers (container) {
 }
 
 function init (query) {
-  let container = graphArea()
-
   function resetGraph () {
-    container.remove()
-    const id = Number(window.location.hash.slice(1))
+    const id = window.location.hash.slice(1)
     const elements = []
-    if (Number.isInteger(id)) {
-      const note = query.note(id)
+    const nid = Number(id)
+    let sectionID = nid
+    if (Number.isInteger(nid)) {
+      const note = query.note(nid)
       if (note != null) {
         elements.push(...neighborElements(query, note))
       }
       if (elements.length < 2) return
     } else {
-      elements.push(...clusterElements(query, window.location.hash.slice(1)))
+      sectionID = id
+      elements.push(...clusterElements(query, id))
       if (elements.length === 0) return
     }
-    container = document.body.appendChild(graphArea())
+
+    const extras = document.getElementById(sectionID).querySelector('div.slipbox-extras')
+    extras.innerHTML = ''
+    const container = extras.appendChild(graphArea())
     createCytoscape(container, elements)
   }
 

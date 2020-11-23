@@ -191,20 +191,11 @@
 
   function graphArea () {
     const div = document.createElement('div');
-    div.appendChild(document.createElement('hr'));
-
-    const cy = document.createElement('div');
-    cy.classList.add('cytoscape-container');
-    cy.style.width = '100%';
-    cy.style.height = '80vh';
-    cy.style.position = 'relative';
-    cy.style.top = '0px';
-    cy.style.left = '0px';
-    div.appendChild(cy);
-
-    const info = document.createElement('div');
-    info.classList.add('info-container');
-    div.appendChild(info);
+    div.innerHTML = `
+      <hr>
+      <div class="cytoscape-container" style="width: 100%; height: 80vh; position: relative; top: 0px; left: 0px;"></div>
+      <div class="info-container"></div>
+    `;
     return div
   }
 
@@ -383,23 +374,26 @@
   }
 
   function init (query) {
-    let container = graphArea();
-
     function resetGraph () {
-      container.remove();
-      const id = Number(window.location.hash.slice(1));
+      const id = window.location.hash.slice(1);
       const elements = [];
-      if (Number.isInteger(id)) {
-        const note = query.note(id);
+      const nid = Number(id);
+      let sectionID = nid;
+      if (Number.isInteger(nid)) {
+        const note = query.note(nid);
         if (note != null) {
           elements.push(...neighborElements(query, note));
         }
         if (elements.length < 2) return
       } else {
-        elements.push(...clusterElements(query, window.location.hash.slice(1)));
+        sectionID = id;
+        elements.push(...clusterElements(query, id));
         if (elements.length === 0) return
       }
-      container = document.body.appendChild(graphArea());
+
+      const extras = document.getElementById(sectionID).querySelector('div.slipbox-extras');
+      extras.innerHTML = '';
+      const container = extras.appendChild(graphArea());
       createCytoscape(container, elements);
     }
 
@@ -777,6 +771,9 @@
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
 <p><a href="##slipbox">#slipbox</a></p>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="1" class="level1 slipbox-note" data-filename="index.md" title="Getting started" style="display:none">
 <h1 data-filename="index.md" title="Getting started">1 Getting started</h1>
@@ -803,6 +800,9 @@
 <li><a href="#6">Citations</a></li>
 </ul>
 </section>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="2" class="level1 slipbox-note" data-filename="index.md" title="Note format" style="display:none">
 <h1 data-filename="index.md" title="Note format">2 Note format</h1>
@@ -815,6 +815,9 @@
 <li><a href="#3">Linking notes</a></li>
 </ul>
 </section>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes" style="display:none">
 <h1 data-filename="index.md" title="Linking notes">3 Linking notes</h1>
@@ -828,6 +831,9 @@
 <li><a href="#5">Tags</a></li>
 </ul>
 </section>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="4" class="level1 slipbox-note" data-filename="index.md" title="Linking to external files/images" style="display:none">
 <h1 data-filename="index.md" title="Linking to external files/images">4 Linking to external files/images</h1>
@@ -835,11 +841,17 @@
 <figure>
 <img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
 </figure>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags" style="display:none">
 <h1 data-filename="index.md" title="Tags">5 Tags</h1>
 <p><a href="##slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
 <p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations" style="display:none">
 <h1 data-filename="index.md" title="Citations">6 Citations</h1>
@@ -847,6 +859,9 @@
 <p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
 <p>To use this feature, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
 <p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id="7" class="level1 slipbox-note" data-filename="index.md" title=".slipbox/config.cfg" style="display:none">
 <h1 data-filename="index.md" title=".slipbox/config.cfg">7 <code>.slipbox/config.cfg</code></h1>
@@ -863,6 +878,9 @@ convert_to_data_url = False</code></pre>
 <dd>Used when Pandoc compiles every section into one file.
 </dd>
 </dl>
+<div class="slipbox-extras">
+
+</div>
 </section>
 <section id='#slipbox' title='#slipbox' style='display:none' class='level1'>
   <h1>
@@ -908,6 +926,9 @@ convert_to_data_url = False</code></pre>
       </a>
     </li>
   </ul>
+  <div class='slipbox-extras'>
+
+  </div>
 </section>
 <section id='tags' title='Tags' style='display:none' class='level1'>
   <h1>
@@ -920,6 +941,9 @@ convert_to_data_url = False</code></pre>
       </a>
     </li>
   </ul>
+  <div class='slipbox-extras'>
+
+  </div>
 </section>
 <section id='ref-cite2020' title='ref-cite2020' style='display:none' class='level1'>
   <h1>
@@ -938,6 +962,9 @@ convert_to_data_url = False</code></pre>
       </a>
     </li>
   </ul>
+  <div class='slipbox-extras'>
+
+  </div>
 </section>
 <section id='references' title='References' style='display:none' class='level1'>
   <h1>
@@ -953,6 +980,9 @@ convert_to_data_url = False</code></pre>
       Author. 2020. Title.
     </dd>
   </dl>
+  <div class='slipbox-extras'>
+
+  </div>
 </section>
 <header id="title-block-header">
 <h1 class="title">Slipbox</h1>
