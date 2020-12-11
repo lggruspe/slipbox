@@ -20,7 +20,7 @@ check: bundle
 	cd frontend; npx eslint test --global describe --global it --global beforeEach --rule "no-unused-vars: 0"
 	cd frontend; npm run lint
 	cd frontend; npm test
-	cd cli; pylint slipbox --fail-under=10 -d R0903 -d W0621 -d C0415
+	# cd cli; pylint slipbox --fail-under=10 -d R0903 -d W0621 -d C0415
 	cd cli; mypy -p slipbox
 	cd cli; cd slipbox; pytest --cov=. --cov-fail-under=90 --cov-report=term-missing --cov-branch -x --verbose
 	@echo "Yay!"

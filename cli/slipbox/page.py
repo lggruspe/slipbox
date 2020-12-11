@@ -58,7 +58,6 @@ def create_bibliography(conn: Connection) -> str:
                    Elem("div", **{"class": "slipbox-extras"}),
                    id="references",
                    title="References",
-                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -73,7 +72,6 @@ def create_tags(conn: Connection) -> str:
                    Elem("div", **{"class": "slipbox-extras"}),
                    id="tags",
                    title="Tags",
-                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -92,7 +90,6 @@ def create_tag_page(conn: Connection, tag: str) -> str:
                    Elem("div", **{"class": "slipbox-extras"}),
                    id=tag,
                    title=tag,
-                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -124,7 +121,6 @@ def create_reference_page(conn: Connection, reference: str) -> str:
                    Elem("div", **{"class": "slipbox-extras"}),
                    id=reference,
                    title=reference,
-                   style="display:none",
                    **{"class": "level1"})
     return render(section)
 
@@ -149,8 +145,8 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-        cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts}".format(
+        cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts} -H {style}".format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
             html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
-            title="--metadata title=Slipbox")
+            title="--metadata title=Slipbox", style=shlex.quote(str(Path(__file__).parent/"data"/"style.html")))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)

@@ -7,7 +7,7 @@
   <title>Slipbox</title>
   <style>
     html {
-      line-height: 1.7;
+      line-height: 1.5;
       font-family: Georgia, serif;
       font-size: 20px;
       color: #1a1a1a;
@@ -15,7 +15,7 @@
     }
     body {
       margin: 0 auto;
-      max-width: 40em;
+      max-width: 36em;
       padding-left: 50px;
       padding-right: 50px;
       padding-top: 50px;
@@ -35,6 +35,7 @@
       body {
         background-color: transparent;
         color: black;
+        font-size: 12pt;
       }
       p, h2, h3 {
         orphans: 3;
@@ -45,7 +46,7 @@
       }
     }
     p {
-      margin-top: 1.7em;
+      margin: 1em 0;
     }
     a {
       color: #1a1a1a;
@@ -57,59 +58,82 @@
       max-width: 100%;
     }
     h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.7em;
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
     }
     ol, ul {
       padding-left: 1.7em;
-      margin-top: 1.7em;
+      margin-top: 1em;
     }
     li > ol, li > ul {
       margin-top: 0;
     }
     blockquote {
-      margin: 1.7em 0 1.7em 1.7em;
+      margin: 1em 0 1em 1.7em;
       padding-left: 1em;
       border-left: 2px solid #e6e6e6;
-      font-style: italic;
+      color: #606060;
     }
     code {
       font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
-      background-color: #f0f0f0;
       font-size: 85%;
       margin: 0;
-      padding: .2em .4em;
     }
     pre {
-      line-height: 1.5em;
-      padding: 1em;
-      background-color: #f0f0f0;
+      margin: 1em 0;
       overflow: auto;
     }
     pre code {
       padding: 0;
       overflow: visible;
     }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
     hr {
       background-color: #1a1a1a;
       border: none;
       height: 1px;
-      margin-top: 1.7em;
+      margin: 1em 0;
     }
     table {
+      margin: 1em 0;
       border-collapse: collapse;
       width: 100%;
       overflow-x: auto;
       display: block;
+      font-variant-numeric: lining-nums tabular-nums;
     }
-    th, td {
-      border-bottom: 1px solid lightgray;
-      padding: 1em 3em 1em 0;
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
     }
     header {
-      margin-bottom: 6em;
+      margin-bottom: 4em;
       text-align: center;
     }
-    nav a:not(:hover) {
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
       text-decoration: none;
     }
     code{white-space: pre-wrap;}
@@ -661,52 +685,6 @@
     document.body.insertBefore(searchForm(container), document.body.firstChild);
   }
 
-  function getSectionFromHash (hash) {
-    const id = hash.substring(1);
-    if (!id) { return null }
-    const elem = document.getElementById(id);
-    if (elem) {
-      return elem.closest('section.level1')
-    }
-  }
-
-  function sectionChanger () {
-    let _previousHash = window.location.hash;
-    return function () {
-      const oldSection = getSectionFromHash(_previousHash);
-      if (oldSection) {
-        oldSection.style.display = 'none';
-      }
-      _previousHash = window.location.hash;
-      const newSection = getSectionFromHash(_previousHash);
-      if (newSection) {
-        newSection.style.display = '';
-        document.title = newSection.title || 'Slipbox';
-      } else {
-        window.location.hash = '#0';
-      }
-      window.scrollTo(0, 0);
-    }
-  }
-
-  function notFoundSection () {
-    const section = document.createElement('section');
-    section.id = '0';
-    section.classList.add('level1');
-    section.style.display = 'none';
-    const h1 = document.createElement('h1');
-    h1.innerText = 'Note not found';
-    section.appendChild(h1);
-    return section
-  }
-
-  function init$2 () {
-    document.body.appendChild(notFoundSection());
-    const changeSection = sectionChanger();
-    changeSection();
-    window.addEventListener('hashchange', changeSection);
-  }
-
   window.query = new Query(new Database());
 
   window.Model = Model;
@@ -715,7 +693,6 @@
     const title = document.getElementById('title-block-header');
     if (title) { title.remove(); }
     init$1();
-    init$2();
     init(window.query);
   };
   </script>
@@ -757,9 +734,18 @@
   window.initSlipbox()
   })
   </script>
+  <style>
+  .level1 {
+    display: none;
+  }
+
+  .level1:target {
+    display: block;
+  }
+  </style>
 </head>
 <body>
-<section id="0" class="level1 slipbox-note" data-filename="index.md" title="slipbox" style="display:none">
+<section id="0" class="level1 slipbox-note" data-filename="index.md" title="slipbox">
 <h1 data-filename="index.md" title="slipbox">0 slipbox</h1>
 <p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
 <ul>
@@ -775,7 +761,7 @@
 
 </div>
 </section>
-<section id="1" class="level1 slipbox-note" data-filename="index.md" title="Getting started" style="display:none">
+<section id="1" class="level1 slipbox-note" data-filename="index.md" title="Getting started">
 <h1 data-filename="index.md" title="Getting started">1 Getting started</h1>
 <p>Make sure you have <code>pandoc</code> and <code>python</code> installed.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
@@ -804,7 +790,7 @@
 
 </div>
 </section>
-<section id="2" class="level1 slipbox-note" data-filename="index.md" title="Note format" style="display:none">
+<section id="2" class="level1 slipbox-note" data-filename="index.md" title="Note format">
 <h1 data-filename="index.md" title="Note format">2 Note format</h1>
 <p>Slipbox notes begin with a level 1 header. The header text must contain an ID (number) and a title.</p>
 <p>You can store each note in a separate file, or you can put multiple notes in one file.</p>
@@ -819,7 +805,7 @@
 
 </div>
 </section>
-<section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes" style="display:none">
+<section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes">
 <h1 data-filename="index.md" title="Linking notes">3 Linking notes</h1>
 <p>To link to a note in the slipbox, use the note’s ID as the link target.</p>
 <p><a href="#4">Example</a>.</p>
@@ -835,7 +821,7 @@
 
 </div>
 </section>
-<section id="4" class="level1 slipbox-note" data-filename="index.md" title="Linking to external files/images" style="display:none">
+<section id="4" class="level1 slipbox-note" data-filename="index.md" title="Linking to external files/images">
 <h1 data-filename="index.md" title="Linking to external files/images">4 Linking to external files/images</h1>
 <p>Links must either be absolute or relative to the output HTML.</p>
 <figure>
@@ -845,7 +831,7 @@
 
 </div>
 </section>
-<section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags" style="display:none">
+<section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags">
 <h1 data-filename="index.md" title="Tags">5 Tags</h1>
 <p><a href="##slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
 <p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
@@ -853,7 +839,7 @@
 
 </div>
 </section>
-<section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations" style="display:none">
+<section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations">
 <h1 data-filename="index.md" title="Citations">6 Citations</h1>
 <p>Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
 <p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
@@ -863,7 +849,7 @@
 
 </div>
 </section>
-<section id="7" class="level1 slipbox-note" data-filename="index.md" title=".slipbox/config.cfg" style="display:none">
+<section id="7" class="level1 slipbox-note" data-filename="index.md" title=".slipbox/config.cfg">
 <h1 data-filename="index.md" title=".slipbox/config.cfg">7 <code>.slipbox/config.cfg</code></h1>
 <p>The config file is <code>.slipbox/config.cfg</code> inside the slipbox directory. Here’s a sample config file.</p>
 <pre><code>[slipbox]
@@ -882,7 +868,7 @@ convert_to_data_url = False</code></pre>
 
 </div>
 </section>
-<section id='#slipbox' title='#slipbox' style='display:none' class='level1'>
+<section id='#slipbox' title='#slipbox' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
       #slipbox
@@ -930,7 +916,7 @@ convert_to_data_url = False</code></pre>
 
   </div>
 </section>
-<section id='tags' title='Tags' style='display:none' class='level1'>
+<section id='tags' title='Tags' class='level1'>
   <h1>
     Tags
   </h1>
@@ -945,7 +931,7 @@ convert_to_data_url = False</code></pre>
 
   </div>
 </section>
-<section id='ref-cite2020' title='ref-cite2020' style='display:none' class='level1'>
+<section id='ref-cite2020' title='ref-cite2020' class='level1'>
   <h1>
     <a href='#references'>
       @cite2020
@@ -966,7 +952,7 @@ convert_to_data_url = False</code></pre>
 
   </div>
 </section>
-<section id='references' title='References' style='display:none' class='level1'>
+<section id='references' title='References' class='level1'>
   <h1>
     References
   </h1>

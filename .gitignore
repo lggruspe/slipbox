@@ -5,6 +5,6 @@ build/
 dist/
 *.egg-info/
 node_modules/
-cli/slipbox/data/
+cli/slipbox/data/*.js
 *.pyc
 docs/.slipbox/

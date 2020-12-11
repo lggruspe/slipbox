@@ -202,7 +202,6 @@ local function modify()
 
       if div.attributes.level then
         if div.attributes.level == "1" then
-          div.attributes.style = "display:none"
           table.insert(div.classes, "slipbox-note")
           table.insert(div.content, pandoc.Div({}, {class = "slipbox-extras"}))
         end
