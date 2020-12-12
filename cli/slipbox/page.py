@@ -145,8 +145,10 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-        cmd = "{pandoc} {dummy} -H{script} {title} -B{html} -B{extra} --section-divs {opts} -H {style}".format(
+        cmd = "{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search} --section-divs {opts} -H {style}".format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
             html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
-            title="--metadata title=Slipbox", style=shlex.quote(str(Path(__file__).parent/"data"/"style.html")))
+            title="--metadata title=Slipbox", style=shlex.quote(str(Path(__file__).parent/"data"/"style.html")),
+            nav=shlex.quote(str(Path(__file__).parent/"data"/"nav.html")),
+            search=shlex.quote(str(Path(__file__).parent/"data"/"search.html")))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)
