@@ -38,7 +38,7 @@ def generate_javascript(conn: Connection) -> Iterable[str]:
     bundle = Path(__file__).parent/"data"/"frontend.js"
     yield bundle.read_text().strip()
     yield '</script>'
-    yield '<script type="text/javascript">'
+    yield '<script>'
     yield "window.addEventListener('DOMContentLoaded', () => {"
     yield from generate_data(conn)
     yield "window.initSlipbox()"

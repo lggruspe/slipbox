@@ -3,8 +3,7 @@ import cytoscape from 'cytoscape'
 function graphArea () {
   const div = document.createElement('div')
   div.innerHTML = `
-    <hr>
-    <div class="cytoscape-container" style="width: 100%; height: 80vh; position: relative; top: 0px; left: 0px;"></div>
+    <div class="cytoscape-container" style="width: 100%; height: 80vh; padding-top: 1em; border-top: 1px solid black;"></div>
     <div class="info-container"></div>
   `
   return div

@@ -132,6 +132,21 @@ local function collect(slipbox)
   }
 end
 
+local function hashtag()
+  -- Create filter that turns #tags into links.
+  return {
+    Str = function(elem)
+      local tag = utils.hashtag_prefix(elem.text)
+      if tag then
+        return {
+          pandoc.Link({pandoc.Str(tag)}, '#' .. tag),
+          pandoc.Str(elem.text:sub(#tag + 1)),
+        }
+      end
+    end
+  }
+end
+
 local Modifier = {}
 function Modifier:new()
   self.__index = self
@@ -166,22 +181,10 @@ function Modifier:Note(elem)
   return pandoc.Superscript(pandoc.Str(tostring(count)))
 end
 
-function Modifier.Str(elem)
-  -- Turn #tags into links.
-  local tag = utils.hashtag_prefix(elem.text)
-  if tag then
-    return {
-      pandoc.Link({pandoc.Str(tag)}, '#' .. tag),
-      pandoc.Str(elem.text:sub(#tag + 1)),
-    }
-  end
-end
-
 function Modifier:filter()
   return {
     Link = function(elem) return self.Link(elem) end,
     Note = function(elem) return self:Note(elem) end,
-    Str = function(elem) return self.Str(elem) end,
   }
 end
 
@@ -276,9 +279,10 @@ local function check(slipbox)
 end
 
 local function cleanup()
+  -- TODO only cleanup note section headers?
   return {
     Header = function(elem)
-      elem.attributes.level = nil
+      elem.attributes = {}
       return elem
     end
   }
@@ -288,6 +292,7 @@ return {
   preprocess = preprocess,
   init = init,
   collect = collect,
+  hashtag = hashtag,
   modify = modify,
   citations = citations,
   serialize = serialize,
