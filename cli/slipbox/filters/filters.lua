@@ -43,18 +43,32 @@ local function init(slipbox)
     -- Only scan level 1 headers.
     if elem.level ~= 1 then return end
 
-    local content = pandoc.utils.stringify(elem.content)
-    local id, title = utils.parse_id_and_title(content)
-    if id and title then
-      local filename = elem.attributes.filename
-      local err = slipbox:save_note(id, title, filename)
-      if err then log.warning(err) end
-
-      elem.identifier = id
-      elem.attributes.title = title
-      elem.attributes.level = elem.level  -- Gets added to parent section
-      return elem
+    local id
+    local content = elem.content
+    if content[1].tag == "Str" then
+      id = tonumber(content[1].text:match '^%d+$')
     end
+    if id == nil then return end
+
+    table.remove(content, 1)
+    while #content > 0 do
+      if content[1].tag == "Space" then
+        table.remove(content, 1)
+      else
+        break
+      end
+    end
+    local title = pandoc.utils.stringify(content)
+    if not title or title == "" then return end
+
+    local filename = elem.attributes.filename
+    local err = slipbox:save_note(id, title, filename)
+    if err then log.warning(err) end
+
+    elem.identifier = id
+    elem.attributes.title = title
+    elem.attributes.level = elem.level  -- Gets added to parent section
+    return elem
   end
 
   local function Pandoc(doc)

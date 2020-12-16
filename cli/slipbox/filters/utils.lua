@@ -13,20 +13,6 @@ local function get_link(src, link)
   }
 end
 
-local function parse_id_and_title(s)
-  local pattern = '^%s*(%d+)%s+(.-)%s*$'
-  local id, count = s:gsub(pattern, '%1')
-  if count == 0 then return nil end
-  local title
-  title, count = s:gsub(pattern, '%2')
-  if count ~= 0 and title ~= "" then
-    id = tonumber(id)
-    assert(type(id) == "number")
-    assert(type(title) == "string")
-    return id, title
-  end
-end
-
 local function append_text(filename, text)
   local file = io.open(filename, 'a')
   if not file then return false end
@@ -59,7 +45,6 @@ return {
   is_reference_id = is_reference_id,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
-  parse_id_and_title = parse_id_and_title,
   parse_filename = parse_filename,
   write_text = write_text,
   append_text = append_text,
