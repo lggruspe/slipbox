@@ -184,11 +184,16 @@ function hoverHandlers (container) {
 }
 
 function init (query) {
+  const extras = document.createElement('div')
+  extras.classList.add('slipbox-extras')
+  document.body.appendChild(extras)
+
   function resetGraph () {
+    extras.style.display = 'none'
     const id = window.location.hash.slice(1)
+    if (id.length === 0) return
     const elements = []
     const nid = Number(id)
-    let sectionID = nid
     if (Number.isInteger(nid)) {
       const note = query.note(nid)
       if (note != null) {
@@ -196,12 +201,10 @@ function init (query) {
       }
       if (elements.length < 2) return
     } else {
-      sectionID = id
       elements.push(...clusterElements(query, id))
       if (elements.length === 0) return
     }
-
-    const extras = document.getElementById(sectionID).querySelector('div.slipbox-extras')
+    extras.style.display = 'block'
     extras.innerHTML = ''
     const container = extras.appendChild(graphArea())
     createCytoscape(container, elements)

@@ -220,7 +220,6 @@ local function modify()
       if div.attributes.level then
         if div.attributes.level == "1" then
           table.insert(div.classes, "slipbox-note")
-          table.insert(div.content, pandoc.Div({}, {class = "slipbox-extras"}))
         end
         div.attributes.level = nil
       end

@@ -42,9 +42,6 @@ def test_create_bibliography(mock_db):
       Reference text.
     </dd>
   </dl>
-  <div class='slipbox-extras'>
-
-  </div>
 </section>"""
 
 def test_create_tags(mock_db):
@@ -68,9 +65,6 @@ def test_create_tags(mock_db):
       </a>
     </li>
   </ul>
-  <div class='slipbox-extras'>
-
-  </div>
 </section>"""
 
 def test_create_tag_page(mock_db):
@@ -98,9 +92,6 @@ def test_create_tag_page(mock_db):
       </a>
     </li>
   </ul>
-  <div class='slipbox-extras'>
-
-  </div>
 </section>"""
 
 def test_create_reference_page(mock_db):
@@ -125,9 +116,6 @@ def test_create_reference_page(mock_db):
       </a>
     </li>
   </ul>
-  <div class='slipbox-extras'>
-
-  </div>
 </section>"""
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

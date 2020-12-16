@@ -55,7 +55,6 @@ def create_bibliography(conn: Connection) -> str:
     section = Elem("section",
                    Elem("h1", "References"),
                    Elem("dl", *items),
-                   Elem("div", **{"class": "slipbox-extras"}),
                    id="references",
                    title="References",
                    **{"class": "level1"})
@@ -69,7 +68,6 @@ def create_tags(conn: Connection) -> str:
     section = Elem("section",
                    Elem("h1", "Tags"),
                    Elem("ul", *items),
-                   Elem("div", **{"class": "slipbox-extras"}),
                    id="tags",
                    title="Tags",
                    **{"class": "level1"})
@@ -87,7 +85,6 @@ def create_tag_page(conn: Connection, tag: str) -> str:
     section = Elem("section",
                    Elem("h1", Elem("a", tag, href="#tags", title="List of tags")),
                    Elem("ul", *items),
-                   Elem("div", **{"class": "slipbox-extras"}),
                    id=tag,
                    title=tag,
                    **{"class": "level1"})
@@ -118,7 +115,6 @@ def create_reference_page(conn: Connection, reference: str) -> str:
                    Elem("h1", Elem("a", '@' + reference[4:], href="#references")),
                    Elem("p", text),
                    Elem("ul", *items),
-                   Elem("div", **{"class": "slipbox-extras"}),
                    id=reference,
                    title=reference,
                    **{"class": "level1"})
