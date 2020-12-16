@@ -10,12 +10,13 @@ function graphArea () {
 }
 
 function noteElement (note, currentNote = false) {
+  const title = document.getElementById(note.id).querySelector('h1').textContent
   return {
     data: {
       id: note.id,
-      title: note.title,
+      title: title,
       filename: note.filename,
-      label: note.title,
+      label: title,
       color: 'white',
       bgColor: currentNote ? 'black' : 'gray'
     }

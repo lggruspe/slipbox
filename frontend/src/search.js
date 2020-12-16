@@ -20,15 +20,19 @@ function displayResults (results, container) {
   div.textContent = ''
   for (const result of results) {
     const p = document.createElement('p')
+    const heading = result.item.querySelector('h1')
+    if (!heading) continue
+    const title = heading.textContent
+
     const h3 = document.createElement('h3')
-    h3.innerHTML = `<a href="#${result.item.id}">${result.item.title}</a>`
+    h3.innerHTML = `<a href="#${result.item.id}">${title}</a>`
     p.appendChild(h3)
 
     let count = 3
     for (const child of result.item.children) {
       const clone = child.cloneNode(true)
       if (count-- <= 0) break
-      if (clone.tagName === 'H1' && clone.title === result.item.title) {
+      if (clone.tagName === 'H1' && clone.textContent === title) {
         continue
       }
       p.appendChild(clone)
