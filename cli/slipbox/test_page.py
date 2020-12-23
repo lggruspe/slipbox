@@ -78,20 +78,10 @@ def test_create_tag_page(mock_db):
       #test
     </a>
   </h1>
-  <ul>
-    <li>
-      [0] 
-      <a href='#0'>
-        0
-      </a>
-    </li>
-    <li>
-      [1] 
-      <a href='#1'>
-        1
-      </a>
-    </li>
-  </ul>
+  <ol class='slipbox-list'>
+    <li value='0'></li>
+    <li value='1'></li>
+  </ol>
 </section>"""
 
 def test_create_reference_page(mock_db):
@@ -108,14 +98,9 @@ def test_create_reference_page(mock_db):
   <p>
     Reference text.
   </p>
-  <ul>
-    <li>
-      [0] 
-      <a href='#0'>
-        0
-      </a>
-    </li>
-  </ul>
+  <ol class='slipbox-list'>
+    <li value='0'></li>
+  </ol>
 </section>"""
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

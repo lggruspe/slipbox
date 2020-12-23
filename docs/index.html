@@ -428,6 +428,28 @@
     window.addEventListener('hashchange', resetGraph);
   }
 
+  function init$1 () {
+    const lis = document.querySelectorAll('ol.slipbox-list > li[value]');
+    for (let i = 0; i < lis.length; i++) {
+      const li = lis[i];
+      const id = li.value;
+      const section = document.querySelector(`section.slipbox-note[id="${id}"]`);
+      if (!section) {
+        li.remove();
+        continue
+      }
+      const h1 = section.querySelector('h1');
+      if (!h1) {
+        li.remove();
+        continue
+      }
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      a.innerHTML = h1.innerHTML;
+      li.appendChild(a);
+    }
+  }
+
   class Database {
     // Schema
     // {
@@ -619,7 +641,7 @@
     }
   }
 
-  function init$1 () {
+  function init$2 () {
     // Container will contain search results.
     const container = document.querySelector('#search > .search-results');
     const input = document.querySelector('nav input[type="text"]');
@@ -638,6 +660,7 @@
     const title = document.getElementById('title-block-header');
     if (title) { title.remove(); }
     init$1();
+    init$2();
     init(window.query);
   };
   </script>
@@ -818,44 +841,14 @@ convert_to_data_url = False</code></pre>
       #slipbox
     </a>
   </h1>
-  <ul>
-    <li>
-      [0] 
-      <a href='#0'>
-        slipbox
-      </a>
-    </li>
-    <li>
-      [1] 
-      <a href='#1'>
-        Getting started
-      </a>
-    </li>
-    <li>
-      [2] 
-      <a href='#2'>
-        Note format
-      </a>
-    </li>
-    <li>
-      [3] 
-      <a href='#3'>
-        Linking notes
-      </a>
-    </li>
-    <li>
-      [5] 
-      <a href='#5'>
-        Tags
-      </a>
-    </li>
-    <li>
-      [6] 
-      <a href='#6'>
-        Citations
-      </a>
-    </li>
-  </ul>
+  <ol class='slipbox-list'>
+    <li value='0'></li>
+    <li value='1'></li>
+    <li value='2'></li>
+    <li value='3'></li>
+    <li value='5'></li>
+    <li value='6'></li>
+  </ol>
 </section>
 <section id='tags' title='Tags' class='level1'>
   <h1>
@@ -878,14 +871,9 @@ convert_to_data_url = False</code></pre>
   <p>
     Author. 2020. Title.
   </p>
-  <ul>
-    <li>
-      [6] 
-      <a href='#6'>
-        Citations
-      </a>
-    </li>
-  </ul>
+  <ol class='slipbox-list'>
+    <li value='6'></li>
+  </ol>
 </section>
 <section id='references' title='References' class='level1'>
   <h1>

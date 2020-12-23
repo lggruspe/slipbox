@@ -80,11 +80,11 @@ def create_tag_page(conn: Connection, tag: str) -> str:
     """
     items = []
     for nid, title in conn.execute(sql, (tag,)):
-        item = Elem("li", f"[{nid}] ", Elem("a", title, href=f"#{nid}"))
+        item = Elem("li", value=str(nid))
         items.append(item)
     section = Elem("section",
                    Elem("h1", Elem("a", tag, href="#tags", title="List of tags")),
-                   Elem("ul", *items),
+                   Elem("ol", *items, **{"class": "slipbox-list"}),
                    id=tag,
                    title=tag,
                    **{"class": "level1"})
@@ -109,12 +109,12 @@ def create_reference_page(conn: Connection, reference: str) -> str:
     text = ""
     for note, title, _text in conn.execute(sql, (reference,)):
         text = _text
-        item = Elem("li", f"[{note}] ", Elem("a", title, href=f"#{note}"))
+        item = Elem("li", value=str(note))
         items.append(item)
     section = Elem("section",
                    Elem("h1", Elem("a", '@' + reference[4:], href="#references")),
                    Elem("p", text),
-                   Elem("ul", *items),
+                   Elem("ol", *items, **{"class": "slipbox-list"}),
                    id=reference,
                    title=reference,
                    **{"class": "level1"})

@@ -19,6 +19,8 @@ def render(elem: Union[str, Elem], prefix: str = "") -> str:
     attrs = ""
     for key, val in elem.attributes.items():
         attrs += f" {key}={val!r}"
+    if not elem.children:
+        return "<{tag}{attrs}></{tag}>".format(tag=elem.tag, attrs=attrs)
     children = indent("\n".join(render(child) for child in elem.children),
                       prefix + "  ")
     return "<{tag}{attrs}>\n{children}\n</{tag}>".format(
