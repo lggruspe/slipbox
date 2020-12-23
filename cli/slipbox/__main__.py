@@ -34,9 +34,6 @@ if __name__ == "__main__":
     init.add_argument("-d", "--document-options",
                       default=defaults.get("slipbox", "document_options"),
                       help="pandoc options for the output")
-    init.add_argument("--convert-to-data-url", action="store_true",
-                      default=defaults.getboolean("slipbox", "convert_to_data_url"),
-                      help="convert local images links to data URL")
 
     args = parser.parse_args()
 
@@ -45,7 +42,6 @@ if __name__ == "__main__":
     command = args.command
     del args.command
     if command == "init":
-        args.convert_to_data_url = str(args.convert_to_data_url)
         parent = args.directory
         del args.directory
         parent.mkdir(parents=True, exist_ok=True)

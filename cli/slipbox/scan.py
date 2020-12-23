@@ -74,17 +74,13 @@ def process_batch(conn: Connection,
                   config: ConfigParser,
                   basedir: Path) -> None:
     """Process batch of input notes."""
-    convert_to_data_url = "1" \
-        if config.getboolean("slipbox", "convert_to_data_url") \
-        else ""
     with utils.temporary_directory() as tempdir:
         html = tempdir/"temp.html"
         preprocessed_input = tempdir/"input.md"
         concatenate(preprocessed_input, *batch, basedir=basedir)
         cmd = build_command(preprocessed_input, str(html),
                             config.get("slipbox", "content_options"))
-        retcode = utils.run_command(cmd, dict(SLIPBOX_TMPDIR=str(tempdir),
-                                              CONVERT_TO_DATA_URL=convert_to_data_url),
+        retcode = utils.run_command(cmd, dict(SLIPBOX_TMPDIR=str(tempdir)),
                                     cwd=basedir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
