@@ -23,14 +23,12 @@ def generate_active_htmls(conn: Connection) -> Iterable[str]:
 def generate_data(conn: Connection) -> Iterable[str]:
     """Generate slipbox data in javascript."""
     yield "for (const sec of document.querySelectorAll('section.slipbox-note')) {"
-    yield "  window.query.db.add(new Model.Note(Number(sec.id), sec.title, "\
-        "sec.getAttribute('data-filename')))"
+    yield "  window.slipbox.addNote(sec.id)"
     yield "}"
     sql = "SELECT src, dest, tag FROM ValidLinks"
     for src, dest, tag in conn.execute(sql):
         tag = "null" if not tag else repr(tag)
-        yield f"""window.query.db.add(new Model.Link(
-  window.query.note({src}), window.query.note({dest}), {tag}))"""
+        yield f"window.slipbox.addLink({str(src)!r}, {str(dest)!r}, {tag})"
 
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""

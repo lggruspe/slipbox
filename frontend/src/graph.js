@@ -1,99 +1,92 @@
 import cytoscape from 'cytoscape'
 
+class SlipboxCollection {
+  constructor () {
+    this.cy = cytoscape({ headless: true })
+  }
+
+  addNote (id) {
+    const section = document.getElementById(id)
+    const title = section.querySelector('h1').textContent
+    const filename = section.getAttribute('data-filename')
+    this.cy.add({
+      data: {
+        id,
+        title,
+        filename,
+        label: title,
+        bgColor: 'gray'
+      }
+    })
+  }
+
+  addLink (source, target, tag) {
+    const id = `${source}-${target}${tag}`
+    this.cy.add({ data: { id, source, target, tag } })
+  }
+}
+
 function graphArea () {
   const div = document.createElement('div')
   div.innerHTML = `
     <div class="cytoscape-container" style="width: 100%; height: 80vh; padding-top: 1em; border-top: 1px solid black;"></div>
-    <div class="info-container"></div>
+    <div class="info-container" style="bottom: 0; right: 0; padding: 20px; position: fixed; max-width: 30em; z-index: 1;">
+      <header>
+        <h3><a href=""></h3>
+        <p></p>
+      </header>
+    </div>
   `
   return div
 }
 
-function noteElement (note, currentNote = false) {
-  const title = document.getElementById(note.id).querySelector('h1').textContent
-  return {
-    data: {
-      id: note.id,
-      title: title,
-      filename: note.filename,
-      label: title,
-      color: 'white',
-      bgColor: currentNote ? 'black' : 'gray'
+function clusterElements (slipbox, tag) {
+  const edges = slipbox.cy.edges(`[tag="${tag}"]`)
+  const nodes = edges.connectedNodes()
+  return nodes.union(edges.filter(e => e.data('source') !== e.data('target')))
+}
+
+function neighborElements (slipbox, id) {
+  const node = slipbox.cy.getElementById(id)
+
+  const incomingEdges = new Set()
+  const incomers = node.incomers().edges('edge[tag]')
+  while (incomers.length > 0) {
+    const edge = incomers.pop()
+    const tag = edge.data('tag')
+    if (incomingEdges.has(edge)) {
+      continue
     }
+    incomers.push(...edge.source().incomers(`edge[tag="${tag}"]`))
+    incomingEdges.add(edge)
   }
-}
 
-function linkElement (source, target) {
-  return {
-    data: { id: `${source}-${target}`, source, target, arrow: 'triangle', style: 'solid', color: 'black' }
-  }
-}
-
-function dfs (graph, src) {
-  if (!graph[src]) return []
-  const edges = []
-  const done = new Set()
-  const stack = [src]
-  while (stack.length > 0) {
-    const top = stack.pop()
-    if (done.has(top)) continue
-    const children = graph[top] || []
-    for (const child of children) {
-      edges.push([top, child])
-      stack.push(child)
+  const outgoingEdges = new Set()
+  const outgoers = node.outgoers().edges('edge[tag]')
+  while (outgoers.length > 0) {
+    const edge = outgoers.pop()
+    const tag = edge.data('tag')
+    if (outgoingEdges.has(edge)) {
+      continue
     }
-    done.add(top)
+    outgoers.push(...edge.target().outgoers(`edge[tag="${tag}"]`))
+    outgoingEdges.add(edge)
   }
-  return edges
+
+  const edges = slipbox.cy.collection().union(Array.from(incomingEdges)).union(Array.from(outgoingEdges))
+  const nodes = edges.connectedNodes()
+  const neighbors = node.openNeighborhood()
+  const eles = nodes.union(edges).union(neighbors)
+    .filter(e => e.isNode() || e.data('source') !== e.data('target'))
+
+  const clone = eles.getElementById(id).clone()
+  clone.data('bgColor', 'black')
+  return clone.union(eles)
 }
 
-function traverse (query, id) {
-  const edges = []
-  for (const { forward, reverse } of Object.values(query.db.data.clusters)) {
-    edges.push(...dfs(forward, id))
-    edges.push(...dfs(reverse, id).map(([a, b]) => [b, a]))
-  }
-  return Array.from(new Set(edges.filter(([a, b]) => a !== b)))
-}
-
-function * clusterElements (query, tag) {
-  const cluster = query.db.data.clusters[tag] || { forward: [] }
-  for (const [src, dests] of Object.entries(cluster.forward)) {
-    const source = Number(src)
-    yield noteElement(query.note(source))
-    for (const dest of dests) {
-      if (source !== dest) {
-        yield noteElement(query.note(dest))
-        yield linkElement(source, dest)
-      }
-    }
-  }
-}
-
-function * neighborElements (query, note) {
-  yield noteElement(note, true)
-
-  for (const backlink of note.backlinks()) {
-    yield noteElement(backlink.src)
-    yield linkElement(backlink.src.id, note.id)
-  }
-  for (const link of note.links()) {
-    yield noteElement(link.dest)
-    yield linkElement(note.id, link.dest.id)
-  }
-  for (const [src, dest] of traverse(query, note.id)) {
-    yield noteElement(query.note(src))
-    yield noteElement(query.note(dest))
-    yield linkElement(src, dest)
-  }
-}
-
-function createCytoscape (container, elements) {
+function createCytoscape (container) {
   const cy = cytoscape({
-    directed: true,
-    multigraph: true,
     container: container.querySelector('div.cytoscape-container'),
-    elements: elements,
     selectionType: 'additive',
     style: [
       {
@@ -104,7 +97,7 @@ function createCytoscape (container, elements) {
           width: 'label',
           padding: '8px',
           shape: 'round-rectangle',
-          color: 'data(color)',
+          color: 'white',
           'background-color': 'data(bgColor)',
           'text-halign': 'center',
           'text-valign': 'center',
@@ -117,19 +110,21 @@ function createCytoscape (container, elements) {
         style: {
           width: 2,
           'curve-style': 'bezier',
-          'line-color': 'data(color)',
-          'line-style': 'data(style)'
-        }
-      },
-      {
-        selector: 'edge[arrow]',
-        style: {
-          'target-arrow-color': 'data(color)',
-          'target-arrow-shape': 'data(arrow)'
+          'line-color': 'black',
+          'line-style': 'solid',
+          'target-arrow-color': 'black',
+          'target-arrow-shape': 'triangle'
         }
       }
     ]
   })
+  const [show, hide] = hoverHandlers(container)
+  cy.on('select', 'node', show)
+  cy.on('unselect', 'node', hide)
+  return cy
+}
+
+function renderCytoscape (cy) {
   cy.layout({
     name: 'breadthfirst',
     spacingFactor: 1.0,
@@ -140,34 +135,13 @@ function createCytoscape (container, elements) {
   }).run()
   cy.reset()
   cy.center()
-
-  const infoContainer = container.querySelector('div.info-container')
-  const [show, hide] = hoverHandlers(infoContainer)
-  cy.on('select', 'node', show)
-  cy.on('unselect', 'node', hide)
   return cy
 }
 
-function noteInfoDiv () {
-  const div = document.createElement('div')
-  div.style.bottom = 0
-  div.style.right = 0
-  div.style.padding = '20px'
-  div.style.position = 'fixed'
-  div.style.maxWidth = '30em'
-  div.style.zIndex = 1
-  return div
-}
-
 function hoverHandlers (container) {
-  const header = document.createElement('header')
-  header.innerHTML = '<h3><a href=""></a></h3><p></p>'
-  const a = header.querySelector('a')
-  const p = header.querySelector('p')
-
-  const infoDiv = noteInfoDiv()
-  infoDiv.appendChild(header)
-  container.appendChild(infoDiv)
+  const infoDiv = container.querySelector('.info-container')
+  const a = infoDiv.querySelector('header a')
+  const p = infoDiv.querySelector('header p')
 
   const show = event => {
     const id = event.target.data('id')
@@ -184,35 +158,36 @@ function hoverHandlers (container) {
   return [show, hide]
 }
 
-function init (query) {
+function init (slipbox) {
   const extras = document.createElement('div')
-  extras.classList.add('slipbox-extras')
   document.body.appendChild(extras)
 
   function resetGraph () {
     extras.style.display = 'none'
     const id = window.location.hash.slice(1)
-    if (id.length === 0) return
-    const elements = []
-    const nid = Number(id)
-    if (Number.isInteger(nid)) {
-      const note = query.note(nid)
-      if (note != null) {
-        elements.push(...neighborElements(query, note))
-      }
-      if (elements.length < 2) return
+    let elements = []
+    if (!id) {
+      elements = slipbox.cy.elements().filter(e => e.isNode() || e.data('source') !== e.data('target'))
     } else {
-      elements.push(...clusterElements(query, id))
-      if (elements.length === 0) return
+      const nid = Number(id)
+      if (Number.isInteger(nid)) {
+        elements = neighborElements(slipbox, id)
+        if (elements.length < 2) return
+      } else {
+        elements = clusterElements(slipbox, id)
+      }
     }
+    if (elements.length === 0) return
     extras.style.display = 'block'
     extras.innerHTML = ''
     const container = extras.appendChild(graphArea())
-    createCytoscape(container, elements)
+    const cy = createCytoscape(container)
+    cy.add(elements)
+    renderCytoscape(cy)
   }
 
   resetGraph()
   window.addEventListener('hashchange', resetGraph)
 }
 
-export { init }
+export { init, SlipboxCollection }
