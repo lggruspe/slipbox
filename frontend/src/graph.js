@@ -124,15 +124,24 @@ function createCytoscape (container) {
   return cy
 }
 
-function renderCytoscape (cy) {
-  cy.layout({
-    name: 'breadthfirst',
-    spacingFactor: 1.0,
-    fit: true,
-    directed: true,
-    avoidOverlap: true,
-    nodeDimensionsIncludeLabels: true
-  }).run()
+function renderCytoscape (cy, layout = 'breadthfirst') {
+  if (layout === 'cose') {
+    cy.layout({
+      name: 'cose',
+      animate: false,
+      nodeDimensionsIncludeLabels: true,
+      fit: true
+    }).run()
+  } else {
+    cy.layout({
+      name: 'breadthfirst',
+      spacingFactor: 1.0,
+      fit: true,
+      directed: true,
+      avoidOverlap: true,
+      nodeDimensionsIncludeLabels: true
+    }).run()
+  }
   cy.reset()
   cy.center()
   return cy
@@ -166,8 +175,12 @@ function init (slipbox) {
     extras.style.display = 'none'
     const id = window.location.hash.slice(1)
     let elements = []
+    let layout = 'breadthfirst'
     if (!id) {
       elements = slipbox.cy.elements().filter(e => e.isNode() || e.data('source') !== e.data('target'))
+      if (elements.length > 30) {
+        layout = 'cose'
+      }
     } else {
       const nid = Number(id)
       if (Number.isInteger(nid)) {
@@ -183,7 +196,7 @@ function init (slipbox) {
     const container = extras.appendChild(graphArea())
     const cy = createCytoscape(container)
     cy.add(elements)
-    renderCytoscape(cy)
+    renderCytoscape(cy, layout)
   }
 
   resetGraph()
