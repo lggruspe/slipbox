@@ -128,7 +128,6 @@ function renderCytoscape (cy, layout = 'breadthfirst') {
   if (layout === 'cose') {
     cy.layout({
       name: 'cose',
-      animate: false,
       nodeDimensionsIncludeLabels: true,
       fit: true
     }).run()
@@ -142,8 +141,6 @@ function renderCytoscape (cy, layout = 'breadthfirst') {
       nodeDimensionsIncludeLabels: true
     }).run()
   }
-  cy.reset()
-  cy.center()
   return cy
 }
 

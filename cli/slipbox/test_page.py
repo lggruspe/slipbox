@@ -58,11 +58,13 @@ def test_create_tags(mock_db):
       <a href='###test'>
         ##test
       </a>
+       (1)
     </li>
     <li>
       <a href='##test'>
         #test
       </a>
+       (2)
     </li>
   </ul>
 </section>"""

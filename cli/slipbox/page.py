@@ -60,9 +60,8 @@ def create_bibliography(conn: Connection) -> str:
 
 def create_tags(conn: Connection) -> str:
     """Create HTML section that lists all tags."""
-    rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
-    tags = (row[0] for row in rows)
-    items = (Elem("li", Elem("a", tag, href=f"#{tag}")) for tag in tags)
+    rows = conn.execute("SELECT tag, COUNT(*) FROM Tags GROUP BY tag ORDER BY tag")
+    items = (Elem("li", Elem("a", tag, href=f"#{tag}"), f" ({count})") for tag, count in rows)
     section = Elem("section",
                    Elem("h1", "Tags"),
                    Elem("ul", *items),
