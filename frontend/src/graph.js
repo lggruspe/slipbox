@@ -27,7 +27,7 @@ class SlipboxCollection {
 
   colorEntrypoints () {
     // Call this after inserting all notes and links.
-    this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#222288')
+    this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#4444aa')
   }
 }
 
@@ -37,7 +37,7 @@ function graphArea () {
     <div class="cytoscape-container" style="width: 100%; height: 80vh; padding-top: 1em; border-top: 1px solid black;"></div>
     <div class="info-container" style="bottom: 0; right: 0; padding: 20px; position: fixed; max-width: 30em; z-index: 1;">
       <header>
-        <h3><a href=""></h3>
+        <h3><a href=""></a></h3>
         <p></p>
       </header>
     </div>

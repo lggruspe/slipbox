@@ -4,15 +4,14 @@
 
 - [Getting started](#1)
 - [Note format](#2)
-- [Connecting notes](#3)
+- [Linking notes](#3)
+- [Graph](#8)
 
 GitHub: <https://github.com/lggruspe/slipbox>
 
 Slipbox: <https://lggruspe.github.io/slipbox>
 
 Source: <https://github.com/lggruspe/slipbox/blob/master/docs/index.md>
-
-#slipbox
 
 
 
@@ -24,8 +23,7 @@ Make sure you have `pandoc` and `python` installed.
 # Install slipbox.
 pip install slipbox
 
-# Install genanki to generate Anki flashcards from your notes.
-# This step is optional.
+# (Optional) Install genanki to generate Anki flashcards from your notes.
 pip install genanki
 
 # Create slipbox directory.
@@ -40,9 +38,9 @@ The initialized directory contains a `.slipbox` directory.
 Inside it you'll find a [configuration file](#7), an sqlite3 database
 and a patterns file.
 
-### See also
+---
 
-#slipbox
+#writing-notes
 
 - [Note format](#2)
 - [Citations](#6)
@@ -54,12 +52,11 @@ and a patterns file.
 Slipbox notes begin with a level 1 header.
 The header text must contain an ID (number) and a title.
 
-You can store each note in a separate file,
-or you can put multiple notes in one file.
+You can put any number of notes in one file.
 
-### See also
+---
 
-#slipbox
+#writing-notes
 
 - [Linking notes](#3)
 
@@ -67,23 +64,27 @@ or you can put multiple notes in one file.
 
 # 3 Linking notes
 
-To link to a note in the slipbox, use the note's ID as the link target.
+Link to a note in your slipbox using the note's ID as the link target.
 
 [Example](#4).
 
-The links can be seen in the interactive graph below.
+---
 
-### See also
+#writing-notes
 
-#slipbox
+- [Linking to external files/images](#4)
+
+#connecting-notes
 
 - [Tags](#5)
+- [Contextual tags](#9)
+- [Graph](#8)
 
 
 
 # 4 Linking to external files/images
 
-Links must either be absolute or relative to the output HTML.
+Links to external files/images must be relative to the output HTML.
 
 ![Example](images/example.png)
 
@@ -95,34 +96,31 @@ Links must either be absolute or relative to the output HTML.
 You can click on tags to get a list of other notes that have the same
 tag.
 
-The [`#tags`](#tags) page contains a list of all tags in use.
-
 
 
 # 6 Citations
+#slipbox
 
-Clicking on a citation will open a page with a list of all notes that
-cite the same reference.
+Clicking on a citation will open a page with all notes that cite the
+same reference.
 
 [Example: @cite2020].
 
-To use this feature, you need to specify a bibliography file in the
+To enable citations, you need to specify a bibliography file in the
 [config file](#7).
 
-The [`#references`](#references) page contains a list of all cited references.
 
 
+# 7 Configuration
 
-# 7 `.slipbox/config.cfg`
-
-The config file is `.slipbox/config.cfg` inside the slipbox directory.
-Here's a sample config file.
+Here's a sample config file with `citeproc`.
 
 ```
+# .slipbox/config.cfg
+
 [slipbox]
 content_options = --mathjax --bibliography my-bib.bib --citeproc
-document_options = --mathjax --o output.html -c my-css.css
-convert_to_data_url = False
+document_options = --mathjax --o output.html -s
 ```
 
 `content_options`
@@ -130,3 +128,35 @@ convert_to_data_url = False
 
 `document_options`
 : Used when Pandoc compiles every section into one file.
+
+
+
+# 8 Graph
+
+`slipbox` uses [Cytoscape.js](https://js.cytoscape.org/) for visualizing
+notes.
+The notes are put in a hierarchical layout.
+When the graph gets too big, it switches to the
+[cose layout](https://js.cytoscape.org/#layouts/cose).
+
+Entrypoints are shown in blue.
+
+The slipbox Cytoscape object can be accessed from the browser console
+as `window.slipbox.cy`.
+
+---
+
+#connecting-notes
+
+- [Contextual tags](#9)
+
+
+
+# 9 Contextual tags
+
+[Tag pages](#5) show a cluster of notes at the bottom of the page.
+The cluster contains notes as well as [links](#3) that belong to the tag.
+
+Links are added to clusters using contextual tags.
+When you link to a note, the link automatically gets tagged with the
+last tag that appears in the note before the link.

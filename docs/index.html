@@ -240,7 +240,7 @@
 
     colorEntrypoints () {
       // Call this after inserting all notes and links.
-      this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#222288');
+      this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#4444aa');
     }
   }
 
@@ -250,7 +250,7 @@
       <div class="cytoscape-container" style="width: 100%; height: 80vh; padding-top: 1em; border-top: 1px solid black;"></div>
       <div class="info-container" style="bottom: 0; right: 0; padding: 20px; position: fixed; max-width: 30em; z-index: 1;">
         <header>
-          <h3><a href=""></h3>
+          <h3><a href=""></a></h3>
           <p></p>
         </header>
       </div>
@@ -510,20 +510,29 @@
     window.slipbox.addNote(sec.id)
   }
   window.slipbox.addLink('1', '7', null)
-  window.slipbox.addLink('1', '1', '#slipbox')
-  window.slipbox.addLink('1', '2', '#slipbox')
-  window.slipbox.addLink('1', '6', '#slipbox')
-  window.slipbox.addLink('2', '2', '#slipbox')
-  window.slipbox.addLink('2', '3', '#slipbox')
+  window.slipbox.addLink('1', '1', '#writing-notes')
+  window.slipbox.addLink('1', '2', '#writing-notes')
+  window.slipbox.addLink('1', '6', '#writing-notes')
+  window.slipbox.addLink('2', '2', '#writing-notes')
+  window.slipbox.addLink('2', '3', '#writing-notes')
   window.slipbox.addLink('3', '4', null)
-  window.slipbox.addLink('3', '3', '#slipbox')
-  window.slipbox.addLink('3', '5', '#slipbox')
+  window.slipbox.addLink('3', '3', '#writing-notes')
+  window.slipbox.addLink('3', '4', '#writing-notes')
+  window.slipbox.addLink('3', '3', '#connecting-notes')
+  window.slipbox.addLink('3', '5', '#connecting-notes')
+  window.slipbox.addLink('3', '9', '#connecting-notes')
+  window.slipbox.addLink('3', '8', '#connecting-notes')
   window.slipbox.addLink('5', '5', '#slipbox')
-  window.slipbox.addLink('6', '7', null)
+  window.slipbox.addLink('6', '6', '#slipbox')
+  window.slipbox.addLink('6', '7', '#slipbox')
+  window.slipbox.addLink('8', '8', '#connecting-notes')
+  window.slipbox.addLink('8', '9', '#connecting-notes')
   window.slipbox.addLink('0', '1', null)
   window.slipbox.addLink('0', '2', null)
   window.slipbox.addLink('0', '3', null)
-  window.slipbox.addLink('0', '0', '#slipbox')
+  window.slipbox.addLink('0', '8', null)
+  window.slipbox.addLink('9', '5', null)
+  window.slipbox.addLink('9', '3', null)
   window.initSlipbox()
   })
   </script>
@@ -556,6 +565,7 @@
 </div>
 <nav>
   <ul>
+    <li><a href="#">Home</a></li>
     <li><a href="#tags">Tags</a></li>
     <li><a href="#references">References</a></li>
     <li><input type="text" placeholder="Search notes"></li>
@@ -567,12 +577,12 @@
 <ul>
 <li><a href="#1">Getting started</a></li>
 <li><a href="#2">Note format</a></li>
-<li><a href="#3">Connecting notes</a></li>
+<li><a href="#3">Linking notes</a></li>
+<li><a href="#8">Graph</a></li>
 </ul>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
-<p><a href="##slipbox">#slipbox</a></p>
 </section>
 <section id="1" class="level1 slipbox-note" data-filename="index.md" title="Getting started">
 <h1>Getting started</h1>
@@ -580,54 +590,52 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install genanki to generate Anki flashcards from your notes.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This step is optional.</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) Install genanki to generate Anki flashcards from your notes.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a <a href="#7">configuration file</a>, an sqlite3 database and a patterns file.</p>
-<section id="see-also" class="level3">
-<h3>See also</h3>
-<p><a href="##slipbox">#slipbox</a></p>
+<hr />
+<p><a href="##writing-notes">#writing-notes</a></p>
 <ul>
 <li><a href="#2">Note format</a></li>
 <li><a href="#6">Citations</a></li>
 </ul>
 </section>
-</section>
 <section id="2" class="level1 slipbox-note" data-filename="index.md" title="Note format">
 <h1>Note format</h1>
 <p>Slipbox notes begin with a level 1 header. The header text must contain an ID (number) and a title.</p>
-<p>You can store each note in a separate file, or you can put multiple notes in one file.</p>
-<section id="see-also-1" class="level3">
-<h3>See also</h3>
-<p><a href="##slipbox">#slipbox</a></p>
+<p>You can put any number of notes in one file.</p>
+<hr />
+<p><a href="##writing-notes">#writing-notes</a></p>
 <ul>
 <li><a href="#3">Linking notes</a></li>
 </ul>
 </section>
-</section>
 <section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes">
 <h1>Linking notes</h1>
-<p>To link to a note in the slipbox, use the note’s ID as the link target.</p>
+<p>Link to a note in your slipbox using the note’s ID as the link target.</p>
 <p><a href="#4">Example</a>.</p>
-<p>The links can be seen in the interactive graph below.</p>
-<section id="see-also-2" class="level3">
-<h3>See also</h3>
-<p><a href="##slipbox">#slipbox</a></p>
+<hr />
+<p><a href="##writing-notes">#writing-notes</a></p>
+<ul>
+<li><a href="#4">Linking to external files/images</a></li>
+</ul>
+<p><a href="##connecting-notes">#connecting-notes</a></p>
 <ul>
 <li><a href="#5">Tags</a></li>
+<li><a href="#9">Contextual tags</a></li>
+<li><a href="#8">Graph</a></li>
 </ul>
-</section>
 </section>
 <section id="4" class="level1 slipbox-note" data-filename="index.md" title="Linking to external files/images">
 <h1>Linking to external files/images</h1>
-<p>Links must either be absolute or relative to the output HTML.</p>
+<p>Links to external files/images must be relative to the output HTML.</p>
 <figure>
 <img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
 </figure>
@@ -635,22 +643,22 @@
 <section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags">
 <h1>Tags</h1>
 <p><a href="##slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
-<p>The <a href="#tags"><code>#tags</code></a> page contains a list of all tags in use.</p>
 </section>
 <section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations">
 <h1>Citations</h1>
-<p>Clicking on a citation will open a page with a list of all notes that cite the same reference.</p>
+<p><a href="##slipbox">#slipbox</a></p>
+<p>Clicking on a citation will open a page with all notes that cite the same reference.</p>
 <p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
-<p>To use this feature, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
-<p>The <a href="#references"><code>#references</code></a> page contains a list of all cited references.</p>
+<p>To enable citations, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
 </section>
-<section id="7" class="level1 slipbox-note" data-filename="index.md" title=".slipbox/config.cfg">
-<h1><code>.slipbox/config.cfg</code></h1>
-<p>The config file is <code>.slipbox/config.cfg</code> inside the slipbox directory. Here’s a sample config file.</p>
-<pre><code>[slipbox]
+<section id="7" class="level1 slipbox-note" data-filename="index.md" title="Configuration">
+<h1>Configuration</h1>
+<p>Here’s a sample config file with <code>citeproc</code>.</p>
+<pre><code># .slipbox/config.cfg
+
+[slipbox]
 content_options = --mathjax --bibliography my-bib.bib --citeproc
-document_options = --mathjax --o output.html -c my-css.css
-convert_to_data_url = False</code></pre>
+document_options = --mathjax --o output.html -s</code></pre>
 <dl>
 <dt><code>content_options</code></dt>
 <dd>Used when Pandoc converts new notes into HTML sections.
@@ -660,6 +668,35 @@ convert_to_data_url = False</code></pre>
 </dd>
 </dl>
 </section>
+<section id="8" class="level1 slipbox-note" data-filename="index.md" title="Graph">
+<h1>Graph</h1>
+<p><code>slipbox</code> uses <a href="https://js.cytoscape.org/">Cytoscape.js</a> for visualizing notes. The notes are put in a hierarchical layout. When the graph gets too big, it switches to the <a href="https://js.cytoscape.org/#layouts/cose">cose layout</a>.</p>
+<p>Entrypoints are shown in blue.</p>
+<p>The slipbox Cytoscape object can be accessed from the browser console as <code>window.slipbox.cy</code>.</p>
+<hr />
+<p><a href="##connecting-notes">#connecting-notes</a></p>
+<ul>
+<li><a href="#9">Contextual tags</a></li>
+</ul>
+</section>
+<section id="9" class="level1 slipbox-note" data-filename="index.md" title="Contextual tags">
+<h1>Contextual tags</h1>
+<p><a href="#5">Tag pages</a> show a cluster of notes at the bottom of the page. The cluster contains notes as well as <a href="#3">links</a> that belong to the tag.</p>
+<p>Links are added to clusters using contextual tags. When you link to a note, the link automatically gets tagged with the last tag that appears in the note before the link.</p>
+</section>
+<section id='#connecting-notes' title='#connecting-notes' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #connecting-notes
+    </a>
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='3'></li>
+    <li value='5'></li>
+    <li value='8'></li>
+    <li value='9'></li>
+  </ol>
+</section>
 <section id='#slipbox' title='#slipbox' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
@@ -667,11 +704,22 @@ convert_to_data_url = False</code></pre>
     </a>
   </h1>
   <ol class='slipbox-list'>
-    <li value='0'></li>
+    <li value='5'></li>
+    <li value='6'></li>
+    <li value='7'></li>
+  </ol>
+</section>
+<section id='#writing-notes' title='#writing-notes' class='level1'>
+  <h1>
+    <a href='#tags' title='List of tags'>
+      #writing-notes
+    </a>
+  </h1>
+  <ol class='slipbox-list'>
     <li value='1'></li>
     <li value='2'></li>
     <li value='3'></li>
-    <li value='5'></li>
+    <li value='4'></li>
     <li value='6'></li>
   </ol>
 </section>
@@ -681,10 +729,22 @@ convert_to_data_url = False</code></pre>
   </h1>
   <ul>
     <li>
+      <a href='##connecting-notes'>
+        #connecting-notes
+      </a>
+       (4)
+    </li>
+    <li>
       <a href='##slipbox'>
         #slipbox
       </a>
-       (6)
+       (3)
+    </li>
+    <li>
+      <a href='##writing-notes'>
+        #writing-notes
+      </a>
+       (5)
     </li>
   </ul>
 </section>
