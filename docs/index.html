@@ -237,6 +237,11 @@
       const id = `${source}-${target}${tag}`;
       this.cy.add({ data: { id, source, target, tag } });
     }
+
+    colorEntrypoints () {
+      // Call this after inserting all notes and links.
+      this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#222288');
+    }
   }
 
   function graphArea () {
@@ -378,6 +383,7 @@
   }
 
   function init (slipbox) {
+    slipbox.colorEntrypoints();
     const extras = document.createElement('div');
     document.body.appendChild(extras);
 

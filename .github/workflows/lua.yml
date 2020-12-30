@@ -13,8 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: leafo/gh-actions-lua@v5
-    - uses: leafo/gh-actions-luarocks@v2
+    - uses: leafo/gh-actions-lua@v8.0.0
+    - uses: leafo/gh-actions-luarocks@v4.0.0
     - name: Set up lua
       run: |
         luarocks install busted

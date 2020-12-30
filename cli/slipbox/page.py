@@ -73,10 +73,10 @@ def create_tags(conn: Connection) -> str:
 def create_tag_page(conn: Connection, tag: str) -> str:
     """Create HTML section that lists all notes with the tag."""
     sql = """
-        SELECT id, title FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
+        SELECT id FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
     """
     items = []
-    for nid, title in conn.execute(sql, (tag,)):
+    for nid, in conn.execute(sql, (tag,)):
         item = Elem("li", value=str(nid))
         items.append(item)
     section = Elem("section",
@@ -96,7 +96,7 @@ def create_tag_pages(conn: Connection) -> str:
 def create_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""
     sql = """
-        SELECT note, title, text FROM Citations
+        SELECT note, text FROM Citations
             JOIN Notes ON Citations.note = Notes.id
                 JOIN Bibliography ON Bibliography.key = Citations.reference
                     WHERE reference = ?
@@ -104,7 +104,7 @@ def create_reference_page(conn: Connection, reference: str) -> str:
     """
     items = []
     text = ""
-    for note, title, _text in conn.execute(sql, (reference,)):
+    for note, _text in conn.execute(sql, (reference,)):
         text = _text
         item = Elem("li", value=str(note))
         items.append(item)
@@ -138,10 +138,13 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-        cmd = "{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search} --section-divs {opts} -H {style}".format(
+        cmd = """{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search}
+                --section-divs {opts} -H {style}
+            """.format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
             html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
-            title="--metadata title=Slipbox", style=shlex.quote(str(Path(__file__).parent/"data"/"style.html")),
+            title="--metadata title=Slipbox",
+            style=shlex.quote(str(Path(__file__).parent/"data"/"style.html")),
             nav=shlex.quote(str(Path(__file__).parent/"data"/"nav.html")),
             search=shlex.quote(str(Path(__file__).parent/"data"/"search.html")))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)
