@@ -347,6 +347,7 @@
       cy.layout({
         name: 'cose',
         nodeDimensionsIncludeLabels: true,
+        numIter: 300,
         fit: true
       }).run();
     } else {
@@ -441,56 +442,58 @@
     }
   }
 
-  function createFuse () {
-    const options = {
-      includeMatches: true,
-      ignoreLocation: true,
-      keys: ['textContent'],
-      threshold: 0.45
-    };
-    const nodes = document.body.querySelectorAll('section.level1');
-    const sections = Array.prototype.filter.call(nodes, function (node) {
-      return Number.isInteger(Number(node.id))
-    });
-    return new Fuse(sections, options)
+  function init$2 (slipbox) {
+    const random = () => '#' + Math.floor(Math.random() * slipbox.cy.nodes().length);
+    const a = document.querySelector('nav a[href="#random"]');
+    a.addEventListener('click', () => { a.href = random(); });
   }
 
-  function displayResults (results, container) {
-    // Display results in container.
-    const div = container;
-    div.textContent = '';
-    for (const result of results) {
-      const p = document.createElement('p');
-      const heading = result.item.querySelector('h1');
-      if (!heading) continue
-      const title = heading.textContent;
+  class Search {
+    constructor (sections, options = null) {
+      this.fuse = new Fuse(sections, options || {
+        includeMatches: true,
+        ignoreLocation: true,
+        keys: ['textContent'],
+        threshold: 0.45
+      });
+    }
 
-      const h3 = document.createElement('h3');
-      h3.innerHTML = `<a href="#${result.item.id}">${title}</a>`;
-      p.appendChild(h3);
+    render (container) {
+      container.input.addEventListener('change', () => {
+        window.location.hash = '#search';
+        const results = this.fuse.search(container.input.value);
+        container.results.textContent = '';
+        for (const result of results) {
+          const heading = result.item.querySelector('h1');
+          if (!heading) continue
+          const title = heading.textContent;
 
-      let count = 3;
-      for (const child of result.item.children) {
-        const clone = child.cloneNode(true);
-        if (count-- <= 0) break
-        if (clone.tagName === 'H1' && clone.textContent === title) {
-          continue
+          const h3 = document.createElement('h3');
+          h3.innerHTML = `<a href="#${result.item.id}">${title}</a>`;
+          const p = document.createElement('p');
+          p.appendChild(h3);
+
+          let count = 3;
+          for (const child of result.item.children) {
+            const clone = child.cloneNode(true);
+            if (count-- <= 0) break
+            if (clone.tagName === 'H1' && clone.textContent === title) {
+              continue
+            }
+            p.appendChild(clone);
+          }
+          container.results.appendChild(p);
+          container.results.appendChild(document.createElement('hr'));
         }
-        p.appendChild(clone);
-      }
-      div.appendChild(p);
-      div.appendChild(document.createElement('hr'));
+      });
     }
   }
 
-  function init$2 () {
-    // Container will contain search results.
-    const container = document.querySelector('#search > .search-results');
-    const input = document.querySelector('nav input[type="text"]');
-    input.addEventListener('change', function () {
-      window.location.hash = '#search';
-      const results = createFuse().search(input.value);
-      displayResults(results, container);
+  function init$3 () {
+    const sections = Array.from(document.getElementsByClassName('slipbox-note'));
+    new Search(sections).render({
+      results: document.querySelector('#search > .search-results'),
+      input: document.querySelector('nav input[type="text"]')
     });
   }
 
@@ -500,7 +503,8 @@
     const title = document.getElementById('title-block-header');
     if (title) { title.remove(); }
     init$1();
-    init$2();
+    init$2(window.slipbox);
+    init$3();
     init(window.slipbox);
   };
   </script>
@@ -568,6 +572,7 @@
     <li><a href="#">Home</a></li>
     <li><a href="#tags">Tags</a></li>
     <li><a href="#references">References</a></li>
+    <li><a href="#random">Random</a></li>
     <li><input type="text" placeholder="Search notes"></li>
   </ul>
 </nav>

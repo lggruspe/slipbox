@@ -134,6 +134,7 @@ function renderCytoscape (cy, layout = 'breadthfirst') {
     cy.layout({
       name: 'cose',
       nodeDimensionsIncludeLabels: true,
+      numIter: 300,
       fit: true
     }).run()
   } else {
