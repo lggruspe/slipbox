@@ -12,11 +12,12 @@ bundle:
 	cd frontend; npm run bundle
 	mkdir -p cli/slipbox/data
 	cp frontend/dist/frontend.js cli/slipbox/data
+	cp -r filters cli/slipbox
 
 .PHONY:	check
 check: bundle
-	cd cli; luacheck slipbox/filters/*.lua --std max+busted
-	cd cli/slipbox; busted . -p '.*.test.lua'
+	luacheck filters/*.lua --std max+busted
+	busted . -p '.*.test.lua'
 	cd frontend; npx eslint test --global describe --global it --global beforeEach --rule "no-unused-vars: 0"
 	cd frontend; npm run lint
 	cd frontend; npm test
