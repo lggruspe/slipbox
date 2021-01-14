@@ -25,7 +25,7 @@ def generate_data(conn: Connection) -> Iterable[str]:
     yield "for (const sec of document.querySelectorAll('section.slipbox-note')) {"
     yield "  window.slipbox.addNote(sec.id)"
     yield "}"
-    sql = "SELECT src, dest, tag FROM ValidLinks"
+    sql = "SELECT src, dest, tag FROM ValidLinks ORDER BY src, dest, tag"
     for src, dest, tag in conn.execute(sql):
         tag = "null" if not tag else repr(tag)
         yield f"window.slipbox.addLink({str(src)!r}, {str(dest)!r}, {tag})"

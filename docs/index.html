@@ -145,6 +145,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -443,7 +444,8 @@
   }
 
   function init$2 (slipbox) {
-    const random = () => '#' + Math.floor(Math.random() * slipbox.cy.nodes().length);
+    const ids = slipbox.cy.nodes().map(e => e.data('id'));
+    const random = () => '#' + ids[Math.floor(Math.random() * ids.length)];
     const a = document.querySelector('nav a[href="#random"]');
     a.addEventListener('click', () => { a.href = random(); });
   }
@@ -513,30 +515,30 @@
   for (const sec of document.querySelectorAll('section.slipbox-note')) {
     window.slipbox.addNote(sec.id)
   }
-  window.slipbox.addLink('1', '7', null)
+  window.slipbox.addLink('0', '1', null)
+  window.slipbox.addLink('0', '2', null)
+  window.slipbox.addLink('0', '3', null)
+  window.slipbox.addLink('0', '8', null)
   window.slipbox.addLink('1', '1', '#writing-notes')
   window.slipbox.addLink('1', '2', '#writing-notes')
   window.slipbox.addLink('1', '6', '#writing-notes')
+  window.slipbox.addLink('1', '7', null)
   window.slipbox.addLink('2', '2', '#writing-notes')
   window.slipbox.addLink('2', '3', '#writing-notes')
-  window.slipbox.addLink('3', '4', null)
-  window.slipbox.addLink('3', '3', '#writing-notes')
-  window.slipbox.addLink('3', '4', '#writing-notes')
   window.slipbox.addLink('3', '3', '#connecting-notes')
+  window.slipbox.addLink('3', '3', '#writing-notes')
+  window.slipbox.addLink('3', '4', null)
+  window.slipbox.addLink('3', '4', '#writing-notes')
   window.slipbox.addLink('3', '5', '#connecting-notes')
-  window.slipbox.addLink('3', '9', '#connecting-notes')
   window.slipbox.addLink('3', '8', '#connecting-notes')
+  window.slipbox.addLink('3', '9', '#connecting-notes')
   window.slipbox.addLink('5', '5', '#slipbox')
   window.slipbox.addLink('6', '6', '#slipbox')
   window.slipbox.addLink('6', '7', '#slipbox')
   window.slipbox.addLink('8', '8', '#connecting-notes')
   window.slipbox.addLink('8', '9', '#connecting-notes')
-  window.slipbox.addLink('0', '1', null)
-  window.slipbox.addLink('0', '2', null)
-  window.slipbox.addLink('0', '3', null)
-  window.slipbox.addLink('0', '8', null)
-  window.slipbox.addLink('9', '5', null)
   window.slipbox.addLink('9', '3', null)
+  window.slipbox.addLink('9', '5', null)
   window.initSlipbox()
   })
   </script>
@@ -599,11 +601,11 @@
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox init my-slipbox</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> slipbox init my-slipbox</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> -m slipbox build</span></code></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> slipbox build</span></code></pre></div>
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a <a href="#7">configuration file</a>, an sqlite3 database and a patterns file.</p>
 <hr />
 <p><a href="##writing-notes">#writing-notes</a></p>
