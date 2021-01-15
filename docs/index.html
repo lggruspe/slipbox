@@ -387,7 +387,7 @@
   function init (slipbox) {
     slipbox.colorEntrypoints();
     const extras = document.createElement('div');
-    document.body.appendChild(extras);
+    document.querySelector('.slipbox-bottom').appendChild(extras);
 
     function resetGraph () {
       extras.style.display = 'none';
@@ -784,8 +784,8 @@ document_options = --mathjax --o output.html -s</code></pre>
   </dl>
 </section>
 <section id="search" title="Search" class="level1">
-  <div class="search-results">
-  </div>
+  <div class="search-results"></div>
 </section>
+<div class="slipbox-bottom"></div>
 </body>
 </html>

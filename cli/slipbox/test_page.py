@@ -1,6 +1,8 @@
 # type: ignore
 """Test page.py."""
 
+from os.path import join
+
 import pytest
 from . import page
 from .utils import check_requirements
@@ -21,6 +23,20 @@ SQL = """
     INSERT INTO Citations (note, reference) VALUES
         (0, 'ref-test');
 """
+
+def test_data_path():
+    """Check if path is constructed correctly."""
+    path = page.data_path("frontend.js")
+    assert join("data", "frontend.js") in str(path)
+
+def test_data_shell_path():
+    """Check if path is constructed and escaped correctly."""
+    path = page.data_shell_path("frontend.js")
+    assert join("data", "frontend.js") in str(path)
+
+    path = page.data_shell_path("front end.js")
+    assert path[0] == "'"
+    assert join("data", "front end.js") + "'" in path
 
 def test_create_bibliography(mock_db):
     """Check create_bibliography output."""

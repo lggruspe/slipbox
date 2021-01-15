@@ -173,7 +173,7 @@ function hoverHandlers (container) {
 function init (slipbox) {
   slipbox.colorEntrypoints()
   const extras = document.createElement('div')
-  document.body.appendChild(extras)
+  document.querySelector('.slipbox-bottom').appendChild(extras)
 
   function resetGraph () {
     extras.style.display = 'none'

@@ -15,6 +15,14 @@ $\,$
 ```
 :::"""
 
+def data_path(filename: str) -> Path:
+    """Return path in data directory."""
+    return Path(__file__).parent/"data"/filename
+
+def data_shell_path(filename: str) -> str:
+    """Return shell-escaped filename in data directory."""
+    return shlex.quote(str(data_path(filename)))
+
 def generate_active_htmls(conn: Connection) -> Iterable[str]:
     """Get HTML stored in the database for active sections."""
     sql = "SELECT html FROM Notes WHERE html IS NOT NULL ORDER BY id ASC"
@@ -33,8 +41,7 @@ def generate_data(conn: Connection) -> Iterable[str]:
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""
     yield '<script type="module">'
-    bundle = Path(__file__).parent/"data"/"frontend.js"
-    yield bundle.read_text().strip()
+    yield data_path("frontend.js").read_text().strip()
     yield '</script>'
     yield '<script>'
     yield "window.addEventListener('DOMContentLoaded', () => {"
@@ -139,12 +146,13 @@ def generate_complete_html(conn: Connection, options: str, basedir: Path) -> Non
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
         cmd = """{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search}
-                --section-divs {opts} -H {style}
+                -A{bottom} --section-divs {opts} -H {style}
             """.format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)), script=shlex.quote(str(script)),
             html=shlex.quote(str(html)), opts=options, extra=shlex.quote(str(extra)),
             title="--metadata title=Slipbox",
-            style=shlex.quote(str(Path(__file__).parent/"data"/"style.html")),
-            nav=shlex.quote(str(Path(__file__).parent/"data"/"nav.html")),
-            search=shlex.quote(str(Path(__file__).parent/"data"/"search.html")))
+            style=data_shell_path("style.html"),
+            nav=data_shell_path("nav.html"),
+            bottom=data_shell_path("bottom.html"),
+            search=data_shell_path("search.html"))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)
