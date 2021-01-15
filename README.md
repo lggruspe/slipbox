@@ -8,6 +8,7 @@ Features
 
 - Interactive graph of notes and links
 - Text search
+- Spaced repetition
 - Anki generator
 
 Requirements
