@@ -214,7 +214,7 @@
   import cytoscape from 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.17.1/cytoscape.esm.min.js';
   import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.3/dist/fuse.esm.js';
 
-  class SlipboxCollection {
+  var SlipboxCollection_1 = class SlipboxCollection {
     constructor () {
       this.cy = cytoscape({ headless: true });
     }
@@ -243,7 +243,7 @@
       // Call this after inserting all notes and links.
       this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#4444aa');
     }
-  }
+  };
 
   function graphArea () {
     const div = document.createElement('div');
@@ -384,7 +384,7 @@
     return [show, hide]
   }
 
-  function init (slipbox) {
+  var init = function init (slipbox) {
     slipbox.colorEntrypoints();
     const extras = document.createElement('div');
     document.querySelector('.slipbox-bottom').appendChild(extras);
@@ -419,9 +419,14 @@
 
     resetGraph();
     window.addEventListener('hashchange', resetGraph);
-  }
+  };
 
-  function init$1 () {
+  var graph = {
+  	SlipboxCollection: SlipboxCollection_1,
+  	init: init
+  };
+
+  var init$1 = function init () {
     const lis = document.querySelectorAll('ol.slipbox-list > li[value]');
     for (let i = 0; i < lis.length; i++) {
       const li = lis[i];
@@ -441,7 +446,11 @@
       a.innerHTML = h1.innerHTML;
       li.appendChild(a);
     }
-  }
+  };
+
+  var list = {
+  	init: init$1
+  };
 
   class Search {
     constructor (sections, options = null) {
@@ -484,13 +493,17 @@
     }
   }
 
-  function init$2 () {
+  var init$2 = function init () {
     const sections = Array.from(document.getElementsByClassName('slipbox-note'));
     new Search(sections).render({
       results: document.querySelector('#search > .search-results'),
       input: document.querySelector('nav input[type="text"]')
     });
-  }
+  };
+
+  var search = {
+  	init: init$2
+  };
 
   /* Flashcard data is stored in window.localStorage.
    *
@@ -505,7 +518,6 @@
    * Get number of successful recalls.
    *     window.localStorage.getItem('1.score')
    */
-
   function getScore (id) {
     return Number(window.localStorage.getItem(`${id}.score`))
   }
@@ -545,11 +557,10 @@
     }
   }
 
-  class Flashcard {
+  var Flashcard_1 = class Flashcard {
     constructor (container) {
       this.pressed = null;
       this.container = container;
-      this.container.classList.add('slipbox-srs');
       window.addEventListener('hashchange', () => {
         this.pressed = null;
         this.render();
@@ -606,6 +617,7 @@
     }
 
     render () {
+      this.container.classList.add('slipbox-srs');
       this.container.innerHTML = '';
       const id = window.location.hash.slice(1);
       if (!id || !Number.isInteger(Number(id))) return
@@ -641,13 +653,13 @@
       score.textContent = getScore(id);
       total.textContent = getTotal(id);
     }
-  }
+  };
 
-  class Scheduler {
-    constructor (link, ids) {
+  var Scheduler_1 = class Scheduler {
+    constructor (container, ids) {
       this.sched = [];
-      this.container = link;
       this.ids = ids;
+      this.container = container;
     }
 
     isReady (id) {
@@ -663,13 +675,14 @@
     }
 
     schedule () {
-      if (this.sched.length > 0) return
+      if (this.sched.length > 0) return this
       shuffle(this.ids);
       for (const id of this.ids) {
         if (this.isReady(id)) {
           this.sched.push(id);
         }
       }
+      return this
     }
 
     render () {
@@ -684,28 +697,43 @@
       }
       return this.sched.pop()
     }
-  }
+  };
 
-  function init$3 (slipbox) {
+  // Private exports for testing purposes
+  var _getRecent = getRecent;
+
+  var srs = {
+  	Flashcard: Flashcard_1,
+  	Scheduler: Scheduler_1,
+  	_getRecent: _getRecent
+  };
+
+  window.slipbox = new graph.SlipboxCollection();
+
+  function initSRS (slipbox) {
     const container = document.createElement('div');
     document.querySelector('.slipbox-bottom').appendChild(container);
-    new Flashcard(container).render();
-    new Scheduler(
+    new srs.Flashcard(container).render();
+    new srs.Scheduler(
       document.querySelector('nav a[href="#random"]'),
       slipbox.cy.nodes().map(e => e.data('id'))
     ).render();
   }
 
-  window.slipbox = new SlipboxCollection();
-
   window.initSlipbox = function () {
     const title = document.getElementById('title-block-header');
     if (title) { title.remove(); }
-    init$1();
-    init$2();
-    init$3(window.slipbox);
-    init(window.slipbox);
+    list.init();
+    search.init();
+    initSRS(window.slipbox);
+    graph.init(window.slipbox);
   };
+
+  var src = {
+
+  };
+
+  export default src;
   </script>
   <script>
   window.addEventListener('DOMContentLoaded', () => {

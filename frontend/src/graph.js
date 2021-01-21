@@ -1,6 +1,6 @@
-import cytoscape from 'cytoscape'
+const cytoscape = require('cytoscape')
 
-class SlipboxCollection {
+module.exports.SlipboxCollection = class SlipboxCollection {
   constructor () {
     this.cy = cytoscape({ headless: true })
   }
@@ -170,7 +170,7 @@ function hoverHandlers (container) {
   return [show, hide]
 }
 
-function init (slipbox) {
+module.exports.init = function init (slipbox) {
   slipbox.colorEntrypoints()
   const extras = document.createElement('div')
   document.querySelector('.slipbox-bottom').appendChild(extras)
@@ -206,5 +206,3 @@ function init (slipbox) {
   resetGraph()
   window.addEventListener('hashchange', resetGraph)
 }
-
-export { init, SlipboxCollection }

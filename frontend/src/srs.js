@@ -51,11 +51,10 @@ function shuffle (array) {
   }
 }
 
-class Flashcard {
+module.exports.Flashcard = class Flashcard {
   constructor (container) {
     this.pressed = null
     this.container = container
-    this.container.classList.add('slipbox-srs')
     window.addEventListener('hashchange', () => {
       this.pressed = null
       this.render()
@@ -112,6 +111,7 @@ class Flashcard {
   }
 
   render () {
+    this.container.classList.add('slipbox-srs')
     this.container.innerHTML = ''
     const id = window.location.hash.slice(1)
     if (!id || !Number.isInteger(Number(id))) return
@@ -149,11 +149,11 @@ class Flashcard {
   }
 }
 
-class Scheduler {
-  constructor (link, ids) {
+module.exports.Scheduler = class Scheduler {
+  constructor (container, ids) {
     this.sched = []
-    this.container = link
     this.ids = ids
+    this.container = container
   }
 
   isReady (id) {
@@ -169,13 +169,14 @@ class Scheduler {
   }
 
   schedule () {
-    if (this.sched.length > 0) return
+    if (this.sched.length > 0) return this
     shuffle(this.ids)
     for (const id of this.ids) {
       if (this.isReady(id)) {
         this.sched.push(id)
       }
     }
+    return this
   }
 
   render () {
@@ -192,12 +193,5 @@ class Scheduler {
   }
 }
 
-export function init (slipbox) {
-  const container = document.createElement('div')
-  document.querySelector('.slipbox-bottom').appendChild(container)
-  new Flashcard(container).render()
-  new Scheduler(
-    document.querySelector('nav a[href="#random"]'),
-    slipbox.cy.nodes().map(e => e.data('id'))
-  ).render()
-}
+// Private exports for testing purposes
+module.exports._getRecent = getRecent

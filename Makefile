@@ -18,7 +18,7 @@ bundle:
 check: bundle
 	luacheck filters/*.lua --std max+busted
 	busted . -p '.*.test.lua'
-	cd frontend; npx eslint test --global describe --global it --global beforeEach --rule "no-unused-vars: 0"
+	cd frontend; npx eslint test --global describe --global it --global beforeEach --global afterEach --rule "no-unused-vars: 0"
 	cd frontend; npm run lint
 	cd frontend; npm test
 	# cd cli; pylint slipbox --fail-under=10 -d R0903 -d W0621 -d C0415

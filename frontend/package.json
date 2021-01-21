@@ -3,14 +3,13 @@
   "version": "0.0.0",
   "description": "Slipbox frontend",
   "main": "index.js",
-  "type": "module",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "bundle": "rollup -c",
     "lint": "eslint src",
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -26,15 +25,19 @@
   },
   "homepage": "https://github.com/lggruspe/slipbox#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.1.0",
     "cytoscape": "^3.17.1",
-    "eslint": "^7.16.0",
-    "eslint-config-standard": "^14.1.1",
+    "eslint": "^7.18.0",
+    "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.1.0",
-    "fuse.js": "^6.4.3",
+    "fuse.js": "^6.4.6",
+    "jsdom": "^16.4.0",
     "mocha": "^8.2.1",
-    "rollup": "^2.35.1"
+    "nyc": "^15.1.0",
+    "rollup": "^2.37.1"
   }
 }

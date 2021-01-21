@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js'
+const Fuse = require('fuse.js')
 
 class Search {
   constructor (sections, options = null) {
@@ -41,7 +41,7 @@ class Search {
   }
 }
 
-export function init () {
+module.exports.init = function init () {
   const sections = Array.from(document.getElementsByClassName('slipbox-note'))
   new Search(sections).render({
     results: document.querySelector('#search > .search-results'),
