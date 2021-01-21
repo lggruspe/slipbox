@@ -34,8 +34,8 @@ class SlipboxCollection {
 function graphArea () {
   const div = document.createElement('div')
   div.innerHTML = `
-    <div class="cytoscape-container" style="width: 100%; height: 80vh; padding-top: 1em; border-top: 1px solid black;"></div>
-    <div class="info-container" style="bottom: 0; right: 0; padding: 20px; position: fixed; max-width: 30em; z-index: 1;">
+    <div class="slipbox-graph-cytoscape"></div>
+    <div class="slipbox-graph-info">
       <header>
         <h3><a href=""></a></h3>
         <p></p>
@@ -91,7 +91,7 @@ function neighborElements (slipbox, id) {
 
 function createCytoscape (container) {
   const cy = cytoscape({
-    container: container.querySelector('div.cytoscape-container'),
+    container: container.querySelector('.slipbox-graph-cytoscape'),
     selectionType: 'additive',
     style: [
       {
@@ -151,7 +151,7 @@ function renderCytoscape (cy, layout = 'breadthfirst') {
 }
 
 function hoverHandlers (container) {
-  const infoDiv = container.querySelector('.info-container')
+  const infoDiv = container.querySelector('.slipbox-graph-info')
   const a = infoDiv.querySelector('header a')
   const p = infoDiv.querySelector('header p')
 
