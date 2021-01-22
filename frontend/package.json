@@ -8,6 +8,7 @@
   },
   "scripts": {
     "bundle": "rollup -c",
+    "minify": "terser --compress --mangle -o dist/frontend.min.js -- dist/frontend.js",
     "lint": "eslint src",
     "test": "nyc mocha"
   },
@@ -38,6 +39,7 @@
     "jsdom": "^16.4.0",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
-    "rollup": "^2.37.1"
+    "rollup": "^2.37.1",
+    "terser": "^5.5.1"
   }
 }

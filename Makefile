@@ -9,9 +9,9 @@ init:
 
 .PHONY:	bundle
 bundle:
-	cd frontend; npm run bundle
+	cd frontend; npm run bundle; npm run minify
 	mkdir -p cli/slipbox/data
-	cp frontend/dist/frontend.js cli/slipbox/data
+	cp frontend/dist/frontend.min.js cli/slipbox/data/frontend.js
 	cp -r filters cli/slipbox
 
 .PHONY:	check
