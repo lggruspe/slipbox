@@ -7,10 +7,10 @@
     "test": "test"
   },
   "scripts": {
+    "lint": "eslint --fix src test",
+    "test": "nyc mocha",
     "bundle": "rollup -c",
-    "minify": "terser --compress --mangle -o dist/frontend.min.js -- dist/frontend.js",
-    "lint": "eslint src",
-    "test": "nyc mocha"
+    "minify": "terser --compress --mangle -o dist/frontend.min.js -- dist/frontend.js"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
-    "cytoscape": "^3.17.1",
+    "cytoscape": "^3.18.0",
     "eslint": "^7.18.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
