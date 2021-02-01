@@ -42,12 +42,6 @@ INSERT OR IGNORE INTO Meta VALUES ('timestamp', 0.0), ('version', '0.0');
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
 
-CREATE VIEW IF NOT EXISTS NextId AS
-SELECT id + 1 AS result FROM Notes
-WHERE result NOT IN (
-    SELECT id FROM Notes
-);
-
 CREATE VIEW IF NOT EXISTS Tags AS
 SELECT * FROM (
     SELECT tag, src AS id FROM Links WHERE tag IS NOT NULL AND tag != ''
@@ -56,4 +50,9 @@ SELECT * FROM (
 )
 WHERE id in (
     SELECT id FROM Notes
+);
+
+CREATE VIEW IF NOT EXISTS Untagged AS
+SELECT id FROM Notes WHERE id NOT IN (
+    SELECT id FROM Tags
 );

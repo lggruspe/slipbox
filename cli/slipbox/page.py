@@ -66,7 +66,10 @@ def create_bibliography(conn: Connection) -> str:
     return render(section)
 
 def create_tags(conn: Connection) -> str:
-    """Create HTML section that lists all tags."""
+    """Create HTML section that lists all tags.
+
+    Also list untagged notes.
+    """
     rows = conn.execute("SELECT tag, COUNT(*) FROM Tags GROUP BY tag ORDER BY tag")
     items = (Elem("li", Elem("a", tag, href=f"#{tag}"), f" ({count})") for tag, count in rows)
     section = Elem("section",
@@ -75,6 +78,11 @@ def create_tags(conn: Connection) -> str:
                    id="tags",
                    title="Tags",
                    **{"class": "level1"})
+    untagged = list(conn.execute("SELECT * FROM Untagged"))
+    if untagged:
+        section.children.append(Elem("h2", "Untagged notes"))
+        items = (Elem("li", value=str(nid)) for nid, in untagged)
+        section.children.append(Elem("ol", *items, **{"class": "slipbox-list"}))
     return render(section)
 
 def create_tag_page(conn: Connection, tag: str) -> str:
@@ -98,7 +106,7 @@ def create_tag_pages(conn: Connection) -> str:
     """Create all tag pages."""
     rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
     tags = (row[0] for row in rows)
-    return '\n'.join(create_tag_page(conn, tag) for tag in tags)
+    return ('\n'.join(create_tag_page(conn, tag) for tag in tags))
 
 def create_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""
