@@ -1,11 +1,10 @@
 """Initialize notes repository."""
 
-from argparse import Namespace
 from configparser import ConfigParser
 from pathlib import Path
 from sqlite3 import Connection, connect
 import sys
-from typing import List, Sequence, Optional
+from typing import Any, Dict, List, Sequence, Optional
 
 def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
@@ -24,7 +23,7 @@ def default_config() -> ConfigParser:
 
 class DotSlipbox:
     """Initialized .slipbox/ directory."""
-    def __init__(self, parent: Path, args: Optional[Namespace] = None, *, exit_: bool = True):
+    def __init__(self, parent: Path, args: Optional[Dict[str, Any]] = None, *, exit_: bool = True):
         """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
@@ -37,7 +36,7 @@ class DotSlipbox:
                 initialize_database(conn)
             config = default_config()
             if args is not None:
-                config["slipbox"].update(vars(args))
+                config["slipbox"].update(args)
             with open(self.path/"config.cfg", "w") as config_file:
                 config.write(config_file)
             self.path.joinpath("patterns").write_text("*.md\n*.markdown\n")

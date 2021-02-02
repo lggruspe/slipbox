@@ -37,7 +37,7 @@ bundle:	check-js check-lua
 # Run python tests.
 .PHONY:	check
 check: bundle
-	# cd cli; pylint slipbox --fail-under=10 -d R0903 -d W0621 -d C0415
+	cd cli; pylint slipbox --fail-under=10 -d R0903,W0621,C0415,E1136,C0103
 	cd cli; mypy -p slipbox
 	cd cli; cd slipbox; pytest --cov=. --cov-fail-under=90 --cov-report=term-missing --cov-branch -x --verbose
 
@@ -46,8 +46,8 @@ check: bundle
 docs:	bundle
 	cd docs; rm -rf .slipbox \
 	cd docs; PYTHONPATH=../cli python -m slipbox init \
-		-c "--bibliography example.bib --citeproc" \
-		-d "-o index.html -s"
+		--content_options "--bibliography example.bib --citeproc" \
+		--document_options "-o index.html -s"
 	cd docs; PYTHONPATH=../cli python -m slipbox build
 
 # Release slipbox.

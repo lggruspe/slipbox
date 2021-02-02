@@ -21,5 +21,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Environment :: Console",
     ],
+    install_requires=["climates==0.0.0"],
     python_requires=">=3.7",
 )

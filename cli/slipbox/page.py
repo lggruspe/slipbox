@@ -106,7 +106,7 @@ def create_tag_pages(conn: Connection) -> str:
     """Create all tag pages."""
     rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
     tags = (row[0] for row in rows)
-    return ('\n'.join(create_tag_page(conn, tag) for tag in tags))
+    return '\n'.join(create_tag_page(conn, tag) for tag in tags)
 
 def create_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""

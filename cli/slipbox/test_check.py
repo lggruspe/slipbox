@@ -3,7 +3,9 @@
 
 import pytest
 
-from .check import invalid_links, isolated_notes, unsourced_notes
+from .check import invalid_links, isolated_notes, unsourced_notes, check_notes
+from .initializer import DotSlipbox
+from .slipbox import Slipbox
 from .utils import check_requirements
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
@@ -59,3 +61,34 @@ Bar.
     sbox.process([test_md])
     result = list(unsourced_notes(sbox))
     assert result == [(0, "Foo", "test.md")]
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_check_notes_empty(capsys, tmp_path):
+    """check_notes must not output anything if there are no errors.
+
+    The result must be True (no errors).
+    """
+    dot = DotSlipbox(tmp_path)
+    with Slipbox(dot) as slipbox:
+        is_ok = check_notes(slipbox)
+        assert is_ok
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert not stderr
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_check_notes(sbox, capsys, tmp_path, test_md):
+    """check_notes must output to stdout.
+
+    The result must be False (has errors).
+    """
+    test_md.write_text("# 0 Test\n[](#1)")
+    sbox.process([test_md])
+    dot = DotSlipbox(tmp_path)
+    with Slipbox(dot) as slipbox:
+        is_ok = check_notes(slipbox)
+        assert not is_ok
+        stdout, stderr = capsys.readouterr()
+        assert stdout
+        assert "Test" in stdout
+        assert not stderr

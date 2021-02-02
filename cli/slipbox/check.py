@@ -2,6 +2,7 @@
 
 from typing import Iterator, Tuple
 from .slipbox import Slipbox
+from .utils import print_sequence
 
 _Note = Tuple[int, str, str]
 
@@ -36,3 +37,24 @@ def unsourced_notes(slipbox: Slipbox) -> Iterator[_Note]:
                 SELECT note FROM Citations
             )
         """)
+
+def check_notes(slipbox: Slipbox) -> bool:
+    """Check notes in slipbox.
+
+    Returns false is errors are found.
+    """
+    format_note = lambda note: f"  {note[0]}. {note[1]} in {note[2]!r}."
+    format_link = lambda x: f"  {x[0][0]}. {x[0][1]} in {x[0][2]!r} -> {x[1]}."
+    _invalid_links = invalid_links(slipbox)
+    _isolated_notes = isolated_notes(slipbox)
+    _unsourced_notes = unsourced_notes(slipbox)
+
+    errors = [
+        print_sequence("The following notes link to non-existent notes.",
+                       map(format_link, _invalid_links)),
+        print_sequence("The following notes are not connected to other notes.",
+                       map(format_note, _isolated_notes)),
+        print_sequence("The following notes have missing citations.",
+                       map(format_note, _unsourced_notes)),
+    ]
+    return not any(errors)

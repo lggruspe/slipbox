@@ -2,11 +2,21 @@
 
 from pathlib import Path
 import sys
+from typing import Optional
 
 from . import check
-from .initializer import DotSlipbox
+from .initializer import DotSlipbox, default_config
 from .slipbox import Slipbox
-from .utils import print_sequence
+
+def require_dot_slipbox() -> DotSlipbox:
+    """Return .slipbox object in current directory.
+
+    Exit if it does not exist.
+    """
+    dot = DotSlipbox.locate(Path().resolve())
+    if dot is None:
+        sys.exit("could not find '.slipbox' in any parent directory.")
+    return dot
 
 def show_info(dot: DotSlipbox, note_id: int) -> None:
     """Print metadata associated with note ID."""
@@ -20,35 +30,26 @@ def show_info(dot: DotSlipbox, note_id: int) -> None:
             print(note[0])
             print(note[1])
 
-def main(dot: DotSlipbox) -> None:
+def show_info_wrapper(note_id: str, /) -> None:
+    """Show information about note."""
+    dot = require_dot_slipbox()
+    return show_info(dot, int(note_id))
+
+def main() -> None:
     """Compile notes into static page."""
+    dot = require_dot_slipbox()
     with Slipbox(dot) as slipbox:
         slipbox.run()
 
-def check_notes(dot: DotSlipbox) -> bool:
-    """Check notes in slipbox.
-
-    Returns false is errors are found.
-    """
+def check_notes() -> None:
+    """Check notes in slipbox for invalid links and isolated notes."""
+    dot = require_dot_slipbox()
     with Slipbox(dot) as slipbox:
-        format_note = lambda note: f"  {note[0]}. {note[1]} in {note[2]!r}."
-        format_link = lambda x: f"  {x[0][0]}. {x[0][1]} in {x[0][2]!r} -> {x[1]}."
-        invalid_links = check.invalid_links(slipbox)
-        isolated_notes = check.isolated_notes(slipbox)
-        unsourced_notes = check.unsourced_notes(slipbox)
+        if not check.check_notes(slipbox):
+            sys.exit(65)
 
-        errors = [
-            print_sequence("The following notes link to non-existent notes.",
-                           map(format_link, invalid_links)),
-            print_sequence("The following notes are not connected to other notes.",
-                           map(format_note, isolated_notes)),
-            print_sequence("The following notes have missing citations.",
-                           map(format_note, unsourced_notes)),
-        ]
-        return not any(errors)
-
-def generate_flashcards(dot: DotSlipbox, output: Path) -> None:
-    """Generate flash cards from notes."""
+def generate_flashcards(output: str, /) -> None:
+    """Generate anki flash cards from notes."""
     try:
         import genanki #type: ignore
     except ImportError:
@@ -70,6 +71,7 @@ def generate_flashcards(dot: DotSlipbox, output: Path) -> None:
     )
     deck = genanki.Deck(1843743983, # deck ID
                         "Slipbox")
+    dot = require_dot_slipbox()
     with Slipbox(dot) as slipbox:
         sql = "SELECT title, html FROM Notes"
         for title, html in slipbox.conn.execute(sql):
@@ -79,4 +81,21 @@ def generate_flashcards(dot: DotSlipbox, output: Path) -> None:
                                     html.replace(' style="display:none"', "")
                                 ])
             deck.add_note(note)
-    genanki.Package(deck).write_to_file(output)
+    genanki.Package(deck).write_to_file(Path(output))
+
+def initialize(directory: Optional[str] = None,
+               /,
+               content_options: Optional[str] = None,
+               document_options: Optional[str] = None) -> None:
+    """Initialize notes directory."""
+    parent = Path(directory) if directory else Path()
+    parent.mkdir(parents=True, exist_ok=True)
+
+    defaults = default_config()
+    if not content_options:
+        content_options = defaults.get("slipbox", "content_options")
+    if not document_options:
+        document_options = defaults.get("slipbox", "document_options")
+
+    DotSlipbox(parent, dict(content_options=content_options, document_options=document_options))
+    print(f"Initialized .slipbox in {parent.resolve()!s}.")

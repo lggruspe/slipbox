@@ -1,8 +1,6 @@
 # type: ignore
 """Test initializer.py."""
 
-from argparse import Namespace
-
 from .initializer import DotSlipbox
 
 def test_initialize(tmp_path):
@@ -41,7 +39,7 @@ def test_dot_slipbox_patterns(tmp_path):
 
 def test_dot_slipbox_check_config_new(tmp_path):
     """.check_config must delete newly initialized data with invalid config."""
-    args = Namespace(content_options="--strip-comments")
+    args = dict(content_options="--strip-comments")
     DotSlipbox(tmp_path, args, exit_=False)
     assert not tmp_path.joinpath(".slipbox").exists()
 
