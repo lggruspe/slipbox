@@ -22,5 +22,5 @@ setuptools.setup(
         "Environment :: Console",
     ],
     install_requires=["climates==0.0.0"],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 )
