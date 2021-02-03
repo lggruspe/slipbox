@@ -2,18 +2,18 @@
 
 from pathlib import Path
 import sys
-from typing import Optional
+from typing import Optional, Sequence
 
 from . import check
 from .initializer import DotSlipbox, default_config
 from .slipbox import Slipbox
 
-def require_dot_slipbox() -> DotSlipbox:
+def require_dot_slipbox(path: Path = Path()) -> DotSlipbox:
     """Return .slipbox object in current directory.
 
     Exit if it does not exist.
     """
-    dot = DotSlipbox.locate(Path().resolve())
+    dot = DotSlipbox.locate(path.resolve())
     if dot is None:
         sys.exit("could not find '.slipbox' in any parent directory.")
     return dot
@@ -99,3 +99,39 @@ def initialize(directory: Optional[str] = None,
 
     DotSlipbox(parent, dict(content_options=content_options, document_options=document_options))
     print(f"Initialized .slipbox in {parent.resolve()!s}.")
+
+def has_gaps(sequence: Sequence[int]) -> bool:
+    """Check if sequence has gaps.
+
+    Assume sequence is an increasing sequence of non-negative integers with no
+    duplicate entries.
+    """
+    return bool(sequence) and (sequence[-1] - sequence[0] >= len(sequence))
+
+def find_available_id(sequence: Sequence[int]) -> int:
+    """Return smallest non-negative integer not in the sequence."""
+    if not sequence or sequence[0] > 0:
+        return 0
+    if not has_gaps(sequence):
+        return sequence[-1] + 1
+    while len(sequence) > 2:
+        mid = len(sequence) // 2
+        lower = sequence[:mid]
+        boundary = sequence[mid-1:mid+1]
+        upper = sequence[mid:]
+        sequence = lower if has_gaps(lower) \
+            else boundary if has_gaps(boundary) \
+            else upper
+    return sequence[0] + 1
+
+def new_note(note_format: Optional[str] = None, /) -> None:
+    """Get smallest available note ID for new note."""
+    dot = require_dot_slipbox()
+    with Slipbox(dot) as slipbox:
+        rows = slipbox.conn.execute("SELECT id FROM Notes ORDER BY (id)")
+        ids = [row[0] for row in rows]
+    suggest = find_available_id(ids)
+    if note_format == "markdown":
+        print(f"# {suggest} New note")
+    else:
+        print(suggest)
