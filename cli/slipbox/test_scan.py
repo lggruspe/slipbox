@@ -9,6 +9,7 @@ import pytest
 from . import scan
 from .utils import insert_file_script
 
+
 def test_is_recently_modified(tmp_path):
     """is_recently_modified should return true iff the input file was modified
     after the specified timestamp.
@@ -25,6 +26,7 @@ def test_is_recently_modified(tmp_path):
     os.utime(path, ns=(time.time_ns(), time.time_ns()))
     assert scan.is_recently_modified(after, path)
 
+
 def test_is_file_in_db(mock_db, tmp_path):
     """Quick check for is_file_in_db."""
     conn = mock_db
@@ -34,6 +36,7 @@ def test_is_file_in_db(mock_db, tmp_path):
     assert scan.is_file_in_db(present.name, conn)
     assert not scan.is_file_in_db(absent.name, conn)
 
+
 def test_has_valid_pattern():
     """has_valid_pattern is true only for filenames that match at least one of
     the wildcard patterns."""
@@ -42,6 +45,7 @@ def test_has_valid_pattern():
     assert scan.has_valid_pattern("a.rst", patterns)
     assert not scan.has_valid_pattern("a.tex", patterns)
     assert not scan.has_valid_pattern("a.md", (".md"))
+
 
 def test_group_by_file_extension():
     """group_by_file_extension should split by file type.
@@ -57,12 +61,15 @@ def test_group_by_file_extension():
     assert [".tex"] in groups
     assert [""] in groups
 
+
 def test_group_by_file_extension_on_the_same_type():
-    """group_by_file_extension should group files with the same type together."""
+    """group_by_file_extension should group files with the same type together.
+    """
     files = [f"{c}.md" for c in "abcdefg"]
     groups = list(map(list, scan.group_by_file_extension(files)))
     assert len(groups) == 1
     assert files in groups
+
 
 def test_build_command(tmp_path):
     """Sanity check for build_command."""
@@ -75,6 +82,7 @@ def test_build_command(tmp_path):
     assert str(input_file) in cmd
     assert f"-o {output}" in cmd
     assert options in cmd
+
 
 @pytest.mark.xfail
 def test_build_command_when_input_file_does_not_exist(tmp_path):

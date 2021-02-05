@@ -10,6 +10,7 @@ colorama==0.4.4
 coverage==5.4
 cryptography==3.3.1
 docutils==0.16
+flake8==3.8.4
 frozendict==1.2
 genanki==0.10.1
 idna==2.10
@@ -26,7 +27,9 @@ packaging==20.9
 pkginfo==1.7.0
 pluggy==0.13.1
 py==1.10.0
+pycodestyle==2.6.0
 pycparser==2.20
+pyflakes==2.2.0
 Pygments==2.7.4
 pylint==2.6.0
 pyparsing==2.4.7

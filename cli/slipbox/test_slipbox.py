@@ -9,6 +9,7 @@ from .initializer import DotSlipbox
 from .slipbox import Slipbox
 from .utils import check_requirements, insert_file_script
 
+
 def test_find_new_notes(tmp_path, sbox):
     """find_new_notes must only return existing files that aren't yet in the
     database and match the input patterns (*.md by default).
@@ -25,6 +26,7 @@ def test_find_new_notes(tmp_path, sbox):
     sbox.conn.executescript(insert_file_script(present, basedir=sbox.basedir))
     assert list(sbox.find_new_notes()) == [absent]
 
+
 def test_added_notes_pattern(tmp_path, sbox):
     """Results in sbox.find_new_notes() must match the input pattern."""
     sbox.dot.patterns = ('*.md', '*.txt')
@@ -38,6 +40,7 @@ def test_added_notes_pattern(tmp_path, sbox):
     tex.touch()
     assert sorted(sbox.find_new_notes()) == [markdown, txt]
 
+
 def test_added_notes_in_db(tmp_path, sbox):
     """Results in sbox.find_new_notes() must not already be in the database."""
     new = tmp_path/"new.md"
@@ -47,6 +50,7 @@ def test_added_notes_in_db(tmp_path, sbox):
     sbox.conn.executescript(insert_file_script(skip, basedir=sbox.basedir))
     assert list(sbox.find_new_notes()) == [new]
 
+
 def test_added_notes_recursive(tmp_path, sbox):
     """sbox.find_new_notes() must find files recursively."""
     directory = tmp_path/"directory"
@@ -54,6 +58,7 @@ def test_added_notes_recursive(tmp_path, sbox):
     directory.mkdir()
     new.touch()
     assert list(sbox.find_new_notes()) == [new]
+
 
 def test_slipbox_context_manager(tmp_path):
     """Test database timestamp."""
@@ -64,6 +69,7 @@ def test_slipbox_context_manager(tmp_path):
     with Slipbox(dot) as slipbox:
         assert slipbox.timestamp != 0.0
 
+
 @pytest.mark.skipif(True, reason="flaky")
 def test_modified_notes(tmp_path, sbox):
     """sbox.find_new_notes() must find modified notes after they are purged."""
@@ -71,7 +77,8 @@ def test_modified_notes(tmp_path, sbox):
     not_modified = tmp_path/"not_modified.md"
     added = tmp_path/"added.md"
 
-    sbox.conn.executescript(insert_file_script(modified, not_modified, basedir=sbox.basedir))
+    sbox.conn.executescript(insert_file_script(modified, not_modified,
+                                               basedir=sbox.basedir))
     sbox.timestamp = time()
     sleep(1)
 
@@ -81,10 +88,12 @@ def test_modified_notes(tmp_path, sbox):
 
     assert list(sbox.find_new_notes()) == [added, modified]
 
+
 def test_purge(sbox, files_abc):
     """Input files must be purged from the database."""
     a_md, b_md, c_md = files_abc
-    sbox.conn.executescript(insert_file_script(a_md, b_md, c_md, basedir=sbox.basedir))
+    sbox.conn.executescript(insert_file_script(a_md, b_md, c_md,
+                                               basedir=sbox.basedir))
     sbox.timestamp = time()
     sleep(1)
 
@@ -95,6 +104,7 @@ def test_purge(sbox, files_abc):
     result = sbox.conn.execute("SELECT filename FROM Files")
     remaining = sorted(filename for filename, in result)
     assert len(remaining) == 1
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_run(files_abc, capsys, sbox):
@@ -113,16 +123,22 @@ def test_run(files_abc, capsys, sbox):
     assert not stdout
     assert not stderr
 
+
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process(tmp_path, sbox):
     """Smoke test for slipbox.process."""
     input_file = tmp_path/"input.md"
     input_file.write_text("# 1 Test note\n\nHello, world!\n")
-    assert not list(sbox.conn.execute("SELECT * FROM Notes WHERE html IS NOT NULL"))
+    assert not list(sbox.conn.execute(
+        "SELECT * FROM Notes WHERE html IS NOT NULL"
+    ))
 
     sbox.process([input_file])
-    result = list(sbox.conn.execute("SELECT * FROM Notes WHERE html IS NOT NULL"))
+    result = list(sbox.conn.execute(
+        "SELECT * FROM Notes WHERE html IS NOT NULL"
+    ))
     assert result
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_empty_file(tmp_path, sbox):
@@ -136,6 +152,7 @@ def test_process_empty_file(tmp_path, sbox):
     assert not list(sbox.conn.execute("SELECT * FROM Links"))
     assert not list(sbox.conn.execute("SELECT * FROM Bibliography"))
     assert not list(sbox.conn.execute("SELECT * FROM Citations"))
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_clusters_from_context(tmp_path, sbox):
@@ -155,6 +172,7 @@ Test.
     result = sorted(sbox.conn.execute("SELECT tag, src, dest FROM Links"))
     assert result == sorted([('#test', 0, 0), ('#test', 0, 1)])
 
+
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_filenames(tmp_path, sbox):
     """Filenames must be scanned correctly."""
@@ -168,6 +186,7 @@ def test_process_filenames(tmp_path, sbox):
     assert len(result) == 1
     assert markdown.samefile(sbox.basedir/result[0][0])
 
+
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_filenames0(tmp_path, sbox):
     """Filenames must be scanned correctly."""
@@ -179,6 +198,7 @@ def test_process_filenames0(tmp_path, sbox):
     result = list(sbox.conn.execute("SELECT filename FROM Notes WHERE id = 0"))
     assert len(result) == 1
     assert markdown.samefile(sbox.basedir/result[0][0])
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_non_level1_headers(tmp_path, sbox):
@@ -196,6 +216,7 @@ Bar.
     result = [nid for nid, in sbox.conn.execute("SELECT id FROM Notes")]
     assert len(result) == 1
     assert result == [0]
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
@@ -230,6 +251,7 @@ def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
     assert str(file_a.relative_to(sbox.basedir)) in stderr
     assert str(file_b.relative_to(sbox.basedir)) in stderr
 
+
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_duplicate_ids_in_a_file(tmp_path, capsys, sbox):
     """If there are duplicate IDs in a file, only the first one must be saved.
@@ -254,9 +276,12 @@ Bar.
     assert not stdout
     assert stderr
 
+
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_empty_link_target(tmp_path, capsys, sbox):
-    """slipbox.process must show a warning if there is a link with an empty target."""
+    """slipbox.process must show a warning if there is a link with an empty
+    target.
+    """
     markdown = tmp_path/"test.md"
     markdown.write_text("# 0 Foo\n\n[Empty]().\n")
     sbox.process([markdown])
@@ -266,6 +291,7 @@ def test_process_with_empty_link_target(tmp_path, capsys, sbox):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_id_in_scientific_form(tmp_path, capsys, sbox):
@@ -280,6 +306,7 @@ def test_process_with_id_in_scientific_form(tmp_path, capsys, sbox):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_non_text_titles(tmp_path, capsys, sbox):
@@ -301,9 +328,12 @@ def test_process_with_non_text_titles(tmp_path, capsys, sbox):
     assert not stdout
     assert not stderr
 
+
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
-    """If a hashtag has trailing invalid symbols, only the prefix must be saved."""
+    """If a hashtag has trailing invalid symbols, only the prefix must be
+    saved.
+    """
     markdown = tmp_path/"test.md"
     markdown.write_text("# 0 Test\n\n#tag.\n#tags.\n#0.\n")
     sbox.process([markdown])
@@ -313,6 +343,7 @@ def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
+
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_modify_non_notes(tmp_path, capsys, sbox):
@@ -344,7 +375,8 @@ Bye.
     assert result == [(0, 'Note', str(markdown.relative_to(sbox.basedir)))]
 
     html = ""
-    for section, in sbox.conn.execute("SELECT html FROM Notes WHERE html IS NOT NULL"):
+    sql = "SELECT html FROM Notes WHERE html IS NOT NULL"
+    for section, in sbox.conn.execute(sql):
         assert isinstance(section, str)
         assert section
         html += section

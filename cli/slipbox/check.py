@@ -6,6 +6,7 @@ from .utils import print_sequence
 
 _Note = Tuple[int, str, str]
 
+
 def invalid_links(slipbox: Slipbox) -> Iterator[Tuple[_Note, int]]:
     """Generate notes that link to invalid ID."""
     sql = """
@@ -19,6 +20,7 @@ def invalid_links(slipbox: Slipbox) -> Iterator[Tuple[_Note, int]]:
     for nid, title, filename, dest in slipbox.conn.execute(sql):
         yield (nid, title, filename), dest
 
+
 def isolated_notes(slipbox: Slipbox) -> Iterator[_Note]:
     """Generate isolated notes (untagged)."""
     yield from slipbox.conn.execute("""
@@ -27,6 +29,7 @@ def isolated_notes(slipbox: Slipbox) -> Iterator[_Note]:
             SELECT src FROM Links UNION SELECT dest FROM Links
         )
     """)
+
 
 def unsourced_notes(slipbox: Slipbox) -> Iterator[_Note]:
     """Generate notes that need citations (only if there's a bibliography)."""
@@ -38,13 +41,18 @@ def unsourced_notes(slipbox: Slipbox) -> Iterator[_Note]:
             )
         """)
 
+
 def check_notes(slipbox: Slipbox) -> bool:
     """Check notes in slipbox.
 
     Returns false is errors are found.
     """
-    format_note = lambda note: f"  {note[0]}. {note[1]} in {note[2]!r}."
-    format_link = lambda x: f"  {x[0][0]}. {x[0][1]} in {x[0][2]!r} -> {x[1]}."
+    def format_note(note: _Note) -> str:
+        return f"  {note[0]}. {note[1]} in {note[2]!r}."
+
+    def format_link(x: Tuple[_Note, int]) -> str:
+        return f"  {x[0][0]}. {x[0][1]} in {x[0][2]!r} -> {x[1]}."
+
     _invalid_links = invalid_links(slipbox)
     _isolated_notes = isolated_notes(slipbox)
     _unsourced_notes = unsourced_notes(slipbox)

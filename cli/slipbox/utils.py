@@ -10,23 +10,28 @@ import sys
 import tempfile
 from typing import Any, Dict, Iterable, Iterator, Optional
 
+
 def pandoc() -> str:
     """Pandoc location."""
     return os.environ.get("PANDOC", "pandoc")
+
 
 def check_requirements() -> bool:
     """Check if pandoc is installed."""
     return bool(shutil.which(pandoc()))
 
+
 def sqlite_string(text: str) -> str:
     """Encode python string into sqlite string."""
     return "'{}'".format(text.replace("'", "''"))
+
 
 @contextlib.contextmanager
 def temporary_directory() -> Iterator[Path]:
     """Path to temporary directory."""
     with tempfile.TemporaryDirectory() as tempdir:
         yield Path(tempdir)
+
 
 def run_command(cmd: str,
                 variables: Optional[Dict[str, str]] = None,
@@ -49,11 +54,13 @@ def run_command(cmd: str,
         print(proc.stderr.decode(), file=sys.stderr)
     return proc.returncode
 
+
 def insert_file_script(*files: Path, basedir: Path) -> str:
     """Create SQL query string to insert into the Files table."""
     sql = "INSERT INTO Files (filename) VALUES ({})"
     filenames = (sqlite_string(str(p.relative_to(basedir))) for p in files)
     return sql.format("), (".join(filenames))
+
 
 def print_sequence(header: str, sequence: Iterable[str]) -> bool:
     """Print header and sequence of items if sequence is not empty.

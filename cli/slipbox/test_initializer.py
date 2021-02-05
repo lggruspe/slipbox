@@ -3,6 +3,7 @@
 
 from .initializer import DotSlipbox
 
+
 def test_initialize(tmp_path):
     """Must initialize .slipbox in the parent directory."""
     dot = DotSlipbox(tmp_path).path
@@ -10,6 +11,7 @@ def test_initialize(tmp_path):
     assert dot.joinpath("data.db").is_file()
     assert dot.joinpath("config.cfg").is_file()
     assert dot.joinpath("patterns").is_file()
+
 
 def test_dot_slipbox_locate(tmp_path):
     """find_dot_slipbox must look for .slipbox in parent directories."""
@@ -28,6 +30,7 @@ def test_dot_slipbox_locate(tmp_path):
     assert DotSlipbox.locate(child) is None
     assert DotSlipbox.locate(tmp_path) is None
 
+
 def test_dot_slipbox_patterns(tmp_path):
     """Test patterns property."""
     dot = DotSlipbox(tmp_path)
@@ -37,11 +40,13 @@ def test_dot_slipbox_patterns(tmp_path):
     dot.patterns = patterns
     assert dot.patterns == patterns
 
+
 def test_dot_slipbox_check_config_new(tmp_path):
     """.check_config must delete newly initialized data with invalid config."""
     args = dict(content_options="--strip-comments")
     DotSlipbox(tmp_path, args, exit_=False)
     assert not tmp_path.joinpath(".slipbox").exists()
+
 
 def test_dot_slipbox_check_config_existing(tmp_path):
     """.check_config must not delete existing data with invalid config."""

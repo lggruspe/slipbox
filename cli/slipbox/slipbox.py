@@ -8,6 +8,7 @@ from typing import Iterable, List, Tuple
 from . import scan, page
 from .initializer import DotSlipbox
 
+
 class Slipbox:
     """Slipbox main functions."""
     def __init__(self, dot: DotSlipbox):
@@ -31,7 +32,10 @@ class Slipbox:
     @timestamp.setter
     def timestamp(self, value: float) -> None:
         """Set timestamp in Meta table."""
-        self.conn.execute("UPDATE Meta SET value = ? WHERE key = 'timestamp'", (value,))
+        self.conn.execute(
+            "UPDATE Meta SET value = ? WHERE key = 'timestamp'",
+            (value,)
+        )
         self.conn.commit()
 
     def close(self) -> None:
@@ -41,7 +45,7 @@ class Slipbox:
     def __enter__(self) -> "Slipbox":
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None: # type: ignore
+    def __exit__(self, exc_type, exc_value, traceback) -> None:  # type: ignore
         self.close()
 
     def find_new_notes(self) -> Iterable[Path]:
@@ -49,7 +53,8 @@ class Slipbox:
         patterns = self.dot.patterns
         for path in self.basedir.rglob('*'):
             if path.is_file() and scan.has_valid_pattern(path, patterns) \
-                    and not scan.is_file_in_db(path.relative_to(self.basedir), self.conn):
+                    and not scan.is_file_in_db(path.relative_to(self.basedir),
+                                               self.conn):
                 yield path
 
     def purge(self) -> Tuple[List[Path], List[Path]]:
@@ -78,7 +83,8 @@ class Slipbox:
         """Process input files."""
         inputs = list(set(paths))
         for batch in scan.group_by_file_extension(inputs):
-            scan.process_batch(self.conn, list(batch), self.config, self.basedir)
+            scan.process_batch(self.conn, list(batch), self.config,
+                               self.basedir)
         self.timestamp = time()
 
     def compile(self) -> None:

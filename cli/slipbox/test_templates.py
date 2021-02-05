@@ -3,10 +3,12 @@
 
 from .templates import Elem, render
 
+
 def test_render_text():
     """String must render as itself."""
     text = "text"
     assert render(text) == text
+
 
 def test_render_element():
     """Element must render with children and attributes."""
@@ -14,6 +16,7 @@ def test_render_element():
     assert render(elem) == """<a href='#'>
   link
 </a>"""
+
 
 def test_render_nested():
     """Nested element must render with proper indentation."""
@@ -23,6 +26,7 @@ def test_render_nested():
     link
   </a>
 </p>"""
+
 
 def test_render_no_attributes():
     """Element with no attributes must have no space after tag."""

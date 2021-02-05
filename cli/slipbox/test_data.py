@@ -1,7 +1,8 @@
-#type: ignore
+# type: ignore
 """Test data.py."""
 
 from . import data
+
 
 def test_warning(capsys):
     """warning must print all messages to stderr."""

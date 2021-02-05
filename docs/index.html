@@ -215,7 +215,8 @@
   </script>
   <script>
   window.addEventListener('DOMContentLoaded', () => {
-  for (const sec of document.querySelectorAll('section.slipbox-note')) {
+  for(const sec of document.querySelectorAll('section.slipbox-note'))
+  {
     window.slipbox.addNote(sec.id)
   }
   window.slipbox.addLink('0', '1', null)

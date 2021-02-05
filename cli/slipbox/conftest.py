@@ -10,6 +10,7 @@ import pytest
 from .initializer import initialize_database, DotSlipbox
 from .slipbox import Slipbox
 
+
 @pytest.fixture
 def mock_db() -> Iterable[sqlite3.Connection]:
     """Create an empty mock database with all the necessary tables."""
@@ -17,12 +18,14 @@ def mock_db() -> Iterable[sqlite3.Connection]:
         initialize_database(conn)
         yield conn
 
+
 @pytest.fixture
 def sbox(tmp_path) -> Slipbox:
     """Create automatically configured Slipbox object."""
     dot = DotSlipbox(tmp_path)
     with Slipbox(dot) as slipbox:
         yield slipbox
+
 
 @pytest.fixture
 def files_abc(tmp_path) -> List[Path]:
@@ -32,6 +35,7 @@ def files_abc(tmp_path) -> List[Path]:
         path.touch()
     yield files
 
+
 @pytest.fixture
 def mnote(tmp_path) -> Path:
     """Mock markdown note in tmp_path/test.md."""
@@ -39,10 +43,12 @@ def mnote(tmp_path) -> Path:
     path.write_text("# 0 Test\n\nTest note.\n")
     yield path
 
+
 @pytest.fixture
 def test_md(tmp_path) -> Path:
     """Empty test file (tmp_path/test.md)."""
     yield tmp_path/"test.md"
+
 
 @pytest.fixture
 def test_bib(tmp_path) -> Path:

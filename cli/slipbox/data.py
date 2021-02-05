@@ -6,11 +6,13 @@ from sqlite3 import Connection, IntegrityError
 import sys
 from typing import Callable, Sequence, Type
 
+
 def warning(message: str, *information: str) -> None:
     """Show warning message."""
     print(f"[WARNING] {message}", file=sys.stderr)
     for info in information:
         print(f"  {info}", file=sys.stderr)
+
 
 def run_sql_on_csv(conn: Connection,
                    path: Path,
@@ -29,10 +31,12 @@ def run_sql_on_csv(conn: Connection,
                 if callback:
                     callback(*args)
 
+
 def process_files(conn: Connection, path: Path) -> None:
     """Process Files data in path."""
     sql = "INSERT OR IGNORE INTO Files (filename) VALUES (?)"
     run_sql_on_csv(conn, path, sql, (str,))
+
 
 def process_notes(conn: Connection, path: Path) -> None:
     """Process Notes data in path."""
@@ -50,20 +54,24 @@ def process_notes(conn: Connection, path: Path) -> None:
     sql = "INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)"
     run_sql_on_csv(conn, path, sql, (int, str, str), fix)
 
+
 def process_links(conn: Connection, path: Path) -> None:
     """Process Links data in path."""
     sql = "INSERT OR IGNORE INTO Links (src, dest, tag) VALUES (?, ?, ?)"
     run_sql_on_csv(conn, path, sql, (int, int, str))
+
 
 def process_bibliography(conn: Connection, path: Path) -> None:
     """Process Bibliography data in path."""
     sql = "INSERT OR IGNORE INTO Bibliography (key, text) VALUES (?, ?)"
     run_sql_on_csv(conn, path, sql, (str, str))
 
+
 def process_citations(conn: Connection, path: Path) -> None:
     """Process Citations data in path."""
     sql = "INSERT OR IGNORE INTO Citations (note, reference) VALUES (?, ?)"
     run_sql_on_csv(conn, path, sql, (int, str))
+
 
 def process_csvs(conn: Connection, basedir: Path) -> None:
     """Process CSV data in basedir."""

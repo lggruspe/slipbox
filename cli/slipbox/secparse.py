@@ -5,6 +5,7 @@ from typing import Callable, List, Optional, Tuple
 
 Attrs = List[Tuple[str, Optional[str]]]
 
+
 def note_id(tag: str, attrs: Attrs) -> Optional[int]:
     """Return section as int if it's in the list of attributes."""
     if tag == "section" and attrs:
@@ -12,6 +13,7 @@ def note_id(tag: str, attrs: Attrs) -> Optional[int]:
         if id_.isdigit():
             return int(id_)
     return None
+
 
 class SectionParser(HTMLParser):
     """Parses sections in ephemeral pandoc output."""
@@ -73,11 +75,14 @@ class SectionParser(HTMLParser):
     def unknown_decl(self, data: str) -> None:
         self.section += f"<![{data}]>"
 
-def parse_sections(html: str, callback: Optional[SectionParser.Callback] = None) -> None:
+
+def parse_sections(html: str,
+                   callback: Optional[SectionParser.Callback] = None) -> None:
     """Parses sections in ephemeral pandoc output."""
     parser = SectionParser(callback)
     parser.feed(html)
     parser.close()
+
 
 if __name__ == "__main__":
     from pathlib import Path

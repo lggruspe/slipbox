@@ -8,10 +8,12 @@ import pytest
 
 from . import utils
 
+
 def test_sqlite_string():
     """Single quotes must be escaped properly."""
     assert utils.sqlite_string("''") == "''''''"
     assert utils.sqlite_string("'foo'bar'") == "'''foo''bar'''"
+
 
 def test_temporary_directory():
     """temporary_directory gets deleted when the context manager exits."""
@@ -20,6 +22,7 @@ def test_temporary_directory():
         assert temp.exists()
         assert temp.is_dir()
     assert not path.exists()
+
 
 @pytest.mark.skipif(not shutil.which("grep"), reason="requires grep")
 def test_run_command(tmp_path, capsys):
@@ -47,6 +50,7 @@ def test_run_command(tmp_path, capsys):
     assert str(first) not in stdout
     assert str(second) in stdout
 
+
 @pytest.mark.skipif(not shutil.which("env"), reason="requires env")
 def test_run_command_with_kwargs(capsys):
     """Keyword arguments to run_command must be used as environment variables.
@@ -57,6 +61,7 @@ def test_run_command_with_kwargs(capsys):
     assert not retcode
     assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in stdout
 
+
 def test_print_sequence_empty(capsys):
     """print_sequence must not print anything if sequence is empty.
 
@@ -66,6 +71,7 @@ def test_print_sequence_empty(capsys):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
+
 
 def test_print_sequence_not_empty(capsys):
     """print_sequence must print header if sequence is not empty.

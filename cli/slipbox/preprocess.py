@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+
 def concatenate(dest: Path, *sources: Path, basedir: Path) -> None:
     """Write contents of sources into dest.
 

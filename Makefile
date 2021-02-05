@@ -12,7 +12,7 @@ all:
 .PHONY:	init
 init:
 	cd frontend; npm ci
-	pip install --upgrade pip
+	pip install --upgrade pip wheel
 	cd cli; pip install -r requirements.txt
 
 # Run JS tests.
@@ -37,6 +37,7 @@ bundle:	check-js check-lua
 # Run python tests.
 .PHONY:	check
 check: bundle
+	cd cli; flake8 slipbox
 	cd cli; pylint slipbox --fail-under=10 -d R0903,W0621,C0415,E1136,C0103
 	cd cli; mypy -p slipbox
 	cd cli; cd slipbox; pytest --cov=. --cov-fail-under=90 --cov-report=term-missing --cov-branch -x --verbose

@@ -1,7 +1,8 @@
-#type: ignore
+# type: ignore
 """Test secparse.py."""
 
 from .secparse import note_id, parse_sections
+
 
 def test_note_id():
     """Test note_id on different inputs.."""
@@ -10,6 +11,7 @@ def test_note_id():
     assert note_id("section", [("id", "-1")]) is None
     assert note_id("section", [("id", "42")]) == 42
 
+
 def test_parse_sections():
     """Test parse_sections."""
     section1 = '<section id="1">&gt;<!--comment--><hr /></section>'
@@ -17,6 +19,7 @@ def test_parse_sections():
     test_html = section1 + '\n' + section2
 
     result = []
+
     def callback(this):
         result.append((this.id_, this.section.strip()))
     parse_sections(test_html, callback)

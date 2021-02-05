@@ -8,6 +8,7 @@ from . import check
 from .initializer import DotSlipbox, default_config
 from .slipbox import Slipbox
 
+
 def require_dot_slipbox(path: Path = Path()) -> DotSlipbox:
     """Return .slipbox object in current directory.
 
@@ -17,6 +18,7 @@ def require_dot_slipbox(path: Path = Path()) -> DotSlipbox:
     if dot is None:
         sys.exit("could not find '.slipbox' in any parent directory.")
     return dot
+
 
 def show_info(dot: DotSlipbox, note_id: int) -> None:
     """Print metadata associated with note ID."""
@@ -30,16 +32,19 @@ def show_info(dot: DotSlipbox, note_id: int) -> None:
             print(note[0])
             print(note[1])
 
+
 def show_info_wrapper(note_id: str, /) -> None:
     """Show information about note."""
     dot = require_dot_slipbox()
     return show_info(dot, int(note_id))
+
 
 def main() -> None:
     """Compile notes into static page."""
     dot = require_dot_slipbox()
     with Slipbox(dot) as slipbox:
         slipbox.run()
+
 
 def check_notes() -> None:
     """Check notes in slipbox for invalid links and isolated notes."""
@@ -48,14 +53,15 @@ def check_notes() -> None:
         if not check.check_notes(slipbox):
             sys.exit(65)
 
+
 def generate_flashcards(output: str, /) -> None:
     """Generate anki flash cards from notes."""
     try:
-        import genanki #type: ignore
+        import genanki  # type: ignore
     except ImportError:
         sys.exit("could not import genanki")
     model = genanki.Model(
-        1635490798, # model ID
+        1635490798,  # model ID
         "Note",
         fields=[
             {"name": "Question"},
@@ -69,7 +75,7 @@ def generate_flashcards(output: str, /) -> None:
             },
         ],
     )
-    deck = genanki.Deck(1843743983, # deck ID
+    deck = genanki.Deck(1843743983,  # deck ID
                         "Slipbox")
     dot = require_dot_slipbox()
     with Slipbox(dot) as slipbox:
@@ -82,6 +88,7 @@ def generate_flashcards(output: str, /) -> None:
                                 ])
             deck.add_note(note)
     genanki.Package(deck).write_to_file(Path(output))
+
 
 def initialize(directory: Optional[str] = None,
                /,
@@ -97,8 +104,10 @@ def initialize(directory: Optional[str] = None,
     if not document_options:
         document_options = defaults.get("slipbox", "document_options")
 
-    DotSlipbox(parent, dict(content_options=content_options, document_options=document_options))
+    DotSlipbox(parent, dict(content_options=content_options,
+                            document_options=document_options))
     print(f"Initialized .slipbox in {parent.resolve()!s}.")
+
 
 def has_gaps(sequence: Sequence[int]) -> bool:
     """Check if sequence has gaps.
@@ -107,6 +116,7 @@ def has_gaps(sequence: Sequence[int]) -> bool:
     duplicate entries.
     """
     return bool(sequence) and (sequence[-1] - sequence[0] >= len(sequence))
+
 
 def find_available_id(sequence: Sequence[int]) -> int:
     """Return smallest non-negative integer not in the sequence."""
@@ -123,6 +133,7 @@ def find_available_id(sequence: Sequence[int]) -> int:
             else boundary if has_gaps(boundary) \
             else upper
     return sequence[0] + 1
+
 
 def new_note(note_format: Optional[str] = None, /) -> None:
     """Get smallest available note ID for new note."""

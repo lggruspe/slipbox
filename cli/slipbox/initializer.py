@@ -6,11 +6,13 @@ from sqlite3 import Connection, connect
 import sys
 from typing import Any, Dict, List, Sequence, Optional
 
+
 def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
     sql = Path(__file__).with_name("schema.sql").read_text()
     conn.executescript(sql)
     conn.commit()
+
 
 def default_config() -> ConfigParser:
     """Create ConfigParser object with default options."""
@@ -21,9 +23,13 @@ def default_config() -> ConfigParser:
     }
     return config
 
+
 class DotSlipbox:
     """Initialized .slipbox/ directory."""
-    def __init__(self, parent: Path, args: Optional[Dict[str, Any]] = None, *, exit_: bool = True):
+    def __init__(self, parent: Path,
+                 args: Optional[Dict[str, Any]] = None,
+                 *,
+                 exit_: bool = True):
         """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
