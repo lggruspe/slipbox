@@ -1,5 +1,43 @@
 const Fuse = require('fuse.js')
 
+function extractTitle (section) {
+  // Or create clone of h1?
+  const title = section.querySelector('h1')?.textContent
+  const h3 = document.createElement('h3')
+  h3.innerHTML = `<a href="#${section.id}">${title}</a>`
+  return title ? h3 : null
+}
+
+function extractSummary (section) {
+  const title = extractTitle(section)
+  if (!title) return null
+
+  const fragment = document.createDocumentFragment()
+  fragment.appendChild(title)
+
+  const _title = title.textContent
+  let count = 3
+  for (const child of section.children) {
+    if (count-- <= 0) break
+    const clone = child.cloneNode(true)
+    if (clone.tagName === 'H1' && clone.textContent === _title) {
+      continue
+    }
+    fragment.appendChild(clone)
+  }
+  return fragment
+}
+
+function createResultFromSection (section) {
+  const summary = extractSummary(section)
+  if (!summary) return null
+
+  const div = document.createElement('div')
+  div.classList.add('search-result')
+  div.appendChild(summary)
+  return div
+}
+
 class Search {
   constructor (sections, options = null) {
     this.fuse = new Fuse(sections, options || {
@@ -16,26 +54,10 @@ class Search {
       const results = this.fuse.search(container.input.value)
       container.results.textContent = ''
       for (const result of results) {
-        const heading = result.item.querySelector('h1')
-        if (!heading) continue
-        const title = heading.textContent
-
-        const h3 = document.createElement('h3')
-        h3.innerHTML = `<a href="#${result.item.id}">${title}</a>`
-        const p = document.createElement('p')
-        p.appendChild(h3)
-
-        let count = 3
-        for (const child of result.item.children) {
-          const clone = child.cloneNode(true)
-          if (count-- <= 0) break
-          if (clone.tagName === 'H1' && clone.textContent === title) {
-            continue
-          }
-          p.appendChild(clone)
-        }
-        container.results.appendChild(p)
+        const element = createResultFromSection(result.item)
+        if (element) container.results.appendChild(element)
         container.results.appendChild(document.createElement('hr'))
+        // TODO style .search-result border instead of adding hr
       }
     })
   }
