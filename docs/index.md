@@ -6,6 +6,7 @@
 - [Note format](#2)
 - [Linking notes](#3)
 - [Graph](#8)
+- [Text search](#10)
 
 GitHub: <https://github.com/lggruspe/slipbox>
 
@@ -59,6 +60,7 @@ You can put any number of notes in one file.
 #writing-notes
 
 - [Linking notes](#3)
+- [Generate note IDs](#11)
 
 
 
@@ -160,3 +162,17 @@ The cluster contains notes as well as [links](#3) that belong to the tag.
 Links are added to clusters using contextual tags.
 When you link to a note, the link automatically gets tagged with the
 last tag that appears in the note before the link.
+
+
+
+# 10 Text search
+
+Slipbox provides text search using `lunr.js`.
+See the [`lunr.js` docs](https://lunrjs.com/guides/searching.html) to
+learn more about the syntax for complex queries.
+
+
+
+# 11 Generate note IDs
+
+`python -m slipbox new` prints the smallest available ID.

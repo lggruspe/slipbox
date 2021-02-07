@@ -284,12 +284,14 @@
   window.slipbox.addLink('0', '2', null)
   window.slipbox.addLink('0', '3', null)
   window.slipbox.addLink('0', '8', null)
+  window.slipbox.addLink('0', '10', null)
   window.slipbox.addLink('1', '1', '#writing-notes')
   window.slipbox.addLink('1', '2', '#writing-notes')
   window.slipbox.addLink('1', '6', '#writing-notes')
   window.slipbox.addLink('1', '7', null)
   window.slipbox.addLink('2', '2', '#writing-notes')
   window.slipbox.addLink('2', '3', '#writing-notes')
+  window.slipbox.addLink('2', '11', '#writing-notes')
   window.slipbox.addLink('3', '3', '#connecting-notes')
   window.slipbox.addLink('3', '3', '#writing-notes')
   window.slipbox.addLink('3', '4', null)
@@ -376,6 +378,7 @@
 <li><a href="#2">Note format</a></li>
 <li><a href="#3">Linking notes</a></li>
 <li><a href="#8">Graph</a></li>
+<li><a href="#10">Text search</a></li>
 </ul>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
@@ -412,6 +415,7 @@
 <p><a href="##writing-notes">#writing-notes</a></p>
 <ul>
 <li><a href="#3">Linking notes</a></li>
+<li><a href="#11">Generate note IDs</a></li>
 </ul>
 </section>
 <section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes">
@@ -481,6 +485,14 @@ document_options = --mathjax --o output.html -s</code></pre>
 <p><a href="#5">Tag pages</a> show a cluster of notes at the bottom of the page. The cluster contains notes as well as <a href="#3">links</a> that belong to the tag.</p>
 <p>Links are added to clusters using contextual tags. When you link to a note, the link automatically gets tagged with the last tag that appears in the note before the link.</p>
 </section>
+<section id="10" class="level1 slipbox-note" data-filename="index.md" title="Text search">
+<h1>Text search</h1>
+<p>Slipbox provides text search using <code>lunr.js</code>. See the <a href="https://lunrjs.com/guides/searching.html"><code>lunr.js</code> docs</a> to learn more about the syntax for complex queries.</p>
+</section>
+<section id="11" class="level1 slipbox-note" data-filename="index.md" title="Generate note IDs">
+<h1>Generate note IDs</h1>
+<p><code>python -m slipbox new</code> prints the smallest available ID.</p>
+</section>
 <section id='#connecting-notes' title='#connecting-notes' class='level1'>
   <h1>
     <a href='#tags' title='List of tags'>
@@ -518,6 +530,7 @@ document_options = --mathjax --o output.html -s</code></pre>
     <li value='3'></li>
     <li value='4'></li>
     <li value='6'></li>
+    <li value='11'></li>
   </ol>
 </section>
 <section id='tags' title='Tags' class='level1'>
@@ -541,7 +554,7 @@ document_options = --mathjax --o output.html -s</code></pre>
       <a href='##writing-notes'>
         #writing-notes
       </a>
-       (5)
+       (6)
     </li>
   </ul>
   <h2>
@@ -549,6 +562,7 @@ document_options = --mathjax --o output.html -s</code></pre>
   </h2>
   <ol class='slipbox-list'>
     <li value='0'></li>
+    <li value='10'></li>
   </ol>
 </section>
 <section id='ref-cite2020' title='ref-cite2020' class='level1'>
