@@ -30,10 +30,13 @@ def is_file_in_db(path: Path, conn: Connection) -> bool:
     return False
 
 
-def has_valid_pattern(filename: Path, patterns: Iterable[str]) -> bool:
-    """Check if filename matches one of the patterns."""
+def has_valid_pattern(path: Path,
+                      patterns: Iterable[str],
+                      basedir: Path) -> bool:
+    """Check if path matches one of the patterns."""
     for pattern in patterns:
-        if fnmatch.fnmatch(str(filename), pattern):
+        relpath = str(path.relative_to(basedir.resolve()))
+        if fnmatch.fnmatch(relpath, pattern):
             return True
     return False
 
