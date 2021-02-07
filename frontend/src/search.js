@@ -1,8 +1,8 @@
-const Fuse = require('fuse.js')
+const lunr = require('lunr')
 
 function extractTitle (section) {
   // Or create clone of h1?
-  const title = section.querySelector('h1')?.textContent
+  const title = section?.querySelector('h1')?.textContent
   const h3 = document.createElement('h3')
   h3.innerHTML = `<a href="#${section.id}">${title}</a>`
   return title ? h3 : null
@@ -40,21 +40,22 @@ function createResultFromSection (section) {
 
 class Search {
   constructor (sections, options = null) {
-    this.fuse = new Fuse(sections, options || {
-      includeMatches: true,
-      ignoreLocation: true,
-      keys: ['textContent'],
-      threshold: 0.45
+    this.index = lunr(function () {
+      this.ref('id')
+      this.field('textContent')
+      sections.forEach(function (sec) {
+        this.add(sec)
+      }, this)
     })
   }
 
   render (container) {
     container.input.addEventListener('change', () => {
       window.location.hash = '#search'
-      const results = this.fuse.search(container.input.value)
+      const results = this.index.search(container.input.value)
       container.results.textContent = ''
       for (const result of results) {
-        const element = createResultFromSection(result.item)
+        const element = createResultFromSection(document.getElementById(result.ref))
         if (element) container.results.appendChild(element)
         container.results.appendChild(document.createElement('hr'))
         // TODO style .search-result border instead of adding hr

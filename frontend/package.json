@@ -35,11 +35,13 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.1.0",
-    "fuse.js": "^6.4.6",
     "jsdom": "^16.4.0",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
     "rollup": "^2.37.1",
     "terser": "^5.5.1"
+  },
+  "dependencies": {
+    "lunr": "^2.3.9"
   }
 }
