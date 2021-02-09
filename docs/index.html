@@ -394,11 +394,11 @@
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> slipbox init my-slipbox</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> init my-slipbox</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> slipbox build</span></code></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span></code></pre></div>
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a <a href="#7">configuration file</a>, an sqlite3 database and a patterns file.</p>
 <hr />
 <p><a href="##writing-notes">#writing-notes</a></p>
@@ -491,7 +491,7 @@ document_options = --mathjax --o output.html -s</code></pre>
 </section>
 <section id="11" class="level1 slipbox-note" data-filename="index.md" title="Generate note IDs">
 <h1>Generate note IDs</h1>
-<p><code>python -m slipbox new</code> prints the smallest available ID.</p>
+<p><code>slipbox new</code> prints the smallest available ID.</p>
 </section>
 <section id='#connecting-notes' title='#connecting-notes' class='level1'>
   <h1>

@@ -5,7 +5,7 @@ with open("../README.md") as fp:
 
 setuptools.setup(
     name="slipbox",
-    version="0.15.3",
+    version="0.15.5",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
     description="Static-site generator for Zettelkasten notes",
@@ -24,4 +24,9 @@ setuptools.setup(
     ],
     install_requires=["climates==0.0.3"],
     python_requires=">=3.8",
+    entry_points={
+        "console_scripts": [
+            "slipbox=slipbox.__main__:main"
+        ]
+    }
 )

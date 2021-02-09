@@ -28,11 +28,11 @@ pip install slipbox
 pip install genanki
 
 # Create slipbox directory.
-python -m slipbox init my-slipbox
+slipbox init my-slipbox
 
 # Generate site.
 cd my-slipbox
-python -m slipbox build
+slipbox build
 ```
 
 The initialized directory contains a `.slipbox` directory.
@@ -175,4 +175,4 @@ learn more about the syntax for complex queries.
 
 # 11 Generate note IDs
 
-`python -m slipbox new` prints the smallest available ID.
+`slipbox new` prints the smallest available ID.
