@@ -4,7 +4,7 @@ from climates import Climate
 from .app import (check_notes, generate_flashcards, main, show_info_wrapper,
                   initialize, new_note)
 
-cli = Climate("Generate a single-page HTML from your notes.")
+cli = Climate("slipbox", "Generate a single-page HTML from your notes.")
 cli.add_commands(
     build=main,
     check=check_notes,
