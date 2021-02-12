@@ -3,12 +3,12 @@ attrs==20.3.0
 bleach==3.3.0
 cached-property==1.5.2
 certifi==2020.12.5
-cffi==1.14.4
+cffi==1.14.5
 chardet==4.0.0
 climates==0.0.3
 colorama==0.4.4
 coverage==5.4
-cryptography==3.3.1
+cryptography==3.4.4
 docutils==0.16
 flake8==3.8.4
 frozendict==1.2
@@ -20,7 +20,7 @@ jeepney==0.6.0
 keyring==22.0.1
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
-more-itertools==8.6.0
+more-itertools==8.7.0
 mypy==0.800
 mypy-extensions==0.4.3
 packaging==20.9
@@ -41,10 +41,10 @@ readme-renderer==28.0
 requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
-SecretStorage==3.3.0
+SecretStorage==3.3.1
 six==1.15.0
 toml==0.10.2
-tqdm==4.56.0
+tqdm==4.56.2
 twine==3.3.0
 typed-ast==1.4.2
 typing-extensions==3.7.4.3

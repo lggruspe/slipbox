@@ -1,6 +1,8 @@
 slipbox
 =======
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lggruspe/slipbox/Python%20application?label=check&style=flat-square)
+
 `slipbox` is a static site generator for Zettelkasten notes.
 
 Features
