@@ -1,7 +1,10 @@
 slipbox
 =======
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lggruspe/slipbox/Python%20application?label=check&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lggruspe/slipbox/Python%20application)
+![PyPI](https://img.shields.io/pypi/v/slipbox)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/slipbox)
+![GitHub](https://img.shields.io/github/license/lggruspe/slipbox)
 
 `slipbox` is a static site generator for Zettelkasten notes.
 
@@ -17,7 +20,7 @@ Requirements
 ------------
 
 - `pandoc` (should be compiled with `pandoc-types` 1.22)
-- `python3`
+- `python3` (3.8+)
 - `genanki` (only needed when generating Anki cards)
 
 Installation and usage

@@ -30,7 +30,7 @@ jobs:
         if [ -f cli/requirements.txt ]; then pip install -r cli/requirements.txt; fi
     - name: Lint with flake8
       run: |
-        cd cli; flake8 slipbox
+        cd cli; flake8 slipbox --max-complexity=10
     - name: Lint with pylint
       run: |
         cd cli; pylint --fail-under=10 slipbox -d R0903,W0621,C0415,E1136,C0103
