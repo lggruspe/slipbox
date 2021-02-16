@@ -1,5 +1,11 @@
 const cytoscape = require('cytoscape')
 
+/// Used as a master database that contains information about all notes.
+/// The elements in SlipboxCollection.cy aren't displayed directly on the page.
+/// Instead, a new cytoscape object gets created whenever a note page or a tag
+/// page gets visited (for example).
+/// This cytoscape object is a subset of the SlipboxCollection.cy that only
+/// contains relevant elements in the visited page.
 module.exports.SlipboxCollection = class SlipboxCollection {
   constructor () {
     this.cy = cytoscape({ headless: true })
@@ -89,85 +95,94 @@ function neighborElements (slipbox, id) {
   return clone.union(eles)
 }
 
-function createCytoscape (container) {
-  const cy = cytoscape({
-    container: container.querySelector('.slipbox-graph-cytoscape'),
-    selectionType: 'additive',
-    style: [
-      {
-        selector: 'node',
-        style: {
-          label: 'data(label)',
-          height: 'label',
-          width: 'label',
-          padding: '8px',
-          shape: 'round-rectangle',
-          color: 'white',
-          'background-color': 'data(bgColor)',
-          'text-halign': 'center',
-          'text-valign': 'center',
-          'text-wrap': 'wrap',
-          'text-max-width': 100
+class GraphView {
+  constructor (container) {
+    this.init(container)
+  }
+
+  init (container) {
+    this.container = container
+    this.cy = cytoscape({
+      container: this.container.querySelector('.slipbox-graph-cytoscape'),
+      selectionType: 'additive',
+      style: [
+        {
+          selector: 'node',
+          style: {
+            label: 'data(label)',
+            height: 'label',
+            width: 'label',
+            padding: '8px',
+            shape: 'round-rectangle',
+            color: 'white',
+            'background-color': 'data(bgColor)',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            'text-wrap': 'wrap',
+            'text-max-width': 100
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            width: 2,
+            'curve-style': 'bezier',
+            'line-color': 'black',
+            'line-style': 'solid',
+            'target-arrow-color': 'black',
+            'target-arrow-shape': 'triangle'
+          }
         }
-      },
-      {
-        selector: 'edge',
-        style: {
-          width: 2,
-          'curve-style': 'bezier',
-          'line-color': 'black',
-          'line-style': 'solid',
-          'target-arrow-color': 'black',
-          'target-arrow-shape': 'triangle'
-        }
-      }
-    ]
-  })
-  const [show, hide] = hoverHandlers(container)
-  cy.on('select', 'node', show)
-  cy.on('unselect', 'node', hide)
-  return cy
+      ]
+    })
+    this.addEventListeners()
+  }
+
+  addEventListeners () {
+    const a = this.container.querySelector('.slipbox-graph-info header a')
+    const p = this.container.querySelector('.slipbox-graph-info header p')
+    this.cy.on('select', 'node', event => {
+      const id = event.target.data('id')
+      a.textContent = event.target.data('title')
+      a.href = '#' + id
+      p.textContent = event.target.data('filename')
+      event.target.data('label', id)
+    })
+    this.cy.on('unselect', 'node', event => {
+      a.textContent = ''
+      p.textContent = ''
+      event.target.data('label', event.target.data('title'))
+    })
+  }
+
+  render (layout = 'breadthfirst') {
+    if (layout === 'cose') {
+      this.cy.layout({
+        name: 'cose',
+        nodeDimensionsIncludeLabels: true,
+        numIter: 300,
+        fit: true
+      }).run()
+    } else {
+      this.cy.layout({
+        name: 'breadthfirst',
+        spacingFactor: 1.0,
+        fit: true,
+        directed: true,
+        avoidOverlap: true,
+        nodeDimensionsIncludeLabels: true
+      }).run()
+    }
+  }
 }
 
-function renderCytoscape (cy, layout = 'breadthfirst') {
-  if (layout === 'cose') {
-    cy.layout({
-      name: 'cose',
-      nodeDimensionsIncludeLabels: true,
-      numIter: 300,
-      fit: true
-    }).run()
-  } else {
-    cy.layout({
-      name: 'breadthfirst',
-      spacingFactor: 1.0,
-      fit: true,
-      directed: true,
-      avoidOverlap: true,
-      nodeDimensionsIncludeLabels: true
-    }).run()
-  }
-  return cy
-}
-
-function hoverHandlers (container) {
-  const infoDiv = container.querySelector('.slipbox-graph-info')
-  const a = infoDiv.querySelector('header a')
-  const p = infoDiv.querySelector('header p')
-
-  const show = event => {
-    const id = event.target.data('id')
-    a.textContent = event.target.data('title')
-    a.href = '#' + id
-    p.textContent = event.target.data('filename')
-    event.target.data('label', id)
-  }
-  const hide = event => {
-    a.textContent = ''
-    p.textContent = ''
-    event.target.data('label', event.target.data('title'))
-  }
-  return [show, hide]
+function isNoteId (id) {
+  // id is the string after # in the URL hash.
+  return Boolean(id && Number.isInteger(Number(id)))
+  /*
+  const fragment = document.getElementById(id)
+  return Boolean(fragment?.classList.contains('slipbox-note'))
+  */
 }
 
 module.exports.init = function init (slipbox) {
@@ -175,32 +190,29 @@ module.exports.init = function init (slipbox) {
   const extras = document.createElement('div')
   document.querySelector('.slipbox-bottom').appendChild(extras)
 
+  const view = new GraphView(extras.appendChild(graphArea()))
+
   function resetGraph () {
+    // Clear graph display.
     extras.style.display = 'none'
+
+    // Get elements to display.
     const id = window.location.hash.slice(1)
-    let elements = []
-    let layout = 'breadthfirst'
-    if (!id) {
-      elements = slipbox.cy.elements().filter(e => e.isNode() || e.data('source') !== e.data('target'))
-      if (elements.length > 30) {
-        layout = 'cose'
-      }
-    } else {
-      const nid = Number(id)
-      if (Number.isInteger(nid)) {
-        elements = neighborElements(slipbox, id)
-        if (elements.length < 2) return
-      } else {
-        elements = clusterElements(slipbox, id)
-      }
-    }
-    if (elements.length === 0) return
+    const elements = !id
+      ? slipbox.cy.elements().filter(e => e.isNode() || e.data('source') !== e.data('target'))
+      : isNoteId(id)
+        ? neighborElements(slipbox, id)
+        : clusterElements(slipbox, id)
+
+    // Check if has enough elements.
+    if (elements.length < 2) return
+
+    // Display elements.
     extras.style.display = 'block'
     extras.innerHTML = ''
-    const container = extras.appendChild(graphArea())
-    const cy = createCytoscape(container)
-    cy.add(elements)
-    renderCytoscape(cy, layout)
+    view.init(extras.appendChild(graphArea()))
+    view.cy.add(elements)
+    view.render(!id && elements.length > 30 ? 'cose' : 'breadthfirst')
   }
 
   resetGraph()
