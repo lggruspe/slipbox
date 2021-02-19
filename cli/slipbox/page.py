@@ -81,7 +81,7 @@ def create_tags(conn: Connection) -> str:
     rows = conn.execute(
         "SELECT tag, COUNT(*) FROM Tags GROUP BY tag ORDER BY tag"
     )
-    items = (Elem("li", Elem("a", tag, href=f"#{tag}"), f" ({count})")
+    items = (Elem("li", Elem("a", tag, href=f"#tags/{tag[1:]}"), f" ({count})")
              for tag, count in rows)
     section = Elem("section",
                    Elem("h1", "Tags"),
@@ -108,10 +108,9 @@ def create_tag_page(conn: Connection, tag: str) -> str:
         item = Elem("li", value=str(nid))
         items.append(item)
     section = Elem("section",
-                   Elem("h1", Elem("a", tag, href="#tags",
-                                   title="List of tags")),
+                   Elem("h1", tag),
                    Elem("ol", *items, **{"class": "slipbox-list"}),
-                   id=tag,
+                   id=f"tags/{tag[1:]}",
                    title=tag,
                    **{"class": "level1"})
     return render(section)
@@ -140,8 +139,7 @@ def create_reference_page(conn: Connection, reference: str) -> str:
         item = Elem("li", value=str(note))
         items.append(item)
     section = Elem("section",
-                   Elem("h1", Elem("a", '@' + reference[4:],
-                                   href="#references")),
+                   Elem("h1", '@' + reference[4:]),
                    Elem("p", text),
                    Elem("ol", *items, **{"class": "slipbox-list"}),
                    id=reference,

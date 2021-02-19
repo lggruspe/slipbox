@@ -153,7 +153,7 @@ local function hashtag()
       local tag = utils.hashtag_prefix(elem.text)
       if tag then
         return {
-          pandoc.Link({pandoc.Str(tag)}, '#' .. tag),
+          pandoc.Link({pandoc.Str(tag)}, '#tags/' .. tag:sub(2)),
           pandoc.Str(elem.text:sub(#tag + 1)),
         }
       end

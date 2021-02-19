@@ -92,7 +92,7 @@ local function make_direct_link()
 end
 
 local function make_tag_link()
-  return mock_link({make_sample_str()}, "##tag")
+  return mock_link({make_sample_str()}, "#tags/tag")
 end
 
 describe("get_link", function()

@@ -177,12 +177,16 @@ class GraphView {
 }
 
 function isNoteId (id) {
-  // id is the string after # in the URL hash.
-  return Boolean(id && Number.isInteger(Number(id)))
-  /*
+  // assume id is the string after # in the URL hash.
+  if (!id || !Number.isInteger(Number(id))) return false
   const fragment = document.getElementById(id)
   return Boolean(fragment?.classList.contains('slipbox-note'))
-  */
+}
+
+function isTagId (id) {
+  if (!id.startsWith('tags/')) return false
+  const fragment = document.getElementById(id)
+  return Boolean(fragment?.classList.contains('level1'))
 }
 
 module.exports.init = function init (slipbox) {
@@ -202,7 +206,9 @@ module.exports.init = function init (slipbox) {
       ? slipbox.cy.elements().filter(e => e.isNode() || e.data('source') !== e.data('target'))
       : isNoteId(id)
         ? neighborElements(slipbox, id)
-        : clusterElements(slipbox, id)
+        : isTagId(id)
+          ? clusterElements(slipbox, '#' + id.slice(5)) // tags/tag -> #tag
+          : []
 
     // Check if has enough elements.
     if (elements.length < 2) return

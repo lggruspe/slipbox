@@ -211,12 +211,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
   <script type="module">
-  import cytoscape from"https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.17.1/cytoscape.esm.min.js";var SlipboxCollection_1=class{constructor(){this.cy=cytoscape({headless:!0})}addNote(e){const t=document.getElementById(e),r=t.querySelector("h1").textContent,n=t.getAttribute("data-filename");this.cy.add({data:{id:e,title:r,filename:n,label:r,bgColor:"gray"}})}addLink(e,t,r){const n=`${e}-${t}${r}`;this.cy.add({data:{id:n,source:e,target:t,tag:r}})}colorEntrypoints(){this.cy.nodes((e=>0===e.indegree(!1)&&e.outdegree(!1)>0)).data("bgColor","#4444aa")}};function graphArea(){const e=document.createElement("div");return e.innerHTML='\n    <div class="slipbox-graph-cytoscape"></div>\n    <div class="slipbox-graph-info">\n      <header>\n        <h3><a href=""></a></h3>\n        <p></p>\n      </header>\n    </div>\n  ',e}function clusterElements(e,t){const r=e.cy.edges(`[tag="${t}"]`);return r.connectedNodes().union(r.filter((e=>e.data("source")!==e.data("target"))))}function neighborElements(e,t){const r=e.cy.getElementById(t),n=new Set,i=r.incomers().edges("edge[tag]");for(;i.length>0;){const e=i.pop(),t=e.data("tag");n.has(e)||(i.push(...e.source().incomers(`edge[tag="${t}"]`)),n.add(e))}const s=new Set,o=r.outgoers().edges("edge[tag]");for(;o.length>0;){const e=o.pop(),t=e.data("tag");s.has(e)||(o.push(...e.target().outgoers(`edge[tag="${t}"]`)),s.add(e))}const a=e.cy.collection().union(Array.from(n)).union(Array.from(s)),l=a.connectedNodes(),c=r.openNeighborhood(),u=l.union(a).union(c).filter((e=>e.isNode()||e.data("source")!==e.data("target"))),d=u.getElementById(t).clone();return d.data("bgColor","black"),d.union(u)}class GraphView{constructor(e){this.init(e)}init(e){this.container=e,this.cy=cytoscape({container:this.container.querySelector(".slipbox-graph-cytoscape"),selectionType:"additive",style:[{selector:"node",style:{label:"data(label)",height:"label",width:"label",padding:"8px",shape:"round-rectangle",color:"white","background-color":"data(bgColor)","text-halign":"center","text-valign":"center","text-wrap":"wrap","text-max-width":100}},{selector:"edge",style:{width:2,"curve-style":"bezier","line-color":"black","line-style":"solid","target-arrow-color":"black","target-arrow-shape":"triangle"}}]}),this.addEventListeners()}addEventListeners(){const e=this.container.querySelector(".slipbox-graph-info header a"),t=this.container.querySelector(".slipbox-graph-info header p");this.cy.on("select","node",(r=>{const n=r.target.data("id");e.textContent=r.target.data("title"),e.href="#"+n,t.textContent=r.target.data("filename"),r.target.data("label",n)})),this.cy.on("unselect","node",(r=>{e.textContent="",t.textContent="",r.target.data("label",r.target.data("title"))}))}render(e="breadthfirst"){"cose"===e?this.cy.layout({name:"cose",nodeDimensionsIncludeLabels:!0,numIter:300,fit:!0}).run():this.cy.layout({name:"breadthfirst",spacingFactor:1,fit:!0,directed:!0,avoidOverlap:!0,nodeDimensionsIncludeLabels:!0}).run()}}function isNoteId(e){return Boolean(e&&Number.isInteger(Number(e)))}var init=function(e){e.colorEntrypoints();const t=document.createElement("div");document.querySelector(".slipbox-bottom").appendChild(t);const r=new GraphView(t.appendChild(graphArea()));function n(){t.style.display="none";const n=window.location.hash.slice(1),i=n?isNoteId(n)?neighborElements(e,n):clusterElements(e,n):e.cy.elements().filter((e=>e.isNode()||e.data("source")!==e.data("target")));i.length<2||(t.style.display="block",t.innerHTML="",r.init(t.appendChild(graphArea())),r.cy.add(i),r.render(!n&&i.length>30?"cose":"breadthfirst"))}n(),window.addEventListener("hashchange",n)},graph={SlipboxCollection:SlipboxCollection_1,init:init},init$1=function(){const e=document.querySelectorAll("ol.slipbox-list > li[value]");for(let t=0;t<e.length;t++){const r=e[t],n=r.value,i=document.querySelector(`section.slipbox-note[id="${n}"]`);if(!i){r.remove();continue}const s=i.querySelector("h1");if(!s){r.remove();continue}const o=document.createElement("a");o.href=`#${n}`,o.innerHTML=s.innerHTML,r.appendChild(o)}},list={init:init$1};function createCommonjsModule(e){var t={exports:{}};return e(t,t.exports),t.exports
+  import cytoscape from"https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.17.1/cytoscape.esm.min.js";var SlipboxCollection_1=class{constructor(){this.cy=cytoscape({headless:!0})}addNote(e){const t=document.getElementById(e),r=t.querySelector("h1").textContent,n=t.getAttribute("data-filename");this.cy.add({data:{id:e,title:r,filename:n,label:r,bgColor:"gray"}})}addLink(e,t,r){const n=`${e}-${t}${r}`;this.cy.add({data:{id:n,source:e,target:t,tag:r}})}colorEntrypoints(){this.cy.nodes((e=>0===e.indegree(!1)&&e.outdegree(!1)>0)).data("bgColor","#4444aa")}};function graphArea(){const e=document.createElement("div");return e.innerHTML='\n    <div class="slipbox-graph-cytoscape"></div>\n    <div class="slipbox-graph-info">\n      <header>\n        <h3><a href=""></a></h3>\n        <p></p>\n      </header>\n    </div>\n  ',e}function clusterElements(e,t){const r=e.cy.edges(`[tag="${t}"]`);return r.connectedNodes().union(r.filter((e=>e.data("source")!==e.data("target"))))}function neighborElements(e,t){const r=e.cy.getElementById(t),n=new Set,i=r.incomers().edges("edge[tag]");for(;i.length>0;){const e=i.pop(),t=e.data("tag");n.has(e)||(i.push(...e.source().incomers(`edge[tag="${t}"]`)),n.add(e))}const s=new Set,o=r.outgoers().edges("edge[tag]");for(;o.length>0;){const e=o.pop(),t=e.data("tag");s.has(e)||(o.push(...e.target().outgoers(`edge[tag="${t}"]`)),s.add(e))}const a=e.cy.collection().union(Array.from(n)).union(Array.from(s)),l=a.connectedNodes(),c=r.openNeighborhood(),u=l.union(a).union(c).filter((e=>e.isNode()||e.data("source")!==e.data("target"))),d=u.getElementById(t).clone();return d.data("bgColor","black"),d.union(u)}class GraphView{constructor(e){this.init(e)}init(e){this.container=e,this.cy=cytoscape({container:this.container.querySelector(".slipbox-graph-cytoscape"),selectionType:"additive",style:[{selector:"node",style:{label:"data(label)",height:"label",width:"label",padding:"8px",shape:"round-rectangle",color:"white","background-color":"data(bgColor)","text-halign":"center","text-valign":"center","text-wrap":"wrap","text-max-width":100}},{selector:"edge",style:{width:2,"curve-style":"bezier","line-color":"black","line-style":"solid","target-arrow-color":"black","target-arrow-shape":"triangle"}}]}),this.addEventListeners()}addEventListeners(){const e=this.container.querySelector(".slipbox-graph-info header a"),t=this.container.querySelector(".slipbox-graph-info header p");this.cy.on("select","node",(r=>{const n=r.target.data("id");e.textContent=r.target.data("title"),e.href="#"+n,t.textContent=r.target.data("filename"),r.target.data("label",n)})),this.cy.on("unselect","node",(r=>{e.textContent="",t.textContent="",r.target.data("label",r.target.data("title"))}))}render(e="breadthfirst"){"cose"===e?this.cy.layout({name:"cose",nodeDimensionsIncludeLabels:!0,numIter:300,fit:!0}).run():this.cy.layout({name:"breadthfirst",spacingFactor:1,fit:!0,directed:!0,avoidOverlap:!0,nodeDimensionsIncludeLabels:!0}).run()}}function isNoteId(e){if(!e||!Number.isInteger(Number(e)))return!1;const t=document.getElementById(e);return Boolean(t?.classList.contains("slipbox-note"))}function isTagId(e){if(!e.startsWith("tags/"))return!1;const t=document.getElementById(e);return Boolean(t?.classList.contains("level1"))}var init=function(e){e.colorEntrypoints();const t=document.createElement("div");document.querySelector(".slipbox-bottom").appendChild(t);const r=new GraphView(t.appendChild(graphArea()));function n(){t.style.display="none";const n=window.location.hash.slice(1),i=n?isNoteId(n)?neighborElements(e,n):isTagId(n)?clusterElements(e,"#"+n.slice(5)):[]:e.cy.elements().filter((e=>e.isNode()||e.data("source")!==e.data("target")));i.length<2||(t.style.display="block",t.innerHTML="",r.init(t.appendChild(graphArea())),r.cy.add(i),r.render(!n&&i.length>30?"cose":"breadthfirst"))}n(),window.addEventListener("hashchange",n)},graph={SlipboxCollection:SlipboxCollection_1,init:init},init$1=function(){const e=document.querySelectorAll("ol.slipbox-list > li[value]");for(let t=0;t<e.length;t++){const r=e[t],n=r.value,i=document.querySelector(`section.slipbox-note[id="${n}"]`);if(!i){r.remove();continue}const s=i.querySelector("h1");if(!s){r.remove();continue}const o=document.createElement("a");o.href=`#${n}`,o.innerHTML=s.innerHTML,r.appendChild(o)}},list={init:init$1};function createCommonjsModule(e){var t={exports:{}};return e(t,t.exports),t.exports
   /**
    * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.9
    * Copyright (C) 2020 Oliver Nightingale
    * @license MIT
-   */}var lunr=createCommonjsModule((function(e,t){!function(){var t,r,n,i,s,o,a,l,c,u,d,h,p,f,y,m,g,x,v,w,b,S,Q,E,k,L,T=function(e){var t=new T.Builder;return t.pipeline.add(T.trimmer,T.stopWordFilter,T.stemmer),t.searchPipeline.add(T.stemmer),e.call(t,t),t.build()};T.version="2.3.9",
+   */}var lunr=createCommonjsModule((function(e,t){!function(){var t,r,n,i,s,o,a,l,c,u,d,h,p,f,y,m,g,x,v,w,b,S,E,Q,k,L,T=function(e){var t=new T.Builder;return t.pipeline.add(T.trimmer,T.stopWordFilter,T.stemmer),t.searchPipeline.add(T.stemmer),e.call(t,t),t.build()};T.version="2.3.9",
   /*!
    * lunr.utils
    * Copyright (C) 2020 Oliver Nightingale
@@ -247,7 +247,7 @@
    * Copyright (C) 2020 Oliver Nightingale
    * Includes code from - http://tartarus.org/~martin/PorterStemmer/js.txt
    */
-  T.stemmer=(r={ational:"ate",tional:"tion",enci:"ence",anci:"ance",izer:"ize",bli:"ble",alli:"al",entli:"ent",eli:"e",ousli:"ous",ization:"ize",ation:"ate",ator:"ate",alism:"al",iveness:"ive",fulness:"ful",ousness:"ous",aliti:"al",iviti:"ive",biliti:"ble",logi:"log"},n={icate:"ic",ative:"",alize:"al",iciti:"ic",ical:"ic",ful:"",ness:""},i="[aeiouy]",s="[^aeiou][^aeiouy]*",o=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*"),a=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*[aeiouy][aeiou]*[^aeiou][^aeiouy]*"),l=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*([aeiouy][aeiou]*)?$"),c=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy]"),u=/^(.+?)(ss|i)es$/,d=/^(.+?)([^s])s$/,h=/^(.+?)eed$/,p=/^(.+?)(ed|ing)$/,f=/.$/,y=/(at|bl|iz)$/,m=new RegExp("([^aeiouylsz])\\1$"),g=new RegExp("^"+s+i+"[^aeiouwxy]$"),x=/^(.+?[^aeiou])y$/,v=/^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/,w=/^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/,b=/^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/,S=/^(.+?)(s|t)(ion)$/,Q=/^(.+?)e$/,E=/ll$/,k=new RegExp("^"+s+i+"[^aeiouwxy]$"),L=function(e){var t,i,s,L,T,I,P;if(e.length<3)return e;if("y"==(s=e.substr(0,1))&&(e=s.toUpperCase()+e.substr(1)),T=d,(L=u).test(e)?e=e.replace(L,"$1$2"):T.test(e)&&(e=e.replace(T,"$1$2")),T=p,(L=h).test(e)){var R=L.exec(e);(L=o).test(R[1])&&(L=f,e=e.replace(L,""))}else T.test(e)&&(t=(R=T.exec(e))[1],(T=c).test(t)&&(I=m,P=g,(T=y).test(e=t)?e+="e":I.test(e)?(L=f,e=e.replace(L,"")):P.test(e)&&(e+="e")));return(L=x).test(e)&&(e=(t=(R=L.exec(e))[1])+"i"),(L=v).test(e)&&(t=(R=L.exec(e))[1],i=R[2],(L=o).test(t)&&(e=t+r[i])),(L=w).test(e)&&(t=(R=L.exec(e))[1],i=R[2],(L=o).test(t)&&(e=t+n[i])),T=S,(L=b).test(e)?(t=(R=L.exec(e))[1],(L=a).test(t)&&(e=t)):T.test(e)&&(t=(R=T.exec(e))[1]+R[2],(T=a).test(t)&&(e=t)),(L=Q).test(e)&&(t=(R=L.exec(e))[1],T=l,I=k,((L=a).test(t)||T.test(t)&&!I.test(t))&&(e=t)),T=a,(L=E).test(e)&&T.test(e)&&(L=f,e=e.replace(L,"")),"y"==s&&(e=s.toLowerCase()+e.substr(1)),e},function(e){return e.update(L)}),T.Pipeline.registerFunction(T.stemmer,"stemmer"),
+  T.stemmer=(r={ational:"ate",tional:"tion",enci:"ence",anci:"ance",izer:"ize",bli:"ble",alli:"al",entli:"ent",eli:"e",ousli:"ous",ization:"ize",ation:"ate",ator:"ate",alism:"al",iveness:"ive",fulness:"ful",ousness:"ous",aliti:"al",iviti:"ive",biliti:"ble",logi:"log"},n={icate:"ic",ative:"",alize:"al",iciti:"ic",ical:"ic",ful:"",ness:""},i="[aeiouy]",s="[^aeiou][^aeiouy]*",o=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*"),a=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*[aeiouy][aeiou]*[^aeiou][^aeiouy]*"),l=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*([aeiouy][aeiou]*)?$"),c=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy]"),u=/^(.+?)(ss|i)es$/,d=/^(.+?)([^s])s$/,h=/^(.+?)eed$/,p=/^(.+?)(ed|ing)$/,f=/.$/,y=/(at|bl|iz)$/,m=new RegExp("([^aeiouylsz])\\1$"),g=new RegExp("^"+s+i+"[^aeiouwxy]$"),x=/^(.+?[^aeiou])y$/,v=/^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/,w=/^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/,b=/^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/,S=/^(.+?)(s|t)(ion)$/,E=/^(.+?)e$/,Q=/ll$/,k=new RegExp("^"+s+i+"[^aeiouwxy]$"),L=function(e){var t,i,s,L,T,I,P;if(e.length<3)return e;if("y"==(s=e.substr(0,1))&&(e=s.toUpperCase()+e.substr(1)),T=d,(L=u).test(e)?e=e.replace(L,"$1$2"):T.test(e)&&(e=e.replace(T,"$1$2")),T=p,(L=h).test(e)){var R=L.exec(e);(L=o).test(R[1])&&(L=f,e=e.replace(L,""))}else T.test(e)&&(t=(R=T.exec(e))[1],(T=c).test(t)&&(I=m,P=g,(T=y).test(e=t)?e+="e":I.test(e)?(L=f,e=e.replace(L,"")):P.test(e)&&(e+="e")));return(L=x).test(e)&&(e=(t=(R=L.exec(e))[1])+"i"),(L=v).test(e)&&(t=(R=L.exec(e))[1],i=R[2],(L=o).test(t)&&(e=t+r[i])),(L=w).test(e)&&(t=(R=L.exec(e))[1],i=R[2],(L=o).test(t)&&(e=t+n[i])),T=S,(L=b).test(e)?(t=(R=L.exec(e))[1],(L=a).test(t)&&(e=t)):T.test(e)&&(t=(R=T.exec(e))[1]+R[2],(T=a).test(t)&&(e=t)),(L=E).test(e)&&(t=(R=L.exec(e))[1],T=l,I=k,((L=a).test(t)||T.test(t)&&!I.test(t))&&(e=t)),T=a,(L=Q).test(e)&&T.test(e)&&(L=f,e=e.replace(L,"")),"y"==s&&(e=s.toLowerCase()+e.substr(1)),e},function(e){return e.update(L)}),T.Pipeline.registerFunction(T.stemmer,"stemmer"),
   /*!
    * lunr.stopWordFilter
    * Copyright (C) 2020 Oliver Nightingale
@@ -267,7 +267,7 @@
    * lunr.Index
    * Copyright (C) 2020 Oliver Nightingale
    */
-  T.Index=function(e){this.invertedIndex=e.invertedIndex,this.fieldVectors=e.fieldVectors,this.tokenSet=e.tokenSet,this.fields=e.fields,this.pipeline=e.pipeline},T.Index.prototype.search=function(e){return this.query((function(t){new T.QueryParser(e,t).parse()}))},T.Index.prototype.query=function(e){for(var t=new T.Query(this.fields),r=Object.create(null),n=Object.create(null),i=Object.create(null),s=Object.create(null),o=Object.create(null),a=0;a<this.fields.length;a++)n[this.fields[a]]=new T.Vector;e.call(t,t);for(a=0;a<t.clauses.length;a++){var l=t.clauses[a],c=null,u=T.Set.empty;c=l.usePipeline?this.pipeline.runString(l.term,{fields:l.fields}):[l.term];for(var d=0;d<c.length;d++){var h=c[d];l.term=h;var p=T.TokenSet.fromClause(l),f=this.tokenSet.intersect(p).toArray();if(0===f.length&&l.presence===T.Query.presence.REQUIRED){for(var y=0;y<l.fields.length;y++){s[O=l.fields[y]]=T.Set.empty}break}for(var m=0;m<f.length;m++){var g=f[m],x=this.invertedIndex[g],v=x._index;for(y=0;y<l.fields.length;y++){var w=x[O=l.fields[y]],b=Object.keys(w),S=g+"/"+O,Q=new T.Set(b);if(l.presence==T.Query.presence.REQUIRED&&(u=u.union(Q),void 0===s[O]&&(s[O]=T.Set.complete)),l.presence!=T.Query.presence.PROHIBITED){if(n[O].upsert(v,l.boost,(function(e,t){return e+t})),!i[S]){for(var E=0;E<b.length;E++){var k,L=b[E],I=new T.FieldRef(L,O),P=w[L];void 0===(k=r[I])?r[I]=new T.MatchData(g,O,P):k.add(g,O,P)}i[S]=!0}}else void 0===o[O]&&(o[O]=T.Set.empty),o[O]=o[O].union(Q)}}}if(l.presence===T.Query.presence.REQUIRED)for(y=0;y<l.fields.length;y++){s[O=l.fields[y]]=s[O].intersect(u)}}var R=T.Set.complete,C=T.Set.empty;for(a=0;a<this.fields.length;a++){var O;s[O=this.fields[a]]&&(R=R.intersect(s[O])),o[O]&&(C=C.union(o[O]))}var F=Object.keys(r),N=[],_=Object.create(null);if(t.isNegated()){F=Object.keys(this.fieldVectors);for(a=0;a<F.length;a++){I=F[a];var j=T.FieldRef.fromString(I);r[I]=new T.MatchData}}for(a=0;a<F.length;a++){var D=(j=T.FieldRef.fromString(F[a])).docRef;if(R.contains(D)&&!C.contains(D)){var A,$=this.fieldVectors[j],B=n[j.fieldName].similarity($);if(void 0!==(A=_[D]))A.score+=B,A.matchData.combine(r[j]);else{var M={ref:D,score:B,matchData:r[j]};_[D]=M,N.push(M)}}}return N.sort((function(e,t){return t.score-e.score}))},T.Index.prototype.toJSON=function(){var e=Object.keys(this.invertedIndex).sort().map((function(e){return[e,this.invertedIndex[e]]}),this),t=Object.keys(this.fieldVectors).map((function(e){return[e,this.fieldVectors[e].toJSON()]}),this);return{version:T.version,fields:this.fields,fieldVectors:t,invertedIndex:e,pipeline:this.pipeline.toJSON()}},T.Index.load=function(e){var t={},r={},n=e.fieldVectors,i=Object.create(null),s=e.invertedIndex,o=new T.TokenSet.Builder,a=T.Pipeline.load(e.pipeline);e.version!=T.version&&T.utils.warn("Version mismatch when loading serialised index. Current version of lunr '"+T.version+"' does not match serialized index '"+e.version+"'");for(var l=0;l<n.length;l++){var c=(d=n[l])[0],u=d[1];r[c]=new T.Vector(u)}for(l=0;l<s.length;l++){var d,h=(d=s[l])[0],p=d[1];o.insert(h),i[h]=p}return o.finish(),t.fields=e.fields,t.fieldVectors=r,t.invertedIndex=i,t.tokenSet=o.root,t.pipeline=a,new T.Index(t)},
+  T.Index=function(e){this.invertedIndex=e.invertedIndex,this.fieldVectors=e.fieldVectors,this.tokenSet=e.tokenSet,this.fields=e.fields,this.pipeline=e.pipeline},T.Index.prototype.search=function(e){return this.query((function(t){new T.QueryParser(e,t).parse()}))},T.Index.prototype.query=function(e){for(var t=new T.Query(this.fields),r=Object.create(null),n=Object.create(null),i=Object.create(null),s=Object.create(null),o=Object.create(null),a=0;a<this.fields.length;a++)n[this.fields[a]]=new T.Vector;e.call(t,t);for(a=0;a<t.clauses.length;a++){var l=t.clauses[a],c=null,u=T.Set.empty;c=l.usePipeline?this.pipeline.runString(l.term,{fields:l.fields}):[l.term];for(var d=0;d<c.length;d++){var h=c[d];l.term=h;var p=T.TokenSet.fromClause(l),f=this.tokenSet.intersect(p).toArray();if(0===f.length&&l.presence===T.Query.presence.REQUIRED){for(var y=0;y<l.fields.length;y++){s[O=l.fields[y]]=T.Set.empty}break}for(var m=0;m<f.length;m++){var g=f[m],x=this.invertedIndex[g],v=x._index;for(y=0;y<l.fields.length;y++){var w=x[O=l.fields[y]],b=Object.keys(w),S=g+"/"+O,E=new T.Set(b);if(l.presence==T.Query.presence.REQUIRED&&(u=u.union(E),void 0===s[O]&&(s[O]=T.Set.complete)),l.presence!=T.Query.presence.PROHIBITED){if(n[O].upsert(v,l.boost,(function(e,t){return e+t})),!i[S]){for(var Q=0;Q<b.length;Q++){var k,L=b[Q],I=new T.FieldRef(L,O),P=w[L];void 0===(k=r[I])?r[I]=new T.MatchData(g,O,P):k.add(g,O,P)}i[S]=!0}}else void 0===o[O]&&(o[O]=T.Set.empty),o[O]=o[O].union(E)}}}if(l.presence===T.Query.presence.REQUIRED)for(y=0;y<l.fields.length;y++){s[O=l.fields[y]]=s[O].intersect(u)}}var R=T.Set.complete,C=T.Set.empty;for(a=0;a<this.fields.length;a++){var O;s[O=this.fields[a]]&&(R=R.intersect(s[O])),o[O]&&(C=C.union(o[O]))}var F=Object.keys(r),N=[],_=Object.create(null);if(t.isNegated()){F=Object.keys(this.fieldVectors);for(a=0;a<F.length;a++){I=F[a];var j=T.FieldRef.fromString(I);r[I]=new T.MatchData}}for(a=0;a<F.length;a++){var D=(j=T.FieldRef.fromString(F[a])).docRef;if(R.contains(D)&&!C.contains(D)){var A,$=this.fieldVectors[j],B=n[j.fieldName].similarity($);if(void 0!==(A=_[D]))A.score+=B,A.matchData.combine(r[j]);else{var M={ref:D,score:B,matchData:r[j]};_[D]=M,N.push(M)}}}return N.sort((function(e,t){return t.score-e.score}))},T.Index.prototype.toJSON=function(){var e=Object.keys(this.invertedIndex).sort().map((function(e){return[e,this.invertedIndex[e]]}),this),t=Object.keys(this.fieldVectors).map((function(e){return[e,this.fieldVectors[e].toJSON()]}),this);return{version:T.version,fields:this.fields,fieldVectors:t,invertedIndex:e,pipeline:this.pipeline.toJSON()}},T.Index.load=function(e){var t={},r={},n=e.fieldVectors,i=Object.create(null),s=e.invertedIndex,o=new T.TokenSet.Builder,a=T.Pipeline.load(e.pipeline);e.version!=T.version&&T.utils.warn("Version mismatch when loading serialised index. Current version of lunr '"+T.version+"' does not match serialized index '"+e.version+"'");for(var l=0;l<n.length;l++){var c=(d=n[l])[0],u=d[1];r[c]=new T.Vector(u)}for(l=0;l<s.length;l++){var d,h=(d=s[l])[0],p=d[1];o.insert(h),i[h]=p}return o.finish(),t.fields=e.fields,t.fieldVectors=r,t.invertedIndex=i,t.tokenSet=o.root,t.pipeline=a,new T.Index(t)},
   /*!
    * lunr.Builder
    * Copyright (C) 2020 Oliver Nightingale
@@ -401,7 +401,7 @@
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span></code></pre></div>
 <p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a <a href="#7">configuration file</a>, an sqlite3 database and a patterns file.</p>
 <hr />
-<p><a href="##writing-notes">#writing-notes</a></p>
+<p><a href="#tags/writing-notes">#writing-notes</a></p>
 <ul>
 <li><a href="#2">Note format</a></li>
 <li><a href="#6">Citations</a></li>
@@ -412,7 +412,7 @@
 <p>Slipbox notes begin with a level 1 header. The header text must contain an ID (number) and a title.</p>
 <p>You can put any number of notes in one file.</p>
 <hr />
-<p><a href="##writing-notes">#writing-notes</a></p>
+<p><a href="#tags/writing-notes">#writing-notes</a></p>
 <ul>
 <li><a href="#3">Linking notes</a></li>
 <li><a href="#11">Generate note IDs</a></li>
@@ -423,11 +423,11 @@
 <p>Link to a note in your slipbox using the note’s ID as the link target.</p>
 <p><a href="#4">Example</a>.</p>
 <hr />
-<p><a href="##writing-notes">#writing-notes</a></p>
+<p><a href="#tags/writing-notes">#writing-notes</a></p>
 <ul>
 <li><a href="#4">Linking to external files/images</a></li>
 </ul>
-<p><a href="##connecting-notes">#connecting-notes</a></p>
+<p><a href="#tags/connecting-notes">#connecting-notes</a></p>
 <ul>
 <li><a href="#5">Tags</a></li>
 <li><a href="#9">Contextual tags</a></li>
@@ -443,11 +443,11 @@
 </section>
 <section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags">
 <h1>Tags</h1>
-<p><a href="##slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
+<p><a href="#tags/slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
 </section>
 <section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations">
 <h1>Citations</h1>
-<p><a href="##slipbox">#slipbox</a></p>
+<p><a href="#tags/slipbox">#slipbox</a></p>
 <p>Clicking on a citation will open a page with all notes that cite the same reference.</p>
 <p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
 <p>To enable citations, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
@@ -475,7 +475,7 @@ document_options = --mathjax --o output.html -s</code></pre>
 <p>Entrypoints are shown in blue.</p>
 <p>The slipbox Cytoscape object can be accessed from the browser console as <code>window.slipbox.cy</code>.</p>
 <hr />
-<p><a href="##connecting-notes">#connecting-notes</a></p>
+<p><a href="#tags/connecting-notes">#connecting-notes</a></p>
 <ul>
 <li><a href="#9">Contextual tags</a></li>
 </ul>
@@ -493,11 +493,9 @@ document_options = --mathjax --o output.html -s</code></pre>
 <h1>Generate note IDs</h1>
 <p><code>slipbox new</code> prints the smallest available ID.</p>
 </section>
-<section id='#connecting-notes' title='#connecting-notes' class='level1'>
+<section id='tags/connecting-notes' title='#connecting-notes' class='level1'>
   <h1>
-    <a href='#tags' title='List of tags'>
-      #connecting-notes
-    </a>
+    #connecting-notes
   </h1>
   <ol class='slipbox-list'>
     <li value='3'></li>
@@ -506,11 +504,9 @@ document_options = --mathjax --o output.html -s</code></pre>
     <li value='9'></li>
   </ol>
 </section>
-<section id='#slipbox' title='#slipbox' class='level1'>
+<section id='tags/slipbox' title='#slipbox' class='level1'>
   <h1>
-    <a href='#tags' title='List of tags'>
-      #slipbox
-    </a>
+    #slipbox
   </h1>
   <ol class='slipbox-list'>
     <li value='5'></li>
@@ -518,11 +514,9 @@ document_options = --mathjax --o output.html -s</code></pre>
     <li value='7'></li>
   </ol>
 </section>
-<section id='#writing-notes' title='#writing-notes' class='level1'>
+<section id='tags/writing-notes' title='#writing-notes' class='level1'>
   <h1>
-    <a href='#tags' title='List of tags'>
-      #writing-notes
-    </a>
+    #writing-notes
   </h1>
   <ol class='slipbox-list'>
     <li value='1'></li>
@@ -539,19 +533,19 @@ document_options = --mathjax --o output.html -s</code></pre>
   </h1>
   <ul>
     <li>
-      <a href='##connecting-notes'>
+      <a href='#tags/connecting-notes'>
         #connecting-notes
       </a>
        (4)
     </li>
     <li>
-      <a href='##slipbox'>
+      <a href='#tags/slipbox'>
         #slipbox
       </a>
        (3)
     </li>
     <li>
-      <a href='##writing-notes'>
+      <a href='#tags/writing-notes'>
         #writing-notes
       </a>
        (6)
@@ -567,9 +561,7 @@ document_options = --mathjax --o output.html -s</code></pre>
 </section>
 <section id='ref-cite2020' title='ref-cite2020' class='level1'>
   <h1>
-    <a href='#references'>
-      @cite2020
-    </a>
+    @cite2020
   </h1>
   <p>
     Author. 2020. Title.

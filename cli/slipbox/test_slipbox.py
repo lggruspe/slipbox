@@ -384,7 +384,7 @@ Bye.
 
     assert "<p>Foo</p>" in html
     assert '<p> [<a href="Bar">Bar</a>]</p>' in html
-    assert '<p><a href="##Baz">#Baz</a></p>' in html
+    assert '<p><a href="#tags/Baz">#Baz</a></p>' in html
 
     stdout, stderr = capsys.readouterr()
     assert not stdout

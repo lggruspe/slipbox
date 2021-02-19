@@ -74,13 +74,13 @@ def test_create_tags(mock_db):
   </h1>
   <ul>
     <li>
-      <a href='###test'>
+      <a href='#tags/#test'>
         ##test
       </a>
        (1)
     </li>
     <li>
-      <a href='##test'>
+      <a href='#tags/test'>
         #test
       </a>
        (2)
@@ -94,11 +94,9 @@ def test_create_tag_page(mock_db):
     conn = mock_db
     conn.executescript(SQL)
     html = page.create_tag_page(conn, "#test")
-    assert html == """<section id='#test' title='#test' class='level1'>
+    assert html == """<section id='tags/test' title='#test' class='level1'>
   <h1>
-    <a href='#tags' title='List of tags'>
-      #test
-    </a>
+    #test
   </h1>
   <ol class='slipbox-list'>
     <li value='0'></li>
@@ -114,9 +112,7 @@ def test_create_reference_page(mock_db):
     html = page.create_reference_page(conn, "ref-test")
     assert html == """<section id='ref-test' title='ref-test' class='level1'>
   <h1>
-    <a href='#references'>
-      @test
-    </a>
+    @test
   </h1>
   <p>
     Reference text.
