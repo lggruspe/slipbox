@@ -3,6 +3,13 @@ const List = require('./list.js')
 const Search = require('./search.js')
 const srs = require('./srs.js')
 
+const { Router } = require('@lggruspe/fragment-router')
+const reviewRouter = require('./new-srs.js')
+const graphRouter = require('./new.graph.js')
+const router = new Router()
+router.mount('review/', reviewRouter)
+router.mount('graph/', graphRouter)
+
 window.slipbox = new Graph.SlipboxCollection()
 
 function initSRS (slipbox) {
@@ -22,4 +29,6 @@ window.initSlipbox = function () {
   Search.init()
   initSRS(window.slipbox)
   Graph.init(window.slipbox)
+
+  router.listen()
 }

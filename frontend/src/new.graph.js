@@ -177,9 +177,8 @@ router.route(
 router.route(
   () => router.defer(() => {
     writer.restore()
-    window.location.replace('#tags')
+    window.location.replace('#graph/')
   })
-  // TODO redirect to 404?
 )
 
 module.exports = router

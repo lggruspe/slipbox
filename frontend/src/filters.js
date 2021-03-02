@@ -15,7 +15,7 @@ function isTag (req) {
 }
 
 function isHome (req) {
-  return Boolean(req.id)
+  return req.id === ''
 }
 
 module.exports = {

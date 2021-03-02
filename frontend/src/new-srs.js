@@ -53,17 +53,17 @@ class CardView extends View {
   initialize (container) {
     container.innerHTML = `
       <h1 class="srs-prompt">${this.state.prompt.innerHTML}</h1>
-      <button type="button" class="srs-button-show${this.state.status}">Show answer</button>
+      <button type="button" class="srs-button-show ${this.state.status}">Show answer</button>
       <div class="srs-response ${this.state.status}">${this.state.response.innerHTML}</div>
       <button type="button" class="srs-button-again ${this.state.status}">Again?</button>
-      <button type="button" class="srs-button-next${this.state.status}">Next&gt;</button>
+      <button type="button" class="srs-button-next ${this.state.status}">Next&gt;</button>
     `
-    this.$('.srs-response').querySelector('h1').remove()
+    this.$('.srs-response').querySelector('h1')?.remove()
     this.$('.srs-button-show').addEventListener('click', () => this.state.setStatus('response'))
   }
 
   update () {
-    this.$('.srs-button-show').className = `srs-button ${this.state.status}`
+    this.$('.srs-button-show').className = `srs-button-show ${this.state.status}`
     this.$('.srs-response').className = `srs-response ${this.state.status}`
   }
 }
@@ -94,20 +94,19 @@ class Deck {
 }
 
 class DeckView extends View {
-  constructor (deck, container, redirect = '#') {
+  constructor (deck, container) {
     super({
       container,
       state: deck,
       hooks: ['answer']
     })
-    this.cardViews = new Map()
-    this.redirect = redirect
   }
 
   initialize (container) {
+    this.cardViews = new Map()
     container.innerHTML = ''
     const fragment = document.createDocumentFragment()
-    for (const card of this.state) {
+    for (const card of this.state.due) {
       const cardContainer = document.createElement('div')
       cardContainer.className = 'srs-card'
       fragment.appendChild(cardContainer)
@@ -117,7 +116,7 @@ class DeckView extends View {
     doneDiv.className = `srs-review-done ${!this.state.isDone() ? 'not-' : ''}done`
     doneDiv.innerHTML = `
       <p>You've reached the end!</p>
-      <a href="${this.redirect}" class="srs-button">Go back</button>
+      <a href="#review/" class="srs-button">Go back</button>
     `
     fragment.appendChild(doneDiv)
 
@@ -152,7 +151,8 @@ class SummarizedCardView extends View {
   }
 
   initialize (container) {
-    container.innerHTML = `<a href="#review/${this.state.id}">${this.state.prompt.innerHTML}</a>`
+    container.innerHTML = `<a href="#review/${this.state.id}"></a>`
+    this.$('a').innerHTML = this.state.prompt.innerHTML
   }
 
   update () {}
@@ -164,8 +164,8 @@ function getEntrypoints () {
 
 function createCard (id) {
   const ref = document.getElementById(id)
-  const prompt = ref.querySelector('h1').cloneNode()
-  const response = ref.cloneNode()
+  const prompt = ref.querySelector('h1').cloneNode(true)
+  const response = ref.cloneNode(true)
   prompt.id = ''
   return new Card(id, prompt, response)
 }
@@ -181,7 +181,7 @@ class SrsPageView extends View {
       <p>Pick a question to start with.</p>
     `
     const views = getEntrypoints().map(e => {
-      const card = new Card(e.id)
+      const card = createCard(e.id())
       const container = document.createElement('div')
       container.className = ' srs-card-summary'
       return new SummarizedCardView(card, container)
@@ -208,21 +208,26 @@ router.route(
   check(isNote),
   req => {
     const deck = createDeck(req.id)
-    const container = document.createElement('section')
-    container.className = 'level1'
-    const view = new DeckView(deck, container, '#review')
+    const container = document.createElement('div')
+    const view = new DeckView(deck, container)
     router.defer(() => writer.render(view.container))
   }
 )
 
 router.route(
   check(isHome),
-  req => {
-    const container = document.createElement('section')
-    container.className = 'level1'
+  () => {
+    const container = document.createElement('div')
     const view = new SrsPageView(container)
     router.defer(() => writer.render(view.container))
   }
+)
+
+router.route(
+  () => router.defer(() => {
+    writer.restore()
+    window.location.replace('#review/')
+  })
 )
 
 module.exports = router
