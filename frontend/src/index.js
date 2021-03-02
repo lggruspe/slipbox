@@ -4,7 +4,7 @@ const Search = require('./search.js')
 const srs = require('./srs.js')
 
 const { Router } = require('@lggruspe/fragment-router')
-const reviewRouter = require('./new-srs.js')
+const reviewRouter = require('./review.js')
 const graphRouter = require('./new.graph.js')
 const router = new Router()
 router.mount('review/', reviewRouter)

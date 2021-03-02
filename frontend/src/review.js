@@ -52,19 +52,25 @@ class CardView extends View {
 
   initialize (container) {
     container.innerHTML = `
-      <h1 class="srs-prompt">${this.state.prompt.innerHTML}</h1>
-      <button type="button" class="srs-button-show ${this.state.status}">Show answer</button>
-      <div class="srs-response ${this.state.status}">${this.state.response.innerHTML}</div>
-      <button type="button" class="srs-button-again ${this.state.status}">Again?</button>
-      <button type="button" class="srs-button-next ${this.state.status}">Next&gt;</button>
+      <h1 class="flashcard-prompt">${this.state.prompt.innerHTML}</h1>
+      <div class="buttons">
+        <button type="button" class="button flashcard-show is-${this.state.status}">Show answer</button>
+      </div>
+      <div class="flashcard-response is-${this.state.status}">${this.state.response.innerHTML}</div>
+      <div class="buttons">
+        <button type="button" class="button flashcard-again is-${this.state.status}">Again?</button>
+        <button type="button" class="button flashcard-next is-${this.state.status}">Next&gt;</button>
+      </div>
     `
-    this.$('.srs-response').querySelector('h1')?.remove()
-    this.$('.srs-button-show').addEventListener('click', () => this.state.setStatus('response'))
+    this.$('.flashcard-response').querySelector('h1')?.remove()
+    this.$('.flashcard-show').addEventListener('click', () => this.state.setStatus('response'))
   }
 
   update () {
-    this.$('.srs-button-show').className = `srs-button-show ${this.state.status}`
-    this.$('.srs-response').className = `srs-response ${this.state.status}`
+    this.$('.flashcard-show').className = `button flashcard-show is-${this.state.status}`
+    this.$('.flashcard-again').className = `button flashcard-again is-${this.state.status}`
+    this.$('.flashcard-next').className = `button flashcard-next is-${this.state.status}`
+    this.$('.flashcard-response').className = `flashcard-response is-${this.state.status}`
   }
 }
 
@@ -76,6 +82,12 @@ class Deck {
 
   isDone () {
     return this.due.length === 0
+  }
+
+  start () {
+    if (!this.isDone()) {
+      this.due[0].setStatus('prompt')
+    }
   }
 
   answer (card, correct) {
@@ -108,15 +120,15 @@ class DeckView extends View {
     const fragment = document.createDocumentFragment()
     for (const card of this.state.due) {
       const cardContainer = document.createElement('div')
-      cardContainer.className = 'srs-card'
+      cardContainer.className = 'flashcard'
       fragment.appendChild(cardContainer)
       this.cardViews.set(card, new CardView(card, cardContainer))
     }
     const doneDiv = document.createElement('div')
-    doneDiv.className = `srs-review-done ${!this.state.isDone() ? 'not-' : ''}done`
+    doneDiv.className = `flashcard flashcard-end ${!this.state.isDone() ? 'is-hidden' : ''}`
     doneDiv.innerHTML = `
       <p>You've reached the end!</p>
-      <a href="#review/" class="srs-button">Go back</button>
+      <a href="#review/" class="button">Go back</a>
     `
     fragment.appendChild(doneDiv)
 
@@ -125,19 +137,19 @@ class DeckView extends View {
     // register button event listeners in cards
     for (const card of this.state.due) {
       const view = this.cardViews.get(card)
-      view.$('.srs-button-again').onclick = () => this.state.answer(card, false)
-      view.$('.srs-button-next').onclick = () => this.state.answer(card, true)
+      view.$('.flashcard-again').onclick = () => this.state.answer(card, false)
+      view.$('.flashcard-next').onclick = () => this.state.answer(card, true)
     }
     for (const card of this.state.done) {
       const view = this.cardViews.get(card)
-      view.$('.srs-button-again').onclick = () => this.state.answer(card, false)
-      view.$('.srs-button-next').onclick = () => this.state.answer(card, true)
+      view.$('.flashcard-again').onclick = () => this.state.answer(card, false)
+      view.$('.flashcard-next').onclick = () => this.state.answer(card, true)
     }
   }
 
   update () {
     this.state.isDone()
-      ? this.$('.srs-review-done').scrollIntoView()
+      ? this.$('.flashcard-end').scrollIntoView()
       : this.cardViews.get(this.state.due[0]).container.scrollIntoView()
   }
 }
@@ -183,7 +195,7 @@ class SrsPageView extends View {
     const views = getEntrypoints().map(e => {
       const card = createCard(e.id())
       const container = document.createElement('div')
-      container.className = ' srs-card-summary'
+      container.className = 'flashcard'
       return new SummarizedCardView(card, container)
     })
     for (const view of views) {
@@ -208,6 +220,7 @@ router.route(
   check(isNote),
   req => {
     const deck = createDeck(req.id)
+    deck.start()
     const container = document.createElement('div')
     const view = new DeckView(deck, container)
     router.defer(() => writer.render(view.container))
