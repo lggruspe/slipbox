@@ -1,28 +1,9 @@
 const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
+const { isHome, isNote, isTag } = require('./filters.js')
 const cytoscape = require('cytoscape')
 
 const router = new Router()
 const writer = new DomWriter(router)
-
-function isNote (req) {
-  if (!req.id || !Number.isInteger(Number(req.id))) {
-    return false
-  }
-  const fragment = document.getElementById(req.id)
-  return Boolean(fragment?.classList.contains('slipbox-note'))
-}
-
-function isTag (req) {
-  if (!req.id.sartsWith('tags/')) {
-    return false
-  }
-  const fragment = document.getElementById(req.id)
-  return Boolean(fragment?.classList.contains('level1'))
-}
-
-function isHome (req) {
-  return Boolean(req.id)
-}
 
 function clusterElements (slipbox, tag) {
   const edges = slipbox.cy.edges(`[tag="${tag}"]`)
@@ -201,4 +182,4 @@ router.route(
   // TODO redirect to 404?
 )
 
-exports.router = router
+module.exports = router

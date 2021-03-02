@@ -1,4 +1,6 @@
-import { View } from '@lggruspe/view-hooks'
+const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
+const { View } = require('@lggruspe/view-hooks')
+const { isNote, isHome } = require('./filters.js')
 
 class Card {
   constructor (id, prompt, response) {
@@ -92,10 +94,10 @@ class Deck {
 }
 
 class DeckView extends View {
-  constructor (cards, container, redirect = '#') {
+  constructor (deck, container, redirect = '#') {
     super({
       container,
-      state: cards,
+      state: deck,
       hooks: ['answer']
     })
     this.cardViews = new Map()
@@ -150,7 +152,7 @@ class SummarizedCardView extends View {
   }
 
   initialize (container) {
-    container.innerHTML = `<a href="#srs/${this.state.id}">${this.state.prompt.innerHTML}</a>`
+    container.innerHTML = `<a href="#review/${this.state.id}">${this.state.prompt.innerHTML}</a>`
   }
 
   update () {}
@@ -170,7 +172,7 @@ function createCard (id) {
 
 class SrsPageView extends View {
   constructor (container) {
-    super({ container, hooks: ['show'] })
+    super({ container })
   }
 
   initialize (container) {
@@ -199,8 +201,28 @@ function createDeck (id) {
   return new Deck(cards)
 }
 
-module.exports = {
-  createDeck,
-  DeckView,
-  SrsPageView
-}
+const router = new Router()
+const writer = new DomWriter(router)
+
+router.route(
+  check(isNote),
+  req => {
+    const deck = createDeck(req.id)
+    const container = document.createElement('section')
+    container.className = 'level1'
+    const view = new DeckView(deck, container, '#review')
+    router.defer(() => writer.render(view.container))
+  }
+)
+
+router.route(
+  check(isHome),
+  req => {
+    const container = document.createElement('section')
+    container.className = 'level1'
+    const view = new SrsPageView(container)
+    router.defer(() => writer.render(view.container))
+  }
+)
+
+module.exports = router
