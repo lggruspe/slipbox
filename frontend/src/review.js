@@ -2,14 +2,36 @@ const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
 const { View } = require('@lggruspe/view-hooks')
 const { isNote, isHome } = require('./filters.js')
 
-class Card {
+class Flashcard {
   constructor (id, prompt, response) {
     this.id = id
     this.prompt = prompt
     this.response = response
-    this.status = 'hidden' // 'prompt', 'response', 'done'
-    this.attempts = 0
-    // NOTE visibility state is handled in parent container
+    this.prev = this
+    this.next = this
+
+    this.status = 'hidden'
+  }
+
+  append (card) {
+    const cardPrev = card.prev
+    card.prev = this.prev
+    card.prev.next = card
+    this.prev = cardPrev
+    this.prev.next = this
+    return this
+  }
+
+  remove () {
+    if (this.next === this) {
+      return this
+    }
+    const next = this.next
+    this.next.prev = this.prev
+    this.prev.next = this.next
+    this.next = this
+    this.prev = this
+    return next
   }
 
   setStatus (value) {
@@ -24,19 +46,61 @@ class Card {
         throw new Error('invalid value')
     }
   }
+}
 
-  again (nextCard) {
-    this.attempts++
-    this.setStatus('hidden')
-    if (nextCard) {
-      nextCard.setStatus('prompt')
+class FlashcardDeck {
+  constructor (card) {
+    this.current = card
+  }
+
+  isDone () {
+    if (this.current == null) return true
+    if (this.current.next !== this) return false
+    return this.current.status === 'done'
+  }
+
+  start () {
+    if (this.current == null) {
+      return
+    }
+    this.current.setStatus('prompt')
+  }
+
+  again () {
+    if (this.current == null) {
+      return
+    }
+    this.current.setStatus('hidden')
+    if (this.current.next !== this.current) {
+      this.current = this.current.next
+      this.current.setStatus('prompt')
+    } else {
+      this.current.setStatus('prompt')
     }
   }
 
-  next (nextCard) {
-    this.setStatus('done')
-    if (nextCard) {
-      nextCard.setStatus('prompt')
+  next () {
+    if (this.current == null) {
+      return
+    }
+    this.current.setStatus('done')
+    if (this.current.next !== this.current) {
+      this.current = this.current.remove()
+      this.current.setStatus('prompt')
+    } else {
+      this.current = null
+    }
+  }
+
+  * [Symbol.iterator] () {
+    let current = this.current
+    if (current != null) {
+      yield current
+      current = current.next
+      while (current !== this.current) {
+        yield current
+        current = current.next
+      }
     }
   }
 }
@@ -74,43 +138,12 @@ class CardView extends View {
   }
 }
 
-class Deck {
-  constructor (cards) {
-    this.due = cards
-    this.done = []
-  }
-
-  isDone () {
-    return this.due.length === 0
-  }
-
-  start () {
-    if (!this.isDone()) {
-      this.due[0].setStatus('prompt')
-    }
-  }
-
-  answer (card, correct) {
-    const next = this.due[0]
-    if (!correct) {
-      card?.again(next)
-    } else {
-      card?.next(next)
-      const index = this.due.indexOf(card)
-      if (index !== -1) {
-        const removed = this.due.splice(index, 1)
-        this.done.push(...removed)
-      }
-    }
-  }
-}
-
 class DeckView extends View {
   constructor (deck, container) {
     super({
       container,
       state: deck,
-      hooks: ['answer']
+      hooks: ['again', 'next']
     })
   }
 
@@ -118,7 +151,7 @@ class DeckView extends View {
     this.cardViews = new Map()
     container.innerHTML = ''
     const fragment = document.createDocumentFragment()
-    for (const card of this.state.due) {
+    for (const card of this.state) {
       const cardContainer = document.createElement('div')
       cardContainer.className = 'flashcard'
       fragment.appendChild(cardContainer)
@@ -128,29 +161,27 @@ class DeckView extends View {
     doneDiv.className = `flashcard flashcard-end ${!this.state.isDone() ? 'is-hidden' : ''}`
     doneDiv.innerHTML = `
       <p>You've reached the end!</p>
-      <a href="#review/" class="button">Go back</a>
+      <div class="buttons">
+        <a href="#review/" class="button">Go back</a>
+      </div>
     `
     fragment.appendChild(doneDiv)
 
     container.appendChild(fragment)
 
     // register button event listeners in cards
-    for (const card of this.state.due) {
+    for (const card of this.state) {
       const view = this.cardViews.get(card)
-      view.$('.flashcard-again').onclick = () => this.state.answer(card, false)
-      view.$('.flashcard-next').onclick = () => this.state.answer(card, true)
-    }
-    for (const card of this.state.done) {
-      const view = this.cardViews.get(card)
-      view.$('.flashcard-again').onclick = () => this.state.answer(card, false)
-      view.$('.flashcard-next').onclick = () => this.state.answer(card, true)
+      view.$('.flashcard-again').onclick = () => this.state.again()
+      view.$('.flashcard-next').onclick = () => this.state.next()
     }
   }
 
   update () {
+    this.$('.flashcard-end').className = `flashcard flashcard-end ${!this.state.isDone() ? 'is-hidden' : ''}`
     this.state.isDone()
       ? this.$('.flashcard-end').scrollIntoView()
-      : this.cardViews.get(this.state.due[0]).container.scrollIntoView()
+      : this.cardViews.get(this.state.current).container.scrollIntoView()
   }
 }
 
@@ -179,7 +210,7 @@ function createCard (id) {
   const prompt = ref.querySelector('h1').cloneNode(true)
   const response = ref.cloneNode(true)
   prompt.id = ''
-  return new Card(id, prompt, response)
+  return new Flashcard(id, prompt, response)
 }
 
 class SrsPageView extends View {
@@ -207,10 +238,10 @@ class SrsPageView extends View {
 }
 
 function createDeck (id) {
-  const cards = [createCard(id)]
+  const card = createCard(id)
   const descendants = window.slipbox.cy.nodes(`#${id}`).descendants().map(createCard)
-  cards.push(...descendants)
-  return new Deck(cards)
+  const deck = descendants.reduce((t, a) => t.append(a), card)
+  return new FlashcardDeck(deck)
 }
 
 const router = new Router()
