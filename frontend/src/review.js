@@ -5,11 +5,23 @@ const { List } = require('./linked-list.js')
 
 class Flashcard extends List {
   constructor (id, prompt, response) {
-    super()
-    this.id = id
-    this.prompt = prompt
-    this.response = response
-    this.status = 'hidden'
+    super({ id, prompt, response, status: 'hidden' })
+  }
+
+  get id () {
+    return this.data.id
+  }
+
+  get prompt () {
+    return this.data.prompt
+  }
+
+  get response () {
+    return this.data.response
+  }
+
+  get status () {
+    return this.data.status
   }
 
   setStatus (value) {
@@ -18,7 +30,7 @@ class Flashcard extends List {
       case 'prompt':
       case 'response':
       case 'done':
-        this.status = value
+        this.data.status = value
         break
       default:
         throw new Error('invalid value')
@@ -217,8 +229,8 @@ class SrsPageView extends View {
 
 function createDeck (id) {
   const card = createCard(id)
-  const descendants = window.slipbox.cy.nodes(`#${id}`).descendants().map(createCard)
-  const deck = descendants.reduce((t, a) => t.append(a), card)
+  const neighbors = window.slipbox.cy.$(`#${id}`).neighborhood().nodes().map(e => e.id()).map(createCard)
+  const deck = neighbors.reduce((acc, cur) => acc.append(cur), card)
   return new FlashcardDeck(deck)
 }
 
