@@ -106,7 +106,7 @@ class CardView extends View {
 
   initialize (container) {
     container.innerHTML = `
-      <h1 class="flashcard-prompt">${this.state.prompt.innerHTML}</h1>
+      <h2 class="flashcard-prompt">${this.state.prompt.innerHTML}</h2>
       <div class="buttons">
         <button type="button" class="button flashcard-show is-${this.state.status}">Show answer</button>
       </div>
@@ -228,9 +228,12 @@ class SrsPageView extends View {
 }
 
 function createDeck (id) {
-  const card = createCard(id)
-  const neighbors = window.slipbox.cy.$(`#${id}`).neighborhood().nodes().map(e => e.id()).map(createCard)
-  const deck = neighbors.reduce((acc, cur) => acc.append(cur), card)
+  const cards = window.slipbox.cy.$(`#${id}`)
+    .neighborhood()
+    .nodes()
+    .map(e => e.id())
+    .map(createCard)
+  const deck = cards.reduce((acc, cur) => acc.append(cur))
   return new FlashcardDeck(deck)
 }
 
