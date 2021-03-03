@@ -233,6 +233,7 @@ router.route(
     const container = document.createElement('div')
     const view = new DeckView(deck, container)
     router.defer(() => writer.render(view.container))
+    router.onExit(() => writer.restore())
   }
 )
 
@@ -242,6 +243,7 @@ router.route(
     const container = document.createElement('div')
     const view = new SrsPageView(container)
     router.defer(() => writer.render(view.container))
+    router.onExit(() => writer.restore())
   }
 )
 

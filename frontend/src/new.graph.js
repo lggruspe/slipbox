@@ -148,6 +148,7 @@ router.route(
     const elements = neighborElements(window.slipbox, req.id)
     if (elements.length >= 2) {
       router.defer(() => renderGraph(elements, 'breadthfirst'))
+      router.onExit(() => writer.restore())
     }
   }
 )
@@ -158,6 +159,7 @@ router.route(
     const elements = clusterElements(window.slipbox, '#' + req.id.slice(5))
     if (elements.length >= 2) {
       router.defer(() => renderGraph(elements, 'breadthfirst'))
+      router.onExit(() => writer.restore())
     }
   }
 )
@@ -170,6 +172,7 @@ router.route(
     if (elements.length >= 2) {
       const layout = elements.length > 30 ? 'cose' : 'breadthfirst'
       router.defer(() => renderGraph(elements, layout))
+      router.onExit(() => writer.restore())
     }
   }
 )
