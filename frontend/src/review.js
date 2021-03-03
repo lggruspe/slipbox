@@ -1,37 +1,15 @@
 const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
 const { View } = require('@lggruspe/view-hooks')
 const { isNote, isHome } = require('./filters.js')
+const { List } = require('./linked-list.js')
 
-class Flashcard {
+class Flashcard extends List {
   constructor (id, prompt, response) {
+    super()
     this.id = id
     this.prompt = prompt
     this.response = response
-    this.prev = this
-    this.next = this
-
     this.status = 'hidden'
-  }
-
-  append (card) {
-    const cardPrev = card.prev
-    card.prev = this.prev
-    card.prev.next = card
-    this.prev = cardPrev
-    this.prev.next = this
-    return this
-  }
-
-  remove () {
-    if (this.next === this) {
-      return this
-    }
-    const next = this.next
-    this.next.prev = this.prev
-    this.prev.next = this.next
-    this.next = this
-    this.prev = this
-    return next
   }
 
   setStatus (value) {
@@ -274,4 +252,7 @@ router.route(
   })
 )
 
-module.exports = router
+module.exports = {
+  router,
+  Flashcard
+}

@@ -4,10 +4,10 @@ const Search = require('./search.js')
 const srs = require('./srs.js')
 
 const { Router } = require('@lggruspe/fragment-router')
-const reviewRouter = require('./review.js')
+const review = require('./review.js')
 const graphRouter = require('./new.graph.js')
 const router = new Router()
-router.mount('review/', reviewRouter)
+router.mount('review/', review.router)
 router.mount('graph/', graphRouter)
 
 window.slipbox = new Graph.SlipboxCollection()
