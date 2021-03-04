@@ -40,4 +40,4 @@ and <https://lggruspe.github.io/slipbox>.
 License
 -------
 
-MIT.
+[MIT](./LICENSE).

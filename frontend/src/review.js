@@ -227,12 +227,29 @@ class SrsPageView extends View {
   update () {}
 }
 
+function randomChoice (collection) {
+  const length = collection.length
+  const index = Math.floor(Math.random() * length)
+  return collection[index]
+}
+
+function randomPath (source) {
+  const path = [source.id()]
+  for (;;) {
+    const children = source.outgoers().edges().targets(e => !path.includes(e.id()))
+    if (children.length === 0) {
+      break
+    }
+    const child = randomChoice(children)
+    path.push(child.id())
+    source = child
+  }
+  return path
+}
+
 function createDeck (id) {
-  const cards = window.slipbox.cy.$(`#${id}`)
-    .neighborhood()
-    .nodes()
-    .map(e => e.id())
-    .map(createCard)
+  const path = randomPath(window.slipbox.cy.$(`#${id}`))
+  const cards = path.map(createCard)
   const deck = cards.reduce((acc, cur) => acc.append(cur))
   return new FlashcardDeck(deck)
 }
