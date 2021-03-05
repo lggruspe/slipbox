@@ -176,7 +176,7 @@ def generate_complete_html(conn: Connection,
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
         cmd = """{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search}
-                -A{bottom} --section-divs {opts} -H {style} -o {output}
+            -A{bottom} --section-divs {opts} -H {style} -o {output} -c {css}
             """.format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)),
             script=shlex.quote(str(script)), html=shlex.quote(str(html)),
@@ -186,5 +186,6 @@ def generate_complete_html(conn: Connection,
             nav=data_shell_path("nav.html"),
             output=out/"index.html",
             bottom=data_shell_path("bottom.html"),
-            search=data_shell_path("search.html"))
+            search=data_shell_path("search.html"),
+            css=data_shell_path("base.css"))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)
