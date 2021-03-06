@@ -189,7 +189,7 @@ function isTagId (id) {
 module.exports.init = function init (slipbox) {
   slipbox.colorEntrypoints()
   const extras = document.createElement('div')
-  document.querySelector('.slipbox-bottom').appendChild(extras)
+  document.getElementById('secondary').appendChild(extras)
 
   const view = new GraphView(extras.appendChild(graphArea()))
 
