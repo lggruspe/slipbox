@@ -1,55 +1,9 @@
+const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
+const { isHome, isNote, isTag } = require('./filters.js')
 const cytoscape = require('cytoscape')
 
-/// Used as a master database that contains information about all notes.
-/// The elements in SlipboxCollection.cy aren't displayed directly on the page.
-/// Instead, a new cytoscape object gets created whenever a note page or a tag
-/// page gets visited (for example).
-/// This cytoscape object is a subset of the SlipboxCollection.cy that only
-/// contains relevant elements in the visited page.
-module.exports.SlipboxCollection = class SlipboxCollection {
-  constructor () {
-    this.cy = cytoscape({ headless: true })
-  }
-
-  addNote (id) {
-    const section = document.getElementById(id)
-    const title = section.querySelector('h1').textContent
-    const filename = section.getAttribute('data-filename')
-    this.cy.add({
-      data: {
-        id,
-        title,
-        filename,
-        label: title,
-        bgColor: 'gray'
-      }
-    })
-  }
-
-  addLink (source, target, tag) {
-    const id = `${source}-${target}${tag}`
-    this.cy.add({ data: { id, source, target, tag } })
-  }
-
-  colorEntrypoints () {
-    // Call this after inserting all notes and links.
-    this.cy.nodes(e => e.indegree(false) === 0 && e.outdegree(false) > 0).data('bgColor', '#4444aa')
-  }
-}
-
-function graphArea () {
-  const div = document.createElement('div')
-  div.innerHTML = `
-    <div class="slipbox-graph-cytoscape"></div>
-    <div class="slipbox-graph-info">
-      <header>
-        <h3><a href=""></a></h3>
-        <p></p>
-      </header>
-    </div>
-  `
-  return div
-}
+const router = new Router()
+const writer = new DomWriter(router)
 
 function clusterElements (slipbox, tag) {
   const edges = slipbox.cy.edges(`[tag="${tag}"]`)
@@ -95,129 +49,136 @@ function neighborElements (slipbox, id) {
   return clone.union(eles)
 }
 
-class GraphView {
-  constructor (container) {
-    this.init(container)
-  }
+function createGraphArea () {
+  const div = document.createElement('div')
+  div.innerHTML = `
+    <div class="slipbox-graph-cytoscape"></div>
+    <div class="slipbox-graph-info card">
+      <header>
+        <h3><a href=""></a></h3>
+        <p></p>
+      </header>
+    </div>
+  `
+  return div
+}
 
-  init (container) {
-    this.container = container
-    this.cy = cytoscape({
-      container: this.container.querySelector('.slipbox-graph-cytoscape'),
-      selectionType: 'additive',
-      style: [
-        {
-          selector: 'node',
-          style: {
-            label: 'data(label)',
-            height: '2em',
-            width: '2em',
-            shape: 'round-rectangle',
-            color: 'black',
-            'background-color': 'data(bgColor)',
-            'text-wrap': 'wrap',
-            'text-max-width': 150
-          }
-        },
-        {
-          selector: 'edge',
-          style: {
-            width: 2,
-            'curve-style': 'bezier',
-            'line-color': 'black',
-            'line-style': 'solid',
-            'target-arrow-color': 'black',
-            'target-arrow-shape': 'triangle'
-          }
+function createPageCytoscape (container) {
+  const cy = cytoscape({
+    container: container.querySelector('.slipbox-graph-cytoscape'),
+    selectionType: 'additive',
+    style: [
+      {
+        selector: 'node',
+        style: {
+          label: 'data(label)',
+          height: '2em',
+          width: '2em',
+          shape: 'round-rectangle',
+          color: 'black',
+          'background-color': 'data(bgColor)',
+          'text-wrap': 'wrap',
+          'text-max-width': 100
         }
-      ]
-    })
-    this.addEventListeners()
-  }
+      },
+      {
+        selector: 'edge',
+        style: {
+          width: 2,
+          'curve-style': 'bezier',
+          'line-color': 'black',
+          'line-style': 'solid',
+          'target-arrow-color': 'black',
+          'target-arrow-shape': 'triangle'
+        }
+      }
+    ]
+  })
+  const a = container.querySelector('.slipbox-graph-info header a')
+  const p = container.querySelector('.slipbox-graph-info header p')
+  cy.on('select', 'node', event => {
+    const id = event.target.data('id')
+    a.textContent = event.target.data('title')
+    a.href = '#' + id
+    p.textContent = event.target.data('filename')
+    event.target.data('label', id)
+  })
+  cy.on('unselect', 'node', event => {
+    a.textContent = ''
+    p.textContent = ''
+    event.target.data('label', event.target.data('title'))
+  })
+  return cy
+}
 
-  addEventListeners () {
-    const a = this.container.querySelector('.slipbox-graph-info header a')
-    const p = this.container.querySelector('.slipbox-graph-info header p')
-    this.cy.on('select', 'node', event => {
-      const id = event.target.data('id')
-      a.textContent = event.target.data('title')
-      a.href = '#' + id
-      p.textContent = event.target.data('filename')
-      event.target.data('label', id)
-    })
-    this.cy.on('unselect', 'node', event => {
-      a.textContent = ''
-      p.textContent = ''
-      event.target.data('label', event.target.data('title'))
-    })
+function changePageCytoscapeLayout (cy, layout = 'breadthfirst') {
+  if (layout === 'cose') {
+    cy.layout({
+      name: 'cose',
+      nodeDimensionsIncludeLabels: true,
+      numIter: 300,
+      fit: true
+    }).run()
+  } else {
+    cy.layout({
+      name: 'breadthfirst',
+      spacingFactor: 1.0,
+      fit: true,
+      directed: true,
+      avoidOverlap: true,
+      nodeDimensionsIncludeLabels: true
+    }).run()
   }
+}
 
-  render (layout = 'breadthfirst') {
-    if (layout === 'cose') {
-      this.cy.layout({
-        name: 'cose',
-        nodeDimensionsIncludeLabels: true,
-        numIter: 300,
-        fit: true
-      }).run()
-    } else {
-      this.cy.layout({
-        name: 'breadthfirst',
-        spacingFactor: 1.0,
-        fit: true,
-        directed: true,
-        avoidOverlap: true,
-        nodeDimensionsIncludeLabels: true
-      }).run()
+function renderGraph (elements, layout) {
+  const container = createGraphArea()
+  writer.render(container)
+  const cy = createPageCytoscape(container)
+  cy.add(elements)
+  changePageCytoscapeLayout(cy, 'breadthfirst')
+}
+
+router.route(
+  check(isNote),
+  req => {
+    const elements = neighborElements(window.slipbox, req.id)
+    if (elements.length >= 2) {
+      router.defer(() => renderGraph(elements, 'breadthfirst'))
+      router.onExit(() => writer.restore())
     }
   }
-}
+)
 
-function isNoteId (id) {
-  // assume id is the string after # in the URL hash.
-  if (!id || !Number.isInteger(Number(id))) return false
-  const fragment = document.getElementById(id)
-  return Boolean(fragment?.classList.contains('slipbox-note'))
-}
-
-function isTagId (id) {
-  if (!id.startsWith('tags/')) return false
-  const fragment = document.getElementById(id)
-  return Boolean(fragment?.classList.contains('level1'))
-}
-
-module.exports.init = function init (slipbox) {
-  slipbox.colorEntrypoints()
-  const extras = document.createElement('div')
-  document.getElementById('secondary').appendChild(extras)
-
-  const view = new GraphView(extras.appendChild(graphArea()))
-
-  function resetGraph () {
-    // Clear graph display.
-    extras.style.display = 'none'
-
-    // Get elements to display.
-    const id = window.location.hash.slice(1)
-    const elements = !id
-      ? slipbox.cy.elements().filter(e => e.isNode() || e.data('source') !== e.data('target'))
-      : isNoteId(id)
-        ? neighborElements(slipbox, id)
-        : isTagId(id)
-          ? clusterElements(slipbox, '#' + id.slice(5)) // tags/tag -> #tag
-          : []
-
-    // Check if has enough elements.
-    if (elements.length < 2) return
-
-    // Display elements.
-    extras.style.display = 'block'
-    extras.innerHTML = ''
-    view.init(extras.appendChild(graphArea()))
-    view.cy.add(elements)
-    view.render(!id && elements.length > 30 ? 'cose' : 'breadthfirst')
+router.route(
+  check(isTag),
+  req => {
+    const elements = clusterElements(window.slipbox, '#' + req.id.slice(5))
+    if (elements.length >= 2) {
+      router.defer(() => renderGraph(elements, 'breadthfirst'))
+      router.onExit(() => writer.restore())
+    }
   }
+)
 
-  resetGraph()
-  window.addEventListener('hashchange', resetGraph)
-}
+router.route(
+  check(isHome),
+  req => {
+    const elements = window.slipbox.cy.elements()
+      .filter(e => e.isNode() || e.data('source') !== e.data('target'))
+    if (elements.length >= 2) {
+      const layout = elements.length > 30 ? 'cose' : 'breadthfirst'
+      router.defer(() => renderGraph(elements, layout))
+      router.onExit(() => writer.restore())
+    }
+  }
+)
+
+router.route(
+  () => router.defer(() => {
+    writer.restore()
+    window.location.replace('#graph/')
+  })
+)
+
+module.exports = router
