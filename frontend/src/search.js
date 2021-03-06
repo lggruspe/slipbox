@@ -68,6 +68,6 @@ module.exports.init = function init () {
   const sections = Array.from(document.getElementsByClassName('slipbox-note'))
   new Search(sections).render({
     results: document.querySelector('#search > .search-results'),
-    input: document.querySelector('nav input[type="text"]')
+    input: document.querySelector('#primary .search-input')
   })
 }
