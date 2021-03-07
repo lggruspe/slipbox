@@ -142,6 +142,38 @@ h2 {
   box-shadow: 0 0 3px #aaaaaa;
 }
 
+.flashcard {
+  border: 1px solid #aaaaaa;
+  margin: 1em;
+  padding: 1em;
+  border-radius: 1em;
+}
+
+.button {
+  border: medium hidden blue;
+  background-color: #eeeeee;
+  color: #555555;
+  padding: 5px;
+  font-weight: bold;
+  min-width: 150px;
+  box-shadow: 0 2px 3px #aaaaaa;
+}
+
+a.button {
+  text-decoration: none;
+  font-size: 1em;
+  text-align: center;
+}
+
+.button:hover {
+  background-color: rgba(0,0,0,0.125);
+}
+
+.button:active {
+  background-color: rgba(0,0,0,0.25);
+  box-shadow: none;
+}
+
 /*
 .dark {
   background-color: #222233;

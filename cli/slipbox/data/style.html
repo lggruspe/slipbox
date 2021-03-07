@@ -1,20 +1,8 @@
 <style>
 .buttons {
-  text-align: center;
-}
-.button {
-  background-color: inherit;
-  padding: 0.5em 2em 0.5em 2em;
-  font-weight: bold;
-  border: 2px solid #555555;
-  font-family: sans-serif;
-  text-decoration: none;
-}
-.button:hover {
-  background-color: rgba(0,0,0,0.125);
-}
-.button:active {
-  background-color: rgba(0,0,0,0.25);
+  display: flex;
+  column-gap: 1em;
+  justify-content: center;
 }
 .level1 {
   display: none;
@@ -56,12 +44,6 @@ nav ul {
   position: fixed;
   max-width: 30em;
   z-index: 1;
-}
-.flashcard {
-  border: 2px solid #555555;
-  margin: 1em;
-  padding: 1em;
-  border-radius: 5px;
 }
 .flashcard-prompt {
   text-align: center;
