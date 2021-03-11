@@ -131,12 +131,12 @@ function changePageCytoscapeLayout (cy, layout = 'breadthfirst') {
   }
 }
 
-function renderGraph (elements, layout) {
+function renderGraph (elements, layout = 'breadthfirst') {
   const container = createGraphArea()
   writer.render(container)
   const cy = createPageCytoscape(container)
   cy.add(elements)
-  changePageCytoscapeLayout(cy, 'breadthfirst')
+  changePageCytoscapeLayout(cy, layout)
 }
 
 router.route(
