@@ -50,8 +50,8 @@ def check_notes(slipbox: Slipbox) -> bool:
     def format_note(note: _Note) -> str:
         return f"  {note[0]}. {note[1]} in {note[2]!r}."
 
-    def format_link(x: Tuple[_Note, int]) -> str:
-        return f"  {x[0][0]}. {x[0][1]} in {x[0][2]!r} -> {x[1]}."
+    def format_link(link: Tuple[_Note, int]) -> str:
+        return f"  {link[0][0]}. {link[0][1]} in {link[0][2]!r} -> {link[1]}."
 
     _invalid_links = invalid_links(slipbox)
     _isolated_notes = isolated_notes(slipbox)

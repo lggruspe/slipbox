@@ -86,5 +86,4 @@ def parse_sections(html: str,
 
 if __name__ == "__main__":
     from pathlib import Path
-    html = Path("index.html").read_text()
-    parse_sections(html)
+    parse_sections(Path("index.html").read_text())

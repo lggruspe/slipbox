@@ -38,7 +38,7 @@ bundle:	check-js check-lua
 .PHONY:	check
 check: bundle
 	cd cli; flake8 slipbox --max-complexity=10
-	cd cli; pylint slipbox --fail-under=10 -d R0903,W0621,C0415,E1136,C0103
+	cd cli; pylint slipbox --fail-under=10 -d R0903,C0415
 	cd cli; mypy -p slipbox
 	cd cli; cd slipbox; pytest --cov=. --cov-fail-under=90 --cov-report=term-missing --cov-branch --verbose
 
