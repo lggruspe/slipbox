@@ -110,16 +110,13 @@ class GraphView {
           selector: 'node',
           style: {
             label: 'data(label)',
-            height: 'label',
-            width: 'label',
-            padding: '8px',
+            height: '2em',
+            width: '2em',
             shape: 'round-rectangle',
-            color: 'white',
+            color: 'black',
             'background-color': 'data(bgColor)',
-            'text-halign': 'center',
-            'text-valign': 'center',
             'text-wrap': 'wrap',
-            'text-max-width': 100
+            'text-max-width': 150
           }
         },
         {
