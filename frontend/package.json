@@ -42,7 +42,7 @@
     "terser": "^5.6.0"
   },
   "dependencies": {
-    "@lggruspe/fragment-router": "^1.4.4",
+    "@lggruspe/fragment-router": "^1.4.6",
     "@lggruspe/view-hooks": "^1.0.0",
     "lunr": "^2.3.9"
   }

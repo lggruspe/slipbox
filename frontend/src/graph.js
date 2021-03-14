@@ -174,11 +174,12 @@ router.route(
   }
 )
 
-router.route(
-  () => router.defer(() => {
-    writer.restore()
-    window.location.replace('#graph/')
-  })
-)
+router.route(() => writer.restore())
 
-module.exports = router
+function init () {
+  const container = document.createElement('div')
+  document.body.appendChild(container)
+  writer.options.container = container
+}
+
+module.exports = { router, init }

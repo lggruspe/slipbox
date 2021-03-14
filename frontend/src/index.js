@@ -4,10 +4,10 @@ const { SlipboxCollection } = require('./slipbox.js')
 
 const { Router } = require('@lggruspe/fragment-router')
 const review = require('./review.js')
-const graphRouter = require('./graph.js')
+const graph = require('./graph.js')
 const router = new Router()
 router.mount('review/', review.router)
-router.mount('graph/', graphRouter)
+router.mount('', graph.router)
 
 window.slipbox = new SlipboxCollection()
 
@@ -16,5 +16,8 @@ window.initSlipbox = function () {
   if (title) { title.remove() }
   List.init()
   Search.init()
+
+  graph.init()
+
   router.listen()
 }
