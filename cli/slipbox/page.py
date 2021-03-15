@@ -157,7 +157,8 @@ def create_reference_pages(conn: Connection) -> str:
 
 def generate_complete_html(conn: Connection,
                            options: str,
-                           basedir: Path) -> None:
+                           basedir: Path,
+                           out: Path) -> None:
     """Create final HTML file with javascript."""
     with temporary_directory() as tempdir:
         script = tempdir/"script.js"
@@ -175,7 +176,7 @@ def generate_complete_html(conn: Connection,
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
         cmd = """{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search}
-                -A{bottom} --section-divs {opts} -H {style}
+                -o {output} -A{bottom} --section-divs {opts} -H {style}
             """.format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)),
             script=shlex.quote(str(script)), html=shlex.quote(str(html)),
@@ -183,6 +184,7 @@ def generate_complete_html(conn: Connection,
             title="--metadata title=Slipbox",
             style=data_shell_path("style.html"),
             nav=data_shell_path("nav.html"),
+            output=out/"index.html.test",
             bottom=data_shell_path("bottom.html"),
             search=data_shell_path("search.html"))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)

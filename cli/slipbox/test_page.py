@@ -127,4 +127,4 @@ def test_create_reference_page(mock_db):
 def test_generate_complete_html(mock_db, tmp_path):
     """Sanity check."""
     options = ""
-    page.generate_complete_html(mock_db, options, tmp_path)
+    page.generate_complete_html(mock_db, options, tmp_path, tmp_path)

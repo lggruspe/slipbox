@@ -5,6 +5,8 @@ from shutil import rmtree
 from sqlite3 import Connection
 from typing import Callable
 
+from .page import generate_complete_html as generate_index
+
 
 data = Path(__file__).parent/"data"
 
@@ -31,12 +33,14 @@ class OutputDirectory:
 
 class IndexGenerator:
     """Generates index.html."""
-    def __init__(self, con: Connection):
+    def __init__(self, con: Connection, options: str, basedir: Path):
         self.con = con
+        self.options = options
+        self.basedir = basedir
 
     def run(self, out: Path) -> None:
         """Generate index.html inside output directory."""
-        raise NotImplementedError
+        generate_index(self.con, self.options, self.basedir, out)
 
 
 class JsGenerator:
