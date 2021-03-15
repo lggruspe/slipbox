@@ -43,18 +43,11 @@ class IndexGenerator:
         generate_index(self.con, self.options, self.basedir, out)
 
 
-class JsGenerator:
-    """Generates Javascript files: app.js."""
-    def __init__(self, con: Connection):
-        self.con = con
-
-    def run(self, out: Path) -> None:
-        """Generate app.js inside output directory."""
-        print(self.con)
-        app_js = out/"app.js"
-        source = data/"frontend.js"
-        app_js.write_text(source.read_text())
-        raise NotImplementedError
+def generate_js(out: Path) -> None:
+    """Generate app.js inside output directory."""
+    app_js = out/"app.js"
+    source = data/"frontend.js"
+    app_js.write_text(source.read_text())
 
 
 def generate_css(out: Path) -> None:
@@ -62,3 +55,12 @@ def generate_css(out: Path) -> None:
     style_css = out/"style.css"
     source = data/"style.html"
     style_css.write_text(source.read_text())
+
+
+def main(con: Connection, options: str, basedir: Path, out: Path) -> None:
+    """Generate all files."""
+    OutputDirectory(out).generate(
+        IndexGenerator(con, options, basedir).run,
+        generate_js,
+        generate_css,
+    )

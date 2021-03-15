@@ -5,7 +5,7 @@ from pathlib import Path
 from time import time
 from typing import Iterable, List, Tuple
 
-from . import scan, page
+from . import generator, scan
 from .initializer import DotSlipbox
 
 
@@ -91,8 +91,8 @@ class Slipbox:
     def compile(self) -> None:
         """Compile processed HTML into final output."""
         options = self.config.get("slipbox", "document_options")
-        out = self.basedir
-        page.generate_complete_html(self.conn, options, self.basedir, out)
+        out = self.basedir/"public"
+        generator.main(self.conn, options, self.basedir, out)
 
     def run(self) -> None:
         """Run all steps needed to compile output."""
