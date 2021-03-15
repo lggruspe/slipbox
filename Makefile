@@ -48,7 +48,7 @@ docs:	bundle
 	cd docs; rm -rf .slipbox \
 	cd docs; PYTHONPATH=../cli python -m slipbox init \
 		--content_options "--bibliography example.bib --citeproc" \
-		--document_options "-o index.html -s"
+		--document_options " -s"
 	cd docs; PYTHONPATH=../cli python -m slipbox build
 
 # Release slipbox.

@@ -19,7 +19,7 @@ def default_config() -> ConfigParser:
     config = ConfigParser()
     config["slipbox"] = {
         "content_options": "--mathjax",
-        "document_options": "--mathjax -s -o index.html",
+        "document_options": "--mathjax -s",
     }
     return config
 
