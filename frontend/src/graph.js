@@ -167,7 +167,7 @@ router.route(
     const elements = window.slipbox.cy.elements()
       .filter(e => e.isNode() || e.data('source') !== e.data('target'))
     if (elements.length >= 2) {
-      const layout = elements.length > 30 ? 'cose' : 'breadthfirst'
+      const layout = elements.nodes().length > 30 ? 'cose' : 'breadthfirst'
       router.defer(() => renderGraph(elements, layout))
       router.onExit(() => writer.restore())
     }

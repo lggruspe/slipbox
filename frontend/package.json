@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@lggruspe/fragment-router": "^1.4.6",
-    "@lggruspe/view-hooks": "^1.0.0",
+    "@lggruspe/view-hooks": "^1.1.0",
     "lunr": "^2.3.9"
   }
 }

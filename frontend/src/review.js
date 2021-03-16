@@ -104,7 +104,8 @@ class CardView extends View {
     })
   }
 
-  initialize (container) {
+  initialize () {
+    const container = this.container
     container.innerHTML = `
       <h2 class="flashcard-prompt">${this.state.prompt.innerHTML}</h2>
       <div class="buttons">
@@ -137,7 +138,8 @@ class DeckView extends View {
     })
   }
 
-  initialize (container) {
+  initialize () {
+    const container = this.container
     this.cardViews = new Map()
     container.innerHTML = ''
     const fragment = document.createDocumentFragment()
@@ -145,7 +147,10 @@ class DeckView extends View {
       const cardContainer = document.createElement('div')
       cardContainer.className = 'flashcard'
       fragment.appendChild(cardContainer)
-      this.cardViews.set(card, new CardView(card, cardContainer))
+
+      const view = new CardView(card, cardContainer)
+      this.cardViews.set(card, view)
+      view.initialize()
     }
     const doneDiv = document.createElement('div')
     doneDiv.className = `flashcard flashcard-end ${!this.state.isDone() ? 'is-hidden' : ''}`
@@ -183,7 +188,8 @@ class SummarizedCardView extends View {
     })
   }
 
-  initialize (container) {
+  initialize () {
+    const container = this.container
     container.innerHTML = `<a href="#review/${this.state.id}"></a>`
     this.$('a').innerHTML = this.state.prompt.innerHTML
   }
@@ -208,7 +214,8 @@ class SrsPageView extends View {
     super({ container })
   }
 
-  initialize (container) {
+  initialize () {
+    const container = this.container
     container.innerHTML = `
       <h1>Review notes</h1>
       <p>Pick a question to start with.</p>
@@ -220,6 +227,7 @@ class SrsPageView extends View {
       return new SummarizedCardView(card, container)
     })
     for (const view of views) {
+      view.initialize()
       container.appendChild(view.container)
     }
   }
@@ -264,6 +272,7 @@ router.route(
     deck.start()
     const container = document.createElement('div')
     const view = new DeckView(deck, container)
+    view.initialize()
     router.defer(() => writer.render(view.container))
     router.onExit(() => writer.restore())
   }
@@ -274,6 +283,7 @@ router.route(
   () => {
     const container = document.createElement('div')
     const view = new SrsPageView(container)
+    view.initialize()
     router.defer(() => writer.render(view.container))
     router.onExit(() => writer.restore())
   }
