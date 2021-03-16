@@ -43,18 +43,20 @@ class IndexGenerator:
         generate_index(self.con, self.options, self.basedir, out)
 
 
+def copy(source: Path, dest: Path) -> None:
+    """Copy text from source to dest Path."""
+    dest.write_text(source.read_text())
+
+
 def generate_js(out: Path) -> None:
     """Generate app.js inside output directory."""
-    app_js = out/"app.js"
-    source = data/"frontend.js"
-    app_js.write_text(source.read_text())
+    copy(data/"frontend.js", out/"app.js")
 
 
 def generate_css(out: Path) -> None:
-    """Generates CSS files: style.css."""
-    style_css = out/"style.css"
-    source = data/"style.html"
-    style_css.write_text(source.read_text())
+    """Generates CSS files: style.css and base.css."""
+    copy(data/"style.css", out/"style.css")
+    copy(data/"base.css", out/"base.css")
 
 
 def main(con: Connection, options: str, basedir: Path, out: Path) -> None:

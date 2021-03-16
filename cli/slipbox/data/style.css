@@ -1,4 +1,5 @@
-<style>
+@import url("base.css");
+
 .buttons {
   display: flex;
   column-gap: 1em;
@@ -60,4 +61,3 @@ nav ul {
 .flashcard-next.is-done {
   display: none;
 }
-</style>

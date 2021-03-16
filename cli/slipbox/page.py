@@ -176,15 +176,13 @@ def generate_complete_html(conn: Connection,
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
         cmd = """{pandoc} {dummy} -H{script} {title} -A{nav} -A{html} -A{extra} -A{search}
-            --section-divs {opts} -H {style} -o {output} -c {css}
+                --section-divs {opts} -o {output} -c style.css
             """.format(
             pandoc=pandoc(), dummy=shlex.quote(str(dummy)),
             script=shlex.quote(str(script)), html=shlex.quote(str(html)),
             opts=options, extra=shlex.quote(str(extra)),
             title="--metadata title=Slipbox",
-            style=data_shell_path("style.html"),
             nav=data_shell_path("nav.html"),
             output=out/"index.html",
-            search=data_shell_path("search.html"),
-            css=data_shell_path("base.css"))
+            search=data_shell_path("search.html"))
         subprocess.run(shlex.split(cmd), check=False, cwd=basedir)
