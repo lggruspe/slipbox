@@ -2,8 +2,9 @@
 
 .buttons {
   display: flex;
-  column-gap: 1em;
-  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: space-evenly;
 }
 .level1 {
   display: none;
