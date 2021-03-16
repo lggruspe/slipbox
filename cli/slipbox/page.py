@@ -46,9 +46,7 @@ def generate_data(conn: Connection) -> Iterable[str]:
 
 def generate_javascript(conn: Connection) -> Iterable[str]:
     """Generate slipbox javascript code."""
-    yield '<script type="module">'
-    yield data_path("frontend.js").read_text().strip()
-    yield '</script>'
+    yield '<script type="module" src="app.js" defer></script>'
     yield '<script>'
     yield "window.addEventListener('DOMContentLoaded', () => {"
     yield from generate_data(conn)
