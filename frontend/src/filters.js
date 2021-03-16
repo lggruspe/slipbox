@@ -7,7 +7,7 @@ function isNote (req) {
 }
 
 function isTag (req) {
-  if (!req.id.sartsWith('tags/')) {
+  if (!req.id.startsWith('tags/')) {
     return false
   }
   const fragment = document.getElementById(req.id)
