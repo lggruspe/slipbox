@@ -12,6 +12,7 @@ router.mount('', graph.router)
 window.slipbox = new SlipboxCollection()
 
 window.initSlipbox = function () {
+  window.slipbox.colorEntrypoints()
   const title = document.getElementById('title-block-header')
   if (title) { title.remove() }
   List.init()

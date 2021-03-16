@@ -4,6 +4,7 @@ const cytoscape = require('cytoscape')
 
 const router = new Router()
 const writer = new DomWriter(router)
+const secondaryWriter = new DomWriter(router)
 
 function clusterElements (slipbox, tag) {
   const edges = slipbox.cy.edges(`[tag="${tag}"]`)
@@ -51,21 +52,23 @@ function neighborElements (slipbox, id) {
 
 function createGraphArea () {
   const div = document.createElement('div')
+  div.classList.add('slipbox-graph-cytoscape')
+  return div
+}
+
+function createInfoArea () {
+  const div = document.createElement('div')
+  div.classList.add('slipbox-graph-info')
   div.innerHTML = `
-    <div class="slipbox-graph-cytoscape"></div>
-    <div class="slipbox-graph-info card">
-      <header>
-        <h3><a href=""></a></h3>
-        <p></p>
-      </header>
-    </div>
+    <h3><a href=""></a></h3>
+    <p></p>
   `
   return div
 }
 
-function createPageCytoscape (container) {
+function createPageCytoscape (container, infoContainer) {
   const cy = cytoscape({
-    container: container.querySelector('.slipbox-graph-cytoscape'),
+    container,
     selectionType: 'additive',
     style: [
       {
@@ -94,8 +97,8 @@ function createPageCytoscape (container) {
       }
     ]
   })
-  const a = container.querySelector('.slipbox-graph-info header a')
-  const p = container.querySelector('.slipbox-graph-info header p')
+  const a = infoContainer.querySelector('.slipbox-graph-info a')
+  const p = infoContainer.querySelector('.slipbox-graph-info p')
   cy.on('select', 'node', event => {
     const id = event.target.data('id')
     a.textContent = event.target.data('title')
@@ -132,9 +135,15 @@ function changePageCytoscapeLayout (cy, layout = 'breadthfirst') {
 }
 
 function renderGraph (elements, layout = 'breadthfirst') {
-  const container = createGraphArea()
-  writer.render(container)
-  const cy = createPageCytoscape(container)
+  const graphContainer = createGraphArea()
+  const infoContainer = createInfoArea()
+  writer.render(graphContainer)
+  secondaryWriter.render(infoContainer)
+  router.onExit(() => {
+    writer.restore()
+    secondaryWriter.restore()
+  })
+  const cy = createPageCytoscape(graphContainer, infoContainer)
   cy.add(elements)
   changePageCytoscapeLayout(cy, layout)
 }
@@ -145,7 +154,6 @@ router.route(
     const elements = neighborElements(window.slipbox, req.id)
     if (elements.length >= 2) {
       router.defer(() => renderGraph(elements, 'breadthfirst'))
-      router.onExit(() => writer.restore())
     }
   }
 )
@@ -156,7 +164,6 @@ router.route(
     const elements = clusterElements(window.slipbox, '#' + req.id.slice(5))
     if (elements.length >= 2) {
       router.defer(() => renderGraph(elements, 'breadthfirst'))
-      router.onExit(() => writer.restore())
     }
   }
 )
@@ -169,7 +176,6 @@ router.route(
     if (elements.length >= 2) {
       const layout = elements.nodes().length > 30 ? 'cose' : 'breadthfirst'
       router.defer(() => renderGraph(elements, layout))
-      router.onExit(() => writer.restore())
     }
   }
 )
@@ -180,6 +186,7 @@ function init () {
   const container = document.createElement('div')
   document.body.appendChild(container)
   writer.options.container = container
+  secondaryWriter.options.container = document.getElementById('secondary')
 }
 
 module.exports = { router, init }
