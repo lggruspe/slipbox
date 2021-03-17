@@ -117,14 +117,14 @@ local function citations_to_csv(citations)
   return w.data
 end
 
-function SlipBox:write_data(basedir)
+function SlipBox:write_data()
   -- Create sql statements from slipbox contents.
   local write = utils.write_text
-  write(basedir .. "/files.csv", files_to_csv(self.notes))
-  write(basedir .. "/notes.csv", notes_to_csv(self.notes))
-  write(basedir .. "/links.csv", links_to_csv(self.links))
-  write(basedir .. "/bibliography.csv", bibliography_to_csv(self.bibliography))
-  write(basedir .. "/citations.csv", citations_to_csv(self.citations))
+  write("files.csv", files_to_csv(self.notes))
+  write("notes.csv", notes_to_csv(self.notes))
+  write("links.csv", links_to_csv(self.links))
+  write("bibliography.csv", bibliography_to_csv(self.bibliography))
+  write("citations.csv", citations_to_csv(self.citations))
 end
 
 return {

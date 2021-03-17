@@ -54,12 +54,7 @@ def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
 
 
 def build_command(input_: Path, output: str, options: str = "") -> str:
-    """Construct a single pandoc command to run on inputs.
-
-    inputs is a string of filenames separated by spaces.
-    Each filename must be shlex.quoted if needed.
-    Return an empty string if there are no input files.
-    """
+    """Construct a single pandoc command to run on input."""
     assert input_.exists()
     data_dir = shlex.quote(str(Path(__file__).parent.resolve()))
     cmd = f"{utils.pandoc()} {options} -Lzk.lua --section-divs " \
@@ -96,8 +91,7 @@ def process_batch(conn: Connection,
         concatenate(preprocessed_input, *batch, basedir=basedir)
         cmd = build_command(preprocessed_input, str(html),
                             config.get("slipbox", "content_options"))
-        retcode = utils.run_command(cmd, dict(SLIPBOX_TMPDIR=str(tempdir)),
-                                    cwd=basedir)
+        retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return

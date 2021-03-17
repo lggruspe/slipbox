@@ -91,8 +91,7 @@ class Slipbox:
     def compile(self) -> None:
         """Compile processed HTML into final output."""
         options = self.config.get("slipbox", "document_options")
-        out = self.basedir/"public"
-        generator.main(self.conn, options, self.basedir, out)
+        generator.main(self.conn, options, self.basedir/"public")
 
     def run(self) -> None:
         """Run all steps needed to compile output."""
