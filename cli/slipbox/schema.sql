@@ -17,6 +17,17 @@ CREATE TABLE IF NOT EXISTS Links (
     PRIMARY KEY(src, dest, tag)
 );
 
+CREATE TABLE IF NOT EXISTS Images (
+    filename PRIMARY KEY,
+    binary NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ImageLinks (
+    note NOT NULL REFERENCES Notes ON DELETE CASCADE,
+    image NOT NULL REFERENCES Images ON DELETE CASCADE,
+    PRIMARY KEY(note, image)
+);
+
 CREATE TABLE IF NOT EXISTS Bibliography (
     key PRIMARY KEY,
     text

@@ -73,10 +73,39 @@ def process_citations(conn: Connection, path: Path) -> None:
     run_sql_on_csv(conn, path, sql, (int, str))
 
 
+def process_images(conn: Connection, path: Path) -> None:
+    """Process Images data in path."""
+    sql = "INSERT OR IGNORE INTO Images (filename, binary) VALUES (?, ?)"
+    cur = conn.cursor()
+    basedir = path.parent
+    with open(path, encoding="utf-8") as file:
+        reader = csv.reader(file)
+        for row in reader:
+            filename = row[0]
+            image = basedir/"images"/filename
+            binary: bytes = b""
+            try:
+                binary = image.read_bytes()
+            except FileNotFoundError:
+                continue
+            try:
+                cur.execute(sql, (filename, binary))
+            except IntegrityError:
+                pass
+
+
+def process_image_links(conn: Connection, path: Path) -> None:
+    """Process ImageLinks data in path."""
+    sql = "INSERT OR IGNORE INTO ImageLinks (note, image) VALUES (?, ?)"
+    run_sql_on_csv(conn, path, sql, (int, str))
+
+
 def process_csvs(conn: Connection, basedir: Path) -> None:
     """Process CSV data in basedir."""
     process_files(conn, basedir/"files.csv")
     process_notes(conn, basedir/"notes.csv")
     process_links(conn, basedir/"links.csv")
+    process_images(conn, basedir/"images.csv")
+    process_image_links(conn, basedir/"image_links.csv")
     process_bibliography(conn, basedir/"bibliography.csv")
     process_citations(conn, basedir/"citations.csv")

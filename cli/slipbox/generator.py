@@ -58,10 +58,26 @@ def generate_css(out: Path) -> None:
     copy(data/"base.css", out/"base.css")
 
 
+class ImagesGenerator:
+    """Copies images from database into output directory."""
+    def __init__(self, con: Connection):
+        self.con = con
+
+    def run(self, out: Path) -> None:
+        """Copy images into output directory."""
+        images = out/"images"
+        images.mkdir()
+        sql = "SELECT filename, binary FROM Images"
+        for filename, binary in self.con.execute(sql):
+            image = images/filename
+            image.write_bytes(binary)
+
+
 def main(con: Connection, options: str, out: Path) -> None:
     """Generate all files."""
     OutputDirectory(out).generate(
         IndexGenerator(con, options).run,
+        ImagesGenerator(con).run,
         generate_js,
         generate_css,
     )
