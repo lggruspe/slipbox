@@ -250,13 +250,10 @@ local function citations(slipbox)
 end
 
 local function serialize(slipbox)
-  -- Create filter to dump slipbox data into SLIPBOX_TMPDIR.
+  -- Create filter to dump slipbox data into working directory.
   return {
     Pandoc = function()
-      local tmpdir = os.getenv "SLIPBOX_TMPDIR"
-      if tmpdir and tmpdir ~= "" then
-        slipbox:write_data(tmpdir)
-      end
+      slipbox:write_data()
     end
   }
 end
