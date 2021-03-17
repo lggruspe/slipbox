@@ -8,6 +8,7 @@ function SlipBox:new()
     notes = {},
     links = {},
     citations = {},
+    images = {},
     bibliography = {},
     invalid = {
       has_empty_link_target = {},
@@ -21,6 +22,19 @@ function SlipBox:save_citation(id, citation)
   local citations = self.citations[id] or {}
   citations[citation] = true
   self.citations[id] = citations
+end
+
+function SlipBox:save_image(id, filename)
+  assert(type(id) == "number")
+  assert(type(filename) == "string")
+
+  local image = self.images[filename] or {
+    id = id,
+    filename = filename,
+    notes = {},
+  }
+  self.images[filename] = image
+  image.notes[id] = true
 end
 
 function SlipBox:save_reference(id, text)
@@ -117,12 +131,32 @@ local function citations_to_csv(citations)
   return w.data
 end
 
+local function images_to_csv(images)
+  local w = csv.Writer:new{"filename"}
+  for filename in pairs(images) do
+    w:write{filename}
+  end
+  return w.data
+end
+
+local function image_links_to_csv(images)
+  local w = csv.Writer:new{"note", "image"}
+  for filename, image in pairs(images) do
+    for note in pairs(image.notes) do
+      w:write{note, filename}
+    end
+  end
+  return w.data
+end
+
 function SlipBox:write_data()
   -- Create sql statements from slipbox contents.
   local write = utils.write_text
   write("files.csv", files_to_csv(self.notes))
   write("notes.csv", notes_to_csv(self.notes))
   write("links.csv", links_to_csv(self.links))
+  write("images.csv", images_to_csv(self.images))
+  write("image_links.csv", image_links_to_csv(self.images))
   write("bibliography.csv", bibliography_to_csv(self.bibliography))
   write("citations.csv", citations_to_csv(self.citations))
 end

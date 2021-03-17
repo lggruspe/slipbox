@@ -62,7 +62,7 @@ def build_command(input_: Path,
     data_dir = shlex.quote(str(Path(__file__).parent.resolve()))
     cmd = f"{utils.pandoc()} {options} -Lzk.lua --section-divs " \
         f"--data-dir={data_dir} -Mlink-citations:true " \
-        "--resource-path {} -o {} ".format(
+        "--resource-path {} -o {} --extract-media=images".format(
             shlex.quote(str(basedir.resolve())),
             shlex.quote(output),
         )

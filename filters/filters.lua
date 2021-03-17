@@ -104,6 +104,10 @@ function Collector:Cite(elem)
   end
 end
 
+function Collector:Image(elem)
+  self.slipbox:save_image(self.id, elem.src)
+end
+
 function Collector:Link(elem)
   if not elem.target or elem.target == "" then
     self.has_empty_link_target = true
@@ -126,6 +130,7 @@ end
 function Collector:filter()
   return {
     Cite = function(elem) return self:Cite(elem) end,
+    Image = function (elem) return self:Image(elem) end,
     Link = function(elem) return self:Link(elem) end,
     Str = function(elem) return self:Str(elem) end,
   }
