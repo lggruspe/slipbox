@@ -53,13 +53,19 @@ def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
     return map(lambda g: g[1], groups)
 
 
-def build_command(input_: Path, output: str, options: str = "") -> str:
+def build_command(input_: Path,
+                  output: str,
+                  basedir: Path,
+                  options: str = "") -> str:
     """Construct a single pandoc command to run on input."""
     assert input_.exists()
     data_dir = shlex.quote(str(Path(__file__).parent.resolve()))
     cmd = f"{utils.pandoc()} {options} -Lzk.lua --section-divs " \
-          f"--data-dir={data_dir} -Mlink-citations:true " \
-          "-o {} ".format(shlex.quote(output))
+        f"--data-dir={data_dir} -Mlink-citations:true " \
+        "--resource-path {} -o {} ".format(
+            shlex.quote(str(basedir.resolve())),
+            shlex.quote(output),
+        )
     return cmd + ' ' + shlex.quote(str(input_.resolve()))
 
 
@@ -89,7 +95,7 @@ def process_batch(conn: Connection,
         html = tempdir/"temp.html"
         preprocessed_input = tempdir/"input.md"
         concatenate(preprocessed_input, *batch, basedir=basedir)
-        cmd = build_command(preprocessed_input, str(html),
+        cmd = build_command(preprocessed_input, str(html), basedir,
                             config.get("slipbox", "content_options"))
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:

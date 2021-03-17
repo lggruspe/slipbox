@@ -93,7 +93,7 @@ def test_build_command(tmp_path):
     options = "--mathjax"
     input_file.touch()
 
-    cmd = scan.build_command(input_file, output, options)
+    cmd = scan.build_command(input_file, output, tmp_path, options)
     assert str(input_file) in cmd
     assert f"-o {output}" in cmd
     assert options in cmd
@@ -103,4 +103,4 @@ def test_build_command(tmp_path):
 def test_build_command_when_input_file_does_not_exist(tmp_path):
     """build_command must fail if input file does not exist."""
     input_file = tmp_path/"input.md"
-    scan.build_command(input_file, "output.html", "")
+    scan.build_command(input_file, "output.html", tmp_path, "")
