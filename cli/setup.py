@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/lggruspe/slipbox",
     packages=setuptools.find_packages(),
     package_data={
-        "slipbox": ["data/frontend.js", "filters/*.lua", "*.sql", "data/*.html"
+        "slipbox": ["data/app.js", "filters/*.lua", "*.sql", "data/*.html"
                     ]
     },
     classifiers=[

@@ -11,14 +11,14 @@ all:
 # Initialize project.
 .PHONY:	init
 init:
-	cd frontend; npm ci
+	cd js; npm ci
 	pip install --upgrade pip wheel
 	cd cli; pip install -r requirements.txt
 
 # Run JS tests.
 .PHONY:	check-js
 check-js:
-	cd frontend; npm run lint; npm test
+	cd js; npm run lint; npm test
 
 # Run lua tests.
 .PHONY:	check-lua
@@ -29,9 +29,9 @@ check-lua:
 # Copy JS and Lua filters into slipbox/
 .PHONY:	bundle
 bundle:	check-js check-lua
-	cd frontend; npm run bundle; npm run minify
+	cd js; npm run bundle; npm run minify
 	mkdir -p cli/slipbox/data
-	cp frontend/dist/frontend.min.js cli/slipbox/data/frontend.js
+	cp js/dist/app.min.js cli/slipbox/data/app.js
 	cp -r filters cli/slipbox
 
 # Run python tests.

@@ -25,11 +25,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: |
-        cd frontend
+        cd js
         npm ci
     - run: |
-        cd frontend
+        cd js
         npm run lint
     - run: |
-        cd frontend
+        cd js
         npm test

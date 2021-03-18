@@ -27,14 +27,14 @@ SQL = """
 
 def test_data_path():
     """Check if path is constructed correctly."""
-    path = page.data_path("frontend.js")
-    assert join("data", "frontend.js") in str(path)
+    path = page.data_path("app.js")
+    assert join("data", "app.js") in str(path)
 
 
 def test_data_shell_path():
     """Check if path is constructed and escaped correctly."""
-    path = page.data_shell_path("frontend.js")
-    assert join("data", "frontend.js") in str(path)
+    path = page.data_shell_path("app.js")
+    assert join("data", "app.js") in str(path)
 
     path = page.data_shell_path("front end.js")
     assert path[0] == "'"

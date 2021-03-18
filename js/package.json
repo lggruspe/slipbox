@@ -1,7 +1,7 @@
 {
-  "name": "slipbox-frontend",
+  "name": "slipbox-js",
   "version": "0.0.0",
-  "description": "Slipbox frontend",
+  "description": "Slipbox JS",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -10,7 +10,7 @@
     "lint": "eslint --fix src test",
     "test": "nyc mocha",
     "bundle": "rollup -c",
-    "minify": "terser --compress --mangle -o dist/frontend.min.js -- dist/frontend.js"
+    "minify": "terser --compress --mangle -o dist/app.min.js -- dist/app.js"
   },
   "repository": {
     "type": "git",

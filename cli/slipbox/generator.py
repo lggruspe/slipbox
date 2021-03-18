@@ -49,7 +49,7 @@ def copy(source: Path, dest: Path) -> None:
 
 def generate_js(out: Path) -> None:
     """Generate app.js inside output directory."""
-    copy(data/"frontend.js", out/"app.js")
+    copy(data/"app.js", out/"app.js")
 
 
 def generate_css(out: Path) -> None:

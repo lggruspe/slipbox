@@ -5,7 +5,7 @@ export default {
   input: 'src/index.js',
   output: {
     exports: 'auto',
-    file: 'dist/frontend.js',
+    file: 'dist/app.js',
     paths: {
       cytoscape: 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.17.1/cytoscape.esm.min.js'
     },
