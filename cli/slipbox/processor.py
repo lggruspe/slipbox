@@ -18,7 +18,7 @@ from .scan import build_command
 from .secparse import parse_sections, SectionParser
 
 
-Template = Callable[..., str]
+Preprocessor = Callable[..., str]
 
 
 def html_metadata(**fields: Any) -> str:
@@ -61,17 +61,39 @@ def store_html(conn: Connection,
     parse_sections(html, callback)
 
 
+PREPROCESSORS = {
+    ".md": preprocess_markdown,
+    ".markdown": preprocess_markdown,
+}
+
+
+def choose_preprocessor(extension: str) -> Preprocessor:
+    """Get preprocessor for extension."""
+    return PREPROCESSORS.get(extension, preprocess_markdown)
+
+
+def create_preprocessed_input(
+    tempdir: Path,
+    batch: Batch,
+    basedir: Path
+) -> Path:
+    """Create preprocessed input to be passed to Pandoc."""
+    preprocess = choose_preprocessor(batch.extension)
+    path = tempdir/("input" + batch.extension)
+    path.write_text(
+        preprocess(*batch.paths, basedir=basedir),
+        encoding="utf-8"
+    )
+    return path
+
+
 def process_batch(conn: Connection,
                   batch: Batch,
                   config: ConfigParser,
                   basedir: Path) -> None:
     """Process batch of input notes."""
     with utils.temporary_directory() as tempdir:
-        preprocessed_input = tempdir/"input.md"
-        preprocessed_input.write_text(
-            preprocess_markdown(*batch.paths, basedir=basedir),
-            encoding="utf-8"
-        )
+        preprocessed_input = create_preprocessed_input(tempdir, batch, basedir)
         html = tempdir/"temp.html"
         cmd = build_command(preprocessed_input, str(html), basedir,
                             config.get("slipbox", "content_options"))
