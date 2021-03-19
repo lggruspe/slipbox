@@ -93,7 +93,8 @@ def generate_flashcards(output: str, /) -> None:
 def initialize(directory: Optional[str] = None,
                /,
                content_options: Optional[str] = None,
-               document_options: Optional[str] = None) -> None:
+               document_options: Optional[str] = None,
+               output_directory: Optional[str] = None) -> None:
     """Initialize notes directory."""
     parent = Path(directory) if directory else Path()
     parent.mkdir(parents=True, exist_ok=True)
@@ -103,9 +104,12 @@ def initialize(directory: Optional[str] = None,
         content_options = defaults.get("slipbox", "content_options")
     if not document_options:
         document_options = defaults.get("slipbox", "document_options")
+    if not output_directory:
+        output_directory = defaults.get("slipbox", "output_directory")
 
     DotSlipbox(parent, dict(content_options=content_options,
-                            document_options=document_options))
+                            document_options=document_options,
+                            output_directory=output_directory))
     print(f"Initialized .slipbox in {parent.resolve()!s}.")
 
 

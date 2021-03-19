@@ -20,6 +20,7 @@ def default_config() -> ConfigParser:
     config["slipbox"] = {
         "content_options": "--mathjax",
         "document_options": "--mathjax -s",
+        "output_directory": "public",
     }
     return config
 
