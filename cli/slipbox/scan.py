@@ -1,12 +1,11 @@
 """Look for files that must be compiled."""
 
-from itertools import groupby
 import fnmatch
 import os
 from pathlib import Path
 import shlex
 from sqlite3 import Connection
-from typing import Iterable, Tuple, Union
+from typing import Iterable
 
 from . import utils
 
@@ -34,18 +33,6 @@ def has_valid_pattern(path: Path,
         if fnmatch.fnmatch(relpath, pattern):
             return True
     return False
-
-
-def group_by_file_extension(files: Iterable[Path]) -> Iterable[Iterable[Path]]:
-    """Generate an iterator for each file extension.
-
-    Each file with no file extension is given its own iterator.
-    """
-    def key(filename: Union[str, Path]) -> Tuple[str, str]:
-        root, ext = os.path.splitext(filename)
-        return (ext, "") if ext else ("", root)
-    groups = groupby(sorted(files, key=key), key=key)
-    return map(lambda g: g[1], groups)
 
 
 def build_command(input_: Path,

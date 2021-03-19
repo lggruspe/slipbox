@@ -9,9 +9,10 @@ from configparser import ConfigParser
 from pathlib import Path
 from sqlite3 import Connection
 import sys
-from typing import Any, Callable, List
+from typing import Any, Callable, Sequence
 
 from . import utils
+from .batch import Batch
 from .data import process_csvs
 from .scan import build_command
 from .secparse import parse_sections, SectionParser
@@ -34,7 +35,7 @@ def html_metadata(**fields: Any) -> str:
     return template.format(body)
 
 
-def process_markdown(*sources: Path, basedir: Path) -> str:
+def preprocess_markdown(*sources: Path, basedir: Path) -> str:
     """Preprocess markdown notes."""
     return "".join(
         html_metadata(filename=str(source.relative_to(basedir)))
@@ -43,9 +44,9 @@ def process_markdown(*sources: Path, basedir: Path) -> str:
     )
 
 
-def store_html_sections(conn: Connection,
-                        html: str,
-                        sources: List[Path]) -> None:
+def store_html(conn: Connection,
+               html: str,
+               sources: Sequence[Path]) -> None:
     """Insert HTML sections into Notes table."""
     if not html.strip() or not sources:
         return
@@ -61,14 +62,14 @@ def store_html_sections(conn: Connection,
 
 
 def process_batch(conn: Connection,
-                  batch: List[Path],
+                  batch: Batch,
                   config: ConfigParser,
                   basedir: Path) -> None:
     """Process batch of input notes."""
     with utils.temporary_directory() as tempdir:
         preprocessed_input = tempdir/"input.md"
         preprocessed_input.write_text(
-            process_markdown(*batch, basedir=basedir),
+            preprocess_markdown(*batch.paths, basedir=basedir),
             encoding="utf-8"
         )
         html = tempdir/"temp.html"
@@ -79,5 +80,5 @@ def process_batch(conn: Connection,
             print("Scan failed.", file=sys.stderr)
             return
         process_csvs(conn, tempdir)
-        store_html_sections(conn, html.read_text(encoding="utf-8"), batch)
+        store_html(conn, html.read_text(encoding="utf-8"), batch.paths)
         conn.commit()

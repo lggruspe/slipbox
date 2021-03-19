@@ -6,6 +6,7 @@ from time import time
 from typing import Iterable, List, Tuple
 
 from . import generator, scan
+from .batch import group_by_file_extension
 from .initializer import DotSlipbox
 from .processor import process_batch
 
@@ -84,8 +85,8 @@ class Slipbox:
     def process(self, paths: Iterable[Path]) -> None:
         """Process input files."""
         inputs = list(set(paths))
-        for batch in scan.group_by_file_extension(inputs):
-            process_batch(self.conn, list(batch), self.config, self.basedir)
+        for batch in group_by_file_extension(inputs):
+            process_batch(self.conn, batch, self.config, self.basedir)
         self.timestamp = time()
 
     def compile(self) -> None:

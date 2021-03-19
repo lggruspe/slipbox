@@ -62,30 +62,6 @@ def test_has_valid_pattern_with_parent(tmp_path):
     assert scan.has_valid_pattern(notes_test_md, patterns, tmp_path)
 
 
-def test_group_by_file_extension():
-    """group_by_file_extension should split by file type.
-
-    Files with no extension should be considered their own type.
-    """
-    files = ["a.md", "b.md", ".md", "c.tex", ".tex", ""]
-    groups = list(map(list, scan.group_by_file_extension(files)))
-    assert len(groups) == 5
-    assert ["a.md", "b.md"] in groups
-    assert [".md"] in groups
-    assert ["c.tex"] in groups
-    assert [".tex"] in groups
-    assert [""] in groups
-
-
-def test_group_by_file_extension_on_the_same_type():
-    """group_by_file_extension should group files with the same type together.
-    """
-    files = [f"{c}.md" for c in "abcdefg"]
-    groups = list(map(list, scan.group_by_file_extension(files)))
-    assert len(groups) == 1
-    assert files in groups
-
-
 def test_build_command(tmp_path):
     """Sanity check for build_command."""
     input_file = tmp_path/"input.md"
