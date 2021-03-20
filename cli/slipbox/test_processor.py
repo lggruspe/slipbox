@@ -1,6 +1,6 @@
 # type: ignore
 """Test processor.py."""
-from .processor import preprocess_markdown
+from .processor import preprocess, MARKDOWN_TEMPLATE
 
 
 def test_preprocess_markdown_with_sources(files_abc, tmp_path):
@@ -11,7 +11,7 @@ def test_preprocess_markdown_with_sources(files_abc, tmp_path):
     sources[0].write_text("B")
     sources[1].write_text("C")
 
-    content = preprocess_markdown(*sources, basedir=tmp_path)
+    content = preprocess(MARKDOWN_TEMPLATE, *sources, basedir=tmp_path)
     template = """
 ```
 [slipbox-metadata]
@@ -24,6 +24,6 @@ filename={}
 
 
 def test_preprocess_markdown_with_no_sources(tmp_path):
-    """preprocess.preprocess_markdown must return empty string."""
-    content = preprocess_markdown(basedir=tmp_path)
+    """It must return an empty string."""
+    content = preprocess(MARKDOWN_TEMPLATE, basedir=tmp_path)
     assert not content

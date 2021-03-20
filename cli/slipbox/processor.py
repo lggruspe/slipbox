@@ -9,7 +9,7 @@ from configparser import ConfigParser
 from pathlib import Path
 from sqlite3 import Connection
 import sys
-from typing import Any, Callable, Sequence
+from typing import Any, Sequence
 
 from . import utils
 from .batch import Batch
@@ -18,109 +18,71 @@ from .scan import build_command
 from .secparse import parse_sections, SectionParser
 
 
-Preprocessor = Callable[..., str]
-
-
-def dokuwiki_metadata(**fields: Any) -> str:
-    """Render DokuWiki metadata code block."""
-    template = """
+DOKUWIKI_TEMPLATE = """
 <code>
 [slipbox-metadata]
 {}
 </code>
 """
-    body = '\n'.join(
-        f"{k}={v}"
-        for k, v in fields.items()
-    )
-    return template.format(body)
 
-
-def latex_metadata(**fields: Any) -> str:
-    """Render LaTeX metadata code block."""
-    template = r"""
+LATEX_TEMPLATE = r"""
 \begin{verbatim}
 [slipbox-metadata]
 {}
 \end{verbatim}
 """
-    body = '\n'.join(
-        f"{k}={v}"
-        for k, v in fields.items()
-    )
-    return template.format(body)
 
-
-def markdown_metadata(**fields: Any) -> str:
-    """Render markdown metadata code block."""
-    template = """
+MARKDOWN_TEMPLATE = """
 ```
 [slipbox-metadata]
 {}
 ```
 """
-    body = '\n'.join(
-        f"{k}={v}"
-        for k, v in fields.items()
-    )
-    return template.format(body)
 
-
-def mediawiki_metadata(**fields: Any) -> str:
-    """Render mediawiki metadata code block."""
-    template = """
+MEDIAWIKI_TEMPLATE = """
 <pre>[slipbox-metadata]
 {}</pre>
 """
-    body = '\n'.join(
-        f"{k}={v}"
-        for k, v in fields.items()
-    )
-    return template.format(body)
 
-
-def org_metadata(**fields: Any) -> str:
-    """Render org mode metadata code block."""
-    template = """
+ORG_TEMPLATE = """
 #+begin_example
 [slipbox-metadata]
 {}
 #+end_example
 """
-    body = '\n'.join(
-        f"{k}={v}"
-        for k, v in fields.items()
-    )
-    return template.format(body)
 
-
-def rst_metadata(**fields: Any) -> str:
-    """Render rst metadata code block."""
-    template = """
+RST_TEMPLATE = """
 .. code::
 [slipbox-metadata]
 {}
 
 """
-    body = '\n'.join(
-        f"{k}={v}"
-        for k, v in fields.items()
-    )
-    return template.format(body)
 
+T2T_TEMPLATE = MARKDOWN_TEMPLATE
 
-def t2t_metadata(**fields: Any) -> str:
-    """Render text2tag metadata code block."""
-    return markdown_metadata(**fields)
-
-
-def textile_metadata(**fields: Any) -> str:
-    """Render textile metadata code block."""
-    template = """
+TEXTILE_TEMPLATE = """
 bc. [slipbox-metadata]
 {}
 
 """
+
+METADATA_TEMPLATES = {
+    ".dokuwiki": DOKUWIKI_TEMPLATE,
+    ".latex": LATEX_TEMPLATE,
+    ".markdown": MARKDOWN_TEMPLATE,
+    ".md": MARKDOWN_TEMPLATE,
+    ".mdown": MARKDOWN_TEMPLATE,
+    ".org": ORG_TEMPLATE,
+    ".rst": RST_TEMPLATE,
+    ".t2t": T2T_TEMPLATE,
+    ".tex": LATEX_TEMPLATE,
+    ".textile": TEXTILE_TEMPLATE,
+    ".wiki": MEDIAWIKI_TEMPLATE,
+}
+
+
+def render_metadata(template: str, **fields: Any) -> str:
+    """Render metadata code block using template."""
     body = '\n'.join(
         f"{k}={v}"
         for k, v in fields.items()
@@ -128,10 +90,12 @@ bc. [slipbox-metadata]
     return template.format(body)
 
 
-def preprocess_markdown(*sources: Path, basedir: Path) -> str:
-    """Preprocess markdown notes."""
+def preprocess(template: str, *sources: Path, basedir: Path) -> str:
+    """Preprocess notes (sources) by inserting code blocks generated
+    using the template.
+    """
     return "".join(
-        markdown_metadata(filename=str(source.relative_to(basedir)))
+        render_metadata(template, filename=str(source.relative_to(basedir)))
         + source.read_text(encoding="utf-8")
         for source in sources
     )
@@ -154,27 +118,16 @@ def store_html(conn: Connection,
     parse_sections(html, callback)
 
 
-PREPROCESSORS = {
-    ".md": preprocess_markdown,
-    ".markdown": preprocess_markdown,
-}
-
-
-def choose_preprocessor(extension: str) -> Preprocessor:
-    """Get preprocessor for extension."""
-    return PREPROCESSORS.get(extension, preprocess_markdown)
-
-
 def create_preprocessed_input(
     tempdir: Path,
     batch: Batch,
     basedir: Path
 ) -> Path:
     """Create preprocessed input to be passed to Pandoc."""
-    preprocess = choose_preprocessor(batch.extension)
+    template = METADATA_TEMPLATES.get(batch.extension, MARKDOWN_TEMPLATE)
     path = tempdir/("input" + batch.extension)
     path.write_text(
-        preprocess(*batch.paths, basedir=basedir),
+        preprocess(template, *batch.paths, basedir=basedir),
         encoding="utf-8"
     )
     return path
