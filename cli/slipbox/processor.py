@@ -21,6 +21,36 @@ from .secparse import parse_sections, SectionParser
 Preprocessor = Callable[..., str]
 
 
+def dokuwiki_metadata(**fields: Any) -> str:
+    """Render DokuWiki metadata code block."""
+    template = """
+<code>
+[slipbox-metadata]
+{}
+</code>
+"""
+    body = '\n'.join(
+        f"{k}={v}"
+        for k, v in fields.items()
+    )
+    return template.format(body)
+
+
+def latex_metadata(**fields: Any) -> str:
+    """Render LaTeX metadata code block."""
+    template = r"""
+\begin{verbatim}
+[slipbox-metadata]
+{}
+\end{verbatim}
+"""
+    body = '\n'.join(
+        f"{k}={v}"
+        for k, v in fields.items()
+    )
+    return template.format(body)
+
+
 def markdown_metadata(**fields: Any) -> str:
     """Render markdown metadata code block."""
     template = """
@@ -28,6 +58,68 @@ def markdown_metadata(**fields: Any) -> str:
 [slipbox-metadata]
 {}
 ```
+"""
+    body = '\n'.join(
+        f"{k}={v}"
+        for k, v in fields.items()
+    )
+    return template.format(body)
+
+
+def mediawiki_metadata(**fields: Any) -> str:
+    """Render mediawiki metadata code block."""
+    template = """
+<pre>[slipbox-metadata]
+{}</pre>
+"""
+    body = '\n'.join(
+        f"{k}={v}"
+        for k, v in fields.items()
+    )
+    return template.format(body)
+
+
+def org_metadata(**fields: Any) -> str:
+    """Render org mode metadata code block."""
+    template = """
+#+begin_example
+[slipbox-metadata]
+{}
+#+end_example
+"""
+    body = '\n'.join(
+        f"{k}={v}"
+        for k, v in fields.items()
+    )
+    return template.format(body)
+
+
+def rst_metadata(**fields: Any) -> str:
+    """Render rst metadata code block."""
+    template = """
+.. code::
+[slipbox-metadata]
+{}
+
+"""
+    body = '\n'.join(
+        f"{k}={v}"
+        for k, v in fields.items()
+    )
+    return template.format(body)
+
+
+def t2t_metadata(**fields: Any) -> str:
+    """Render text2tag metadata code block."""
+    return markdown_metadata(**fields)
+
+
+def textile_metadata(**fields: Any) -> str:
+    """Render textile metadata code block."""
+    template = """
+bc. [slipbox-metadata]
+{}
+
 """
     body = '\n'.join(
         f"{k}={v}"
