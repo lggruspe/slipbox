@@ -1,6 +1,6 @@
 """Process notes and store results in database.
 
-Preprocessors insert metadata blocks into notes as comments.
+Preprocessors insert metadata blocks into notes as code blocks.
 They are mainly used to pass note metadata to Pandoc filters even when
 the input is the concatenation of several files.
 """
@@ -21,15 +21,16 @@ from .secparse import parse_sections, SectionParser
 Preprocessor = Callable[..., str]
 
 
-def html_metadata(**fields: Any) -> str:
-    """Render HTML comment metadata block."""
+def markdown_metadata(**fields: Any) -> str:
+    """Render markdown metadata code block."""
     template = """
-<!--#slipbox-metadata
+```
+[slipbox-metadata]
 {}
--->
+```
 """
     body = '\n'.join(
-        f"{k}: {v}"
+        f"{k}={v}"
         for k, v in fields.items()
     )
     return template.format(body)
@@ -38,7 +39,7 @@ def html_metadata(**fields: Any) -> str:
 def preprocess_markdown(*sources: Path, basedir: Path) -> str:
     """Preprocess markdown notes."""
     return "".join(
-        html_metadata(filename=str(source.relative_to(basedir)))
+        markdown_metadata(filename=str(source.relative_to(basedir)))
         + source.read_text(encoding="utf-8")
         for source in sources
     )

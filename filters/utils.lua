@@ -29,11 +29,9 @@ local function write_text(filename, text)
   return true
 end
 
-local function parse_filename(elem)
-  assert(elem.tag == "RawBlock")
-  local pattern = '^<!%-%-#slipbox%-metadata\nfilename: (.-)\n%-%->$'
-  local filename, count = elem.text:gsub(pattern, '%1')
-  if count > 0 then return filename end
+local function parse_filename(text)
+  local pattern = '^%[slipbox%-metadata%]\nfilename=(.-)$'
+  return text:match(pattern)
 end
 
 local function is_reference_id(text)

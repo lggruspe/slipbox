@@ -13,8 +13,8 @@ local function preprocess()
   local function Pandoc(doc)
     local filename
     for _, elem in ipairs(doc.blocks) do
-      if elem.tag == "RawBlock" and elem.format == "html" then
-        filename = utils.parse_filename(elem) or filename
+      if elem.tag == "CodeBlock" then
+        filename = utils.parse_filename(elem.text) or filename
       elseif elem.tag == "Header" and elem.level == 1 then
         assert(filename)
         elem.attributes.filename = filename
@@ -32,9 +32,9 @@ local function init(slipbox)
   -- Create filter that preprocesses headers by splitting the document
   -- into sections.
 
-  local function RawBlock(elem)
-      -- Strip #slipbox-metadata.
-      if elem.format == "html" and utils.parse_filename(elem) then
+  local function CodeBlock(elem)
+      -- Strip slipbox-metadata code block.
+      if utils.parse_filename(elem.text) then
         return {}
       end
   end
@@ -78,7 +78,7 @@ local function init(slipbox)
 
   return {
     Header = Header,
-    RawBlock = RawBlock,
+    CodeBlock = CodeBlock,
     Pandoc = Pandoc,
   }
 end
