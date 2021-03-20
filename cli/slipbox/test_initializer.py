@@ -39,27 +39,3 @@ def test_dot_slipbox_patterns(tmp_path):
     patterns = ['*.rst', '*.txt']
     dot.patterns = patterns
     assert dot.patterns == patterns
-
-
-def test_dot_slipbox_check_config_new(tmp_path):
-    """.check_config must delete newly initialized data with invalid config."""
-    args = dict(content_options="--strip-comments")
-    DotSlipbox(tmp_path, args, exit_=False)
-    assert not tmp_path.joinpath(".slipbox").exists()
-
-
-def test_dot_slipbox_check_config_existing(tmp_path):
-    """.check_config must not delete existing data with invalid config."""
-    dot = DotSlipbox(tmp_path)
-    assert dot.path.exists()
-    assert dot.path.joinpath("config.cfg").is_file()
-    assert dot.check_config()
-
-    config = dot.config
-    config["slipbox"]["content_options"] = "--strip-comments"
-    with open(dot.path.joinpath("config.cfg"), "w") as config_file:
-        config.write(config_file)
-
-    dot = DotSlipbox(tmp_path, exit_=False)
-    assert not dot.check_config(False)
-    assert dot.path.joinpath("config.cfg").is_file()

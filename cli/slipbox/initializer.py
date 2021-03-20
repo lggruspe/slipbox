@@ -3,7 +3,6 @@
 from configparser import ConfigParser
 from pathlib import Path
 from sqlite3 import Connection, connect
-import sys
 from typing import Any, Dict, List, Sequence, Optional
 
 
@@ -18,7 +17,7 @@ def default_config() -> ConfigParser:
     """Create ConfigParser object with default options."""
     config = ConfigParser()
     config["slipbox"] = {
-        "content_options": "--mathjax",
+        "content_options": "--mathjax --strip-comments",
         "document_options": "--mathjax -s",
         "output_directory": "public",
     }
@@ -27,10 +26,7 @@ def default_config() -> ConfigParser:
 
 class DotSlipbox:
     """Initialized .slipbox/ directory."""
-    def __init__(self, parent: Path,
-                 args: Optional[Dict[str, Any]] = None,
-                 *,
-                 exit_: bool = True):
+    def __init__(self, parent: Path, args: Optional[Dict[str, Any]] = None):
         """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
@@ -47,7 +43,6 @@ class DotSlipbox:
             with open(self.path/"config.cfg", "w") as config_file:
                 config.write(config_file)
             self.path.joinpath("patterns").write_text("*.md\n*.markdown\n")
-        self.check_config(exit_)
 
     @property
     def patterns(self) -> List[str]:
@@ -91,17 +86,3 @@ class DotSlipbox:
     def database(self) -> Connection:
         """Create connection to .slipbox/data.db."""
         return connect(self.path/"data.db")
-
-    def check_config(self, exit_: bool = True) -> bool:
-        """Check .slipbox/config.cfg."""
-        content_options = self.config.get("slipbox", "content_options")
-        if "--strip-comments" in content_options:
-            config_path = self.path.joinpath("config.cfg").resolve()
-            if not self.existing:
-                for path in self.path.iterdir():
-                    path.unlink()
-                self.path.rmdir()
-            if exit_:
-                sys.exit(f"invalid content_options value in {config_path!s}")
-            return False
-        return True
