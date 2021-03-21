@@ -29,9 +29,17 @@ local function write_text(filename, text)
   return true
 end
 
+local function strip(text)
+  -- Strip leading and trailing whitespace.
+  return text:match('^%s*(.-)%s*$')
+end
+
 local function parse_filename(text)
   local pattern = '^%[slipbox%-metadata%]\nfilename=(.-)$'
-  return text:match(pattern)
+  local filename = text:match(pattern)
+  if filename then
+    return strip(filename)
+  end
 end
 
 local function is_reference_id(text)
