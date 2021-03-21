@@ -1,15 +1,38 @@
-"""HTML elements."""
+"""Basic templates.
 
-from __future__ import annotations
+Also includes functions for building HTML elements.
+"""
+
+from pathlib import Path
+from string import Template as StringTemplate
 from textwrap import indent
 from typing import Any, Union
+
+
+class Template(StringTemplate):
+    """Extended string.Template with file loader."""
+    @staticmethod
+    def load(path: Path) -> "Template":
+        """Load template from file."""
+        return Template(path.read_text())
+
+    def render(self, **kwargs: Any) -> str:
+        """Substitute template variables."""
+        return self.safe_substitute(**kwargs)
+
+
+def render_template(path: Union[str, Path], **kwargs: Any) -> str:
+    """Render template from templates directory."""
+    basedir = Path(__file__).parent/"templates"
+    template = Template.load(basedir/path)
+    return template.render(**kwargs)
 
 
 class Elem:
     """Represents an HTML element."""
     def __init__(self,
                  tag: str,
-                 *children: Union[str, Elem],
+                 *children: Union[str, "Elem"],
                  **attributes: Any):
         self.tag = tag
         self.children = list(children)

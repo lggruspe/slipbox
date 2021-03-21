@@ -46,21 +46,15 @@ def test_create_bibliography(mock_db):
     conn = mock_db
     conn.executescript(SQL)
     html = page.create_bibliography(conn)
-    assert html == """<section id='references' title='References' class='level1'>
-  <h1>
-    References
-  </h1>
-  <dl>
-    <dt>
-      <a href='#ref-test'>
-        [@test]
-      </a>
-    </dt>
-    <dd>
-      Reference text.
-    </dd>
-  </dl>
-</section>"""
+    assert html == """<section id="references" class="level1" title="References">
+<h1>References</h1>
+<dl>
+<dt><a href="#ref-test">[@test]</a></dt>
+<dd>Reference text.</dd>
+
+</dl>
+</section>
+"""
 
 
 def test_create_tags(mock_db):

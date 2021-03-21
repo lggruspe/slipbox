@@ -6,7 +6,7 @@ from sqlite3 import Connection
 import subprocess
 from typing import Iterable
 
-from .templates import Elem, render
+from .templates import Elem, render, render_template
 from .utils import pandoc, temporary_directory
 
 DUMMY_MARKDOWN = r"""::: {style="display:none"}
@@ -58,17 +58,13 @@ def generate_javascript(conn: Connection) -> Iterable[str]:
 def create_bibliography(conn: Connection) -> str:
     """Create bibliography HTML section from database entries."""
     sql = "SELECT key, text FROM Bibliography ORDER BY key"
-    items = []
-    for key, text in conn.execute(sql):
-        items.append(Elem("dt", Elem("a", f"[@{key[4:]}]", href='#' + key)))
-        items.append(Elem("dd", text))
-    section = Elem("section",
-                   Elem("h1", "References"),
-                   Elem("dl", *items),
-                   id="references",
-                   title="References",
-                   **{"class": "level1"})
-    return render(section)
+    items = '\n'.join(
+        render_template("bibliography__item.html", **dict(
+            href=f"#{key}", term=f"[@{key[4:]}]", description=text
+        ))
+        for key, text in conn.execute(sql)
+    )
+    return render_template("bibliography.html", items=items)
 
 
 def create_tags(conn: Connection) -> str:
