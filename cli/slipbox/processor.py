@@ -25,11 +25,12 @@ DOKUWIKI_TEMPLATE = """
 </code>
 """
 
+# NOTE Some brackets are escaped.
 LATEX_TEMPLATE = r"""
-\begin{verbatim}
+\begin{{verbatim}}
 [slipbox-metadata]
 {}
-\end{verbatim}
+\end{{verbatim}}
 """
 
 MARKDOWN_TEMPLATE = """

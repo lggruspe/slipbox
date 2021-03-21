@@ -51,6 +51,13 @@ docs:	bundle
 		--document_options " -s"
 	cd docs; PYTHONPATH=../cli python -m slipbox build
 
+# Generate examples.
+.PHONY:	examples
+examples:
+	cd examples; rm -rf .slipbox \
+	cd examples; PYTHONPATH=../cli python -m slipbox init
+	cd examples; PYTHONPATH=../cli python -m slipbox build
+
 # Release slipbox.
 .PHONY:	dist
 dist:	bundle check
