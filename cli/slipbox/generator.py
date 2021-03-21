@@ -33,13 +33,14 @@ class OutputDirectory:
 
 class IndexGenerator:
     """Generates index.html."""
-    def __init__(self, con: Connection, options: str):
+    def __init__(self, con: Connection, options: str, title: str = "Slipbox"):
         self.con = con
         self.options = options
+        self.title = title
 
     def run(self, out: Path) -> None:
         """Generate index.html inside output directory."""
-        generate_index(self.con, self.options, out)
+        generate_index(self.con, self.options, out, self.title)
 
 
 def copy(source: Path, dest: Path) -> None:
@@ -73,10 +74,13 @@ class ImagesGenerator:
             image.write_bytes(binary)
 
 
-def main(con: Connection, options: str, out: Path) -> None:
+def main(con: Connection,
+         options: str,
+         out: Path,
+         title: str = "Slipbox") -> None:
     """Generate all files."""
     OutputDirectory(out).generate(
-        IndexGenerator(con, options).run,
+        IndexGenerator(con, options, title).run,
         ImagesGenerator(con).run,
         generate_js,
         generate_css,

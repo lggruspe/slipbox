@@ -22,6 +22,7 @@ def default_config() -> ConfigParser:
         "content_options": "--mathjax --strip-comments",
         "document_options": "--mathjax -s",
         "output_directory": "public",
+        "title": "Slipbox",
     }
     return config
 

@@ -9,11 +9,19 @@ from typing import Iterable
 from .templates import Elem, render, render_template
 from .utils import pandoc, temporary_directory
 
-DUMMY_MARKDOWN = r"""::: {style="display:none"}
+
+def render_dummy(title: str) -> str:
+    """Render dummy markdown."""
+    return fr"""---
+title: {title}
+...
+
+::: {{style="display:none"}}
 $\,$
 ```c
 ```
-:::"""
+:::
+"""
 
 
 def data_path(filename: str) -> Path:
@@ -151,14 +159,15 @@ def create_reference_pages(conn: Connection) -> str:
 
 def generate_complete_html(conn: Connection,
                            options: str,
-                           out: Path) -> None:
+                           out: Path,
+                           title: str = "Slipbox") -> None:
     """Create final HTML file with javascript."""
     with temporary_directory() as tempdir:
         script = tempdir/"script.js"
         html = tempdir/"cached.html"
         extra = tempdir/"extra.html"
         dummy = tempdir/"Slipbox.md"
-        dummy.write_text(DUMMY_MARKDOWN, encoding="utf-8")
+        dummy.write_text(render_dummy(title), encoding="utf-8")
         script.write_text('\n'.join(generate_javascript(conn)),
                           encoding="utf-8")
         html.write_text('\n'.join(generate_active_htmls(conn)),
@@ -168,11 +177,12 @@ def generate_complete_html(conn: Connection,
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-        cmd = """{pandoc} Slipbox.md -Hscript.js --metadata title=Slipbox -A{nav}
+        cmd = """{pandoc} Slipbox.md -Hscript.js --metadata title:{title} -A{nav}
                 -Acached.html -Aextra.html -A{search} --section-divs {opts}
                 -o {output} -c style.css
             """.format(
             pandoc=pandoc(),
+            title=title,
             opts=options,
             nav=data_shell_path("nav.html"),
             output=out/"index.html",

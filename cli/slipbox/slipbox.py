@@ -94,7 +94,8 @@ class Slipbox:
         options = self.config.get("slipbox", "document_options")
         output_directory = self.basedir/self.config.get("slipbox",
                                                         "output_directory")
-        generator.main(self.conn, options, output_directory)
+        title = self.config.get("slipbox", "title")
+        generator.main(self.conn, options, output_directory, title)
 
     def run(self) -> None:
         """Run all steps needed to compile output."""

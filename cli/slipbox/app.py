@@ -94,7 +94,8 @@ def initialize(directory: Optional[str] = None,
                /,
                content_options: Optional[str] = None,
                document_options: Optional[str] = None,
-               output_directory: Optional[str] = None) -> None:
+               output_directory: Optional[str] = None,
+               title: str = "Slipbox") -> None:
     """Initialize notes directory."""
     parent = Path(directory) if directory else Path()
     parent.mkdir(parents=True, exist_ok=True)
@@ -109,7 +110,8 @@ def initialize(directory: Optional[str] = None,
 
     DotSlipbox(parent, dict(content_options=content_options,
                             document_options=document_options,
-                            output_directory=output_directory))
+                            output_directory=output_directory,
+                            title=title))
     print(f"Initialized .slipbox in {parent.resolve()!s}.")
 
 
