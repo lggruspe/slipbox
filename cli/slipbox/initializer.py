@@ -5,6 +5,8 @@ from pathlib import Path
 from sqlite3 import Connection, connect
 from typing import Any, Dict, List, Sequence, Optional
 
+from .processor import METADATA_TEMPLATES
+
 
 def initialize_database(conn: Connection) -> None:
     """Initialize database with schema.sql."""
@@ -42,7 +44,7 @@ class DotSlipbox:
                 config["slipbox"].update(args)
             with open(self.path/"config.cfg", "w") as config_file:
                 config.write(config_file)
-            self.path.joinpath("patterns").write_text("*.md\n*.markdown\n")
+            self.patterns = ['*' + key for key in METADATA_TEMPLATES]
 
     @property
     def patterns(self) -> List[str]:
@@ -53,10 +55,7 @@ class DotSlipbox:
     @patterns.setter
     def patterns(self, value: Sequence[str]) -> None:
         """Set glob patterns."""
-        with self.path.joinpath("patterns").open("w") as file:
-            for pattern in value:
-                if pattern:
-                    print(pattern, file=file)
+        self.path.joinpath("patterns").write_text('\n'.join(value))
 
     @property
     def config(self) -> ConfigParser:

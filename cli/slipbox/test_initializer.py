@@ -34,8 +34,11 @@ def test_dot_slipbox_locate(tmp_path):
 def test_dot_slipbox_patterns(tmp_path):
     """Test patterns property."""
     dot = DotSlipbox(tmp_path)
-    assert sorted(dot.patterns) == ['*.markdown', '*.md']
+    patterns = sorted(dot.patterns)
+    assert "*.markdown" in patterns
+    assert "*.md" in patterns
+    assert "*.mdown" in patterns
 
-    patterns = ['*.rst', '*.txt']
+    patterns = ["*.rst", "*.txt"]
     dot.patterns = patterns
     assert dot.patterns == patterns
