@@ -1,13 +1,13 @@
 ====== 0 test.dokuwiki ======
 
-* test.dokuwiki
-* [[#1|test.latex]]
-* [[#2|test.markdown]]
-* [[#3|test.md (markdown)]]
-* [[#4|test.mdown (markdown)]]
-* [[#5|test.org]]
-* [[#6|test.rst]]
-* [[#7|test.t2t]]
-* [[#8|test.tex]]
-* [[#9|test.textile]]
-* [[#10|test.wiki (mediawiki)]]
+  * test.dokuwiki
+  * [[#1|test.latex]]
+  * [[#2|test.markdown]]
+  * [[#3|test.md (markdown)]]
+  * [[#4|test.mdown (markdown)]]
+  * [[#5|test.org]]
+  * [[#6|test.rst]]
+  * [[#7|test.t2t]]
+  * [[#8|test.tex]]
+  * [[#9|test.textile]]
+  * [[#10|test.wiki (mediawiki)]]

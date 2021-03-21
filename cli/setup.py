@@ -14,8 +14,7 @@ setuptools.setup(
     url="https://github.com/lggruspe/slipbox",
     packages=setuptools.find_packages(),
     package_data={
-        "slipbox": ["data/app.js", "filters/*.lua", "*.sql", "data/*.html"
-                    ]
+        "slipbox": ["data/*", "filters/*.lua", "*.sql", "templates/*"]
     },
     classifiers=[
         "Programming Language :: Python :: 3",

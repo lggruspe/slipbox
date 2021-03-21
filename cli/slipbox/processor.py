@@ -54,8 +54,9 @@ ORG_TEMPLATE = """
 
 RST_TEMPLATE = """
 .. code::
-[slipbox-metadata]
-{}
+
+    [slipbox-metadata]
+    {}
 
 """
 
