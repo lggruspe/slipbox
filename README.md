@@ -11,17 +11,19 @@ slipbox
 Features
 --------
 
-- Interactive graph of notes and links
-- Text search
-- Spaced repetition
-- Anki generator
+-   Interactive graph of notes and links
+-   Static text search
+-   Flashcards
+-   Anki generator
+-   Supports notes in markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags,
+    Textile and MediaWiki formats
 
 Requirements
 ------------
 
 - `pandoc` (should be compiled with `pandoc-types` 1.22)
 - `python3` (3.8+)
-- `genanki` (only needed when generating Anki cards)
+- `genanki` (only needed to generate Anki cards)
 
 Installation and usage
 ----------------------

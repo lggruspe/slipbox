@@ -1,0 +1,175 @@
+:root {
+  --body-width: 760px;
+  --side-width: 300px;
+}
+
+html {
+  font-family: sans-serif;
+  line-height: 1.5;
+}
+
+body {
+  max-width: var(--body-width);
+  margin: 0 auto;
+  padding: 1em;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+#title-block-header {
+  display: none;
+}
+
+/* Layout */
+
+.sidebar {
+  box-sizing: border-box;
+  width: var(--side-width);
+  padding: 1em;
+}
+
+#primary {
+  background-color: #eeeeee;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  box-shadow: 2px 0 2px #aaaaaa;
+  z-index: 2;
+
+  animation-duration: 0.2s;
+  animation-name: slidein;
+  overflow: hidden;
+}
+
+@keyframes slidein {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--side-width);
+  }
+}
+
+#primary-checkbox {
+  display: none;
+}
+
+#primary-label {
+  position: fixed;
+  top: 0.25em;
+  left: 0.25em;
+  font-size: 1.75rem;
+  padding: 0 0.25em;
+  border-radius: 5px;
+  z-index: 3;
+}
+
+#primary-label:hover {
+  font-weight: bold;
+}
+
+#primary-checkbox:checked + #primary {
+  display: none;
+}
+
+#secondary {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.title {
+  font-family: Palatino;
+  text-align: center;
+}
+
+.nav-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  align-items: center;
+}
+
+.nav-item:hover {
+  font-weight: bold;
+}
+
+.plain-link {
+  text-decoration: none;
+  color: black;
+}
+
+.level1 {
+  padding: 1em 1.5em;
+}
+
+.search-box {
+  box-sizing: border-box;
+  margin: 1em 0.25em;
+  border-radius: 1em;
+  background: white;
+  padding: 0 0.5em;
+  font-size: 1.5rem;
+  font-family: inherit;
+  box-shadow: 0 0 1px black;
+}
+
+.search-box:focus-within {
+  box-shadow: 0 0 3px black;
+}
+
+.search-input {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
+
+.card {
+  padding: 1em;
+  background-color: #eeeeee;
+  box-shadow: 0 0 3px #aaaaaa;
+}
+
+.flashcard {
+  border: 1px solid #aaaaaa;
+  margin: 1em;
+  padding: 1em;
+  border-radius: 1em;
+}
+
+.button {
+  border: medium hidden blue;
+  background-color: #eeeeee;
+  color: #555555;
+  padding: 5px;
+  font-weight: bold;
+  min-width: 150px;
+  box-shadow: 0 2px 3px #aaaaaa;
+}
+
+a.button {
+  text-decoration: none;
+  font-size: 1em;
+  text-align: center;
+}
+
+.button:hover {
+  background-color: rgba(0,0,0,0.125);
+}
+
+.button:active {
+  background-color: rgba(0,0,0,0.25);
+  box-shadow: none;
+}
+
+/*
+.dark {
+  background-color: #222233;
+  color: #eeeeee;
+}
+*/

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Slipbox</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <script type="module" src="app.js" defer></script>
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+  for(const sec of document.querySelectorAll('section.slipbox-note'))
+  {
+    window.slipbox.addNote(sec.id)
+  }
+  window.slipbox.addLink('0', '0', '#getting-started')
+  window.slipbox.addLink('0', '1', '#getting-started')
+  window.slipbox.addLink('1', '1', '#getting-started')
+  window.slipbox.addLink('1', '2', '#getting-started')
+  window.slipbox.addLink('2', '2', '#dot-slipbox')
+  window.slipbox.addLink('2', '2', '#view-notes')
+  window.slipbox.addLink('2', '2', '#writing-notes')
+  window.slipbox.addLink('2', '3', '#writing-notes')
+  window.slipbox.addLink('2', '8', '#view-notes')
+  window.slipbox.addLink('2', '10', '#dot-slipbox')
+  window.slipbox.addLink('3', '3', '#writing-notes')
+  window.slipbox.addLink('3', '4', '#writing-notes')
+  window.slipbox.addLink('3', '7', '#writing-notes')
+  window.slipbox.addLink('4', '4', '#connecting-notes')
+  window.slipbox.addLink('4', '4', '#writing-notes')
+  window.slipbox.addLink('4', '5', '#writing-notes')
+  window.slipbox.addLink('4', '6', null)
+  window.slipbox.addLink('4', '6', '#connecting-notes')
+  window.slipbox.addLink('4', '100', null)
+  window.slipbox.addLink('6', '6', '#hashtags')
+  window.slipbox.addLink('6', '6', '#not')
+  window.slipbox.addLink('6', '6', '#tag')
+  window.slipbox.addLink('6', '100', '#tag')
+  window.slipbox.addLink('6', '101', '#tag')
+  window.slipbox.addLink('6', '102', '#not')
+  window.slipbox.addLink('8', '8', '#view-notes')
+  window.slipbox.addLink('8', '9', '#view-notes')
+  window.slipbox.addLink('8', '12', '#view-notes')
+  window.slipbox.addLink('10', '10', '#dot-slipbox')
+  window.slipbox.addLink('10', '11', '#dot-slipbox')
+  window.slipbox.addLink('12', '6', null)
+  window.initSlipbox()
+  })
+  </script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Slipbox</h1>
+</header>
+<div style="display:none">
+<p><span class="math inline"> </span></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
+</div>
+<label id="primary-label" for="primary-checkbox">≡</label>
+<input id="primary-checkbox" type="checkbox" checked>
+<nav id="primary" class="sidebar">
+  <header>
+    <h1 class="title"><a href="" class="plain-link">Slipbox</a></h1>
+  </header>
+  <!--
+  <div class="dark-mode-switch">
+    <input type="checkbox" id="js-dark-mode-switch">
+  </div>
+  -->
+  <div class="search-box">
+    <span>⌕</span>
+    <input class="transparent search-input" type="search">
+  </div>
+  <div class="nav-items">
+    <a href="#" class="nav-item plain-link">Home</a>
+    <a href="#tags" class="nav-item plain-link">Tags</a>
+    <a href="#references" class="nav-item plain-link">References</a>
+  </div>
+  <br>
+  <br>
+  <div class="nav-items">
+    <a href="#review/" class="nav-item plain-link">Review</a>
+  </div>
+</nav>
+<nav id="secondary" class="sidebar"></nav>
+<section id="0" class="level1 slipbox-note" data-filename="index.md" title="What is slipbox?">
+<h1>What is slipbox?</h1>
+<p>slipbox is a static site generator for Zettelkasten notes.</p>
+<p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
+<p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
+<p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
+<hr />
+<p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
+<ul>
+<li>How to install slipbox?  [<a href="#1">#1</a>]</li>
+</ul>
+</section>
+<section id="1" class="level1 slipbox-note" data-filename="index.md" title="How to install slipbox?">
+<h1>How to install slipbox?</h1>
+<p>Make sure you have pandoc and python installed. Your installation of Pandoc needs to have been compiled with pandoc-types 1.22.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) Install genanki to generate Anki flashcards from your notes.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
+<hr />
+<p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
+<ul>
+<li>How to run slipbox?  [<a href="#2">#2</a>]</li>
+</ul>
+</section>
+<section id="2" class="level1 slipbox-note" data-filename="index.md" title="How to run slipbox?">
+<h1>How to run slipbox?</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates a .slipbox/ directory inside my-slipbox.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> init my-slipbox</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Show help.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> <span class="at">-h</span></span></code></pre></div>
+<hr />
+<p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
+<ul>
+<li>How to write notes?  [<a href="#3">#3</a>]</li>
+</ul>
+<p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
+<ul>
+<li>How to view the generated site?  [<a href="#8">#8</a>]</li>
+</ul>
+<p><strong><a href="#tags/dot-slipbox">#dot-slipbox</a></strong></p>
+<ul>
+<li>What does the <code>.slipbox/</code> directory contain?  [<a href="#10">#10</a>]</li>
+</ul>
+</section>
+<section id="3" class="level1 slipbox-note" data-filename="index.md" title="How to write notes?">
+<h1>How to write notes?</h1>
+<p>slipbox supports many formats: markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags, Textile and MediaWiki.</p>
+<p>In these formats, a “note” is just a section that begins with a level 1 header contains a unique ID (number) and a non-empty title.</p>
+<p>Your notes don’t have to be in separate files. You can put any number of notes in one file.</p>
+<p>Run <code>slipbox new</code> to get the next available note ID.</p>
+<hr />
+<p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
+<ul>
+<li>How to link to other notes?  [<a href="#4">#4</a>]</li>
+<li>How to add citations?  [<a href="#7">#7</a>]</li>
+</ul>
+</section>
+<section id="4" class="level1 slipbox-note" data-filename="index.md" title="How to link to other notes?">
+<h1>How to link to other notes?</h1>
+<p>Use the note ID as the link target. Ex: <a href="#100">link</a> (<code>[link](#100)</code>).</p>
+<p>When you omit the link text, it just shows the target ID. Ex:  [<a href="#100">#100</a>] (<code>[](#100)</code>).</p>
+<p>In addition to direct links, slipbox also supports connecting notes using <a href="#6">contextual tags</a>.</p>
+<hr />
+<p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
+<ul>
+<li>How to link to images?  [<a href="#5">#5</a>]</li>
+</ul>
+<p><strong><a href="#tags/connecting-notes">#connecting-notes</a></strong></p>
+<ul>
+<li>What are contextual tags?  [<a href="#6">#6</a>]</li>
+</ul>
+</section>
+<section id="5" class="level1 slipbox-note" data-filename="index.md" title="How to link to images?">
+<h1>How to link to images?</h1>
+<figure>
+<img src="images/69edee39d8acbbb605eb5116c46c3a2eb6b2429f.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
+</figure>
+</section>
+<section id="6" class="level1 slipbox-note" data-filename="index.md" title="What are contextual tags?">
+<h1>What are contextual tags?</h1>
+<p>slipbox uses <a href="#tags/hashtags">#hashtags</a> to tag notes. You can click on the hashtag to see all the notes that have the same tag.</p>
+<p>The tags are called contextual, because they also apply to the links between the previous tag and the next tag.</p>
+<p>Ex: this <a href="#tags/tag">#tag</a> applies to <a href="#100">this link</a> and <a href="#101">this link</a>, but <a href="#tags/not">#not</a> to <a href="#102">this</a>.</p>
+<p>slipbox tags links contextually in order to cluster notes.</p>
+</section>
+<section id="7" class="level1 slipbox-note" data-filename="index.md" title="How to add citations?">
+<h1>How to add citations?</h1>
+<p><span class="citation" data-cites="cite2020">(Cite <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
+<p>To enable citations, you need to specify a bibliography file in <code>.slipbox/config.cfg</code>.</p>
+<p>Here’s a sample config file.</p>
+<pre class="cfg"><code>[slipbox]
+content_options = --bibliography example.bib --citeproc</code></pre>
+<p>Clicking on a citation will open a page with all notes that cite the same reference.</p>
+</section>
+<section id="8" class="level1 slipbox-note" data-filename="index.md" title="How to view the generated site?">
+<h1>How to view the generated site?</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the site.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to the output directory (public/ by default, see .slipbox/config.cfg).</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> http.server</span></code></pre></div>
+<hr />
+<p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
+<ul>
+<li>How to use text search?  [<a href="#9">#9</a>]</li>
+<li>How to interpret the notes graph?  [<a href="#12">#12</a>]</li>
+</ul>
+</section>
+<section id="9" class="level1 slipbox-note" data-filename="index.md" title="How to use text search?">
+<h1>How to use text search?</h1>
+<p>Slipbox provides text search using lunr.js. See the <a href="https://lunrjs.com/guides/searching.html">lunr.js docs</a> to learn more about the syntax for complex queries.</p>
+</section>
+<section id="10" class="level1 slipbox-note" data-filename="index.md" title="What does the .slipbox/ directory contain?">
+<h1>What does the <code>.slipbox/</code> directory contain?</h1>
+<p>The <code>.slipbox</code> directory contains</p>
+<ul>
+<li>an sqlite3 database (<code>data.db</code>)</li>
+<li>a patterns file (<code>patterns</code>)</li>
+<li>a configuration file (<code>config.cfg</code>).</li>
+</ul>
+<hr />
+<p><strong><a href="#tags/dot-slipbox">#dot-slipbox</a></strong></p>
+<ul>
+<li>What do the configuration options mean?  [<a href="#11">#11</a>]</li>
+</ul>
+</section>
+<section id="11" class="level1 slipbox-note" data-filename="index.md" title="What do the configuration options mean?">
+<h1>What do the configuration options mean?</h1>
+<dl>
+<dt><code>content_options</code></dt>
+<dd>Options that get passed to Pandoc to convert notes to HTML.
+</dd>
+<dd>Use this if you want to apply custom filters or to enable citeproc.
+</dd>
+<dt><code>document_options</code></dt>
+<dd>Options that get passed to Pandoc to compile all HTML sections into
+</dd>
+<dd>one file.
+</dd>
+<dd>Use this if you want to add HTML, JavaScript, CSS, etc. into the output.
+</dd>
+<dt><code>output_directory</code></dt>
+<dd>Contains the generated site.
+</dd>
+<dt><code>title</code></dt>
+<dd>Site title.
+</dd>
+</dl>
+</section>
+<section id="12" class="level1 slipbox-note" data-filename="index.md" title="How to interpret the notes graph?">
+<h1>How to interpret the notes graph?</h1>
+<p>slipbox uses <a href="https://js.cytoscape.org/">Cytoscape.js</a> to display note <a href="#6">clusters</a>.</p>
+<ul>
+<li>Entrypoints are shown in blue.</li>
+<li>The slipbox Cytoscape object can be accessed from the browser console as <code>window.slipbox.cy</code> (for analysis).</li>
+</ul>
+</section>
+<section id="100" class="level1 slipbox-note" data-filename="misc.md" title="Foo">
+<h1>Foo</h1>
+<p>Foo.</p>
+</section>
+<section id="101" class="level1 slipbox-note" data-filename="misc.md" title="Bar">
+<h1>Bar</h1>
+<p>Bar.</p>
+</section>
+<section id="102" class="level1 slipbox-note" data-filename="misc.md" title="Baz">
+<h1>Baz</h1>
+<p>Baz.</p>
+</section>
+<section id='tags/connecting-notes' title='#connecting-notes' class='level1'>
+  <h1>
+    #connecting-notes
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='4'></li>
+    <li value='6'></li>
+  </ol>
+</section>
+<section id='tags/dot-slipbox' title='#dot-slipbox' class='level1'>
+  <h1>
+    #dot-slipbox
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='2'></li>
+    <li value='10'></li>
+    <li value='11'></li>
+  </ol>
+</section>
+<section id='tags/getting-started' title='#getting-started' class='level1'>
+  <h1>
+    #getting-started
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='0'></li>
+    <li value='1'></li>
+    <li value='2'></li>
+  </ol>
+</section>
+<section id='tags/hashtags' title='#hashtags' class='level1'>
+  <h1>
+    #hashtags
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='6'></li>
+  </ol>
+</section>
+<section id='tags/not' title='#not' class='level1'>
+  <h1>
+    #not
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='6'></li>
+    <li value='102'></li>
+  </ol>
+</section>
+<section id='tags/tag' title='#tag' class='level1'>
+  <h1>
+    #tag
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='6'></li>
+    <li value='100'></li>
+    <li value='101'></li>
+  </ol>
+</section>
+<section id='tags/view-notes' title='#view-notes' class='level1'>
+  <h1>
+    #view-notes
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='2'></li>
+    <li value='8'></li>
+    <li value='9'></li>
+    <li value='12'></li>
+  </ol>
+</section>
+<section id='tags/writing-notes' title='#writing-notes' class='level1'>
+  <h1>
+    #writing-notes
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='2'></li>
+    <li value='3'></li>
+    <li value='4'></li>
+    <li value='5'></li>
+    <li value='7'></li>
+  </ol>
+</section>
+<section id='tags' title='Tags' class='level1'>
+  <h1>
+    Tags
+  </h1>
+  <ul>
+    <li>
+      <a href='#tags/connecting-notes'>
+        #connecting-notes
+      </a>
+       (2)
+    </li>
+    <li>
+      <a href='#tags/dot-slipbox'>
+        #dot-slipbox
+      </a>
+       (3)
+    </li>
+    <li>
+      <a href='#tags/getting-started'>
+        #getting-started
+      </a>
+       (3)
+    </li>
+    <li>
+      <a href='#tags/hashtags'>
+        #hashtags
+      </a>
+       (1)
+    </li>
+    <li>
+      <a href='#tags/not'>
+        #not
+      </a>
+       (2)
+    </li>
+    <li>
+      <a href='#tags/tag'>
+        #tag
+      </a>
+       (3)
+    </li>
+    <li>
+      <a href='#tags/view-notes'>
+        #view-notes
+      </a>
+       (4)
+    </li>
+    <li>
+      <a href='#tags/writing-notes'>
+        #writing-notes
+      </a>
+       (5)
+    </li>
+  </ul>
+</section>
+<section id='ref-cite2020' title='ref-cite2020' class='level1'>
+  <h1>
+    @cite2020
+  </h1>
+  <p>
+    Author. 2020. Title.
+  </p>
+  <ol class='slipbox-list'>
+    <li value='7'></li>
+  </ol>
+</section>
+<section id="references" class="level1" title="References">
+<h1>References</h1>
+<dl>
+<dt><a href="#ref-cite2020">[@cite2020]</a></dt>
+<dd>Author. 2020. Title.</dd>
+
+</dl>
+</section>
+
+<section id="search" title="Search" class="level1">
+  <div class="search-results"></div>
+</section>
+</body>
+</html>

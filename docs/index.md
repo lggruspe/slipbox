@@ -1,12 +1,6 @@
-# 0 slipbox
+# 0 What is slipbox?
 
-`slipbox` is a static site generator for Zettelkasten notes.
-
-- [Getting started](#1)
-- [Note format](#2)
-- [Linking notes](#3)
-- [Graph](#8)
-- [Text search](#10)
+slipbox is a static site generator for Zettelkasten notes.
 
 GitHub: <https://github.com/lggruspe/slipbox>
 
@@ -14,11 +8,19 @@ Slipbox: <https://lggruspe.github.io/slipbox>
 
 Source: <https://github.com/lggruspe/slipbox/blob/master/docs/index.md>
 
+---
+
+**#getting-started**
+
+- How to install slipbox? [](#1)
 
 
-# 1 Getting started
 
-Make sure you have `pandoc` and `python` installed.
+# 1 How to install slipbox?
+
+Make sure you have pandoc and python installed.
+Your installation of Pandoc needs to have been compiled with
+pandoc-types 1.22.
 
 ```bash
 # Install slipbox.
@@ -26,153 +28,200 @@ pip install slipbox
 
 # (Optional) Install genanki to generate Anki flashcards from your notes.
 pip install genanki
+```
 
+---
+
+**#getting-started**
+
+- How to run slipbox? [](#2)
+
+
+
+# 2 How to run slipbox?
+
+```bash
 # Create slipbox directory.
+# This creates a .slipbox/ directory inside my-slipbox.
 slipbox init my-slipbox
 
 # Generate site.
 cd my-slipbox
 slipbox build
+
+# Show help.
+slipbox -h
 ```
 
-The initialized directory contains a `.slipbox` directory.
-Inside it you'll find a [configuration file](#7), an sqlite3 database
-and a patterns file.
-
 ---
 
-#writing-notes
+**#writing-notes**
 
-- [Note format](#2)
-- [Citations](#6)
+- How to write notes? [](#3)
+
+**#view-notes**
+
+- How to view the generated site? [](#8)
+
+**#dot-slipbox**
+
+- What does the `.slipbox/` directory contain? [](#10)
 
 
 
-# 2 Note format
+# 3 How to write notes?
 
-Slipbox notes begin with a level 1 header.
-The header text must contain an ID (number) and a title.
+slipbox supports many formats: markdown, RST, LaTeX, dokuwiki,
+Org-mode, txt2tags, Textile and MediaWiki.
 
+In these formats, a "note" is just a section that begins with a level 1
+header contains a unique ID (number) and a non-empty title.
+
+Your notes don't have to be in separate files.
 You can put any number of notes in one file.
 
----
-
-#writing-notes
-
-- [Linking notes](#3)
-- [Generate note IDs](#11)
-
-
-
-# 3 Linking notes
-
-Link to a note in your slipbox using the note's ID as the link target.
-
-[Example](#4).
+Run `slipbox new` to get the next available note ID.
 
 ---
 
-#writing-notes
+**#writing-notes**
 
-- [Linking to external files/images](#4)
-
-#connecting-notes
-
-- [Tags](#5)
-- [Contextual tags](#9)
-- [Graph](#8)
+- How to link to other notes? [](#4)
+- How to add citations? [](#7)
 
 
 
-# 4 Linking to external files/images
+# 4 How to link to other notes?
 
-Links to external files/images must be relative to the output HTML.
+Use the note ID as the link target.
+Ex: [link](#100) (`[link](#100)`).
+
+When you omit the link text, it just shows the target ID.
+Ex: [](#100) (`[](#100)`).
+
+In addition to direct links, slipbox also supports connecting notes
+using [contextual tags](#6).
+
+---
+
+**#writing-notes**
+
+- How to link to images? [](#5)
+
+**#connecting-notes**
+
+- What are contextual tags? [](#6)
+
+
+
+# 5 How to link to images?
 
 ![Example](images/example.png)
 
 
 
-# 5 Tags
+# 6 What are contextual tags?
 
-#slipbox uses hashtags to tag notes.
-You can click on tags to get a list of other notes that have the same
+slipbox uses #hashtags to tag notes.
+You can click on the hashtag to see all the notes that have the same
 tag.
 
+The tags are called contextual, because they also apply to the links
+between the previous tag and the next tag.
+
+Ex: this #tag applies to [this link](#100) and [this link](#101),
+but #not to [this](#102).
+
+slipbox tags links contextually in order to cluster notes.
 
 
-# 6 Citations
-#slipbox
+
+# 7 How to add citations?
+
+[Cite @cite2020].
+
+To enable citations, you need to specify a bibliography file in
+`.slipbox/config.cfg`.
+
+Here's a sample config file.
+
+```cfg
+[slipbox]
+content_options = --bibliography example.bib --citeproc
+```
 
 Clicking on a citation will open a page with all notes that cite the
 same reference.
 
-[Example: @cite2020].
-
-To enable citations, you need to specify a bibliography file in the
-[config file](#7).
 
 
+# 8 How to view the generated site?
 
-# 7 Configuration
+```bash
+# Generate the site.
+slipbox build
 
-Here's a sample config file with `citeproc`.
-
+# Go to the output directory (public/ by default, see .slipbox/config.cfg).
+python -m http.server
 ```
-# .slipbox/config.cfg
-
-[slipbox]
-content_options = --mathjax --bibliography my-bib.bib --citeproc
-document_options = --mathjax --o output.html -s
-```
-
-`content_options`
-: Used when Pandoc converts new notes into HTML sections.
-
-`document_options`
-: Used when Pandoc compiles every section into one file.
-
-
-
-# 8 Graph
-
-`slipbox` uses [Cytoscape.js](https://js.cytoscape.org/) for visualizing
-notes.
-The notes are put in a hierarchical layout.
-When the graph gets too big, it switches to the
-[cose layout](https://js.cytoscape.org/#layouts/cose).
-
-Entrypoints are shown in blue.
-
-The slipbox Cytoscape object can be accessed from the browser console
-as `window.slipbox.cy`.
 
 ---
 
-#connecting-notes
+**#view-notes**
 
-- [Contextual tags](#9)
-
-
-
-# 9 Contextual tags
-
-[Tag pages](#5) show a cluster of notes at the bottom of the page.
-The cluster contains notes as well as [links](#3) that belong to the tag.
-
-Links are added to clusters using contextual tags.
-When you link to a note, the link automatically gets tagged with the
-last tag that appears in the note before the link.
+- How to use text search? [](#9)
+- How to interpret the notes graph? [](#12)
 
 
 
-# 10 Text search
+# 9 How to use text search?
 
-Slipbox provides text search using `lunr.js`.
-See the [`lunr.js` docs](https://lunrjs.com/guides/searching.html) to
+Slipbox provides text search using lunr.js.
+See the [lunr.js docs](https://lunrjs.com/guides/searching.html) to
 learn more about the syntax for complex queries.
 
 
 
-# 11 Generate note IDs
+# 10 What does the `.slipbox/` directory contain?
 
-`slipbox new` prints the smallest available ID.
+The `.slipbox` directory contains
+
+- an sqlite3 database (`data.db`)
+- a patterns file (`patterns`)
+- a configuration file (`config.cfg`).
+
+---
+
+**#dot-slipbox**
+
+- What do the configuration options mean? [](#11)
+
+
+
+# 11 What do the configuration options mean?
+
+`content_options`
+: Options that get passed to Pandoc to convert notes to HTML.
+: Use this if you want to apply custom filters or to enable citeproc.
+
+`document_options`
+: Options that get passed to Pandoc to compile all HTML sections into
+: one file.
+: Use this if you want to add HTML, JavaScript, CSS, etc. into the output.
+
+`output_directory`
+: Contains the generated site.
+
+`title`
+: Site title.
+
+
+
+# 12 How to interpret the notes graph?
+
+slipbox uses [Cytoscape.js](https://js.cytoscape.org/) to display note
+[clusters](#6).
+
+-   Entrypoints are shown in blue.
+-   The slipbox Cytoscape object can be accessed from the browser
+    console as `window.slipbox.cy` (for analysis).

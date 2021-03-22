@@ -1,0 +1,54 @@
+@import url("base.css");
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: space-evenly;
+}
+.level1 {
+  display: none;
+}
+.level1:target {
+  display: block;
+}
+nav ul {
+  align-items: center;
+  column-gap: 2em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  row-gap: 1em;
+}
+.slipbox-srs {
+  text-align: center;
+  padding: 1em 0;
+}
+.slipbox-srs button {
+  border: none;
+  font-size: 1.5em;
+}
+.slipbox-srs-pressed {
+  color: #4444aa;
+}
+.slipbox-graph-cytoscape {
+  width: 100%;
+  height: 90vh;
+}
+.flashcard-prompt {
+  text-align: center;
+}
+.is-hidden {
+  display: none;
+}
+.flashcard-show.is-response,
+.flashcard-show.is-done,
+.flashcard-response.is-prompt,
+.flashcard-again.is-prompt,
+.flashcard-again.is-done,
+.flashcard-next.is-prompt,
+.flashcard-next.is-done {
+  display: none;
+}
