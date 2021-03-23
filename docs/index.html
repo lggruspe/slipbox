@@ -6,136 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Slipbox</title>
   <style>
-    html {
-      line-height: 1.5;
-      font-family: Georgia, serif;
-      font-size: 20px;
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      word-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 1em;
-      }
-    }
-    @media print {
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
-      font-size: 85%;
-      margin: 0;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      background-color: #1a1a1a;
-      border: none;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     span.underline{text-decoration: underline;}
@@ -207,189 +77,51 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
+  <link rel="stylesheet" href="style.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
-  <script type="module">
-  import cytoscape from"https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.17.1/cytoscape.esm.min.js";var SlipboxCollection_1=class{constructor(){this.cy=cytoscape({headless:!0})}addNote(e){const t=document.getElementById(e),r=t.querySelector("h1").textContent,n=t.getAttribute("data-filename");this.cy.add({data:{id:e,title:r,filename:n,label:r,bgColor:"gray"}})}addLink(e,t,r){const n=`${e}-${t}${r}`;this.cy.add({data:{id:n,source:e,target:t,tag:r}})}colorEntrypoints(){this.cy.nodes((e=>0===e.indegree(!1)&&e.outdegree(!1)>0)).data("bgColor","#4444aa")}};function graphArea(){const e=document.createElement("div");return e.innerHTML='\n    <div class="slipbox-graph-cytoscape"></div>\n    <div class="slipbox-graph-info">\n      <header>\n        <h3><a href=""></a></h3>\n        <p></p>\n      </header>\n    </div>\n  ',e}function clusterElements(e,t){const r=e.cy.edges(`[tag="${t}"]`);return r.connectedNodes().union(r.filter((e=>e.data("source")!==e.data("target"))))}function neighborElements(e,t){const r=e.cy.getElementById(t),n=new Set,i=r.incomers().edges("edge[tag]");for(;i.length>0;){const e=i.pop(),t=e.data("tag");n.has(e)||(i.push(...e.source().incomers(`edge[tag="${t}"]`)),n.add(e))}const s=new Set,o=r.outgoers().edges("edge[tag]");for(;o.length>0;){const e=o.pop(),t=e.data("tag");s.has(e)||(o.push(...e.target().outgoers(`edge[tag="${t}"]`)),s.add(e))}const a=e.cy.collection().union(Array.from(n)).union(Array.from(s)),u=a.connectedNodes(),c=r.openNeighborhood(),l=u.union(a).union(c).filter((e=>e.isNode()||e.data("source")!==e.data("target"))),d=l.getElementById(t).clone();return d.data("bgColor","black"),d.union(l)}class GraphView{constructor(e){this.init(e)}init(e){this.container=e,this.cy=cytoscape({container:this.container.querySelector(".slipbox-graph-cytoscape"),selectionType:"additive",style:[{selector:"node",style:{label:"data(label)",height:"label",width:"label",padding:"8px",shape:"round-rectangle",color:"white","background-color":"data(bgColor)","text-halign":"center","text-valign":"center","text-wrap":"wrap","text-max-width":100}},{selector:"edge",style:{width:2,"curve-style":"bezier","line-color":"black","line-style":"solid","target-arrow-color":"black","target-arrow-shape":"triangle"}}]}),this.addEventListeners()}addEventListeners(){const e=this.container.querySelector(".slipbox-graph-info header a"),t=this.container.querySelector(".slipbox-graph-info header p");this.cy.on("select","node",(r=>{const n=r.target.data("id");e.textContent=r.target.data("title"),e.href="#"+n,t.textContent=r.target.data("filename"),r.target.data("label",n)})),this.cy.on("unselect","node",(r=>{e.textContent="",t.textContent="",r.target.data("label",r.target.data("title"))}))}render(e="breadthfirst"){"cose"===e?this.cy.layout({name:"cose",nodeDimensionsIncludeLabels:!0,numIter:300,fit:!0}).run():this.cy.layout({name:"breadthfirst",spacingFactor:1,fit:!0,directed:!0,avoidOverlap:!0,nodeDimensionsIncludeLabels:!0}).run()}}function isNoteId(e){if(!e||!Number.isInteger(Number(e)))return!1;const t=document.getElementById(e);return Boolean(t?.classList.contains("slipbox-note"))}function isTagId(e){if(!e.startsWith("tags/"))return!1;const t=document.getElementById(e);return Boolean(t?.classList.contains("level1"))}var init=function(e){e.colorEntrypoints();const t=document.createElement("div");document.querySelector(".slipbox-bottom").appendChild(t);const r=new GraphView(t.appendChild(graphArea()));function n(){t.style.display="none";const n=window.location.hash.slice(1),i=n?isNoteId(n)?neighborElements(e,n):isTagId(n)?clusterElements(e,"#"+n.slice(5)):[]:e.cy.elements().filter((e=>e.isNode()||e.data("source")!==e.data("target")));i.length<2||(t.style.display="block",t.innerHTML="",r.init(t.appendChild(graphArea())),r.cy.add(i),r.render(!n&&i.length>30?"cose":"breadthfirst"))}n(),window.addEventListener("hashchange",n)},graph={SlipboxCollection:SlipboxCollection_1,init:init},init$1=function(){const e=document.querySelectorAll("ol.slipbox-list > li[value]");for(let t=0;t<e.length;t++){const r=e[t],n=r.value,i=document.querySelector(`section.slipbox-note[id="${n}"]`);if(!i){r.remove();continue}const s=i.querySelector("h1");if(!s){r.remove();continue}const o=document.createElement("a");o.href=`#${n}`,o.innerHTML=s.innerHTML,r.appendChild(o)}},list={init:init$1},commonjsGlobal="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function createCommonjsModule(e){var t={exports:{}};return e(t,t.exports),t.exports
-  /**
-   * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.9
-   * Copyright (C) 2020 Oliver Nightingale
-   * @license MIT
-   */}var lunr=createCommonjsModule((function(e,t){!function(){var t,r,n,i,s,o,a,u,c,l,d,h,p,f,m,y,g,v,x,w,b,E,k,S,L,Q=function(e){var t=new Q.Builder;return t.pipeline.add(Q.trimmer,Q.stopWordFilter,Q.stemmer),t.searchPipeline.add(Q.stemmer),e.call(t,t),t.build()};Q.version="2.3.9",
-  /*!
-   * lunr.utils
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.utils={},Q.utils.warn=function(e){return function(t){e.console&&console.warn&&console.warn(t)}}(this),Q.utils.asString=function(e){return null==e?"":e.toString()},Q.utils.clone=function(e){if(null==e)return e;for(var t=Object.create(null),r=Object.keys(e),n=0;n<r.length;n++){var i=r[n],s=e[i];if(Array.isArray(s))t[i]=s.slice();else{if("string"!=typeof s&&"number"!=typeof s&&"boolean"!=typeof s)throw new TypeError("clone is not deep and does not support nested objects");t[i]=s}}return t},Q.FieldRef=function(e,t,r){this.docRef=e,this.fieldName=t,this._stringValue=r},Q.FieldRef.joiner="/",Q.FieldRef.fromString=function(e){var t=e.indexOf(Q.FieldRef.joiner);if(-1===t)throw"malformed field ref string";var r=e.slice(0,t),n=e.slice(t+1);return new Q.FieldRef(n,r,e)},Q.FieldRef.prototype.toString=function(){return null==this._stringValue&&(this._stringValue=this.fieldName+Q.FieldRef.joiner+this.docRef),this._stringValue},
-  /*!
-   * lunr.Set
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.Set=function(e){if(this.elements=Object.create(null),e){this.length=e.length;for(var t=0;t<this.length;t++)this.elements[e[t]]=!0}else this.length=0},Q.Set.complete={intersect:function(e){return e},union:function(){return this},contains:function(){return!0}},Q.Set.empty={intersect:function(){return this},union:function(e){return e},contains:function(){return!1}},Q.Set.prototype.contains=function(e){return!!this.elements[e]},Q.Set.prototype.intersect=function(e){var t,r,n,i=[];if(e===Q.Set.complete)return this;if(e===Q.Set.empty)return e;this.length<e.length?(t=this,r=e):(t=e,r=this),n=Object.keys(t.elements);for(var s=0;s<n.length;s++){var o=n[s];o in r.elements&&i.push(o)}return new Q.Set(i)},Q.Set.prototype.union=function(e){return e===Q.Set.complete?Q.Set.complete:e===Q.Set.empty?this:new Q.Set(Object.keys(this.elements).concat(Object.keys(e.elements)))},Q.idf=function(e,t){var r=0;for(var n in e)"_index"!=n&&(r+=Object.keys(e[n]).length);var i=(t-r+.5)/(r+.5);return Math.log(1+Math.abs(i))},Q.Token=function(e,t){this.str=e||"",this.metadata=t||{}},Q.Token.prototype.toString=function(){return this.str},Q.Token.prototype.update=function(e){return this.str=e(this.str,this.metadata),this},Q.Token.prototype.clone=function(e){return e=e||function(e){return e},new Q.Token(e(this.str,this.metadata),this.metadata)},
-  /*!
-   * lunr.tokenizer
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.tokenizer=function(e,t){if(null==e||null==e)return[];if(Array.isArray(e))return e.map((function(e){return new Q.Token(Q.utils.asString(e).toLowerCase(),Q.utils.clone(t))}));for(var r=e.toString().toLowerCase(),n=r.length,i=[],s=0,o=0;s<=n;s++){var a=s-o;if(r.charAt(s).match(Q.tokenizer.separator)||s==n){if(a>0){var u=Q.utils.clone(t)||{};u.position=[o,a],u.index=i.length,i.push(new Q.Token(r.slice(o,s),u))}o=s+1}}return i},Q.tokenizer.separator=/[\s\-]+/,
-  /*!
-   * lunr.Pipeline
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.Pipeline=function(){this._stack=[]},Q.Pipeline.registeredFunctions=Object.create(null),Q.Pipeline.registerFunction=function(e,t){t in this.registeredFunctions&&Q.utils.warn("Overwriting existing registered function: "+t),e.label=t,Q.Pipeline.registeredFunctions[e.label]=e},Q.Pipeline.warnIfFunctionNotRegistered=function(e){e.label&&e.label in this.registeredFunctions||Q.utils.warn("Function is not registered with pipeline. This may cause problems when serialising the index.\n",e)},Q.Pipeline.load=function(e){var t=new Q.Pipeline;return e.forEach((function(e){var r=Q.Pipeline.registeredFunctions[e];if(!r)throw new Error("Cannot load unregistered function: "+e);t.add(r)})),t},Q.Pipeline.prototype.add=function(){var e=Array.prototype.slice.call(arguments);e.forEach((function(e){Q.Pipeline.warnIfFunctionNotRegistered(e),this._stack.push(e)}),this)},Q.Pipeline.prototype.after=function(e,t){Q.Pipeline.warnIfFunctionNotRegistered(t);var r=this._stack.indexOf(e);if(-1==r)throw new Error("Cannot find existingFn");r+=1,this._stack.splice(r,0,t)},Q.Pipeline.prototype.before=function(e,t){Q.Pipeline.warnIfFunctionNotRegistered(t);var r=this._stack.indexOf(e);if(-1==r)throw new Error("Cannot find existingFn");this._stack.splice(r,0,t)},Q.Pipeline.prototype.remove=function(e){var t=this._stack.indexOf(e);-1!=t&&this._stack.splice(t,1)},Q.Pipeline.prototype.run=function(e){for(var t=this._stack.length,r=0;r<t;r++){for(var n=this._stack[r],i=[],s=0;s<e.length;s++){var o=n(e[s],s,e);if(null!=o&&""!==o)if(Array.isArray(o))for(var a=0;a<o.length;a++)i.push(o[a]);else i.push(o)}e=i}return e},Q.Pipeline.prototype.runString=function(e,t){var r=new Q.Token(e,t);return this.run([r]).map((function(e){return e.toString()}))},Q.Pipeline.prototype.reset=function(){this._stack=[]},Q.Pipeline.prototype.toJSON=function(){return this._stack.map((function(e){return Q.Pipeline.warnIfFunctionNotRegistered(e),e.label}))},
-  /*!
-   * lunr.Vector
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.Vector=function(e){this._magnitude=0,this.elements=e||[]},Q.Vector.prototype.positionForIndex=function(e){if(0==this.elements.length)return 0;for(var t=0,r=this.elements.length/2,n=r-t,i=Math.floor(n/2),s=this.elements[2*i];n>1&&(s<e&&(t=i),s>e&&(r=i),s!=e);)n=r-t,i=t+Math.floor(n/2),s=this.elements[2*i];return s==e||s>e?2*i:s<e?2*(i+1):void 0},Q.Vector.prototype.insert=function(e,t){this.upsert(e,t,(function(){throw"duplicate index"}))},Q.Vector.prototype.upsert=function(e,t,r){this._magnitude=0;var n=this.positionForIndex(e);this.elements[n]==e?this.elements[n+1]=r(this.elements[n+1],t):this.elements.splice(n,0,e,t)},Q.Vector.prototype.magnitude=function(){if(this._magnitude)return this._magnitude;for(var e=0,t=this.elements.length,r=1;r<t;r+=2){var n=this.elements[r];e+=n*n}return this._magnitude=Math.sqrt(e)},Q.Vector.prototype.dot=function(e){for(var t=0,r=this.elements,n=e.elements,i=r.length,s=n.length,o=0,a=0,u=0,c=0;u<i&&c<s;)(o=r[u])<(a=n[c])?u+=2:o>a?c+=2:o==a&&(t+=r[u+1]*n[c+1],u+=2,c+=2);return t},Q.Vector.prototype.similarity=function(e){return this.dot(e)/this.magnitude()||0},Q.Vector.prototype.toArray=function(){for(var e=new Array(this.elements.length/2),t=1,r=0;t<this.elements.length;t+=2,r++)e[r]=this.elements[t];return e},Q.Vector.prototype.toJSON=function(){return this.elements},
-  /*!
-   * lunr.stemmer
-   * Copyright (C) 2020 Oliver Nightingale
-   * Includes code from - http://tartarus.org/~martin/PorterStemmer/js.txt
-   */
-  Q.stemmer=(t={ational:"ate",tional:"tion",enci:"ence",anci:"ance",izer:"ize",bli:"ble",alli:"al",entli:"ent",eli:"e",ousli:"ous",ization:"ize",ation:"ate",ator:"ate",alism:"al",iveness:"ive",fulness:"ful",ousness:"ous",aliti:"al",iviti:"ive",biliti:"ble",logi:"log"},r={icate:"ic",ative:"",alize:"al",iciti:"ic",ical:"ic",ful:"",ness:""},n="[aeiouy]",i="[^aeiou][^aeiouy]*",s=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*"),o=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*[aeiouy][aeiou]*[^aeiou][^aeiouy]*"),a=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy][aeiou]*[^aeiou][^aeiouy]*([aeiouy][aeiou]*)?$"),u=new RegExp("^([^aeiou][^aeiouy]*)?[aeiouy]"),c=/^(.+?)(ss|i)es$/,l=/^(.+?)([^s])s$/,d=/^(.+?)eed$/,h=/^(.+?)(ed|ing)$/,p=/.$/,f=/(at|bl|iz)$/,m=new RegExp("([^aeiouylsz])\\1$"),y=new RegExp("^"+i+n+"[^aeiouwxy]$"),g=/^(.+?[^aeiou])y$/,v=/^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/,x=/^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/,w=/^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/,b=/^(.+?)(s|t)(ion)$/,E=/^(.+?)e$/,k=/ll$/,S=new RegExp("^"+i+n+"[^aeiouwxy]$"),L=function(e){var n,i,L,Q,T,$,P;if(e.length<3)return e;if("y"==(L=e.substr(0,1))&&(e=L.toUpperCase()+e.substr(1)),T=l,(Q=c).test(e)?e=e.replace(Q,"$1$2"):T.test(e)&&(e=e.replace(T,"$1$2")),T=h,(Q=d).test(e)){var C=Q.exec(e);(Q=s).test(C[1])&&(Q=p,e=e.replace(Q,""))}else T.test(e)&&(n=(C=T.exec(e))[1],(T=u).test(n)&&($=m,P=y,(T=f).test(e=n)?e+="e":$.test(e)?(Q=p,e=e.replace(Q,"")):P.test(e)&&(e+="e")));return(Q=g).test(e)&&(e=(n=(C=Q.exec(e))[1])+"i"),(Q=v).test(e)&&(n=(C=Q.exec(e))[1],i=C[2],(Q=s).test(n)&&(e=n+t[i])),(Q=x).test(e)&&(n=(C=Q.exec(e))[1],i=C[2],(Q=s).test(n)&&(e=n+r[i])),T=b,(Q=w).test(e)?(n=(C=Q.exec(e))[1],(Q=o).test(n)&&(e=n)):T.test(e)&&(n=(C=T.exec(e))[1]+C[2],(T=o).test(n)&&(e=n)),(Q=E).test(e)&&(n=(C=Q.exec(e))[1],T=a,$=S,((Q=o).test(n)||T.test(n)&&!$.test(n))&&(e=n)),T=o,(Q=k).test(e)&&T.test(e)&&(Q=p,e=e.replace(Q,"")),"y"==L&&(e=L.toLowerCase()+e.substr(1)),e},function(e){return e.update(L)}),Q.Pipeline.registerFunction(Q.stemmer,"stemmer"),
-  /*!
-   * lunr.stopWordFilter
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.generateStopWordFilter=function(e){var t=e.reduce((function(e,t){return e[t]=t,e}),{});return function(e){if(e&&t[e.toString()]!==e.toString())return e}},Q.stopWordFilter=Q.generateStopWordFilter(["a","able","about","across","after","all","almost","also","am","among","an","and","any","are","as","at","be","because","been","but","by","can","cannot","could","dear","did","do","does","either","else","ever","every","for","from","get","got","had","has","have","he","her","hers","him","his","how","however","i","if","in","into","is","it","its","just","least","let","like","likely","may","me","might","most","must","my","neither","no","nor","not","of","off","often","on","only","or","other","our","own","rather","said","say","says","she","should","since","so","some","than","that","the","their","them","then","there","these","they","this","tis","to","too","twas","us","wants","was","we","were","what","when","where","which","while","who","whom","why","will","with","would","yet","you","your"]),Q.Pipeline.registerFunction(Q.stopWordFilter,"stopWordFilter"),
-  /*!
-   * lunr.trimmer
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.trimmer=function(e){return e.update((function(e){return e.replace(/^\W+/,"").replace(/\W+$/,"")}))},Q.Pipeline.registerFunction(Q.trimmer,"trimmer"),
-  /*!
-   * lunr.TokenSet
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.TokenSet=function(){this.final=!1,this.edges={},this.id=Q.TokenSet._nextId,Q.TokenSet._nextId+=1},Q.TokenSet._nextId=1,Q.TokenSet.fromArray=function(e){for(var t=new Q.TokenSet.Builder,r=0,n=e.length;r<n;r++)t.insert(e[r]);return t.finish(),t.root},Q.TokenSet.fromClause=function(e){return"editDistance"in e?Q.TokenSet.fromFuzzyString(e.term,e.editDistance):Q.TokenSet.fromString(e.term)},Q.TokenSet.fromFuzzyString=function(e,t){for(var r=new Q.TokenSet,n=[{node:r,editsRemaining:t,str:e}];n.length;){var i=n.pop();if(i.str.length>0){var s,o=i.str.charAt(0);o in i.node.edges?s=i.node.edges[o]:(s=new Q.TokenSet,i.node.edges[o]=s),1==i.str.length&&(s.final=!0),n.push({node:s,editsRemaining:i.editsRemaining,str:i.str.slice(1)})}if(0!=i.editsRemaining){if("*"in i.node.edges)var a=i.node.edges["*"];else{a=new Q.TokenSet;i.node.edges["*"]=a}if(0==i.str.length&&(a.final=!0),n.push({node:a,editsRemaining:i.editsRemaining-1,str:i.str}),i.str.length>1&&n.push({node:i.node,editsRemaining:i.editsRemaining-1,str:i.str.slice(1)}),1==i.str.length&&(i.node.final=!0),i.str.length>=1){if("*"in i.node.edges)var u=i.node.edges["*"];else{u=new Q.TokenSet;i.node.edges["*"]=u}1==i.str.length&&(u.final=!0),n.push({node:u,editsRemaining:i.editsRemaining-1,str:i.str.slice(1)})}if(i.str.length>1){var c,l=i.str.charAt(0),d=i.str.charAt(1);d in i.node.edges?c=i.node.edges[d]:(c=new Q.TokenSet,i.node.edges[d]=c),1==i.str.length&&(c.final=!0),n.push({node:c,editsRemaining:i.editsRemaining-1,str:l+i.str.slice(2)})}}}return r},Q.TokenSet.fromString=function(e){for(var t=new Q.TokenSet,r=t,n=0,i=e.length;n<i;n++){var s=e[n],o=n==i-1;if("*"==s)t.edges[s]=t,t.final=o;else{var a=new Q.TokenSet;a.final=o,t.edges[s]=a,t=a}}return r},Q.TokenSet.prototype.toArray=function(){for(var e=[],t=[{prefix:"",node:this}];t.length;){var r=t.pop(),n=Object.keys(r.node.edges),i=n.length;r.node.final&&(r.prefix.charAt(0),e.push(r.prefix));for(var s=0;s<i;s++){var o=n[s];t.push({prefix:r.prefix.concat(o),node:r.node.edges[o]})}}return e},Q.TokenSet.prototype.toString=function(){if(this._str)return this._str;for(var e=this.final?"1":"0",t=Object.keys(this.edges).sort(),r=t.length,n=0;n<r;n++){var i=t[n];e=e+i+this.edges[i].id}return e},Q.TokenSet.prototype.intersect=function(e){for(var t=new Q.TokenSet,r=void 0,n=[{qNode:e,output:t,node:this}];n.length;){r=n.pop();for(var i=Object.keys(r.qNode.edges),s=i.length,o=Object.keys(r.node.edges),a=o.length,u=0;u<s;u++)for(var c=i[u],l=0;l<a;l++){var d=o[l];if(d==c||"*"==c){var h=r.node.edges[d],p=r.qNode.edges[c],f=h.final&&p.final,m=void 0;d in r.output.edges?(m=r.output.edges[d]).final=m.final||f:((m=new Q.TokenSet).final=f,r.output.edges[d]=m),n.push({qNode:p,output:m,node:h})}}}return t},Q.TokenSet.Builder=function(){this.previousWord="",this.root=new Q.TokenSet,this.uncheckedNodes=[],this.minimizedNodes={}},Q.TokenSet.Builder.prototype.insert=function(e){var t,r=0;if(e<this.previousWord)throw new Error("Out of order word insertion");for(var n=0;n<e.length&&n<this.previousWord.length&&e[n]==this.previousWord[n];n++)r++;this.minimize(r),t=0==this.uncheckedNodes.length?this.root:this.uncheckedNodes[this.uncheckedNodes.length-1].child;for(n=r;n<e.length;n++){var i=new Q.TokenSet,s=e[n];t.edges[s]=i,this.uncheckedNodes.push({parent:t,char:s,child:i}),t=i}t.final=!0,this.previousWord=e},Q.TokenSet.Builder.prototype.finish=function(){this.minimize(0)},Q.TokenSet.Builder.prototype.minimize=function(e){for(var t=this.uncheckedNodes.length-1;t>=e;t--){var r=this.uncheckedNodes[t],n=r.child.toString();n in this.minimizedNodes?r.parent.edges[r.char]=this.minimizedNodes[n]:(r.child._str=n,this.minimizedNodes[n]=r.child),this.uncheckedNodes.pop()}},
-  /*!
-   * lunr.Index
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.Index=function(e){this.invertedIndex=e.invertedIndex,this.fieldVectors=e.fieldVectors,this.tokenSet=e.tokenSet,this.fields=e.fields,this.pipeline=e.pipeline},Q.Index.prototype.search=function(e){return this.query((function(t){new Q.QueryParser(e,t).parse()}))},Q.Index.prototype.query=function(e){for(var t=new Q.Query(this.fields),r=Object.create(null),n=Object.create(null),i=Object.create(null),s=Object.create(null),o=Object.create(null),a=0;a<this.fields.length;a++)n[this.fields[a]]=new Q.Vector;e.call(t,t);for(a=0;a<t.clauses.length;a++){var u=t.clauses[a],c=null,l=Q.Set.empty;c=u.usePipeline?this.pipeline.runString(u.term,{fields:u.fields}):[u.term];for(var d=0;d<c.length;d++){var h=c[d];u.term=h;var p=Q.TokenSet.fromClause(u),f=this.tokenSet.intersect(p).toArray();if(0===f.length&&u.presence===Q.Query.presence.REQUIRED){for(var m=0;m<u.fields.length;m++){s[O=u.fields[m]]=Q.Set.empty}break}for(var y=0;y<f.length;y++){var g=f[y],v=this.invertedIndex[g],x=v._index;for(m=0;m<u.fields.length;m++){var w=v[O=u.fields[m]],b=Object.keys(w),E=g+"/"+O,k=new Q.Set(b);if(u.presence==Q.Query.presence.REQUIRED&&(l=l.union(k),void 0===s[O]&&(s[O]=Q.Set.complete)),u.presence!=Q.Query.presence.PROHIBITED){if(n[O].upsert(x,u.boost,(function(e,t){return e+t})),!i[E]){for(var S=0;S<b.length;S++){var L,T=b[S],$=new Q.FieldRef(T,O),P=w[T];void 0===(L=r[$])?r[$]=new Q.MatchData(g,O,P):L.add(g,O,P)}i[E]=!0}}else void 0===o[O]&&(o[O]=Q.Set.empty),o[O]=o[O].union(k)}}}if(u.presence===Q.Query.presence.REQUIRED)for(m=0;m<u.fields.length;m++){s[O=u.fields[m]]=s[O].intersect(l)}}var C=Q.Set.complete,I=Q.Set.empty;for(a=0;a<this.fields.length;a++){var O;s[O=this.fields[a]]&&(C=C.intersect(s[O])),o[O]&&(I=I.union(o[O]))}var R=Object.keys(r),N=[],j=Object.create(null);if(t.isNegated()){R=Object.keys(this.fieldVectors);for(a=0;a<R.length;a++){$=R[a];var _=Q.FieldRef.fromString($);r[$]=new Q.MatchData}}for(a=0;a<R.length;a++){var F=(_=Q.FieldRef.fromString(R[a])).docRef;if(C.contains(F)&&!I.contains(F)){var D,A=this.fieldVectors[_],V=n[_.fieldName].similarity(A);if(void 0!==(D=j[F]))D.score+=V,D.matchData.combine(r[_]);else{var M={ref:F,score:V,matchData:r[_]};j[F]=M,N.push(M)}}}return N.sort((function(e,t){return t.score-e.score}))},Q.Index.prototype.toJSON=function(){var e=Object.keys(this.invertedIndex).sort().map((function(e){return[e,this.invertedIndex[e]]}),this),t=Object.keys(this.fieldVectors).map((function(e){return[e,this.fieldVectors[e].toJSON()]}),this);return{version:Q.version,fields:this.fields,fieldVectors:t,invertedIndex:e,pipeline:this.pipeline.toJSON()}},Q.Index.load=function(e){var t={},r={},n=e.fieldVectors,i=Object.create(null),s=e.invertedIndex,o=new Q.TokenSet.Builder,a=Q.Pipeline.load(e.pipeline);e.version!=Q.version&&Q.utils.warn("Version mismatch when loading serialised index. Current version of lunr '"+Q.version+"' does not match serialized index '"+e.version+"'");for(var u=0;u<n.length;u++){var c=(d=n[u])[0],l=d[1];r[c]=new Q.Vector(l)}for(u=0;u<s.length;u++){var d,h=(d=s[u])[0],p=d[1];o.insert(h),i[h]=p}return o.finish(),t.fields=e.fields,t.fieldVectors=r,t.invertedIndex=i,t.tokenSet=o.root,t.pipeline=a,new Q.Index(t)},
-  /*!
-   * lunr.Builder
-   * Copyright (C) 2020 Oliver Nightingale
-   */
-  Q.Builder=function(){this._ref="id",this._fields=Object.create(null),this._documents=Object.create(null),this.invertedIndex=Object.create(null),this.fieldTermFrequencies={},this.fieldLengths={},this.tokenizer=Q.tokenizer,this.pipeline=new Q.Pipeline,this.searchPipeline=new Q.Pipeline,this.documentCount=0,this._b=.75,this._k1=1.2,this.termIndex=0,this.metadataWhitelist=[]},Q.Builder.prototype.ref=function(e){this._ref=e},Q.Builder.prototype.field=function(e,t){if(/\//.test(e))throw new RangeError("Field '"+e+"' contains illegal character '/'");this._fields[e]=t||{}},Q.Builder.prototype.b=function(e){this._b=e<0?0:e>1?1:e},Q.Builder.prototype.k1=function(e){this._k1=e},Q.Builder.prototype.add=function(e,t){var r=e[this._ref],n=Object.keys(this._fields);this._documents[r]=t||{},this.documentCount+=1;for(var i=0;i<n.length;i++){var s=n[i],o=this._fields[s].extractor,a=o?o(e):e[s],u=this.tokenizer(a,{fields:[s]}),c=this.pipeline.run(u),l=new Q.FieldRef(r,s),d=Object.create(null);this.fieldTermFrequencies[l]=d,this.fieldLengths[l]=0,this.fieldLengths[l]+=c.length;for(var h=0;h<c.length;h++){var p=c[h];if(null==d[p]&&(d[p]=0),d[p]+=1,null==this.invertedIndex[p]){var f=Object.create(null);f._index=this.termIndex,this.termIndex+=1;for(var m=0;m<n.length;m++)f[n[m]]=Object.create(null);this.invertedIndex[p]=f}null==this.invertedIndex[p][s][r]&&(this.invertedIndex[p][s][r]=Object.create(null));for(var y=0;y<this.metadataWhitelist.length;y++){var g=this.metadataWhitelist[y],v=p.metadata[g];null==this.invertedIndex[p][s][r][g]&&(this.invertedIndex[p][s][r][g]=[]),this.invertedIndex[p][s][r][g].push(v)}}}},Q.Builder.prototype.calculateAverageFieldLengths=function(){for(var e=Object.keys(this.fieldLengths),t=e.length,r={},n={},i=0;i<t;i++){var s=Q.FieldRef.fromString(e[i]),o=s.fieldName;n[o]||(n[o]=0),n[o]+=1,r[o]||(r[o]=0),r[o]+=this.fieldLengths[s]}var a=Object.keys(this._fields);for(i=0;i<a.length;i++){var u=a[i];r[u]=r[u]/n[u]}this.averageFieldLength=r},Q.Builder.prototype.createFieldVectors=function(){for(var e={},t=Object.keys(this.fieldTermFrequencies),r=t.length,n=Object.create(null),i=0;i<r;i++){for(var s=Q.FieldRef.fromString(t[i]),o=s.fieldName,a=this.fieldLengths[s],u=new Q.Vector,c=this.fieldTermFrequencies[s],l=Object.keys(c),d=l.length,h=this._fields[o].boost||1,p=this._documents[s.docRef].boost||1,f=0;f<d;f++){var m,y,g,v=l[f],x=c[v],w=this.invertedIndex[v]._index;void 0===n[v]?(m=Q.idf(this.invertedIndex[v],this.documentCount),n[v]=m):m=n[v],y=m*((this._k1+1)*x)/(this._k1*(1-this._b+this._b*(a/this.averageFieldLength[o]))+x),y*=h,y*=p,g=Math.round(1e3*y)/1e3,u.insert(w,g)}e[s]=u}this.fieldVectors=e},Q.Builder.prototype.createTokenSet=function(){this.tokenSet=Q.TokenSet.fromArray(Object.keys(this.invertedIndex).sort())},Q.Builder.prototype.build=function(){return this.calculateAverageFieldLengths(),this.createFieldVectors(),this.createTokenSet(),new Q.Index({invertedIndex:this.invertedIndex,fieldVectors:this.fieldVectors,tokenSet:this.tokenSet,fields:Object.keys(this._fields),pipeline:this.searchPipeline})},Q.Builder.prototype.use=function(e){var t=Array.prototype.slice.call(arguments,1);t.unshift(this),e.apply(this,t)},Q.MatchData=function(e,t,r){for(var n=Object.create(null),i=Object.keys(r||{}),s=0;s<i.length;s++){var o=i[s];n[o]=r[o].slice()}this.metadata=Object.create(null),void 0!==e&&(this.metadata[e]=Object.create(null),this.metadata[e][t]=n)},Q.MatchData.prototype.combine=function(e){for(var t=Object.keys(e.metadata),r=0;r<t.length;r++){var n=t[r],i=Object.keys(e.metadata[n]);null==this.metadata[n]&&(this.metadata[n]=Object.create(null));for(var s=0;s<i.length;s++){var o=i[s],a=Object.keys(e.metadata[n][o]);null==this.metadata[n][o]&&(this.metadata[n][o]=Object.create(null));for(var u=0;u<a.length;u++){var c=a[u];null==this.metadata[n][o][c]?this.metadata[n][o][c]=e.metadata[n][o][c]:this.metadata[n][o][c]=this.metadata[n][o][c].concat(e.metadata[n][o][c])}}}},Q.MatchData.prototype.add=function(e,t,r){if(!(e in this.metadata))return this.metadata[e]=Object.create(null),void(this.metadata[e][t]=r);if(t in this.metadata[e])for(var n=Object.keys(r),i=0;i<n.length;i++){var s=n[i];s in this.metadata[e][t]?this.metadata[e][t][s]=this.metadata[e][t][s].concat(r[s]):this.metadata[e][t][s]=r[s]}else this.metadata[e][t]=r},Q.Query=function(e){this.clauses=[],this.allFields=e},Q.Query.wildcard=new String("*"),Q.Query.wildcard.NONE=0,Q.Query.wildcard.LEADING=1,Q.Query.wildcard.TRAILING=2,Q.Query.presence={OPTIONAL:1,REQUIRED:2,PROHIBITED:3},Q.Query.prototype.clause=function(e){return"fields"in e||(e.fields=this.allFields),"boost"in e||(e.boost=1),"usePipeline"in e||(e.usePipeline=!0),"wildcard"in e||(e.wildcard=Q.Query.wildcard.NONE),e.wildcard&Q.Query.wildcard.LEADING&&e.term.charAt(0)!=Q.Query.wildcard&&(e.term="*"+e.term),e.wildcard&Q.Query.wildcard.TRAILING&&e.term.slice(-1)!=Q.Query.wildcard&&(e.term=e.term+"*"),"presence"in e||(e.presence=Q.Query.presence.OPTIONAL),this.clauses.push(e),this},Q.Query.prototype.isNegated=function(){for(var e=0;e<this.clauses.length;e++)if(this.clauses[e].presence!=Q.Query.presence.PROHIBITED)return!1;return!0},Q.Query.prototype.term=function(e,t){if(Array.isArray(e))return e.forEach((function(e){this.term(e,Q.utils.clone(t))}),this),this;var r=t||{};return r.term=e.toString(),this.clause(r),this},Q.QueryParseError=function(e,t,r){this.name="QueryParseError",this.message=e,this.start=t,this.end=r},Q.QueryParseError.prototype=new Error,Q.QueryLexer=function(e){this.lexemes=[],this.str=e,this.length=e.length,this.pos=0,this.start=0,this.escapeCharPositions=[]},Q.QueryLexer.prototype.run=function(){for(var e=Q.QueryLexer.lexText;e;)e=e(this)},Q.QueryLexer.prototype.sliceString=function(){for(var e=[],t=this.start,r=this.pos,n=0;n<this.escapeCharPositions.length;n++)r=this.escapeCharPositions[n],e.push(this.str.slice(t,r)),t=r+1;return e.push(this.str.slice(t,this.pos)),this.escapeCharPositions.length=0,e.join("")},Q.QueryLexer.prototype.emit=function(e){this.lexemes.push({type:e,str:this.sliceString(),start:this.start,end:this.pos}),this.start=this.pos},Q.QueryLexer.prototype.escapeCharacter=function(){this.escapeCharPositions.push(this.pos-1),this.pos+=1},Q.QueryLexer.prototype.next=function(){if(this.pos>=this.length)return Q.QueryLexer.EOS;var e=this.str.charAt(this.pos);return this.pos+=1,e},Q.QueryLexer.prototype.width=function(){return this.pos-this.start},Q.QueryLexer.prototype.ignore=function(){this.start==this.pos&&(this.pos+=1),this.start=this.pos},Q.QueryLexer.prototype.backup=function(){this.pos-=1},Q.QueryLexer.prototype.acceptDigitRun=function(){var e,t;do{t=(e=this.next()).charCodeAt(0)}while(t>47&&t<58);e!=Q.QueryLexer.EOS&&this.backup()},Q.QueryLexer.prototype.more=function(){return this.pos<this.length},Q.QueryLexer.EOS="EOS",Q.QueryLexer.FIELD="FIELD",Q.QueryLexer.TERM="TERM",Q.QueryLexer.EDIT_DISTANCE="EDIT_DISTANCE",Q.QueryLexer.BOOST="BOOST",Q.QueryLexer.PRESENCE="PRESENCE",Q.QueryLexer.lexField=function(e){return e.backup(),e.emit(Q.QueryLexer.FIELD),e.ignore(),Q.QueryLexer.lexText},Q.QueryLexer.lexTerm=function(e){if(e.width()>1&&(e.backup(),e.emit(Q.QueryLexer.TERM)),e.ignore(),e.more())return Q.QueryLexer.lexText},Q.QueryLexer.lexEditDistance=function(e){return e.ignore(),e.acceptDigitRun(),e.emit(Q.QueryLexer.EDIT_DISTANCE),Q.QueryLexer.lexText},Q.QueryLexer.lexBoost=function(e){return e.ignore(),e.acceptDigitRun(),e.emit(Q.QueryLexer.BOOST),Q.QueryLexer.lexText},Q.QueryLexer.lexEOS=function(e){e.width()>0&&e.emit(Q.QueryLexer.TERM)},Q.QueryLexer.termSeparator=Q.tokenizer.separator,Q.QueryLexer.lexText=function(e){for(;;){var t=e.next();if(t==Q.QueryLexer.EOS)return Q.QueryLexer.lexEOS;if(92!=t.charCodeAt(0)){if(":"==t)return Q.QueryLexer.lexField;if("~"==t)return e.backup(),e.width()>0&&e.emit(Q.QueryLexer.TERM),Q.QueryLexer.lexEditDistance;if("^"==t)return e.backup(),e.width()>0&&e.emit(Q.QueryLexer.TERM),Q.QueryLexer.lexBoost;if("+"==t&&1===e.width())return e.emit(Q.QueryLexer.PRESENCE),Q.QueryLexer.lexText;if("-"==t&&1===e.width())return e.emit(Q.QueryLexer.PRESENCE),Q.QueryLexer.lexText;if(t.match(Q.QueryLexer.termSeparator))return Q.QueryLexer.lexTerm}else e.escapeCharacter()}},Q.QueryParser=function(e,t){this.lexer=new Q.QueryLexer(e),this.query=t,this.currentClause={},this.lexemeIdx=0},Q.QueryParser.prototype.parse=function(){this.lexer.run(),this.lexemes=this.lexer.lexemes;for(var e=Q.QueryParser.parseClause;e;)e=e(this);return this.query},Q.QueryParser.prototype.peekLexeme=function(){return this.lexemes[this.lexemeIdx]},Q.QueryParser.prototype.consumeLexeme=function(){var e=this.peekLexeme();return this.lexemeIdx+=1,e},Q.QueryParser.prototype.nextClause=function(){var e=this.currentClause;this.query.clause(e),this.currentClause={}},Q.QueryParser.parseClause=function(e){var t=e.peekLexeme();if(null!=t)switch(t.type){case Q.QueryLexer.PRESENCE:return Q.QueryParser.parsePresence;case Q.QueryLexer.FIELD:return Q.QueryParser.parseField;case Q.QueryLexer.TERM:return Q.QueryParser.parseTerm;default:var r="expected either a field or a term, found "+t.type;throw t.str.length>=1&&(r+=" with value '"+t.str+"'"),new Q.QueryParseError(r,t.start,t.end)}},Q.QueryParser.parsePresence=function(e){var t=e.consumeLexeme();if(null!=t){switch(t.str){case"-":e.currentClause.presence=Q.Query.presence.PROHIBITED;break;case"+":e.currentClause.presence=Q.Query.presence.REQUIRED;break;default:var r="unrecognised presence operator'"+t.str+"'";throw new Q.QueryParseError(r,t.start,t.end)}var n=e.peekLexeme();if(null==n){r="expecting term or field, found nothing";throw new Q.QueryParseError(r,t.start,t.end)}switch(n.type){case Q.QueryLexer.FIELD:return Q.QueryParser.parseField;case Q.QueryLexer.TERM:return Q.QueryParser.parseTerm;default:r="expecting term or field, found '"+n.type+"'";throw new Q.QueryParseError(r,n.start,n.end)}}},Q.QueryParser.parseField=function(e){var t=e.consumeLexeme();if(null!=t){if(-1==e.query.allFields.indexOf(t.str)){var r=e.query.allFields.map((function(e){return"'"+e+"'"})).join(", "),n="unrecognised field '"+t.str+"', possible fields: "+r;throw new Q.QueryParseError(n,t.start,t.end)}e.currentClause.fields=[t.str];var i=e.peekLexeme();if(null==i){n="expecting term, found nothing";throw new Q.QueryParseError(n,t.start,t.end)}switch(i.type){case Q.QueryLexer.TERM:return Q.QueryParser.parseTerm;default:n="expecting term, found '"+i.type+"'";throw new Q.QueryParseError(n,i.start,i.end)}}},Q.QueryParser.parseTerm=function(e){var t=e.consumeLexeme();if(null!=t){e.currentClause.term=t.str.toLowerCase(),-1!=t.str.indexOf("*")&&(e.currentClause.usePipeline=!1);var r=e.peekLexeme();if(null!=r)switch(r.type){case Q.QueryLexer.TERM:return e.nextClause(),Q.QueryParser.parseTerm;case Q.QueryLexer.FIELD:return e.nextClause(),Q.QueryParser.parseField;case Q.QueryLexer.EDIT_DISTANCE:return Q.QueryParser.parseEditDistance;case Q.QueryLexer.BOOST:return Q.QueryParser.parseBoost;case Q.QueryLexer.PRESENCE:return e.nextClause(),Q.QueryParser.parsePresence;default:var n="Unexpected lexeme type '"+r.type+"'";throw new Q.QueryParseError(n,r.start,r.end)}else e.nextClause()}},Q.QueryParser.parseEditDistance=function(e){var t=e.consumeLexeme();if(null!=t){var r=parseInt(t.str,10);if(isNaN(r)){var n="edit distance must be numeric";throw new Q.QueryParseError(n,t.start,t.end)}e.currentClause.editDistance=r;var i=e.peekLexeme();if(null!=i)switch(i.type){case Q.QueryLexer.TERM:return e.nextClause(),Q.QueryParser.parseTerm;case Q.QueryLexer.FIELD:return e.nextClause(),Q.QueryParser.parseField;case Q.QueryLexer.EDIT_DISTANCE:return Q.QueryParser.parseEditDistance;case Q.QueryLexer.BOOST:return Q.QueryParser.parseBoost;case Q.QueryLexer.PRESENCE:return e.nextClause(),Q.QueryParser.parsePresence;default:n="Unexpected lexeme type '"+i.type+"'";throw new Q.QueryParseError(n,i.start,i.end)}else e.nextClause()}},Q.QueryParser.parseBoost=function(e){var t=e.consumeLexeme();if(null!=t){var r=parseInt(t.str,10);if(isNaN(r)){var n="boost must be numeric";throw new Q.QueryParseError(n,t.start,t.end)}e.currentClause.boost=r;var i=e.peekLexeme();if(null!=i)switch(i.type){case Q.QueryLexer.TERM:return e.nextClause(),Q.QueryParser.parseTerm;case Q.QueryLexer.FIELD:return e.nextClause(),Q.QueryParser.parseField;case Q.QueryLexer.EDIT_DISTANCE:return Q.QueryParser.parseEditDistance;case Q.QueryLexer.BOOST:return Q.QueryParser.parseBoost;case Q.QueryLexer.PRESENCE:return e.nextClause(),Q.QueryParser.parsePresence;default:n="Unexpected lexeme type '"+i.type+"'";throw new Q.QueryParseError(n,i.start,i.end)}else e.nextClause()}},e.exports=Q}()}));function extractTitle(e){const t=e?.querySelector("h1")?.textContent,r=document.createElement("h3");return r.innerHTML=`<a href="#${e.id}">${t}</a>`,t?r:null}function extractSummary(e){const t=extractTitle(e);if(!t)return null;const r=document.createDocumentFragment();r.appendChild(t);const n=t.textContent;let i=3;for(const t of e.children){if(i--<=0)break;const e=t.cloneNode(!0);"H1"===e.tagName&&e.textContent===n||r.appendChild(e)}return r}function createResultFromSection(e){const t=extractSummary(e);if(!t)return null;const r=document.createElement("div");return r.classList.add("search-result"),r.appendChild(t),r}class Search{constructor(e,t=null){this.index=lunr((function(){this.ref("id"),this.field("textContent"),e.forEach((function(e){this.add(e)}),this)}))}render(e){e.input.addEventListener("change",(()=>{window.location.hash="#search";const t=this.index.search(e.input.value);e.results.textContent="";for(const r of t){const t=createResultFromSection(document.getElementById(r.ref));t&&e.results.appendChild(t),e.results.appendChild(document.createElement("hr"))}}))}}var init$2=function(){const e=Array.from(document.getElementsByClassName("slipbox-note"));new Search(e).render({results:document.querySelector("#search > .search-results"),input:document.querySelector('nav input[type="text"]')})},search={init:init$2},filters=createCommonjsModule((function(e,t){Object.defineProperty(t,"__esModule",{value:!0}),t.hasPrefix=t.matches=t.equals=t.isHome=t.check=void 0,t.check=function(e){return function(t){if(!e(t))throw t.control.next}},t.isHome=function(e){return""===e.id},t.equals=function(e){return function(t){return t.id===e}},t.matches=function(e){return function(t){var r=e.exec(t.id);return!!r&&(t.matched=r,t.matched.groups&&(t.params=t.matched.groups),!0)}},t.hasPrefix=function(e){return function(t){return!e||!!t.id.startsWith(e)&&(t.id=t.id.slice(e.length),t.prefix=t.prefix||""+e,!0)}}})),renderer=createCommonjsModule((function(e,t){var r,n=commonjsGlobal&&commonjsGlobal.__extends||(r=function(e,t){return(r=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var r in t)Object.prototype.hasOwnProperty.call(t,r)&&(e[r]=t[r])})(e,t)},function(e,t){function n(){this.constructor=e}r(e,t),e.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)}),i=commonjsGlobal&&commonjsGlobal.__assign||function(){return(i=Object.assign||function(e){for(var t,r=1,n=arguments.length;r<n;r++)for(var i in t=arguments[r])Object.prototype.hasOwnProperty.call(t,i)&&(e[i]=t[i]);return e}).apply(this,arguments)};Object.defineProperty(t,"__esModule",{value:!0}),t.DomWriter=t.DomAppender=void 0;var s=function(){function e(e,t){void 0===t&&(t={}),this.router=e,this.options=i({container:document.body},t),this.temporary=[],this.replaced=[]}return e.prototype.currentId=function(){var e=new Error("null request"),t=this.router.currentRequest(e);return t.prefix||""+t.id},e.prototype.currentFragment=function(){var e=this.currentId();return e?document.getElementById(e):null},e.prototype.restore=function(){for(;this.temporary.length;)this.temporary.pop().remove();for(;this.replaced.length;){var e=this.replaced.pop(),t=e.original;e.replacement.replaceWith(t)}},e.prototype.renderContent=function(e){this.render(function(e,t){var r=document.createElement("div");return r.id=e,r.textContent=t,r}(this.currentId(),e.toString()))},e.prototype.renderHtml=function(e){var t=document.createElement("template");t.innerHTML=e;var r=t.content;this.render(r.firstElementChild)},e}(),o=function(e){function t(){return null!==e&&e.apply(this,arguments)||this}return n(t,e),t.prototype.render=function(e){this.restore(),e.id=this.currentId(),this.options.container.appendChild(e)},t}(s);t.DomAppender=o;var a=function(e){function t(){return null!==e&&e.apply(this,arguments)||this}return n(t,e),t.prototype.render=function(e){this.restore(),e.id=this.currentId();var t=this.currentFragment();t?(t.replaceWith(e),this.replaced.push({original:t,replacement:e})):(this.options.container.appendChild(e),this.temporary.push(e))},t}(s);t.DomWriter=a})),router=createCommonjsModule((function(e,t){var r=commonjsGlobal&&commonjsGlobal.__spreadArrays||function(){for(var e=0,t=0,r=arguments.length;t<r;t++)e+=arguments[t].length;var n=Array(e),i=0;for(t=0;t<r;t++)for(var s=arguments[t],o=0,a=s.length;o<a;o++,i++)n[i]=s[o];return n};Object.defineProperty(t,"__esModule",{value:!0}),t.Router=t.createRequest=void 0;var n=function(){},i=function(){};function s(e){return{id:e,control:{next:new n,abort:new i}}}t.createRequest=s;var o=function(){function e(){this.routes=[],this.subrouters=[],this.request=null,this.deferred=[],this.exitHandlers=[]}return e.prototype.currentRequest=function(e){if(this.request)return this.request;if(!e)return null;throw e},e.prototype.route=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];return e.length>0&&this.routes.push(e),this},e.prototype.mount=function(e,t){t!==this&&this.subrouters.push([e,t])},e.prototype.runRoute=function(e){for(var t=this.request,r=0,i=e;r<i.length;r++){var s=i[r];try{s(t)}catch(e){if(e instanceof n)return!1;throw e}}return!0},e.prototype.defer=function(e){this.deferred.push(e)},e.prototype.onExit=function(){for(var e,t=[],r=0;r<arguments.length;r++)t[r]=arguments[r];(e=this.exitHandlers).push.apply(e,t)},e.prototype.runDeferred=function(){var e=this.currentRequest();try{for(var t=0,r=this.deferred;t<r.length;t++){(0,r[t])(e)}}catch(t){throw e.control.abort}finally{this.deferred=[]}},e.prototype.runExitHandlers=function(){for(var e=0,t=this.exitHandlers;e<t.length;e++){(0,t[e])()}this.exitHandlers=[]},e.prototype.run=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];this.runExitHandlers();for(var n=0,o=this.subrouters;n<o.length;n++){var a=o[n],u=a[0],c=a[1],l=c.run.apply(c,r(e,[filters.check(filters.hasPrefix(u))]));if(l)return!0}for(var d=!1,h=0,p=this.routes;h<p.length;h++){var f=p[h],m=s(window.location.hash.slice(1));this.request=m;try{for(var y=0,g=e;y<g.length;y++){var v=g[y];v(m)}}catch(e){break}try{if(this.runRoute(f)){this.runDeferred(),d=!0;break}}catch(e){if(e instanceof i)break}}return this.request=null,d},e.prototype.listen=function(){for(var e=this,t=[],r=0;r<arguments.length;r++)t[r]=arguments[r];var n=function(){return e.run.apply(e,t)};return window.addEventListener("load",n),window.addEventListener("hashchange",n),this},e}();t.Router=o})),dist=createCommonjsModule((function(e,t){var r=commonjsGlobal&&commonjsGlobal.__createBinding||(Object.create?function(e,t,r,n){void 0===n&&(n=r),Object.defineProperty(e,n,{enumerable:!0,get:function(){return t[r]}})}:function(e,t,r,n){void 0===n&&(n=r),e[n]=t[r]}),n=commonjsGlobal&&commonjsGlobal.__exportStar||function(e,t){for(var n in e)"default"===n||Object.prototype.hasOwnProperty.call(t,n)||r(t,e,n)};Object.defineProperty(t,"__esModule",{value:!0}),n(filters,t),n(renderer,t),n(router,t)})),dist$1=createCommonjsModule((function(e,t){function r(e,t,r){if(null!=e){var n=e[t];n&&"function"==typeof n&&(Object.defineProperty(i,"name",{value:n.name,writable:!1}),e[t]=i)}function i(){var t=n.apply(e,arguments);return r(),t}}Object.defineProperty(t,"__esModule",{value:!0}),t.View=t.hook=void 0,t.hook=r;var n=function(){function e(e){var t=this;this.state=null==e?void 0:e.state,this.container=(null==e?void 0:e.container)||document.body.appendChild(document.createElement("div"));for(var n=0,i=(null==e?void 0:e.hooks)||[];n<i.length;n++){var s=i[n];r(this.state,s,(function(){return t.update()}))}this.initialize(this.container)}return e.prototype.$=function(e){return this.container.querySelector(e)},e}();t.View=n}));function isNote(e){if(!e.id||!Number.isInteger(Number(e.id)))return!1;const t=document.getElementById(e.id);return Boolean(t?.classList.contains("slipbox-note"))}function isTag(e){if(!e.id.sartsWith("tags/"))return!1;const t=document.getElementById(e.id);return Boolean(t?.classList.contains("level1"))}function isHome(e){return""===e.id}var filters$1={isHome:isHome,isNote:isNote,isTag:isTag};class List{constructor(e){this.data=e,this.prev=this,this.next=this}static from(e){return 0===e.length?null:e.slice(1).reduce(((e,t)=>e.append(new List(t))),new List(e[0]))}append(e){const t=e.prev;return e.prev=this.prev,e.prev.next=e,this.prev=t,this.prev.next=this,this}remove(){if(this.next===this)return this;const e=this.next;return this.next.prev=this.prev,this.prev.next=this.next,this.prev=this,this.next=this,e}*[Symbol.iterator](){yield this.data;let e=this.next;for(;e!==this;)yield e.data,e=e.next}}var List_1=List,linkedList={List:List_1};const{check:check,DomWriter:DomWriter,Router:Router}=dist,{View:View}=dist$1,{isNote:isNote$1,isHome:isHome$1}=filters$1,{List:List$1}=linkedList;class Flashcard extends List$1{constructor(e,t,r){super({id:e,prompt:t,response:r,status:"hidden"})}get id(){return this.data.id}get prompt(){return this.data.prompt}get response(){return this.data.response}get status(){return this.data.status}setStatus(e){switch(e){case"hidden":case"prompt":case"response":case"done":this.data.status=e;break;default:throw new Error("invalid value")}}}class FlashcardDeck{constructor(e){this.current=e}isDone(){return null==this.current||this.current.next===this&&"done"===this.current.status}start(){null!=this.current&&this.current.setStatus("prompt")}again(){null!=this.current&&(this.current.setStatus("hidden"),this.current.next!==this.current?(this.current=this.current.next,this.current.setStatus("prompt")):this.current.setStatus("prompt"))}next(){null!=this.current&&(this.current.setStatus("done"),this.current.next!==this.current?(this.current=this.current.remove(),this.current.setStatus("prompt")):this.current=null)}*[Symbol.iterator](){let e=this.current;if(null!=e)for(yield e,e=e.next;e!==this.current;)yield e,e=e.next}}class CardView extends View{constructor(e,t){super({container:t,state:e,hooks:["setStatus"]})}initialize(e){e.innerHTML=`\n      <h2 class="flashcard-prompt">${this.state.prompt.innerHTML}</h2>\n      <div class="buttons">\n        <button type="button" class="button flashcard-show is-${this.state.status}">Show answer</button>\n      </div>\n      <div class="flashcard-response is-${this.state.status}">${this.state.response.innerHTML}</div>\n      <div class="buttons">\n        <button type="button" class="button flashcard-again is-${this.state.status}">Again?</button>\n        <button type="button" class="button flashcard-next is-${this.state.status}">Next&gt;</button>\n      </div>\n    `,this.$(".flashcard-response").querySelector("h1")?.remove(),this.$(".flashcard-show").addEventListener("click",(()=>this.state.setStatus("response")))}update(){this.$(".flashcard-show").className=`button flashcard-show is-${this.state.status}`,this.$(".flashcard-again").className=`button flashcard-again is-${this.state.status}`,this.$(".flashcard-next").className=`button flashcard-next is-${this.state.status}`,this.$(".flashcard-response").className=`flashcard-response is-${this.state.status}`}}class DeckView extends View{constructor(e,t){super({container:t,state:e,hooks:["again","next"]})}initialize(e){this.cardViews=new Map,e.innerHTML="";const t=document.createDocumentFragment();for(const e of this.state){const r=document.createElement("div");r.className="flashcard",t.appendChild(r),this.cardViews.set(e,new CardView(e,r))}const r=document.createElement("div");r.className="flashcard flashcard-end "+(this.state.isDone()?"":"is-hidden"),r.innerHTML='\n      <p>You\'ve reached the end!</p>\n      <div class="buttons">\n        <a href="#review/" class="button">Go back</a>\n      </div>\n    ',t.appendChild(r),e.appendChild(t);for(const e of this.state){const t=this.cardViews.get(e);t.$(".flashcard-again").onclick=()=>this.state.again(),t.$(".flashcard-next").onclick=()=>this.state.next()}}update(){this.$(".flashcard-end").className="flashcard flashcard-end "+(this.state.isDone()?"":"is-hidden"),this.state.isDone()?this.$(".flashcard-end").scrollIntoView():this.cardViews.get(this.state.current).container.scrollIntoView()}}class SummarizedCardView extends View{constructor(e,t){super({container:t,state:e})}initialize(e){e.innerHTML=`<a href="#review/${this.state.id}"></a>`,this.$("a").innerHTML=this.state.prompt.innerHTML}update(){}}function getEntrypoints(){return window.slipbox.cy.nodes((e=>0===e.indegree(!1)))}function createCard(e){const t=document.getElementById(e),r=t.querySelector("h1").cloneNode(!0),n=t.cloneNode(!0);return r.id="",new Flashcard(e,r,n)}class SrsPageView extends View{constructor(e){super({container:e})}initialize(e){e.innerHTML="\n      <h1>Review notes</h1>\n      <p>Pick a question to start with.</p>\n    ";const t=getEntrypoints().map((e=>{const t=createCard(e.id()),r=document.createElement("div");return r.className="flashcard",new SummarizedCardView(t,r)}));for(const r of t)e.appendChild(r.container)}update(){}}function randomChoice(e){const t=e.length;return e[Math.floor(Math.random()*t)]}function randomPath(e){const t=[e.id()];for(;;){const r=e.outgoers().edges().targets((e=>!t.includes(e.id())));if(0===r.length)break;const n=randomChoice(r);t.push(n.id()),e=n}return t}function createDeck(e){const t=randomPath(window.slipbox.cy.$(`#${e}`)).map(createCard).reduce(((e,t)=>e.append(t)));return new FlashcardDeck(t)}const router$1=new Router,writer=new DomWriter(router$1);router$1.route(check(isNote$1),(e=>{const t=createDeck(e.id);t.start();const r=document.createElement("div"),n=new DeckView(t,r);router$1.defer((()=>writer.render(n.container))),router$1.onExit((()=>writer.restore()))})),router$1.route(check(isHome$1),(()=>{const e=document.createElement("div"),t=new SrsPageView(e);router$1.defer((()=>writer.render(t.container))),router$1.onExit((()=>writer.restore()))})),router$1.route((()=>router$1.defer((()=>{writer.restore(),window.location.replace("#review/")}))));var review={router:router$1,Flashcard:Flashcard};const{check:check$1,DomWriter:DomWriter$1,Router:Router$1}=dist,{isHome:isHome$2,isNote:isNote$2,isTag:isTag$1}=filters$1,router$2=new Router$1,writer$1=new DomWriter$1(router$2);function clusterElements$1(e,t){const r=e.cy.edges(`[tag="${t}"]`);return r.connectedNodes().union(r.filter((e=>e.data("source")!==e.data("target"))))}function neighborElements$1(e,t){const r=e.cy.getElementById(t),n=new Set,i=r.incomers().edges("edge[tag]");for(;i.length>0;){const e=i.pop(),t=e.data("tag");n.has(e)||(i.push(...e.source().incomers(`edge[tag="${t}"]`)),n.add(e))}const s=new Set,o=r.outgoers().edges("edge[tag]");for(;o.length>0;){const e=o.pop(),t=e.data("tag");s.has(e)||(o.push(...e.target().outgoers(`edge[tag="${t}"]`)),s.add(e))}const a=e.cy.collection().union(Array.from(n)).union(Array.from(s)),u=a.connectedNodes(),c=r.openNeighborhood(),l=u.union(a).union(c).filter((e=>e.isNode()||e.data("source")!==e.data("target"))),d=l.getElementById(t).clone();return d.data("bgColor","black"),d.union(l)}function createGraphArea(){const e=document.createElement("div");return e.innerHTML='\n    <div class="slipbox-graph-cytoscape"></div>\n    <div class="slipbox-graph-info">\n      <header>\n        <h3><a href=""></a></h3>\n        <p></p>\n      </header>\n    </div>\n  ',e}function createPageCytoscape(e){const t=cytoscape({container:e.querySelector(".slipbox-graph-cytoscape"),selectionType:"additive",style:[{selector:"node",style:{label:"data(label)",height:"label",width:"label",padding:"8px",shape:"round-rectangle",color:"white","background-color":"data(bgColor)","text-halign":"center","text-valign":"center","text-wrap":"wrap","text-max-width":100}},{selector:"edge",style:{width:2,"curve-style":"bezier","line-color":"black","line-style":"solid","target-arrow-color":"black","target-arrow-shape":"triangle"}}]}),r=e.querySelector(".slipbox-graph-info header a"),n=e.querySelector(".slipbox-graph-info header p");return t.on("select","node",(e=>{const t=e.target.data("id");r.textContent=e.target.data("title"),r.href="#"+t,n.textContent=e.target.data("filename"),e.target.data("label",t)})),t.on("unselect","node",(e=>{r.textContent="",n.textContent="",e.target.data("label",e.target.data("title"))})),t}function changePageCytoscapeLayout(e,t="breadthfirst"){"cose"===t?e.layout({name:"cose",nodeDimensionsIncludeLabels:!0,numIter:300,fit:!0}).run():e.layout({name:"breadthfirst",spacingFactor:1,fit:!0,directed:!0,avoidOverlap:!0,nodeDimensionsIncludeLabels:!0}).run()}function renderGraph(e,t){const r=createGraphArea();writer$1.render(r);const n=createPageCytoscape(r);n.add(e),changePageCytoscapeLayout(n,"breadthfirst")}router$2.route(check$1(isNote$2),(e=>{const t=neighborElements$1(window.slipbox,e.id);t.length>=2&&(router$2.defer((()=>renderGraph(t))),router$2.onExit((()=>writer$1.restore())))})),router$2.route(check$1(isTag$1),(e=>{const t=clusterElements$1(window.slipbox,"#"+e.id.slice(5));t.length>=2&&(router$2.defer((()=>renderGraph(t))),router$2.onExit((()=>writer$1.restore())))})),router$2.route(check$1(isHome$2),(e=>{const t=window.slipbox.cy.elements().filter((e=>e.isNode()||e.data("source")!==e.data("target")));t.length>=2&&(t.length,router$2.defer((()=>renderGraph(t))),router$2.onExit((()=>writer$1.restore())))})),router$2.route((()=>router$2.defer((()=>{writer$1.restore(),window.location.replace("#graph/")}))));var new_graph=router$2;const{Router:Router$2}=dist,router$3=new Router$2;router$3.mount("review/",review.router),router$3.mount("graph/",new_graph),window.slipbox=new graph.SlipboxCollection,window.initSlipbox=function(){const e=document.getElementById("title-block-header");e&&e.remove(),list.init(),search.init(),graph.init(window.slipbox),router$3.listen()};var src={};export default src;
-  </script>
+  <script type="module" src="app.js" defer></script>
   <script>
   window.addEventListener('DOMContentLoaded', () => {
   for(const sec of document.querySelectorAll('section.slipbox-note'))
   {
     window.slipbox.addNote(sec.id)
   }
-  window.slipbox.addLink('0', '1', null)
-  window.slipbox.addLink('0', '2', null)
-  window.slipbox.addLink('0', '3', null)
-  window.slipbox.addLink('0', '8', null)
-  window.slipbox.addLink('0', '10', null)
-  window.slipbox.addLink('1', '1', '#writing-notes')
-  window.slipbox.addLink('1', '2', '#writing-notes')
-  window.slipbox.addLink('1', '6', '#writing-notes')
-  window.slipbox.addLink('1', '7', null)
+  window.slipbox.addLink('0', '0', '#getting-started')
+  window.slipbox.addLink('0', '1', '#getting-started')
+  window.slipbox.addLink('1', '1', '#getting-started')
+  window.slipbox.addLink('1', '2', '#getting-started')
+  window.slipbox.addLink('2', '2', '#dot-slipbox')
+  window.slipbox.addLink('2', '2', '#view-notes')
   window.slipbox.addLink('2', '2', '#writing-notes')
   window.slipbox.addLink('2', '3', '#writing-notes')
-  window.slipbox.addLink('2', '11', '#writing-notes')
-  window.slipbox.addLink('3', '3', '#connecting-notes')
+  window.slipbox.addLink('2', '8', '#view-notes')
+  window.slipbox.addLink('2', '10', '#dot-slipbox')
   window.slipbox.addLink('3', '3', '#writing-notes')
-  window.slipbox.addLink('3', '4', null)
   window.slipbox.addLink('3', '4', '#writing-notes')
-  window.slipbox.addLink('3', '5', '#connecting-notes')
-  window.slipbox.addLink('3', '8', '#connecting-notes')
-  window.slipbox.addLink('3', '9', '#connecting-notes')
-  window.slipbox.addLink('5', '5', '#slipbox')
-  window.slipbox.addLink('6', '6', '#slipbox')
-  window.slipbox.addLink('6', '7', '#slipbox')
-  window.slipbox.addLink('8', '8', '#connecting-notes')
-  window.slipbox.addLink('8', '9', '#connecting-notes')
-  window.slipbox.addLink('9', '3', null)
-  window.slipbox.addLink('9', '5', null)
+  window.slipbox.addLink('3', '7', '#writing-notes')
+  window.slipbox.addLink('4', '4', '#connecting-notes')
+  window.slipbox.addLink('4', '4', '#writing-notes')
+  window.slipbox.addLink('4', '5', '#writing-notes')
+  window.slipbox.addLink('4', '6', null)
+  window.slipbox.addLink('4', '6', '#connecting-notes')
+  window.slipbox.addLink('4', '100', null)
+  window.slipbox.addLink('6', '6', '#hashtags')
+  window.slipbox.addLink('6', '6', '#not')
+  window.slipbox.addLink('6', '6', '#tag')
+  window.slipbox.addLink('6', '100', '#tag')
+  window.slipbox.addLink('6', '101', '#tag')
+  window.slipbox.addLink('6', '102', '#not')
+  window.slipbox.addLink('8', '8', '#view-notes')
+  window.slipbox.addLink('8', '9', '#view-notes')
+  window.slipbox.addLink('8', '12', '#view-notes')
+  window.slipbox.addLink('10', '10', '#dot-slipbox')
+  window.slipbox.addLink('10', '11', '#dot-slipbox')
+  window.slipbox.addLink('12', '6', null)
   window.initSlipbox()
   })
   </script>
-  <style>
-  .buttons {
-    text-align: center;
-  }
-  .button {
-    background-color: inherit;
-    padding: 0.5em 2em 0.5em 2em;
-    font-weight: bold;
-    border: 2px solid #555555;
-    font-family: sans-serif;
-    text-decoration: none;
-  }
-  .button:hover {
-    background-color: rgba(0,0,0,0.125);
-  }
-  .button:active {
-    background-color: rgba(0,0,0,0.25);
-  }
-  .level1 {
-    display: none;
-  }
-  .level1:target {
-    display: block;
-  }
-  nav ul {
-    align-items: center;
-    column-gap: 2em;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    list-style: none;
-    padding: 0;
-    row-gap: 1em;
-  }
-  .slipbox-srs {
-    text-align: center;
-    padding: 1em 0;
-  }
-  .slipbox-srs button {
-    border: none;
-    font-size: 1.5em;
-  }
-  .slipbox-srs-pressed {
-    color: #4444aa;
-  }
-  .slipbox-graph-cytoscape {
-    width: 100%;
-    height: 80vh;
-    padding-top: 1em;
-    border-top: 1px solid black;
-  }
-  .slipbox-graph-info {
-    bottom: 0;
-    right: 0;
-    padding: 20px;
-    position: fixed;
-    max-width: 30em;
-    z-index: 1;
-  }
-  .flashcard {
-    border: 2px solid #555555;
-    margin: 1em;
-    padding: 1em;
-    border-radius: 5px;
-  }
-  .flashcard-prompt {
-    text-align: center;
-  }
-  .is-hidden {
-    display: none;
-  }
-  .flashcard-show.is-response,
-  .flashcard-show.is-done,
-  .flashcard-response.is-prompt,
-  .flashcard-again.is-prompt,
-  .flashcard-again.is-done,
-  .flashcard-next.is-prompt,
-  .flashcard-next.is-done {
-    display: none;
-  }
-  </style>
 </head>
 <body>
 <header id="title-block-header">
@@ -399,156 +131,275 @@
 <p><span class="math inline"> </span></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
 </div>
-<nav>
-  <ul>
-    <li><a href="#">Home</a></li>
-    <li><a href="#tags">Tags</a></li>
-    <li><a href="#references">References</a></li>
-    <li><input type="text" placeholder="Search notes"></li>
-  </ul>
+<label id="primary-label" for="primary-checkbox">≡</label>
+<input id="primary-checkbox" type="checkbox" checked>
+<nav id="primary" class="sidebar">
+  <header>
+    <h1 class="title"><a href="" class="plain-link">Slipbox</a></h1>
+  </header>
+  <!--
+  <div class="dark-mode-switch">
+    <input type="checkbox" id="js-dark-mode-switch">
+  </div>
+  -->
+  <div class="search-box">
+    <span>⌕</span>
+    <input class="transparent search-input" type="search">
+  </div>
+  <div class="nav-items">
+    <a href="#" class="nav-item plain-link">Home</a>
+    <a href="#tags" class="nav-item plain-link">Tags</a>
+    <a href="#references" class="nav-item plain-link">References</a>
+  </div>
+  <br>
+  <br>
+  <div class="nav-items">
+    <a href="#review/" class="nav-item plain-link">Review</a>
+  </div>
 </nav>
-<section id="0" class="level1 slipbox-note" data-filename="index.md" title="slipbox">
-<h1>slipbox</h1>
-<p><code>slipbox</code> is a static site generator for Zettelkasten notes.</p>
-<ul>
-<li><a href="#1">Getting started</a></li>
-<li><a href="#2">Note format</a></li>
-<li><a href="#3">Linking notes</a></li>
-<li><a href="#8">Graph</a></li>
-<li><a href="#10">Text search</a></li>
-</ul>
+<nav id="secondary" class="sidebar"></nav>
+<section id="0" class="level1 slipbox-note" data-filename="index.md" title="What is slipbox?">
+<h1>What is slipbox?</h1>
+<p>slipbox is a static site generator for Zettelkasten notes.</p>
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
-<p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs/index.md</a></p>
+<p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md</a></p>
+<hr />
+<p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
+<ul>
+<li>How to install slipbox?  [<a href="#1">#1</a>]</li>
+</ul>
 </section>
-<section id="1" class="level1 slipbox-note" data-filename="index.md" title="Getting started">
-<h1>Getting started</h1>
-<p>Make sure you have <code>pandoc</code> and <code>python</code> installed.</p>
+<section id="1" class="level1 slipbox-note" data-filename="index.md" title="How to install slipbox?">
+<h1>How to install slipbox?</h1>
+<p>Make sure you have pandoc and python installed. Your installation of Pandoc needs to have been compiled with pandoc-types 1.22.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) Install genanki to generate Anki flashcards from your notes.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> init my-slipbox</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span></code></pre></div>
-<p>The initialized directory contains a <code>.slipbox</code> directory. Inside it you’ll find a <a href="#7">configuration file</a>, an sqlite3 database and a patterns file.</p>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
 <hr />
-<p><a href="#tags/writing-notes">#writing-notes</a></p>
+<p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
 <ul>
-<li><a href="#2">Note format</a></li>
-<li><a href="#6">Citations</a></li>
+<li>How to run slipbox?  [<a href="#2">#2</a>]</li>
 </ul>
 </section>
-<section id="2" class="level1 slipbox-note" data-filename="index.md" title="Note format">
-<h1>Note format</h1>
-<p>Slipbox notes begin with a level 1 header. The header text must contain an ID (number) and a title.</p>
-<p>You can put any number of notes in one file.</p>
+<section id="2" class="level1 slipbox-note" data-filename="index.md" title="How to run slipbox?">
+<h1>How to run slipbox?</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates a .slipbox/ directory inside my-slipbox.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> init my-slipbox</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Show help.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> <span class="at">-h</span></span></code></pre></div>
 <hr />
-<p><a href="#tags/writing-notes">#writing-notes</a></p>
+<p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
-<li><a href="#3">Linking notes</a></li>
-<li><a href="#11">Generate note IDs</a></li>
+<li>How to write notes?  [<a href="#3">#3</a>]</li>
+</ul>
+<p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
+<ul>
+<li>How to view the generated site?  [<a href="#8">#8</a>]</li>
+</ul>
+<p><strong><a href="#tags/dot-slipbox">#dot-slipbox</a></strong></p>
+<ul>
+<li>What does the <code>.slipbox/</code> directory contain?  [<a href="#10">#10</a>]</li>
 </ul>
 </section>
-<section id="3" class="level1 slipbox-note" data-filename="index.md" title="Linking notes">
-<h1>Linking notes</h1>
-<p>Link to a note in your slipbox using the note’s ID as the link target.</p>
-<p><a href="#4">Example</a>.</p>
+<section id="3" class="level1 slipbox-note" data-filename="index.md" title="How to write notes?">
+<h1>How to write notes?</h1>
+<p>slipbox supports many formats: markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags, Textile and MediaWiki.</p>
+<p>In these formats, a “note” is just a section that begins with a level 1 header contains a unique ID (number) and a non-empty title.</p>
+<p>Your notes don’t have to be in separate files. You can put any number of notes in one file.</p>
+<p>Run <code>slipbox new</code> to get the next available note ID.</p>
 <hr />
-<p><a href="#tags/writing-notes">#writing-notes</a></p>
+<p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
-<li><a href="#4">Linking to external files/images</a></li>
-</ul>
-<p><a href="#tags/connecting-notes">#connecting-notes</a></p>
-<ul>
-<li><a href="#5">Tags</a></li>
-<li><a href="#9">Contextual tags</a></li>
-<li><a href="#8">Graph</a></li>
+<li>How to link to other notes?  [<a href="#4">#4</a>]</li>
+<li>How to add citations?  [<a href="#7">#7</a>]</li>
 </ul>
 </section>
-<section id="4" class="level1 slipbox-note" data-filename="index.md" title="Linking to external files/images">
-<h1>Linking to external files/images</h1>
-<p>Links to external files/images must be relative to the output HTML.</p>
+<section id="4" class="level1 slipbox-note" data-filename="index.md" title="How to link to other notes?">
+<h1>How to link to other notes?</h1>
+<p>Use the note ID as the link target. Ex: <a href="#100">link</a> (<code>[link](#100)</code>).</p>
+<p>When you omit the link text, it just shows the target ID. Ex:  [<a href="#100">#100</a>] (<code>[](#100)</code>).</p>
+<p>In addition to direct links, slipbox also supports connecting notes using <a href="#6">contextual tags</a>.</p>
+<hr />
+<p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
+<ul>
+<li>How to link to images?  [<a href="#5">#5</a>]</li>
+</ul>
+<p><strong><a href="#tags/connecting-notes">#connecting-notes</a></strong></p>
+<ul>
+<li>What are contextual tags?  [<a href="#6">#6</a>]</li>
+</ul>
+</section>
+<section id="5" class="level1 slipbox-note" data-filename="index.md" title="How to link to images?">
+<h1>How to link to images?</h1>
 <figure>
-<img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
+<img src="images/69edee39d8acbbb605eb5116c46c3a2eb6b2429f.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
 </figure>
 </section>
-<section id="5" class="level1 slipbox-note" data-filename="index.md" title="Tags">
-<h1>Tags</h1>
-<p><a href="#tags/slipbox">#slipbox</a> uses hashtags to tag notes. You can click on tags to get a list of other notes that have the same tag.</p>
+<section id="6" class="level1 slipbox-note" data-filename="index.md" title="What are contextual tags?">
+<h1>What are contextual tags?</h1>
+<p>slipbox uses <a href="#tags/hashtags">#hashtags</a> to tag notes. You can click on the hashtag to see all the notes that have the same tag.</p>
+<p>The tags are called contextual, because they also apply to the links between the previous tag and the next tag.</p>
+<p>Ex: this <a href="#tags/tag">#tag</a> applies to <a href="#100">this link</a> and <a href="#101">this link</a>, but <a href="#tags/not">#not</a> to <a href="#102">this</a>.</p>
+<p>slipbox tags links contextually in order to cluster notes.</p>
 </section>
-<section id="6" class="level1 slipbox-note" data-filename="index.md" title="Citations">
-<h1>Citations</h1>
-<p><a href="#tags/slipbox">#slipbox</a></p>
+<section id="7" class="level1 slipbox-note" data-filename="index.md" title="How to add citations?">
+<h1>How to add citations?</h1>
+<p><span class="citation" data-cites="cite2020">(Cite <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
+<p>To enable citations, you need to specify a bibliography file in <code>.slipbox/config.cfg</code>.</p>
+<p>Here’s a sample config file.</p>
+<pre class="cfg"><code>[slipbox]
+content_options = --bibliography example.bib --citeproc</code></pre>
 <p>Clicking on a citation will open a page with all notes that cite the same reference.</p>
-<p><span class="citation" data-cites="cite2020">(Example: <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
-<p>To enable citations, you need to specify a bibliography file in the <a href="#7">config file</a>.</p>
 </section>
-<section id="7" class="level1 slipbox-note" data-filename="index.md" title="Configuration">
-<h1>Configuration</h1>
-<p>Here’s a sample config file with <code>citeproc</code>.</p>
-<pre><code># .slipbox/config.cfg
-
-[slipbox]
-content_options = --mathjax --bibliography my-bib.bib --citeproc
-document_options = --mathjax --o output.html -s</code></pre>
+<section id="8" class="level1 slipbox-note" data-filename="index.md" title="How to view the generated site?">
+<h1>How to view the generated site?</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the site.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to the output directory (public/ by default, see .slipbox/config.cfg).</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> http.server</span></code></pre></div>
+<hr />
+<p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
+<ul>
+<li>How to use text search?  [<a href="#9">#9</a>]</li>
+<li>How to interpret the notes graph?  [<a href="#12">#12</a>]</li>
+</ul>
+</section>
+<section id="9" class="level1 slipbox-note" data-filename="index.md" title="How to use text search?">
+<h1>How to use text search?</h1>
+<p>Slipbox provides text search using lunr.js. See the <a href="https://lunrjs.com/guides/searching.html">lunr.js docs</a> to learn more about the syntax for complex queries.</p>
+</section>
+<section id="10" class="level1 slipbox-note" data-filename="index.md" title="What does the .slipbox/ directory contain?">
+<h1>What does the <code>.slipbox/</code> directory contain?</h1>
+<p>The <code>.slipbox</code> directory contains</p>
+<ul>
+<li>an sqlite3 database (<code>data.db</code>)</li>
+<li>a patterns file (<code>patterns</code>)</li>
+<li>a configuration file (<code>config.cfg</code>).</li>
+</ul>
+<hr />
+<p><strong><a href="#tags/dot-slipbox">#dot-slipbox</a></strong></p>
+<ul>
+<li>What do the configuration options mean?  [<a href="#11">#11</a>]</li>
+</ul>
+</section>
+<section id="11" class="level1 slipbox-note" data-filename="index.md" title="What do the configuration options mean?">
+<h1>What do the configuration options mean?</h1>
 <dl>
 <dt><code>content_options</code></dt>
-<dd>Used when Pandoc converts new notes into HTML sections.
+<dd>Options that get passed to Pandoc to convert notes to HTML.
+</dd>
+<dd>Use this if you want to apply custom filters or to enable citeproc.
 </dd>
 <dt><code>document_options</code></dt>
-<dd>Used when Pandoc compiles every section into one file.
+<dd>Options that get passed to Pandoc to compile all HTML sections into
+</dd>
+<dd>one file.
+</dd>
+<dd>Use this if you want to add HTML, JavaScript, CSS, etc. into the output.
+</dd>
+<dt><code>output_directory</code></dt>
+<dd>Contains the generated site.
+</dd>
+<dt><code>title</code></dt>
+<dd>Site title.
 </dd>
 </dl>
 </section>
-<section id="8" class="level1 slipbox-note" data-filename="index.md" title="Graph">
-<h1>Graph</h1>
-<p><code>slipbox</code> uses <a href="https://js.cytoscape.org/">Cytoscape.js</a> for visualizing notes. The notes are put in a hierarchical layout. When the graph gets too big, it switches to the <a href="https://js.cytoscape.org/#layouts/cose">cose layout</a>.</p>
-<p>Entrypoints are shown in blue.</p>
-<p>The slipbox Cytoscape object can be accessed from the browser console as <code>window.slipbox.cy</code>.</p>
-<hr />
-<p><a href="#tags/connecting-notes">#connecting-notes</a></p>
+<section id="12" class="level1 slipbox-note" data-filename="index.md" title="How to interpret the notes graph?">
+<h1>How to interpret the notes graph?</h1>
+<p>slipbox uses <a href="https://js.cytoscape.org/">Cytoscape.js</a> to display note <a href="#6">clusters</a>.</p>
 <ul>
-<li><a href="#9">Contextual tags</a></li>
+<li>Entrypoints are shown in blue.</li>
+<li>The slipbox Cytoscape object can be accessed from the browser console as <code>window.slipbox.cy</code> (for analysis).</li>
 </ul>
 </section>
-<section id="9" class="level1 slipbox-note" data-filename="index.md" title="Contextual tags">
-<h1>Contextual tags</h1>
-<p><a href="#5">Tag pages</a> show a cluster of notes at the bottom of the page. The cluster contains notes as well as <a href="#3">links</a> that belong to the tag.</p>
-<p>Links are added to clusters using contextual tags. When you link to a note, the link automatically gets tagged with the last tag that appears in the note before the link.</p>
+<section id="100" class="level1 slipbox-note" data-filename="misc.md" title="Foo">
+<h1>Foo</h1>
+<p>Foo.</p>
 </section>
-<section id="10" class="level1 slipbox-note" data-filename="index.md" title="Text search">
-<h1>Text search</h1>
-<p>Slipbox provides text search using <code>lunr.js</code>. See the <a href="https://lunrjs.com/guides/searching.html"><code>lunr.js</code> docs</a> to learn more about the syntax for complex queries.</p>
+<section id="101" class="level1 slipbox-note" data-filename="misc.md" title="Bar">
+<h1>Bar</h1>
+<p>Bar.</p>
 </section>
-<section id="11" class="level1 slipbox-note" data-filename="index.md" title="Generate note IDs">
-<h1>Generate note IDs</h1>
-<p><code>slipbox new</code> prints the smallest available ID.</p>
+<section id="102" class="level1 slipbox-note" data-filename="misc.md" title="Baz">
+<h1>Baz</h1>
+<p>Baz.</p>
 </section>
 <section id='tags/connecting-notes' title='#connecting-notes' class='level1'>
   <h1>
     #connecting-notes
   </h1>
   <ol class='slipbox-list'>
-    <li value='3'></li>
-    <li value='5'></li>
-    <li value='8'></li>
-    <li value='9'></li>
+    <li value='4'></li>
+    <li value='6'></li>
   </ol>
 </section>
-<section id='tags/slipbox' title='#slipbox' class='level1'>
+<section id='tags/dot-slipbox' title='#dot-slipbox' class='level1'>
   <h1>
-    #slipbox
+    #dot-slipbox
   </h1>
   <ol class='slipbox-list'>
-    <li value='5'></li>
+    <li value='2'></li>
+    <li value='10'></li>
+    <li value='11'></li>
+  </ol>
+</section>
+<section id='tags/getting-started' title='#getting-started' class='level1'>
+  <h1>
+    #getting-started
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='0'></li>
+    <li value='1'></li>
+    <li value='2'></li>
+  </ol>
+</section>
+<section id='tags/hashtags' title='#hashtags' class='level1'>
+  <h1>
+    #hashtags
+  </h1>
+  <ol class='slipbox-list'>
     <li value='6'></li>
-    <li value='7'></li>
+  </ol>
+</section>
+<section id='tags/not' title='#not' class='level1'>
+  <h1>
+    #not
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='6'></li>
+    <li value='102'></li>
+  </ol>
+</section>
+<section id='tags/tag' title='#tag' class='level1'>
+  <h1>
+    #tag
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='6'></li>
+    <li value='100'></li>
+    <li value='101'></li>
+  </ol>
+</section>
+<section id='tags/view-notes' title='#view-notes' class='level1'>
+  <h1>
+    #view-notes
+  </h1>
+  <ol class='slipbox-list'>
+    <li value='2'></li>
+    <li value='8'></li>
+    <li value='9'></li>
+    <li value='12'></li>
   </ol>
 </section>
 <section id='tags/writing-notes' title='#writing-notes' class='level1'>
@@ -556,12 +407,11 @@ document_options = --mathjax --o output.html -s</code></pre>
     #writing-notes
   </h1>
   <ol class='slipbox-list'>
-    <li value='1'></li>
     <li value='2'></li>
     <li value='3'></li>
     <li value='4'></li>
-    <li value='6'></li>
-    <li value='11'></li>
+    <li value='5'></li>
+    <li value='7'></li>
   </ol>
 </section>
 <section id='tags' title='Tags' class='level1'>
@@ -573,28 +423,51 @@ document_options = --mathjax --o output.html -s</code></pre>
       <a href='#tags/connecting-notes'>
         #connecting-notes
       </a>
-       (4)
+       (2)
     </li>
     <li>
-      <a href='#tags/slipbox'>
-        #slipbox
+      <a href='#tags/dot-slipbox'>
+        #dot-slipbox
       </a>
        (3)
+    </li>
+    <li>
+      <a href='#tags/getting-started'>
+        #getting-started
+      </a>
+       (3)
+    </li>
+    <li>
+      <a href='#tags/hashtags'>
+        #hashtags
+      </a>
+       (1)
+    </li>
+    <li>
+      <a href='#tags/not'>
+        #not
+      </a>
+       (2)
+    </li>
+    <li>
+      <a href='#tags/tag'>
+        #tag
+      </a>
+       (3)
+    </li>
+    <li>
+      <a href='#tags/view-notes'>
+        #view-notes
+      </a>
+       (4)
     </li>
     <li>
       <a href='#tags/writing-notes'>
         #writing-notes
       </a>
-       (6)
+       (5)
     </li>
   </ul>
-  <h2>
-    Untagged notes
-  </h2>
-  <ol class='slipbox-list'>
-    <li value='0'></li>
-    <li value='10'></li>
-  </ol>
 </section>
 <section id='ref-cite2020' title='ref-cite2020' class='level1'>
   <h1>
@@ -604,27 +477,20 @@ document_options = --mathjax --o output.html -s</code></pre>
     Author. 2020. Title.
   </p>
   <ol class='slipbox-list'>
-    <li value='6'></li>
+    <li value='7'></li>
   </ol>
 </section>
-<section id='references' title='References' class='level1'>
-  <h1>
-    References
-  </h1>
-  <dl>
-    <dt>
-      <a href='#ref-cite2020'>
-        [@cite2020]
-      </a>
-    </dt>
-    <dd>
-      Author. 2020. Title.
-    </dd>
-  </dl>
+<section id="references" class="level1" title="References">
+<h1>References</h1>
+<dl>
+<dt><a href="#ref-cite2020">[@cite2020]</a></dt>
+<dd>Author. 2020. Title.</dd>
+
+</dl>
 </section>
+
 <section id="search" title="Search" class="level1">
   <div class="search-results"></div>
 </section>
-<div class="slipbox-bottom"></div>
 </body>
 </html>

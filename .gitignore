@@ -8,4 +8,4 @@ node_modules/
 /cli/slipbox/data/*.js
 /cli/slipbox/data/filter.lua
 *.pyc
-/docs/.slipbox/
+/docs-src/.slipbox/

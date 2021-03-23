@@ -54,11 +54,12 @@ check: bundle
 # Generate docs.
 .PHONY:	docs
 docs:	bundle
-	cd docs; rm -rf .slipbox \
-	cd docs; PYTHONPATH=../cli python -m slipbox init \
+	cd docs-src; rm -rf .slipbox \
+	cd docs-src; PYTHONPATH=../cli python -m slipbox init \
 		--content_options "--bibliography example.bib --citeproc" \
-		--document_options " -s"
-	cd docs; PYTHONPATH=../cli python -m slipbox build
+		--document_options " -s" \
+		--output_directory '../docs'
+	cd docs-src; PYTHONPATH=../cli python -m slipbox build
 
 # Generate examples.
 .PHONY:	examples

@@ -6,7 +6,7 @@ GitHub: <https://github.com/lggruspe/slipbox>
 
 Slipbox: <https://lggruspe.github.io/slipbox>
 
-Source: <https://github.com/lggruspe/slipbox/blob/master/docs/index.md>
+Source: <https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md>
 
 ---
 

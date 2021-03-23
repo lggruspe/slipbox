@@ -36,7 +36,7 @@ cd my-slipbox
 slipbox build
 ```
 
-See [docs/index.md](https://github.com/lggruspe/slipbox/blob/master/docs/index.md)
+See [docs-src/index.md](https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md)
 and <https://lggruspe.github.io/slipbox>.
 
 License
