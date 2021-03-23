@@ -21,7 +21,7 @@ jobs:
         luarocks install luacheck
     - name: Lint with luacheck
       run: |
-        luacheck filters/*.lua --std max+busted
+        cd filters; luacheck src/*.lua --std max+busted
     - name: Test with busted
       run: |
-        busted . -p '.*.test.lua'
+        cd filters; busted src -p '.*.test.lua'
