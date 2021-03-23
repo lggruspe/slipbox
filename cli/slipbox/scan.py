@@ -41,9 +41,10 @@ def build_command(input_: Path,
                   options: str = "") -> str:
     """Construct a single pandoc command to run on input."""
     assert input_.exists()
-    data_dir = shlex.quote(str(Path(__file__).parent.resolve()))
-    cmd = f"{utils.pandoc()} {options} -Lzk.lua --section-divs " \
-        f"--data-dir={data_dir} -Mlink-citations:true " \
+    data = Path(__file__).parent/"data"
+    lua_filter = shlex.quote(str((data/"filter.lua").resolve()))
+    cmd = f"{utils.pandoc()} {options} -L{lua_filter} --section-divs " \
+        f" -Mlink-citations:true " \
         "--resource-path {} -o {} --extract-media=images".format(
             shlex.quote(str(basedir.resolve())),
             shlex.quote(output),

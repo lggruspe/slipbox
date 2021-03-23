@@ -23,16 +23,25 @@ check-js:
 # Run lua tests.
 .PHONY:	check-lua
 check-lua:
-	luacheck filters/*.lua --std max+busted
-	busted . -p '.*.test.lua'
+	cd filters; luacheck src/*.lua --std max+busted
+	cd filters; busted src -p '.*.test.lua'
+
+# Build Lua filters.
+.PHONY:	build-lua
+build-lua:	check-lua
+	mkdir -p filters/build
+	cd filters; \
+		eval `luarocks path`; \
+		amalg.lua src.csv src.filters src.log src.slipbox src.utils \
+			-s src/zk.lua -o build/filter.lua
 
 # Copy JS and Lua filters into slipbox/
 .PHONY:	bundle
-bundle:	check-js check-lua
+bundle:	check-js build-lua
 	cd js; npm run bundle; npm run minify
 	mkdir -p cli/slipbox/data
 	cp js/dist/app.min.js cli/slipbox/data/app.js
-	cp -r filters cli/slipbox
+	cp filters/build/filter.lua cli/slipbox/data
 
 # Run python tests.
 .PHONY:	check

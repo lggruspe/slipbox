@@ -1,6 +1,6 @@
 require "busted.runner" ()
 
-local utils = require "filters/utils"
+local utils = require "src.utils"
 
 local function mock_attr(identifier, classes, attributes)
   -- Mock pandoc.Attr.

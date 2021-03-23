@@ -1,5 +1,5 @@
-local csv = require "filters/csv"
-local utils = require "filters/utils"
+local csv = require "src.csv"
+local utils = require "src.utils"
 
 local SlipBox = {}
 function SlipBox:new()
@@ -150,7 +150,7 @@ local function image_links_to_csv(images)
 end
 
 function SlipBox:write_data()
-  -- Create sql statements from slipbox contents.
+  -- Create CSV data to files.
   local write = utils.write_text
   write("files.csv", files_to_csv(self.notes))
   write("notes.csv", notes_to_csv(self.notes))

@@ -1,10 +1,8 @@
 -- Pandoc filters.
 
 local pandoc = require "pandoc"
-pandoc.utils = require "pandoc.utils"
-
-local log = require "filters/log"
-local utils = require "filters/utils"
+local log = require "src.log"
+local utils = require "src.utils"
 
 local function preprocess()
   -- Create filter that preprocesses headers by setting the filename

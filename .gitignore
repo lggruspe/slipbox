@@ -5,7 +5,7 @@ build/
 dist/
 *.egg-info/
 node_modules/
-cli/slipbox/data/*.js
-cli/slipbox/filters/
+/cli/slipbox/data/*.js
+/cli/slipbox/data/filter.lua
 *.pyc
-docs/.slipbox/
+/docs/.slipbox/

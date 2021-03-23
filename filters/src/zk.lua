@@ -1,5 +1,5 @@
-local filters = require "filters/filters"
-local slipbox = require "filters/slipbox"
+local filters = require "src.filters"
+local slipbox = require "src.slipbox"
 
 local current_slipbox = slipbox.SlipBox:new()
 
