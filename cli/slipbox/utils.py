@@ -1,10 +1,12 @@
 """Utils."""
 
 import contextlib
+from hashlib import sha256
 import os
 from pathlib import Path
 import shlex
 import shutil
+from sqlite3 import Connection
 import subprocess
 import sys
 import tempfile
@@ -19,11 +21,6 @@ def pandoc() -> str:
 def check_requirements() -> bool:
     """Check if pandoc is installed."""
     return bool(shutil.which(pandoc()))
-
-
-def sqlite_string(text: str) -> str:
-    """Encode python string into sqlite string."""
-    return "'{}'".format(text.replace("'", "''"))
 
 
 @contextlib.contextmanager
@@ -55,11 +52,16 @@ def run_command(cmd: str,
     return proc.returncode
 
 
-def insert_file_script(*files: Path, basedir: Path) -> str:
-    """Create SQL query string to insert into the Files table."""
-    sql = "INSERT INTO Files (filename) VALUES ({})"
-    filenames = (sqlite_string(str(p.relative_to(basedir))) for p in files)
-    return sql.format("), (".join(filenames))
+def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
+    """Insert files into database."""
+    sql = "INSERT INTO Files (filename, hash) VALUES (?, ?)"
+    con.executemany(sql, (
+        (
+            str(p.relative_to(basedir)),
+            sha256(p.read_bytes()).hexdigest()
+        )
+        for p in files
+    ))
 
 
 def print_sequence(header: str, sequence: Iterable[str]) -> bool:

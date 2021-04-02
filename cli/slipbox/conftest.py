@@ -32,7 +32,7 @@ def files_abc(tmp_path) -> List[Path]:
     """Create files in tmp_path: a.md, b.md, c.md."""
     files = [tmp_path/"a.md", tmp_path/"b.md", tmp_path/"c.md"]
     for path in files:
-        path.touch()
+        path.write_text(path.name)
     yield files
 
 

@@ -5,6 +5,7 @@ local SlipBox = {}
 function SlipBox:new()
   self.__index = self
   return setmetatable({
+    files = {},
     notes = {},
     links = {},
     citations = {},
@@ -14,6 +15,13 @@ function SlipBox:new()
       has_empty_link_target = {},
     },
   }, self)
+end
+
+function SlipBox:save_file(filename, hash)
+  assert(type(filename) == "string")
+  assert(type(hash) == "string")
+  assert(self.files[filename] == nil or self.files[filename] == hash)
+  self.files[filename] = hash
 end
 
 function SlipBox:save_citation(id, citation)
@@ -108,15 +116,10 @@ local function bibliography_to_csv(refs)
   return w.data
 end
 
-local function files_to_csv(notes)
-  local unique_filenames = {}
-  for _, note in pairs(notes) do
-    unique_filenames[note.filename] = true
-  end
-
-  local w = csv.Writer:new{"filename"}
-  for filename in pairs(unique_filenames) do
-    w:write{filename}
+local function files_to_csv(files)
+  local w = csv.Writer:new{"filename", "hash"}
+  for filename, hash in pairs(files) do
+    w:write{filename, hash}
   end
   return w.data
 end
@@ -152,7 +155,7 @@ end
 function SlipBox:write_data()
   -- Create CSV data to files.
   local write = utils.write_text
-  write("files.csv", files_to_csv(self.notes))
+  write("files.csv", files_to_csv(self.files))
   write("notes.csv", notes_to_csv(self.notes))
   write("links.csv", links_to_csv(self.links))
   write("images.csv", images_to_csv(self.images))

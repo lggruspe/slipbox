@@ -1,40 +1,21 @@
 # type: ignore
 """Test scan.py."""
 
-import os
-import time
-
 import pytest
 
 from . import scan
-from .utils import insert_file_script
-
-
-def test_is_recently_modified(tmp_path):
-    """is_recently_modified should return true iff the input file was modified
-    after the specified timestamp.
-    """
-    before = time.time()
-    path = tmp_path/"file"
-    path.touch()
-    os.utime(path, ns=(time.time_ns(), time.time_ns()))
-    after = time.time()
-
-    assert scan.is_recently_modified(before, path)
-    assert not scan.is_recently_modified(after, path)
-
-    os.utime(path, ns=(time.time_ns(), time.time_ns()))
-    assert scan.is_recently_modified(after, path)
+from .utils import insert_files
 
 
 def test_is_file_in_db(mock_db, tmp_path):
     """Quick check for is_file_in_db."""
-    conn = mock_db
     present = tmp_path/"present"
     absent = tmp_path/"absent"
-    conn.executescript(insert_file_script(present, basedir=tmp_path))
-    assert scan.is_file_in_db(present.name, conn)
-    assert not scan.is_file_in_db(absent.name, conn)
+    present.touch()
+    absent.touch()
+    insert_files(mock_db, present, basedir=tmp_path)
+    assert scan.is_file_in_db(present.name, mock_db)
+    assert not scan.is_file_in_db(absent.name, mock_db)
 
 
 def test_has_valid_pattern(tmp_path):

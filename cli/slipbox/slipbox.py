@@ -1,9 +1,8 @@
 """Sqlite database wrapper."""
 
-from itertools import chain
+from hashlib import sha256
 from pathlib import Path
-from time import time
-from typing import Iterable, List, Tuple
+from typing import Iterable
 
 from . import generator, scan
 from .batch import group_by_file_extension
@@ -23,23 +22,6 @@ class Slipbox:
         """Return base directory regardless of current working directory."""
         return self.dot.parent
 
-    @property
-    def timestamp(self) -> float:
-        """Get timestamp from Meta table."""
-        cur = self.conn.cursor()
-        cur.execute("SELECT * FROM Meta WHERE key = 'timestamp'")
-        _, value = cur.fetchone()
-        return value
-
-    @timestamp.setter
-    def timestamp(self, value: float) -> None:
-        """Set timestamp in Meta table."""
-        self.conn.execute(
-            "UPDATE Meta SET value = ? WHERE key = 'timestamp'",
-            (value,)
-        )
-        self.conn.commit()
-
     def close(self) -> None:
         """Close database connection."""
         self.conn.close()
@@ -50,44 +32,47 @@ class Slipbox:
     def __exit__(self, exc_type, exc_value, traceback) -> None:  # type: ignore
         self.close()
 
-    def find_new_notes(self) -> Iterable[Path]:
+    def find_new_notes(self, paths: Iterable[Path]) -> Iterable[Path]:
         """Yield files that are not yet in the database."""
-        patterns = self.dot.patterns
-        for path in self.basedir.rglob('*'):
-            if path.is_file() and scan.has_valid_pattern(path, patterns,
-                                                         self.basedir) \
-                    and not scan.is_file_in_db(path.relative_to(self.basedir),
-                                               self.conn):
+        is_present = scan.is_file_in_db
+        for path in paths:
+            if not is_present(path.relative_to(self.basedir), self.conn):
                 yield path
 
-    def purge(self) -> Tuple[List[Path], List[Path]]:
-        """Purge outdated/missing files from database.
+    def find_notes(self) -> dict[Path, str]:
+        """Find notes in root with corresponding hash."""
+        digests = {}
+        root = self.basedir
+        patterns = self.dot.patterns
+        for path in root.rglob('*'):
+            if path.is_file() and scan.has_valid_pattern(path, patterns, root):
+                digests[path] = sha256(path.read_bytes()).hexdigest()
+        return digests
 
-        Also delete old sections.
+    def purge(self) -> dict[Path, str]:
+        """Purge outdated/missing files and sections from the database.
+
+        Also returns all notes found.
         """
-        modified = []
-        deleted = []
-        sql = "SELECT filename FROM Files"
-        timestamp = self.timestamp
+        digests = self.find_notes()
+
+        outdated = []
         cur = self.conn.cursor()
         cur.execute("PRAGMA foreign_keys=ON")
-        for filename, in cur.execute(sql):
+        for filename, _hash in cur.execute("SELECT filename, hash FROM Files"):
             path = self.basedir/filename
-            if not path.exists():
-                deleted.append(filename)
-            elif scan.is_recently_modified(timestamp, path):
-                modified.append(filename)
+            if digests.get(path) != _hash:
+                outdated.append(filename)
         cur.executemany("DELETE FROM Files WHERE filename IN (?)",
-                        ((filename,) for filename in chain(modified, deleted)))
+                        ((filename,) for filename in outdated))
         self.conn.commit()
-        return modified, deleted
+        return digests
 
     def process(self, paths: Iterable[Path]) -> None:
         """Process input files."""
-        inputs = list(set(paths))
+        inputs = list(paths)
         for batch in group_by_file_extension(inputs):
             process_batch(self.conn, batch, self.config, self.basedir)
-        self.timestamp = time()
 
     def compile(self) -> None:
         """Compile processed HTML into final output."""
@@ -99,7 +84,6 @@ class Slipbox:
 
     def run(self) -> None:
         """Run all steps needed to compile output."""
-        self.purge()
-        notes = self.find_new_notes()
+        notes = self.find_new_notes(self.purge().keys())
         self.process(notes)
         self.compile()

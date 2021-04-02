@@ -6,6 +6,7 @@ the input is the concatenation of several files.
 """
 
 from configparser import ConfigParser
+from hashlib import sha256
 from pathlib import Path
 from sqlite3 import Connection
 import sys
@@ -96,11 +97,14 @@ def preprocess(template: str, *sources: Path, basedir: Path) -> str:
     """Preprocess notes (sources) by inserting code blocks generated
     using the template.
     """
-    return "".join(
-        render_metadata(template, filename=str(source.relative_to(basedir)))
-        + source.read_text(encoding="utf-8")
-        for source in sources
-    )
+    def preprocess_single(source: Path) -> str:
+        """Preprocess a single file."""
+        content = source.read_bytes()
+        filename = str(source.relative_to(basedir))
+        _hash = sha256(content).hexdigest()
+        metadata = render_metadata(template, filename=filename, hash=_hash)
+        return metadata + content.decode(encoding="utf-8")
+    return "".join(preprocess_single(source) for source in sources)
 
 
 def store_html(conn: Connection,

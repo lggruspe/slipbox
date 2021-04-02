@@ -5,32 +5,7 @@ import pytest
 
 from . import app
 from .initializer import DotSlipbox
-from .slipbox import Slipbox
 from .utils import check_requirements
-
-
-def test_show_info_timestamp_empty(tmp_path):
-    """Calling show_info shouldn't affect the db timestamp."""
-    dot = DotSlipbox(tmp_path)
-    with Slipbox(dot) as slipbox:
-        before = slipbox.timestamp
-    app.show_info(dot, 0)
-    with Slipbox(dot) as slipbox:
-        after = slipbox.timestamp
-    assert before == after
-
-
-@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_show_info_timestamp(tmp_path, mnote, sbox):
-    """Calling show_info shouldn't affect the db timestamp."""
-    sbox.process([mnote])
-    dot = DotSlipbox(tmp_path)
-    with Slipbox(dot) as slipbox:
-        before = slipbox.timestamp
-    app.show_info(dot, 0)
-    with Slipbox(dot) as slipbox:
-        after = slipbox.timestamp
-    assert before == after
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

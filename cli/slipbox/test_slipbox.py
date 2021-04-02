@@ -1,13 +1,9 @@
 # type: ignore
 """Test slipbox.py."""
 
-from time import time, sleep
-
 import pytest
 
-from .initializer import DotSlipbox
-from .slipbox import Slipbox
-from .utils import check_requirements, insert_file_script
+from .utils import check_requirements, insert_files
 
 
 def test_find_new_notes(tmp_path, sbox):
@@ -23,8 +19,8 @@ def test_find_new_notes(tmp_path, sbox):
     directory.mkdir()
     txt.touch()
 
-    sbox.conn.executescript(insert_file_script(present, basedir=sbox.basedir))
-    assert list(sbox.find_new_notes()) == [absent]
+    insert_files(sbox.conn, present, basedir=sbox.basedir)
+    assert list(sbox.find_new_notes(sbox.find_notes())) == [absent]
 
 
 def test_added_notes_pattern(tmp_path, sbox):
@@ -38,7 +34,7 @@ def test_added_notes_pattern(tmp_path, sbox):
     markdown.touch()
     txt.touch()
     tex.touch()
-    assert sorted(sbox.find_new_notes()) == [markdown, txt]
+    assert sorted(sbox.find_new_notes(sbox.find_notes())) == [markdown, txt]
 
 
 def test_added_notes_in_db(tmp_path, sbox):
@@ -47,8 +43,8 @@ def test_added_notes_in_db(tmp_path, sbox):
     skip = tmp_path/"skip.md"
     new.touch()
     skip.touch()
-    sbox.conn.executescript(insert_file_script(skip, basedir=sbox.basedir))
-    assert list(sbox.find_new_notes()) == [new]
+    insert_files(sbox.conn, skip, basedir=sbox.basedir)
+    assert list(sbox.find_new_notes(sbox.find_notes())) == [new]
 
 
 def test_added_notes_recursive(tmp_path, sbox):
@@ -57,50 +53,36 @@ def test_added_notes_recursive(tmp_path, sbox):
     new = directory/"new.md"
     directory.mkdir()
     new.touch()
-    assert list(sbox.find_new_notes()) == [new]
+    assert list(sbox.find_new_notes(sbox.find_notes())) == [new]
 
 
-def test_slipbox_context_manager(tmp_path):
-    """Test database timestamp."""
-    dot = DotSlipbox(tmp_path)
-    with Slipbox(dot) as slipbox:
-        assert slipbox.timestamp == 0.0
-        slipbox.timestamp = time()
-    with Slipbox(dot) as slipbox:
-        assert slipbox.timestamp != 0.0
-
-
-@pytest.mark.skipif(True, reason="flaky")
 def test_modified_notes(tmp_path, sbox):
     """sbox.find_new_notes() must find modified notes after they are purged."""
     modified = tmp_path/"modified.md"
     not_modified = tmp_path/"not_modified.md"
     added = tmp_path/"added.md"
 
-    sbox.conn.executescript(insert_file_script(modified, not_modified,
-                                               basedir=sbox.basedir))
-    sbox.timestamp = time()
-    sleep(1)
+    modified.write_text("hello")
+    not_modified.write_text("hello")
 
-    added.touch()
-    modified.touch()
+    insert_files(sbox.conn, modified, not_modified, basedir=sbox.basedir)
+
+    not_modified.write_text("hello")    # not modified
+    added.write_text("new note")
+    modified.write_text("modified")
     sbox.purge()
 
-    assert list(sbox.find_new_notes()) == [added, modified]
+    assert list(sbox.find_new_notes(sbox.find_notes())) == [added, modified]
 
 
 def test_purge(sbox, files_abc):
     """Input files must be purged from the database."""
     a_md, b_md, c_md = files_abc
-    sbox.conn.executescript(insert_file_script(a_md, b_md, c_md,
-                                               basedir=sbox.basedir))
-    sbox.timestamp = time()
-    sleep(1)
-
+    insert_files(sbox.conn, a_md, b_md, c_md, basedir=sbox.basedir)
+    a_md.write_text(a_md.read_text())
     b_md.unlink()
-    c_md.touch()
+    c_md.write_text("edit")
     sbox.purge()
-
     result = sbox.conn.execute("SELECT filename FROM Files")
     remaining = sorted(filename for filename, in result)
     assert len(remaining) == 1
@@ -115,7 +97,6 @@ def test_run(files_abc, capsys, sbox):
     file_c.write_text("# 2 C\n\nC.\n")
 
     slipbox = sbox
-    slipbox.timestamp = time()
 
     slipbox.run()
 

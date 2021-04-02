@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS Files (
-    filename PRIMARY KEY
+    filename PRIMARY KEY,
+    hash
 );
 
 CREATE TABLE IF NOT EXISTS Notes (
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Meta (
     value
 );
 
-INSERT OR IGNORE INTO Meta VALUES ('timestamp', 0.0), ('version', '0.0');
+INSERT OR IGNORE INTO Meta VALUES ('version', '0.0');
 
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);

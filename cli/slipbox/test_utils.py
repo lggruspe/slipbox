@@ -9,12 +9,6 @@ import pytest
 from . import utils
 
 
-def test_sqlite_string():
-    """Single quotes must be escaped properly."""
-    assert utils.sqlite_string("''") == "''''''"
-    assert utils.sqlite_string("'foo'bar'") == "'''foo''bar'''"
-
-
 def test_temporary_directory():
     """temporary_directory gets deleted when the context manager exits."""
     with utils.temporary_directory() as temp:

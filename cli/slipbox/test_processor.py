@@ -1,5 +1,7 @@
 # type: ignore
 """Test processor.py."""
+from hashlib import sha256
+
 from .processor import preprocess, MARKDOWN_TEMPLATE
 
 
@@ -16,11 +18,18 @@ def test_preprocess_markdown_with_sources(files_abc, tmp_path):
 ```
 [slipbox-metadata]
 filename={}
+hash={}
 ```
 """
 
-    assert template.format(str(sources[0].relative_to(tmp_path))) in content
-    assert template.format(str(sources[1].relative_to(tmp_path))) in content
+    assert template.format(
+        str(sources[0].relative_to(tmp_path)),
+        sha256(b"B").hexdigest()
+    ) in content
+    assert template.format(
+        str(sources[1].relative_to(tmp_path)),
+        sha256(b"C").hexdigest()
+    ) in content
 
 
 def test_preprocess_markdown_with_no_sources(tmp_path):

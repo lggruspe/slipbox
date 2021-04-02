@@ -1,18 +1,12 @@
 """Look for files that must be compiled."""
 
 import fnmatch
-import os
 from pathlib import Path
 import shlex
 from sqlite3 import Connection
 from typing import Iterable
 
 from . import utils
-
-
-def is_recently_modified(timestamp: float, path: Path) -> bool:
-    """Check if file has been modified after the timestamp."""
-    return path.exists() and os.path.getmtime(path) >= timestamp
 
 
 def is_file_in_db(path: Path, conn: Connection) -> bool:

@@ -34,8 +34,8 @@ def run_sql_on_csv(conn: Connection,
 
 def process_files(conn: Connection, path: Path) -> None:
     """Process Files data in path."""
-    sql = "INSERT OR IGNORE INTO Files (filename) VALUES (?)"
-    run_sql_on_csv(conn, path, sql, (str,))
+    sql = "INSERT OR IGNORE INTO Files (filename, hash) VALUES (?, ?)"
+    run_sql_on_csv(conn, path, sql, (str, str))
 
 
 def process_notes(conn: Connection, path: Path) -> None:

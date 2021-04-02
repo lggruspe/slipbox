@@ -18,7 +18,9 @@ local function preprocess()
         end
       elseif elem.tag == "Header" and elem.level == 1 then
         assert(_metadata.filename)
+        assert(_metadata.hash)
         elem.attributes.filename = _metadata.filename
+        elem.attributes.hash = _metadata.hash
       end
     end
     return doc
@@ -63,6 +65,7 @@ local function init(slipbox)
     if not title or title == "" then return end
 
     local filename = elem.attributes.filename
+    slipbox:save_file(filename, elem.attributes.hash)
     local err = slipbox:save_note(id, title, filename)
     if err then log.warning(err) end
 
