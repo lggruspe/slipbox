@@ -2,7 +2,7 @@
 
 from hashlib import sha256
 from pathlib import Path
-from typing import Iterable
+from typing import Dict, Iterable
 
 from . import generator, scan
 from .batch import group_by_file_extension
@@ -39,7 +39,7 @@ class Slipbox:
             if not is_present(path.relative_to(self.basedir), self.conn):
                 yield path
 
-    def find_notes(self) -> dict[Path, str]:
+    def find_notes(self) -> Dict[Path, str]:
         """Find notes in root with corresponding hash."""
         digests = {}
         root = self.basedir
@@ -49,7 +49,7 @@ class Slipbox:
                 digests[path] = sha256(path.read_bytes()).hexdigest()
         return digests
 
-    def purge(self) -> dict[Path, str]:
+    def purge(self) -> Dict[Path, str]:
         """Purge outdated/missing files and sections from the database.
 
         Also returns all notes found.

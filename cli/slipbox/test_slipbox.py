@@ -72,7 +72,7 @@ def test_modified_notes(tmp_path, sbox):
     modified.write_text("modified")
     sbox.purge()
 
-    assert list(sbox.find_new_notes(sbox.find_notes())) == [added, modified]
+    assert sorted(sbox.find_new_notes(sbox.find_notes())) == [added, modified]
 
 
 def test_purge(sbox, files_abc):

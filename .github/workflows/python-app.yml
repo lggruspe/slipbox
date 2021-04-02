@@ -39,4 +39,4 @@ jobs:
         cd cli; mypy -p slipbox
     - name: Test with pytest
       run: |
-        cd cli; pytest --cov=slipbox --cov-report=term-missing --cov-branch
+        cd cli; pytest --cov=slipbox --cov-report=term-missing --cov-branch --verbose
