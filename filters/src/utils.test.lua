@@ -123,6 +123,6 @@ it("hashtag_prefix", function()
   }
   for input, expected in pairs(examples) do
     local output = utils.hashtag_prefix(input)
-    assert.are.equal(output, expected)
+    assert.equal(output, expected)
   end
 end)

@@ -29,19 +29,6 @@ local function write_text(filename, text)
   return true
 end
 
-local function strip(text)
-  -- Strip leading and trailing whitespace.
-  return text:match('^%s*(.-)%s*$')
-end
-
-local function parse_filename(text)
-  local pattern = '^%[slipbox%-metadata%]\nfilename=(.-)$'
-  local filename = text:match(pattern)
-  if filename then
-    return strip(filename)
-  end
-end
-
 local function is_reference_id(text)
   -- Check if text (string) is a reference identifier.
   return text:match('^ref%-.+$') and true or false
@@ -51,7 +38,6 @@ return {
   is_reference_id = is_reference_id,
   hashtag_prefix = hashtag_prefix,
   get_link = get_link,
-  parse_filename = parse_filename,
   write_text = write_text,
   append_text = append_text,
 }

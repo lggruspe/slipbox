@@ -2,6 +2,7 @@
 
 local pandoc = require "pandoc"
 local log = require "src.log"
+local metadata = require "src.metadata"
 local utils = require "src.utils"
 
 local function preprocess()
@@ -9,13 +10,15 @@ local function preprocess()
   -- attribute of Headers to the name of the file.
 
   local function Pandoc(doc)
-    local filename
+    local _metadata = {}
     for _, elem in ipairs(doc.blocks) do
       if elem.tag == "CodeBlock" then
-        filename = utils.parse_filename(elem.text) or filename
+        for key, val in pairs(metadata.parse(elem.text) or {}) do
+          _metadata[key] = val or _metadata[key]
+        end
       elseif elem.tag == "Header" and elem.level == 1 then
-        assert(filename)
-        elem.attributes.filename = filename
+        assert(_metadata.filename)
+        elem.attributes.filename = _metadata.filename
       end
     end
     return doc
@@ -32,7 +35,7 @@ local function init(slipbox)
 
   local function CodeBlock(elem)
       -- Strip slipbox-metadata code block.
-      if utils.parse_filename(elem.text) then
+      if metadata.parse(elem.text) then
         return {}
       end
   end
