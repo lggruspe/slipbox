@@ -303,7 +303,11 @@ local function cleanup()
     Header = function(elem)
       elem.attributes = {}
       return elem
-    end
+    end,
+    Div = function(elem)
+      elem.attributes.hash = nil
+      return elem
+    end,
   }
 end
 
