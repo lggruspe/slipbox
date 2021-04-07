@@ -89,9 +89,6 @@ local function notes_to_csv(notes)
   for id, note in pairs(notes) do
     if note.filename then
       w:write{id, note.title, note.filename}
-      -- TODO show warning if note.filename is nil
-      -- This occurs when the title in the header contains other symbols
-      -- (ex: links, references, equations, etc.).
     end
   end
   return w.data

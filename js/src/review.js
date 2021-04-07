@@ -1,5 +1,5 @@
 const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
-const { View } = require('@lggruspe/view-hooks')
+const ui = require('loulou')
 const { isNote, isHome } = require('./filters.js')
 const { List } = require('./linked-list.js')
 
@@ -95,106 +95,87 @@ class FlashcardDeck {
   }
 }
 
-class CardView extends View {
-  constructor (card, container) {
-    super({
-      container,
-      state: card,
-      hooks: ['setStatus']
-    })
+class CardView {
+  constructor (card) {
+    this.card = card
+    this.ui = new ui.Ui($ => this.update($))
+    this.ui.watch(this.card, 'setStatus')
   }
 
-  initialize () {
-    const container = this.container
-    container.innerHTML = `
-      <h2 class="flashcard-prompt">${this.state.prompt.innerHTML}</h2>
-      <div class="buttons">
-        <button type="button" class="button flashcard-show is-${this.state.status}">Show answer</button>
+  render () {
+    const $ = ui.to$(`
+      <div class="flashcard">
+        <h2 class="flashcard-prompt">${this.card.prompt.innerHTML}</h2>
+        <div class="buttons">
+          <button type="button" class="button flashcard-show is-${this.card.status}">Show answer</button>
+        </div>
+        <div class="flashcard-response is-${this.card.status}">${this.card.response.innerHTML}</div>
+        <div class="buttons">
+          <button type="button" class="button flashcard-again is-${this.card.status}">Again?</button>
+          <button type="button" class="button flashcard-next is-${this.card.status}">Next&gt;</button>
+        </div>
       </div>
-      <div class="flashcard-response is-${this.state.status}">${this.state.response.innerHTML}</div>
-      <div class="buttons">
-        <button type="button" class="button flashcard-again is-${this.state.status}">Again?</button>
-        <button type="button" class="button flashcard-next is-${this.state.status}">Next&gt;</button>
-      </div>
-    `
-    this.$('.flashcard-response').querySelector('h1')?.remove()
-    this.$('.flashcard-show').addEventListener('click', () => this.state.setStatus('response'))
+    `)
+    $('.flashcard-response h1')?.remove()
+    $('.flashcard-show').onclick = () => this.card.setStatus('response')
+    return $()
   }
 
-  update () {
-    this.$('.flashcard-show').className = `button flashcard-show is-${this.state.status}`
-    this.$('.flashcard-again').className = `button flashcard-again is-${this.state.status}`
-    this.$('.flashcard-next').className = `button flashcard-next is-${this.state.status}`
-    this.$('.flashcard-response').className = `flashcard-response is-${this.state.status}`
+  update ($) {
+    $('.flashcard-show').className = `button flashcard-show is-${this.card.status}`
+    $('.flashcard-again').className = `button flashcard-again is-${this.card.status}`
+    $('.flashcard-next').className = `button flashcard-next is-${this.card.status}`
+    $('.flashcard-response').className = `flashcard-response is-${this.card.status}`
   }
 }
 
-class DeckView extends View {
-  constructor (deck, container) {
-    super({
-      container,
-      state: deck,
-      hooks: ['again', 'next']
-    })
+class DeckView {
+  constructor (deck) {
+    this.deck = deck
+    this.ui = new ui.Ui($ => this.update($))
+    this.ui.watch(this.deck, 'again')
+    this.ui.watch(this.deck, 'next')
+    this.cardViews = new Map()
   }
 
-  initialize () {
-    const container = this.container
-    this.cardViews = new Map()
-    container.innerHTML = ''
-    const fragment = document.createDocumentFragment()
-    for (const card of this.state) {
-      const cardContainer = document.createElement('div')
-      cardContainer.className = 'flashcard'
-      fragment.appendChild(cardContainer)
-
-      const view = new CardView(card, cardContainer)
+  render () {
+    const elem = ui.toElem('<div></div>')
+    for (const card of this.deck) {
+      const view = ui.render(new CardView(card), elem)
       this.cardViews.set(card, view)
-      view.initialize()
     }
-    const doneDiv = document.createElement('div')
-    doneDiv.className = `flashcard flashcard-end ${!this.state.isDone() ? 'is-hidden' : ''}`
-    doneDiv.innerHTML = `
-      <p>You've reached the end!</p>
-      <div class="buttons">
-        <a href="#review/" class="button">Go back</a>
+    elem.appendChild(ui.toElem(`
+      <div class="flashcard flashcard-end ${!this.deck.isDone() ? 'is-hidden' : ''}">
+        <p>You've reached the end!</p>
+        <div class="buttons">
+          <a href="#review/" class="button">Go back</a>
+        </div>
       </div>
-    `
-    fragment.appendChild(doneDiv)
-
-    container.appendChild(fragment)
+    `))
 
     // register button event listeners in cards
-    for (const card of this.state) {
+    for (const card of this.deck) {
       const view = this.cardViews.get(card)
-      view.$('.flashcard-again').onclick = () => this.state.again()
-      view.$('.flashcard-next').onclick = () => this.state.next()
+      view.querySelector('.flashcard-again').onclick = () => this.deck.again()
+      view.querySelector('.flashcard-next').onclick = () => this.deck.next()
     }
+    return elem
   }
 
-  update () {
-    this.$('.flashcard-end').className = `flashcard flashcard-end ${!this.state.isDone() ? 'is-hidden' : ''}`
-    this.state.isDone()
-      ? this.$('.flashcard-end').scrollIntoView()
-      : this.cardViews.get(this.state.current).container.scrollIntoView()
+  update ($) {
+    $('.flashcard-end').className = `flashcard flashcard-end ${!this.deck.isDone() ? 'is-hidden' : ''}`
+    this.deck.isDone()
+      ? $('.flashcard-end').scrollIntoView()
+      : this.cardViews.get(this.deck.current).scrollIntoView()
   }
 }
 
-class SummarizedCardView extends View {
-  constructor (card, container) {
-    super({
-      container,
-      state: card
-    })
-  }
-
-  initialize () {
-    const container = this.container
-    container.innerHTML = `<a href="#review/${this.state.id}"></a>`
-    this.$('a').innerHTML = this.state.prompt.innerHTML
-  }
-
-  update () {}
+function createSummarizedCardView (card) {
+  return ui.toElem(`
+    <div class="flashcard">
+      <a href="#review/${card.id}">${card.prompt.innerHTML}</a>
+    </div>
+  `)
 }
 
 function getEntrypoints () {
@@ -209,30 +190,19 @@ function createCard (id) {
   return new Flashcard(id, prompt, response)
 }
 
-class SrsPageView extends View {
-  constructor (container) {
-    super({ container })
-  }
-
-  initialize () {
-    const container = this.container
-    container.innerHTML = `
+function createSrsPageView () {
+  const elem = ui.toElem(`
+    <div>
       <h1>Review notes</h1>
       <p>Pick a question to start with.</p>
-    `
-    const views = getEntrypoints().map(e => {
-      const card = createCard(e.id())
-      const container = document.createElement('div')
-      container.className = 'flashcard'
-      return new SummarizedCardView(card, container)
-    })
-    for (const view of views) {
-      view.initialize()
-      container.appendChild(view.container)
-    }
+    </div>
+  `)
+  for (const entrypoint of getEntrypoints()) {
+    const card = createCard(entrypoint.id())
+    const view = createSummarizedCardView(card)
+    ui.render(view, elem)
   }
-
-  update () {}
+  return elem
 }
 
 function randomChoice (collection) {
@@ -270,10 +240,10 @@ router.route(
   req => {
     const deck = createDeck(req.id)
     deck.start()
-    const container = document.createElement('div')
-    const view = new DeckView(deck, container)
-    view.initialize()
-    router.defer(() => writer.render(view.container))
+    router.defer(() => writer.render(ui.render(
+      new DeckView(deck),
+      document.body
+    )))
     router.onExit(() => writer.restore())
   }
 )
@@ -281,10 +251,10 @@ router.route(
 router.route(
   check(isHome),
   () => {
-    const container = document.createElement('div')
-    const view = new SrsPageView(container)
-    view.initialize()
-    router.defer(() => writer.render(view.container))
+    router.defer(() => writer.render(ui.render(
+      createSrsPageView(),
+      document.body
+    )))
     router.onExit(() => writer.restore())
   }
 )

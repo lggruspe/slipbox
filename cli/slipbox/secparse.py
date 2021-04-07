@@ -20,16 +20,11 @@ class SectionParser(HTMLParser):
 
     Callback = Callable[["SectionParser"], None]
 
-    def __init__(self, callback: Optional[Callback] = None):
+    def __init__(self, callback: Callback):
         HTMLParser.__init__(self, convert_charrefs=False)
         self.id_ = -1
         self.section = ""
-        self.callback = callback or self.default_callback
-
-    @staticmethod
-    def default_callback(this: "SectionParser") -> None:
-        """Default callback invoked when a new section is found."""
-        print(this.section, end="")
+        self.callback = callback
 
     def error(self, message: str) -> None:
         """Dummy method to satisfy pylint."""
@@ -76,14 +71,8 @@ class SectionParser(HTMLParser):
         self.section += f"<![{data}]>"
 
 
-def parse_sections(html: str,
-                   callback: Optional[SectionParser.Callback] = None) -> None:
+def parse_sections(html: str, callback: SectionParser.Callback) -> None:
     """Parses sections in ephemeral pandoc output."""
     parser = SectionParser(callback)
     parser.feed(html)
     parser.close()
-
-
-if __name__ == "__main__":
-    from pathlib import Path
-    parse_sections(Path("index.html").read_text())

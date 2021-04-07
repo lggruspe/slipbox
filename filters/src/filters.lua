@@ -298,7 +298,6 @@ local function check(slipbox)
 end
 
 local function cleanup()
-  -- TODO only cleanup note section headers?
   return {
     Header = function(elem)
       elem.attributes = {}
