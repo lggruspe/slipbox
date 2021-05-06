@@ -4,7 +4,7 @@ import csv
 from pathlib import Path
 from sqlite3 import Connection, IntegrityError
 import sys
-from typing import Callable, Sequence, Type
+import typing as t
 
 
 def warning(message: str, *information: str) -> None:
@@ -17,8 +17,9 @@ def warning(message: str, *information: str) -> None:
 def run_sql_on_csv(conn: Connection,
                    path: Path,
                    sql: str,
-                   types: Sequence[Type],
-                   callback: Callable = None) -> None:
+                   types: t.Sequence[t.Type[t.Any]],
+                   callback: t.Optional[t.Callable[..., t.Any]] = None
+                   ) -> None:
     """Run SQl query on CSV data."""
     cur = conn.cursor()
     with open(path, encoding="utf-8") as file:

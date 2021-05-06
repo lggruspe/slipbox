@@ -36,7 +36,7 @@ jobs:
         cd cli; pylint --fail-under=10 slipbox -d R0903,C0415
     - name: Run mypy
       run: |
-        cd cli; mypy -p slipbox
+        cd cli; mypy -p slipbox --strict
     - name: Test with pytest
       run: |
         cd cli; pytest --cov=slipbox --cov-report=term-missing --cov-branch --verbose
