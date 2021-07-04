@@ -5,7 +5,6 @@ cached-property==1.5.2
 certifi==2020.12.5
 cffi==1.14.5
 chardet==4.0.0
-climux==0.1.0
 colorama==0.4.4
 coverage==5.5
 cryptography==3.4.7
@@ -13,9 +12,9 @@ docutils==0.17.1
 flake8==3.9.1
 frozendict==2.0.2
 genanki==0.10.1
+genbu==0.2.1
 idna==2.10
 importlib-metadata==4.0.1
-infer-parser==0.1.1
 iniconfig==1.1.1
 isort==5.8.0
 jeepney==0.6.0
