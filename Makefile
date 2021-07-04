@@ -59,7 +59,7 @@ check: lint test
 docs:	bundle
 	cd docs-src; rm -rf .slipbox
 	cd docs-src; PYTHONPATH=../cli python -m slipbox init \
-		--content_options "--bibliography example.bib --citeproc" \
+		--content_options " --bibliography example.bib --citeproc" \
 		--document_options " -s" \
 		--output_directory '../docs'
 	cd docs-src; PYTHONPATH=../cli python -m slipbox build
