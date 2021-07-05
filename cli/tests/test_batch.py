@@ -1,7 +1,7 @@
 # type: ignore
 """Test batch.py."""
 
-from .batch import group_by_file_extension
+from slipbox.batch import group_by_file_extension
 
 
 def test_group_by_file_extension():

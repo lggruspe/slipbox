@@ -1,7 +1,7 @@
 # type: ignore
 """Test initializer.py."""
 
-from .initializer import DotSlipbox
+from slipbox.initializer import DotSlipbox
 
 
 def test_initialize(tmp_path):

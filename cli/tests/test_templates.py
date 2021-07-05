@@ -1,7 +1,7 @@
 # type: ignore
 """Test templates.py."""
 
-from .templates import Elem, render
+from slipbox.templates import Elem, render
 
 
 def test_render_text():

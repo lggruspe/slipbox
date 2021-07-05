@@ -3,7 +3,7 @@
 
 import pytest
 
-from .utils import check_requirements, insert_files
+from slipbox.utils import check_requirements, insert_files
 
 
 def test_find_new_notes(tmp_path, sbox):

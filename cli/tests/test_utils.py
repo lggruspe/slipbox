@@ -6,7 +6,7 @@ import shutil
 
 import pytest
 
-from . import utils
+from slipbox import utils
 
 
 def test_temporary_directory():

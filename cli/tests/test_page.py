@@ -4,8 +4,8 @@
 from os.path import join
 
 import pytest
-from . import page
-from .utils import check_requirements
+from slipbox import page
+from slipbox.utils import check_requirements
 
 SQL = """
     PRAGMA foreign_keys=ON;

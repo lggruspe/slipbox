@@ -3,8 +3,8 @@
 
 import pytest
 
-from . import scan
-from .utils import insert_files
+from slipbox import scan
+from slipbox.utils import insert_files
 
 
 def test_is_file_in_db(mock_db, tmp_path):

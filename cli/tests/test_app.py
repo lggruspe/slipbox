@@ -3,9 +3,9 @@
 
 import pytest
 
-from . import app
-from .initializer import DotSlipbox
-from .utils import check_requirements
+from slipbox import app
+from slipbox.initializer import DotSlipbox
+from slipbox.utils import check_requirements
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

@@ -44,13 +44,13 @@ bundle:	check-js build-lua
 
 # Run python linters.
 lint:
-	cd cli; flake8 slipbox --max-complexity=10
-	cd cli; pylint slipbox --fail-under=10 -d R0903,C0415
-	cd cli; mypy -p slipbox --strict
+	cd cli; flake8 slipbox tests --max-complexity=10
+	cd cli; pylint slipbox tests --fail-under=10 -d R0903,C0415
+	cd cli; mypy slipbox tests --strict
 
 # Run python tests.
 test:
-	cd cli; cd slipbox; pytest --cov=. --cov-fail-under=90 --cov-report=term-missing --cov-branch --verbose
+	cd cli; pytest --cov=slipbox --cov=tests --cov-fail-under=90 --cov-report=term-missing --cov-branch --verbose
 
 # Run all tests.
 check: lint test

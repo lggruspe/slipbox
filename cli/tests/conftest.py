@@ -7,8 +7,8 @@ from typing import Iterable, List
 
 import pytest
 
-from .initializer import initialize_database, DotSlipbox
-from .slipbox import Slipbox
+from slipbox.initializer import initialize_database, DotSlipbox
+from slipbox.slipbox import Slipbox
 
 
 @pytest.fixture

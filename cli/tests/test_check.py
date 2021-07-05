@@ -3,10 +3,12 @@
 
 import pytest
 
-from .check import invalid_links, isolated_notes, unsourced_notes, check_notes
-from .initializer import DotSlipbox
-from .slipbox import Slipbox
-from .utils import check_requirements
+from slipbox.check import (
+    check_notes, invalid_links, isolated_notes, unsourced_notes
+)
+from slipbox.initializer import DotSlipbox
+from slipbox.slipbox import Slipbox
+from slipbox.utils import check_requirements
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")

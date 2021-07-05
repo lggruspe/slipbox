@@ -1,7 +1,7 @@
 # type: ignore
 """Test secparse.py."""
 
-from .secparse import note_id, parse_sections
+from slipbox.secparse import note_id, parse_sections
 
 
 def test_note_id():

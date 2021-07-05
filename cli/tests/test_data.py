@@ -1,7 +1,7 @@
 # type: ignore
 """Test data.py."""
 
-from . import data
+from slipbox import data
 
 
 def test_warning(capsys):

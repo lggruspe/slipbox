@@ -2,7 +2,7 @@
 """Test processor.py."""
 from hashlib import sha256
 
-from .processor import preprocess, MARKDOWN_TEMPLATE
+from slipbox.processor import preprocess, MARKDOWN_TEMPLATE
 
 
 def test_preprocess_markdown_with_sources(files_abc, tmp_path):
