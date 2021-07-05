@@ -66,7 +66,7 @@ class DotSlipbox:
         return config
 
     @staticmethod
-    def locate(path: Path) -> Optional["DotSlipbox"]:
+    def locate(path: Path = Path().resolve()) -> "DotSlipbox":
         """Find .slipbox in parent directories of path, or None.
 
         Input path must be absolute.
@@ -81,7 +81,7 @@ class DotSlipbox:
                 return DotSlipbox(path)
             path = parent
             parent = path.parent
-        return None
+        raise Exception("could not find '.slipbox' in any parent directory.")
 
     def database(self) -> Connection:
         """Create connection to .slipbox/data.db."""

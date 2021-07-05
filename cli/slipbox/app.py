@@ -9,47 +9,33 @@ from .initializer import DotSlipbox, default_config
 from .slipbox import Slipbox
 
 
-def require_dot_slipbox(path: Path = Path()) -> DotSlipbox:
-    """Return .slipbox object in current directory.
-
-    Exit if it does not exist.
-    """
-    dot = DotSlipbox.locate(path.resolve())
-    if dot is None:
-        sys.exit("could not find '.slipbox' in any parent directory.")
-    return dot
-
-
-def show_info(dot: DotSlipbox, note_id: int) -> None:
+def show_info(slipbox: Slipbox, note_id: int) -> None:
     """Print metadata associated with note ID."""
     sql = "SELECT title, filename FROM Notes WHERE id = ?"
-    with Slipbox(dot) as slipbox:
-        cur = slipbox.conn.cursor()
-        cur.execute(sql, (note_id,))
-        note = cur.fetchone()
-        if note is not None:
-            print(note_id)
-            print(note[0])
-            print(note[1])
+    cur = slipbox.conn.cursor()
+    cur.execute(sql, (note_id,))
+    note = cur.fetchone()
+    if note is not None:
+        print(note_id)
+        print(note[0])
+        print(note[1])
 
 
-def show_info_wrapper(note_id: str, /) -> None:
+def show_info_wrapper(note_id: str) -> None:
     """Show information about note."""
-    dot = require_dot_slipbox()
-    return show_info(dot, int(note_id))
+    with Slipbox(DotSlipbox.locate()) as slipbox:
+        return show_info(slipbox, int(note_id))
 
 
 def main() -> None:
     """Compile notes into static page."""
-    dot = require_dot_slipbox()
-    with Slipbox(dot) as slipbox:
+    with Slipbox(DotSlipbox.locate()) as slipbox:
         slipbox.run()
 
 
 def check_notes() -> None:
     """Check notes in slipbox for invalid links and isolated notes."""
-    dot = require_dot_slipbox()
-    with Slipbox(dot) as slipbox:
+    with Slipbox(DotSlipbox.locate()) as slipbox:
         if not check.check_notes(slipbox):
             sys.exit(65)
 
@@ -107,8 +93,7 @@ def find_available_id(sequence: Sequence[int]) -> int:
 
 def new_note(note_format: Optional[str] = None, /) -> None:
     """Get smallest available note ID for new note."""
-    dot = require_dot_slipbox()
-    with Slipbox(dot) as slipbox:
+    with Slipbox(DotSlipbox.locate()) as slipbox:
         rows = slipbox.conn.execute("SELECT id FROM Notes ORDER BY (id)")
         ids = [row[0] for row in rows]
     suggest = find_available_id(ids)

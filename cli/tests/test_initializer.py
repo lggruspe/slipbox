@@ -1,6 +1,7 @@
 # type: ignore
 """Test initializer.py."""
 
+import pytest
 from slipbox.initializer import DotSlipbox
 
 
@@ -15,7 +16,8 @@ def test_initialize(tmp_path):
 
 def test_dot_slipbox_locate(tmp_path):
     """find_dot_slipbox must look for .slipbox in parent directories."""
-    assert DotSlipbox.locate(tmp_path) is None
+    with pytest.raises(Exception):
+        DotSlipbox.locate(tmp_path)
 
     dot = DotSlipbox(tmp_path)
     assert DotSlipbox.locate(tmp_path).path == dot.path
@@ -27,8 +29,11 @@ def test_dot_slipbox_locate(tmp_path):
     for file in dot.path.iterdir():
         file.unlink()
     dot.path.rmdir()
-    assert DotSlipbox.locate(child) is None
-    assert DotSlipbox.locate(tmp_path) is None
+
+    with pytest.raises(Exception):
+        DotSlipbox.locate(child)
+    with pytest.raises(Exception):
+        DotSlipbox.locate(tmp_path)
 
 
 def test_dot_slipbox_patterns(tmp_path):

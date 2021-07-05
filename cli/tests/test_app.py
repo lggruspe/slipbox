@@ -5,6 +5,7 @@ import pytest
 
 from slipbox import app
 from slipbox.initializer import DotSlipbox
+from slipbox.slipbox import Slipbox
 from slipbox.utils import check_requirements
 
 
@@ -12,8 +13,8 @@ from slipbox.utils import check_requirements
 def test_show_info_empty_stdout(tmp_path, capsys, mnote, sbox):
     """show_info shouldn't output anything if the note ID doesn't exist."""
     sbox.process([mnote])
-    dot = DotSlipbox(tmp_path)
-    app.show_info(dot, 1)
+    with Slipbox(DotSlipbox(tmp_path)) as slipbox:
+        app.show_info(slipbox, 1)
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
@@ -23,25 +24,11 @@ def test_show_info_empty_stdout(tmp_path, capsys, mnote, sbox):
 def test_show_info_stdout(tmp_path, capsys, mnote, sbox):
     """show_info should output info of note with give note ID."""
     sbox.process([mnote])
-    dot = DotSlipbox(tmp_path)
-    app.show_info(dot, 0)
+    with Slipbox(DotSlipbox(tmp_path)) as slipbox:
+        app.show_info(slipbox, 0)
     stdout, stderr = capsys.readouterr()
     assert stdout
     assert not stderr
-
-
-def test_require_dot_slipbox(tmp_path, sbox):
-    """require_dot_slipbox should return DotSlipbox object in current
-    directory.
-    """
-    dot = app.require_dot_slipbox(tmp_path)
-    assert dot.path == sbox.dot.path
-
-
-def test_require_dot_slipbox_uninitialized(tmp_path):
-    """require_dot_slipbox should abort the program."""
-    with pytest.raises(SystemExit):
-        app.require_dot_slipbox(tmp_path)
 
 
 def test_has_gaps():
