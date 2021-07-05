@@ -6,6 +6,7 @@ import uuid
 from genbu import Genbu, Param, combinators as comb, usage
 from .app import (check_notes, generate_flashcards, main, show_info_wrapper,
                   initialize, new_note)
+from .discover_commands import discover_commands
 
 
 def show_help_message(parser: Genbu) -> None:
@@ -39,12 +40,12 @@ cli = GenbuWithHelp(
     _does_nothing,
     name="slipbox",
     description="Generate a static website from your notes.",
-    subparsers=[
+    subparsers=t.cast(t.List[Genbu], [
         GenbuWithHelp(main, name="build"),
         GenbuWithHelp(check_notes, name="check"),
         GenbuWithHelp(generate_flashcards, name="flashcards"),
         GenbuWithHelp(show_info_wrapper, name="info"),
         GenbuWithHelp(initialize, name="init"),
         GenbuWithHelp(new_note, name="new"),
-    ],
+    ]) + list(discover_commands()),
 )
