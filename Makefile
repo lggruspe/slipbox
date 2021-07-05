@@ -73,4 +73,3 @@ examples:
 # Release slipbox.
 dist:	bundle check
 	cd cli; python setup.py sdist bdist_wheel
-	cd cli; twine upload dist/*
