@@ -1,11 +1,14 @@
-# type: ignore
 """Test processor.py."""
 from hashlib import sha256
+from pathlib import Path
+import typing as t
 
 from slipbox.processor import preprocess, MARKDOWN_TEMPLATE
 
 
-def test_preprocess_markdown_with_sources(files_abc, tmp_path):
+def test_preprocess_markdown_with_sources(files_abc: t.List[Path],
+                                          tmp_path: Path,
+                                          ) -> None:
     """There must be a code block between each file section in the
     result.
     """
@@ -32,7 +35,7 @@ hash={}
     ) in content
 
 
-def test_preprocess_markdown_with_no_sources(tmp_path):
+def test_preprocess_markdown_with_no_sources(tmp_path: Path) -> None:
     """It must return an empty string."""
     content = preprocess(MARKDOWN_TEMPLATE, basedir=tmp_path)
     assert not content

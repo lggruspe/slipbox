@@ -4,7 +4,7 @@
 from slipbox.batch import group_by_file_extension
 
 
-def test_group_by_file_extension():
+def test_group_by_file_extension() -> None:
     """group_by_file_extension should split by file type.
 
     Files with no extension should be considered their own type.
@@ -20,7 +20,7 @@ def test_group_by_file_extension():
     assert ("",) in groups
 
 
-def test_group_by_file_extension_on_the_same_type():
+def test_group_by_file_extension_on_the_same_type() -> None:
     """group_by_file_extension should group files with the same type together.
     """
     files = tuple(f"{c}.md" for c in "abcdefg")

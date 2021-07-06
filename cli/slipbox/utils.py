@@ -10,7 +10,7 @@ from sqlite3 import Connection
 import subprocess
 import sys
 import tempfile
-from typing import Any, Dict, Iterable, Iterator, Optional
+import typing as t
 
 
 def pandoc() -> str:
@@ -24,15 +24,15 @@ def check_requirements() -> bool:
 
 
 @contextlib.contextmanager
-def temporary_directory() -> Iterator[Path]:
+def temporary_directory() -> t.Iterator[Path]:
     """Path to temporary directory."""
     with tempfile.TemporaryDirectory() as tempdir:
         yield Path(tempdir)
 
 
 def run_command(cmd: str,
-                variables: Optional[Dict[str, str]] = None,
-                **kwargs: Any) -> int:
+                variables: t.Optional[t.Dict[str, str]] = None,
+                **kwargs: t.Any) -> int:
     """Run command with additional environment variables in variables.
 
     Output stdout and stderr, and return the error code.
@@ -64,7 +64,7 @@ def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
     ))
 
 
-def print_sequence(header: str, sequence: Iterable[str]) -> bool:
+def print_sequence(header: str, sequence: t.Iterable[str]) -> bool:
     """Print header and sequence of items if sequence is not empty.
 
     Return bool to indicate that sequence is non-empty.

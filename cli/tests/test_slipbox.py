@@ -1,12 +1,14 @@
-# type: ignore
 """Test slipbox.py."""
 
-import pytest
+from pathlib import Path
+import typing as t
 
+import pytest
+from slipbox.slipbox import Slipbox
 from slipbox.utils import check_requirements, insert_files
 
 
-def test_find_new_notes(tmp_path, sbox):
+def test_find_new_notes(tmp_path: Path, sbox: Slipbox) -> None:
     """find_new_notes must only return existing files that aren't yet in the
     database and match the input patterns (*.md by default).
     """
@@ -23,9 +25,9 @@ def test_find_new_notes(tmp_path, sbox):
     assert list(sbox.find_new_notes(sbox.find_notes())) == [absent]
 
 
-def test_added_notes_pattern(tmp_path, sbox):
+def test_added_notes_pattern(tmp_path: Path, sbox: Slipbox) -> None:
     """Results in sbox.find_new_notes() must match the input pattern."""
-    sbox.dot.patterns = ('*.md', '*.txt')
+    sbox.dot.patterns = ['*.md', '*.txt']
     directory = tmp_path/"directory"
     markdown = tmp_path/"input.md"
     txt = tmp_path/"input.txt"
@@ -37,7 +39,7 @@ def test_added_notes_pattern(tmp_path, sbox):
     assert sorted(sbox.find_new_notes(sbox.find_notes())) == [markdown, txt]
 
 
-def test_added_notes_in_db(tmp_path, sbox):
+def test_added_notes_in_db(tmp_path: Path, sbox: Slipbox) -> None:
     """Results in sbox.find_new_notes() must not already be in the database."""
     new = tmp_path/"new.md"
     skip = tmp_path/"skip.md"
@@ -47,7 +49,7 @@ def test_added_notes_in_db(tmp_path, sbox):
     assert list(sbox.find_new_notes(sbox.find_notes())) == [new]
 
 
-def test_added_notes_recursive(tmp_path, sbox):
+def test_added_notes_recursive(tmp_path: Path, sbox: Slipbox) -> None:
     """sbox.find_new_notes() must find files recursively."""
     directory = tmp_path/"directory"
     new = directory/"new.md"
@@ -56,7 +58,7 @@ def test_added_notes_recursive(tmp_path, sbox):
     assert list(sbox.find_new_notes(sbox.find_notes())) == [new]
 
 
-def test_modified_notes(tmp_path, sbox):
+def test_modified_notes(tmp_path: Path, sbox: Slipbox) -> None:
     """sbox.find_new_notes() must find modified notes after they are purged."""
     modified = tmp_path/"modified.md"
     not_modified = tmp_path/"not_modified.md"
@@ -75,7 +77,7 @@ def test_modified_notes(tmp_path, sbox):
     assert sorted(sbox.find_new_notes(sbox.find_notes())) == [added, modified]
 
 
-def test_purge(sbox, files_abc):
+def test_purge(sbox: Slipbox, files_abc: t.List[Path]) -> None:
     """Input files must be purged from the database."""
     a_md, b_md, c_md = files_abc
     insert_files(sbox.conn, a_md, b_md, c_md, basedir=sbox.basedir)
@@ -89,7 +91,10 @@ def test_purge(sbox, files_abc):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_run(files_abc, capsys, sbox):
+def test_run(files_abc: t.List[Path],
+             capsys: pytest.CaptureFixture[str],
+             sbox: Slipbox,
+             ) -> None:
     """There must be no suggestions when running for the first time."""
     file_a, file_b, file_c = files_abc
     file_a.write_text("# 0 A\n\nA.\n[B](#2 '/a').\n")
@@ -106,7 +111,7 @@ def test_run(files_abc, capsys, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process(tmp_path, sbox):
+def test_process(tmp_path: Path, sbox: Slipbox) -> None:
     """Smoke test for slipbox.process."""
     input_file = tmp_path/"input.md"
     input_file.write_text("# 1 Test note\n\nHello, world!\n")
@@ -122,7 +127,7 @@ def test_process(tmp_path, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_empty_file(tmp_path, sbox):
+def test_process_empty_file(tmp_path: Path, sbox: Slipbox) -> None:
     """Scanned files that are empty shouldn't have entries in the database."""
     empty = tmp_path/"empty.md"
     empty.touch()
@@ -136,7 +141,7 @@ def test_process_empty_file(tmp_path, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_clusters_from_context(tmp_path, sbox):
+def test_process_clusters_from_context(tmp_path: Path, sbox: Slipbox) -> None:
     """Check if clusters are stored in db."""
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Test
@@ -155,7 +160,7 @@ Test.
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_filenames(tmp_path, sbox):
+def test_process_filenames(tmp_path: Path, sbox: Slipbox) -> None:
     """Filenames must be scanned correctly."""
     markdown = tmp_path/"foo.md"
     skip = tmp_path/"bar.md"
@@ -169,7 +174,7 @@ def test_process_filenames(tmp_path, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_filenames0(tmp_path, sbox):
+def test_process_filenames0(tmp_path: Path, sbox: Slipbox) -> None:
     """Filenames must be scanned correctly."""
     markdown = tmp_path/"bar.md"
     skip = tmp_path/"foo.md"
@@ -182,7 +187,7 @@ def test_process_filenames0(tmp_path, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_non_level1_headers(tmp_path, sbox):
+def test_process_non_level1_headers(tmp_path: Path, sbox: Slipbox) -> None:
     """Only level 1 headers must be considered as note headers."""
     markdown = tmp_path/"test.md"
     markdown.write_text("""# 0 Valid note header
@@ -200,7 +205,10 @@ Bar.
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
+def test_process_with_duplicate_existing_id(tmp_path: Path,
+                                            sbox: Slipbox,
+                                            capsys: pytest.CaptureFixture[str],
+                                            ) -> None:
     """slipbox.process must show a warning if a new note shares the ID of an
     existing note.
 
@@ -234,7 +242,11 @@ def test_process_with_duplicate_existing_id(tmp_path, sbox, capsys):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_duplicate_ids_in_a_file(tmp_path, capsys, sbox):
+def test_process_with_duplicate_ids_in_a_file(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    sbox: Slipbox,
+) -> None:
     """If there are duplicate IDs in a file, only the first one must be saved.
 
     slipbox.process must show a warning when this happens.
@@ -259,7 +271,10 @@ Bar.
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_empty_link_target(tmp_path, capsys, sbox):
+def test_process_with_empty_link_target(tmp_path: Path,
+                                        capsys: pytest.CaptureFixture[str],
+                                        sbox: Slipbox,
+                                        ) -> None:
     """slipbox.process must show a warning if there is a link with an empty
     target.
     """
@@ -275,7 +290,10 @@ def test_process_with_empty_link_target(tmp_path, capsys, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_id_in_scientific_form(tmp_path, capsys, sbox):
+def test_process_with_id_in_scientific_form(tmp_path: Path,
+                                            capsys: pytest.CaptureFixture[str],
+                                            sbox: Slipbox,
+                                            ) -> None:
     """Headers with non-integer IDs should be ignored."""
     markdown = tmp_path/"test.md"
     markdown.write_text("# 1e1 Invalid note ID\n\nTest.\n")
@@ -290,7 +308,10 @@ def test_process_with_id_in_scientific_form(tmp_path, capsys, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_with_non_text_titles(tmp_path, capsys, sbox):
+def test_process_with_non_text_titles(tmp_path: Path,
+                                      capsys: pytest.CaptureFixture[str],
+                                      sbox: Slipbox,
+                                      ) -> None:
     """Notes with non-text titles in the header must still be recognized."""
     file_a = tmp_path/"a.md"
     file_b = tmp_path/"b.md"
@@ -311,7 +332,11 @@ def test_process_with_non_text_titles(tmp_path, capsys, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
+def test_process_tags_with_trailing_punctuation(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    sbox: Slipbox,
+) -> None:
     """If a hashtag has trailing invalid symbols, only the prefix must be
     saved.
     """
@@ -327,7 +352,10 @@ def test_process_tags_with_trailing_punctuation(tmp_path, capsys, sbox):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_process_modify_non_notes(tmp_path, capsys, sbox):
+def test_process_modify_non_notes(tmp_path: Path,
+                                  capsys: pytest.CaptureFixture[str],
+                                  sbox: Slipbox,
+                                  ) -> None:
     """Modification filters must be applied on non-notes too.
 
     But they shouldn't be saved in the database.

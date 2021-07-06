@@ -3,7 +3,7 @@
 from configparser import ConfigParser
 from pathlib import Path
 from sqlite3 import Connection, connect
-from typing import Any, Dict, List, Sequence, Optional
+import typing as t
 
 from .processor import METADATA_TEMPLATES
 
@@ -29,7 +29,10 @@ def default_config() -> ConfigParser:
 
 class DotSlipbox:
     """Initialized .slipbox/ directory."""
-    def __init__(self, parent: Path, args: Optional[Dict[str, Any]] = None):
+    def __init__(self,
+                 parent: Path,
+                 args: t.Optional[t.Dict[str, t.Any]] = None,
+                 ):
         """Initialize data.db, patterns and config.cfg in ./slipbox/."""
         self.parent = parent
         self.path = parent/".slipbox"
@@ -48,13 +51,13 @@ class DotSlipbox:
             self.patterns = ['*' + key for key in METADATA_TEMPLATES]
 
     @property
-    def patterns(self) -> List[str]:
+    def patterns(self) -> t.List[str]:
         """Return list of glob patterns."""
         text = self.path.joinpath("patterns").read_text(encoding="utf-8")
         return [pat for pat in text.split('\n') if pat]
 
     @patterns.setter
-    def patterns(self, value: Sequence[str]) -> None:
+    def patterns(self, value: t.Sequence[str]) -> None:
         """Set glob patterns."""
         self.path.joinpath("patterns").write_text('\n'.join(value))
 

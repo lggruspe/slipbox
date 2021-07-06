@@ -3,14 +3,14 @@
 from pathlib import Path
 from shutil import rmtree
 from sqlite3 import Connection
-from typing import Callable
+import typing as t
 
 from .page import generate_complete_html as generate_index
 
 
 data = Path(__file__).parent/"data"
 
-Generator = Callable[[Path], None]
+Generator = t.Callable[[Path], None]
 
 
 class OutputDirectory:

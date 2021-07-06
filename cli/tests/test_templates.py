@@ -1,16 +1,15 @@
-# type: ignore
 """Test templates.py."""
 
 from slipbox.templates import Elem, render
 
 
-def test_render_text():
+def test_render_text() -> None:
     """String must render as itself."""
     text = "text"
     assert render(text) == text
 
 
-def test_render_element():
+def test_render_element() -> None:
     """Element must render with children and attributes."""
     elem = Elem("a", "link", href="#")
     assert render(elem) == """<a href='#'>
@@ -18,7 +17,7 @@ def test_render_element():
 </a>"""
 
 
-def test_render_nested():
+def test_render_nested() -> None:
     """Nested element must render with proper indentation."""
     elem = Elem("p", Elem("a", "link", href="#"))
     assert render(elem) == """<p>
@@ -28,7 +27,7 @@ def test_render_nested():
 </p>"""
 
 
-def test_render_no_attributes():
+def test_render_no_attributes() -> None:
     """Element with no attributes must have no space after tag."""
     elem = Elem("p", "text")
     assert render(elem) == """<p>

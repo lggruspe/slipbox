@@ -1,6 +1,6 @@
-# type: ignore
 """Test check.py."""
 
+from pathlib import Path
 import pytest
 
 from slipbox.check import (
@@ -12,7 +12,7 @@ from slipbox.utils import check_requirements
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_invalid_links(sbox, test_md):
+def test_invalid_links(sbox: Slipbox, test_md: Path) -> None:
     """invalid_links must return note and invalid ID."""
     test_md.write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
     sbox.process([test_md])
@@ -21,7 +21,7 @@ def test_invalid_links(sbox, test_md):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_isolated_notes(sbox, test_md):
+def test_isolated_notes(sbox: Slipbox, test_md: Path) -> None:
     """isolated_notes must return untagged notes only."""
     test_md.write_text("""# 0 Foo
 
@@ -39,7 +39,9 @@ def test_isolated_notes(sbox, test_md):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_unsourced_notes_empty_bibliography(sbox, test_md):
+def test_unsourced_notes_empty_bibliography(sbox: Slipbox,
+                                            test_md: Path,
+                                            ) -> None:
     """unsourced_notes must be empty if there is no bibliography."""
     test_md.write_text("# 0 Test\n\nTest.\n")
     sbox.process([test_md])
@@ -48,7 +50,7 @@ def test_unsourced_notes_empty_bibliography(sbox, test_md):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_unsourced_notes(sbox, test_md, test_bib):
+def test_unsourced_notes(sbox: Slipbox, test_md: Path, test_bib: Path) -> None:
     """unsourced_notes must include every note that has no citation."""
     config = sbox.config
     config["slipbox"]["content_options"] += " --bibliography " + \
@@ -71,7 +73,9 @@ Bar.
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_check_notes_empty(capsys, tmp_path):
+def test_check_notes_empty(capsys: pytest.CaptureFixture[str],
+                           tmp_path: Path,
+                           ) -> None:
     """check_notes must not output anything if there are no errors.
 
     The result must be True (no errors).
@@ -86,7 +90,11 @@ def test_check_notes_empty(capsys, tmp_path):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_check_notes(sbox, capsys, tmp_path, test_md):
+def test_check_notes(sbox: Slipbox,
+                     capsys: pytest.CaptureFixture[str],
+                     tmp_path: Path,
+                     test_md: Path,
+                     ) -> None:
     """check_notes must output to stdout.
 
     The result must be False (has errors).

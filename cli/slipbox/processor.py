@@ -10,7 +10,7 @@ from hashlib import sha256
 from pathlib import Path
 from sqlite3 import Connection
 import sys
-from typing import Any, Sequence
+import typing as t
 
 from . import utils
 from .batch import Batch
@@ -84,7 +84,7 @@ METADATA_TEMPLATES = {
 }
 
 
-def render_metadata(template: str, **fields: Any) -> str:
+def render_metadata(template: str, **fields: t.Any) -> str:
     """Render metadata code block using template."""
     body = '\n'.join(
         f"{k}={v}"
@@ -109,7 +109,7 @@ def preprocess(template: str, *sources: Path, basedir: Path) -> str:
 
 def store_html(conn: Connection,
                html: str,
-               sources: Sequence[Path]) -> None:
+               sources: t.Sequence[Path]) -> None:
     """Insert HTML sections into Notes table."""
     if not html.strip() or not sources:
         return

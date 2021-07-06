@@ -2,7 +2,7 @@
 
 from pathlib import Path
 import sys
-from typing import Optional, Sequence
+import typing as t
 
 from . import check
 from .initializer import DotSlipbox, default_config
@@ -40,11 +40,11 @@ def check_notes() -> None:
             sys.exit(65)
 
 
-def initialize(directory: Optional[str] = None,
+def initialize(directory: t.Optional[str] = None,
                /,
-               content_options: Optional[str] = None,
-               document_options: Optional[str] = None,
-               output_directory: Optional[str] = None,
+               content_options: t.Optional[str] = None,
+               document_options: t.Optional[str] = None,
+               output_directory: t.Optional[str] = None,
                title: str = "Slipbox") -> None:
     """Initialize notes directory."""
     parent = Path(directory) if directory else Path()
@@ -65,7 +65,7 @@ def initialize(directory: Optional[str] = None,
     print(f"Initialized .slipbox in {parent.resolve()!s}.")
 
 
-def has_gaps(sequence: Sequence[int]) -> bool:
+def has_gaps(sequence: t.Sequence[int]) -> bool:
     """Check if sequence has gaps.
 
     Assume sequence is an increasing sequence of non-negative integers with no
@@ -74,7 +74,7 @@ def has_gaps(sequence: Sequence[int]) -> bool:
     return bool(sequence) and (sequence[-1] - sequence[0] >= len(sequence))
 
 
-def find_available_id(sequence: Sequence[int]) -> int:
+def find_available_id(sequence: t.Sequence[int]) -> int:
     """Return smallest non-negative integer not in the sequence."""
     if not sequence or sequence[0] > 0:
         return 0
@@ -91,7 +91,7 @@ def find_available_id(sequence: Sequence[int]) -> int:
     return sequence[0] + 1
 
 
-def new_note(note_format: Optional[str] = None, /) -> None:
+def new_note(note_format: t.Optional[str] = None, /) -> None:
     """Get smallest available note ID for new note."""
     with Slipbox(DotSlipbox.locate()) as slipbox:
         rows = slipbox.conn.execute("SELECT id FROM Notes ORDER BY (id)")

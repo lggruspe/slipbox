@@ -1,13 +1,13 @@
 """Check slipbox notes."""
 
-from typing import Iterator, Tuple
+import typing as t
 from .slipbox import Slipbox
 from .utils import print_sequence
 
-_Note = Tuple[int, str, str]
+_Note = t.Tuple[int, str, str]
 
 
-def invalid_links(slipbox: Slipbox) -> Iterator[Tuple[_Note, int]]:
+def invalid_links(slipbox: Slipbox) -> t.Iterator[t.Tuple[_Note, int]]:
     """Generate notes that link to invalid ID."""
     sql = """
         SELECT DISTINCT id, title, filename, dest
@@ -21,7 +21,7 @@ def invalid_links(slipbox: Slipbox) -> Iterator[Tuple[_Note, int]]:
         yield (nid, title, filename), dest
 
 
-def isolated_notes(slipbox: Slipbox) -> Iterator[_Note]:
+def isolated_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
     """Generate isolated notes (untagged)."""
     yield from slipbox.conn.execute("""
         SELECT DISTINCT id, title, filename FROM Notes
@@ -31,7 +31,7 @@ def isolated_notes(slipbox: Slipbox) -> Iterator[_Note]:
     """)
 
 
-def unsourced_notes(slipbox: Slipbox) -> Iterator[_Note]:
+def unsourced_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
     """Generate notes that need citations (only if there's a bibliography)."""
     if "--bibliography" in slipbox.config["slipbox"]["content_options"]:
         yield from slipbox.conn.execute("""
@@ -50,7 +50,7 @@ def check_notes(slipbox: Slipbox) -> bool:
     def format_note(note: _Note) -> str:
         return f"  {note[0]}. {note[1]} in {note[2]!r}."
 
-    def format_link(link: Tuple[_Note, int]) -> str:
+    def format_link(link: t.Tuple[_Note, int]) -> str:
         return f"  {link[0][0]}. {link[0][1]} in {link[0][2]!r} -> {link[1]}."
 
     _invalid_links = invalid_links(slipbox)

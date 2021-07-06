@@ -1,7 +1,8 @@
-# type: ignore
 """Test page.py."""
 
+from pathlib import Path
 from os.path import join
+import sqlite3
 
 import pytest
 from slipbox import page
@@ -25,13 +26,13 @@ SQL = """
 """
 
 
-def test_data_path():
+def test_data_path() -> None:
     """Check if path is constructed correctly."""
     path = page.data_path("app.js")
     assert join("data", "app.js") in str(path)
 
 
-def test_data_shell_path():
+def test_data_shell_path() -> None:
     """Check if path is constructed and escaped correctly."""
     path = page.data_shell_path("app.js")
     assert join("data", "app.js") in str(path)
@@ -41,7 +42,7 @@ def test_data_shell_path():
     assert join("data", "front end.js") + "'" in path
 
 
-def test_create_bibliography(mock_db):
+def test_create_bibliography(mock_db: sqlite3.Connection) -> None:
     """Check create_bibliography output."""
     conn = mock_db
     conn.executescript(SQL)
@@ -57,7 +58,7 @@ def test_create_bibliography(mock_db):
 """
 
 
-def test_create_tags(mock_db):
+def test_create_tags(mock_db: sqlite3.Connection) -> None:
     """Check create_tags output."""
     conn = mock_db
     conn.executescript(SQL)
@@ -83,7 +84,7 @@ def test_create_tags(mock_db):
 </section>"""
 
 
-def test_create_tag_page(mock_db):
+def test_create_tag_page(mock_db: sqlite3.Connection) -> None:
     """Check create_tag_page output."""
     conn = mock_db
     conn.executescript(SQL)
@@ -99,7 +100,7 @@ def test_create_tag_page(mock_db):
 </section>"""
 
 
-def test_create_reference_page(mock_db):
+def test_create_reference_page(mock_db: sqlite3.Connection) -> None:
     """Check create_reference_page output."""
     conn = mock_db
     conn.executescript(SQL)
@@ -118,7 +119,9 @@ def test_create_reference_page(mock_db):
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
-def test_generate_complete_html(mock_db, tmp_path):
+def test_generate_complete_html(mock_db: sqlite3.Connection,
+                                tmp_path: Path,
+                                ) -> None:
     """Sanity check."""
     options = ""
     page.generate_complete_html(mock_db, options, tmp_path)

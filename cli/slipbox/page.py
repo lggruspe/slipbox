@@ -4,7 +4,7 @@ from pathlib import Path
 import shlex
 from sqlite3 import Connection
 import subprocess
-from typing import Iterable
+import typing as t
 
 from .templates import Elem, render, render_template
 from .utils import pandoc, temporary_directory
@@ -34,13 +34,13 @@ def data_shell_path(filename: str) -> str:
     return shlex.quote(str(data_path(filename)))
 
 
-def generate_active_htmls(conn: Connection) -> Iterable[str]:
+def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
     """Get HTML stored in the database for active sections."""
     sql = "SELECT html FROM Notes WHERE html IS NOT NULL ORDER BY id ASC"
     return (html.strip() for html, in conn.execute(sql))
 
 
-def generate_data(conn: Connection) -> Iterable[str]:
+def generate_data(conn: Connection) -> t.Iterable[str]:
     """Generate slipbox data in javascript."""
     yield "for(const sec of document.querySelectorAll('section.slipbox-note'))"
     yield "{"
@@ -52,7 +52,7 @@ def generate_data(conn: Connection) -> Iterable[str]:
         yield f"window.slipbox.addLink({str(src)!r}, {str(dest)!r}, {tag})"
 
 
-def generate_javascript(conn: Connection) -> Iterable[str]:
+def generate_javascript(conn: Connection) -> t.Iterable[str]:
     """Generate slipbox javascript code."""
     yield '<script type="module" src="app.js" defer></script>'
     yield '<script>'

@@ -1,6 +1,6 @@
-# type: ignore
 """Test utils.py."""
 
+from pathlib import Path
 import shlex
 import shutil
 
@@ -9,7 +9,7 @@ import pytest
 from slipbox import utils
 
 
-def test_temporary_directory():
+def test_temporary_directory() -> None:
     """temporary_directory gets deleted when the context manager exits."""
     with utils.temporary_directory() as temp:
         path = temp
@@ -19,7 +19,9 @@ def test_temporary_directory():
 
 
 @pytest.mark.skipif(not shutil.which("grep"), reason="requires grep")
-def test_run_command(tmp_path, capsys):
+def test_run_command(tmp_path: Path,
+                     capsys: pytest.CaptureFixture[str],
+                     ) -> None:
     """run_command must return returncode and capture stdout and stderr."""
     first = tmp_path/"first.txt"
     second = tmp_path/"second.txt"
@@ -46,7 +48,7 @@ def test_run_command(tmp_path, capsys):
 
 
 @pytest.mark.skipif(not shutil.which("env"), reason="requires env")
-def test_run_command_with_kwargs(capsys):
+def test_run_command_with_kwargs(capsys: pytest.CaptureFixture[str]) -> None:
     """Keyword arguments to run_command must be used as environment variables.
     """
     retcode = utils.run_command("env", dict(ZZZZZZZZZZ="ZZZZZZZZZZ"))
@@ -56,7 +58,7 @@ def test_run_command_with_kwargs(capsys):
     assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in stdout
 
 
-def test_print_sequence_empty(capsys):
+def test_print_sequence_empty(capsys: pytest.CaptureFixture[str]) -> None:
     """print_sequence must not print anything if sequence is empty.
 
     The result must be False (empty).
@@ -67,7 +69,7 @@ def test_print_sequence_empty(capsys):
     assert not stderr
 
 
-def test_print_sequence_not_empty(capsys):
+def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
     """print_sequence must print header if sequence is not empty.
 
     The result must be True (non-empty)."""

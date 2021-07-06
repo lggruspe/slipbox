@@ -1,11 +1,11 @@
-# type: ignore
 """Test initializer.py."""
 
+from pathlib import Path
 import pytest
 from slipbox.initializer import DotSlipbox
 
 
-def test_initialize(tmp_path):
+def test_initialize(tmp_path: Path) -> None:
     """Must initialize .slipbox in the parent directory."""
     dot = DotSlipbox(tmp_path).path
     assert dot.is_dir()
@@ -14,7 +14,7 @@ def test_initialize(tmp_path):
     assert dot.joinpath("patterns").is_file()
 
 
-def test_dot_slipbox_locate(tmp_path):
+def test_dot_slipbox_locate(tmp_path: Path) -> None:
     """find_dot_slipbox must look for .slipbox in parent directories."""
     with pytest.raises(Exception):
         DotSlipbox.locate(tmp_path)
@@ -36,7 +36,7 @@ def test_dot_slipbox_locate(tmp_path):
         DotSlipbox.locate(tmp_path)
 
 
-def test_dot_slipbox_patterns(tmp_path):
+def test_dot_slipbox_patterns(tmp_path: Path) -> None:
     """Test patterns property."""
     dot = DotSlipbox(tmp_path)
     patterns = sorted(dot.patterns)

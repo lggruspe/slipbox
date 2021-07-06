@@ -1,12 +1,13 @@
 """Parses sections in ephemeral pandoc output."""
 
 from html.parser import HTMLParser
-from typing import Callable, List, Optional, Tuple
-
-Attrs = List[Tuple[str, Optional[str]]]
+import typing as t
 
 
-def note_id(tag: str, attrs: Attrs) -> Optional[int]:
+Attrs = t.List[t.Tuple[str, t.Optional[str]]]
+
+
+def note_id(tag: str, attrs: Attrs) -> t.Optional[int]:
     """Return section as int if it's in the list of attributes."""
     if tag == "section" and attrs:
         id_ = dict(attrs).get("id") or ""
@@ -18,7 +19,7 @@ def note_id(tag: str, attrs: Attrs) -> Optional[int]:
 class SectionParser(HTMLParser):
     """Parses sections in ephemeral pandoc output."""
 
-    Callback = Callable[["SectionParser"], None]
+    Callback = t.Callable[["SectionParser"], None]
 
     def __init__(self, callback: Callback):
         HTMLParser.__init__(self, convert_charrefs=False)

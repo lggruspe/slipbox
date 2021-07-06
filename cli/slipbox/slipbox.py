@@ -2,7 +2,7 @@
 
 from hashlib import sha256
 from pathlib import Path
-from typing import Dict, Iterable
+import typing as t
 
 from . import generator, scan
 from .batch import group_by_file_extension
@@ -32,14 +32,14 @@ class Slipbox:
     def __exit__(self, exc_type, exc_value, traceback) -> None:  # type: ignore
         self.close()
 
-    def find_new_notes(self, paths: Iterable[Path]) -> Iterable[Path]:
+    def find_new_notes(self, paths: t.Iterable[Path]) -> t.Iterable[Path]:
         """Yield files that are not yet in the database."""
         is_present = scan.is_file_in_db
         for path in paths:
             if not is_present(path.relative_to(self.basedir), self.conn):
                 yield path
 
-    def find_notes(self) -> Dict[Path, str]:
+    def find_notes(self) -> t.Dict[Path, str]:
         """Find notes in root with corresponding hash."""
         digests = {}
         root = self.basedir
@@ -49,7 +49,7 @@ class Slipbox:
                 digests[path] = sha256(path.read_bytes()).hexdigest()
         return digests
 
-    def purge(self) -> Dict[Path, str]:
+    def purge(self) -> t.Dict[Path, str]:
         """Purge outdated/missing files and sections from the database.
 
         Also returns all notes found.
@@ -68,7 +68,7 @@ class Slipbox:
         self.conn.commit()
         return digests
 
-    def process(self, paths: Iterable[Path]) -> None:
+    def process(self, paths: t.Iterable[Path]) -> None:
         """Process input files."""
         inputs = list(paths)
         for batch in group_by_file_extension(inputs):

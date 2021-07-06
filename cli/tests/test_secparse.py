@@ -1,10 +1,9 @@
-# type: ignore
 """Test secparse.py."""
 
-from slipbox.secparse import note_id, parse_sections
+from slipbox.secparse import SectionParser, note_id, parse_sections
 
 
-def test_note_id():
+def test_note_id() -> None:
     """Test note_id on different inputs.."""
     assert note_id("div", [("id", "1")]) is None
     assert note_id("section", [("id", None)]) is None
@@ -12,7 +11,7 @@ def test_note_id():
     assert note_id("section", [("id", "42")]) == 42
 
 
-def test_parse_sections():
+def test_parse_sections() -> None:
     """Test parse_sections."""
     section1 = '<section id="1">&gt;<!--comment--><hr /></section>'
     section2 = '<section id="2"><section>&#x3E;</section></section>'
@@ -20,7 +19,7 @@ def test_parse_sections():
 
     result = []
 
-    def callback(this):
+    def callback(this: SectionParser) -> None:
         result.append((this.id_, this.section.strip()))
     parse_sections(test_html, callback)
 

@@ -6,7 +6,7 @@ Also includes functions for building HTML elements.
 from pathlib import Path
 from string import Template as StringTemplate
 from textwrap import indent
-from typing import Any, Union
+import typing as t
 
 
 class Template(StringTemplate):
@@ -16,12 +16,12 @@ class Template(StringTemplate):
         """Load template from file."""
         return Template(path.read_text())
 
-    def render(self, **kwargs: Any) -> str:
+    def render(self, **kwargs: t.Any) -> str:
         """Substitute template variables."""
         return self.safe_substitute(**kwargs)
 
 
-def render_template(path: Union[str, Path], **kwargs: Any) -> str:
+def render_template(path: t.Union[str, Path], **kwargs: t.Any) -> str:
     """Render template from templates directory."""
     basedir = Path(__file__).parent/"templates"
     template = Template.load(basedir/path)
@@ -32,14 +32,14 @@ class Elem:
     """Represents an HTML element."""
     def __init__(self,
                  tag: str,
-                 *children: Union[str, "Elem"],
-                 **attributes: Any):
+                 *children: t.Union[str, "Elem"],
+                 **attributes: t.Any):
         self.tag = tag
         self.children = list(children)
         self.attributes = attributes.copy()
 
 
-def render(elem: Union[str, Elem], prefix: str = "") -> str:
+def render(elem: t.Union[str, Elem], prefix: str = "") -> str:
     """Render HTML from Elem or str."""
     if isinstance(elem, str):
         return prefix + elem
