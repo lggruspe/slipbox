@@ -45,7 +45,7 @@ class Slipbox:
         root = self.basedir
         patterns = self.dot.patterns
         for path in root.rglob('*'):
-            if path.is_file() and scan.has_valid_pattern(path, patterns, root):
+            if path.is_file() and any(path.match(pat) for pat in patterns):
                 digests[path] = sha256(path.read_bytes()).hexdigest()
         return digests
 
