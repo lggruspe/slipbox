@@ -66,11 +66,10 @@ class ImagesGenerator:
 
     def run(self, out: Path) -> None:
         """Copy images into output directory."""
-        images = out/"images"
-        images.mkdir()
+        (out/"images").mkdir()
         sql = "SELECT filename, binary FROM Images"
         for filename, binary in self.con.execute(sql):
-            image = images/filename
+            image = out/filename
             image.write_bytes(binary)
 
 

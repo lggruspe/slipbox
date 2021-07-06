@@ -83,7 +83,7 @@ def process_images(conn: Connection, path: Path) -> None:
         reader = csv.reader(file)
         for row in reader:
             filename = row[0]
-            image = basedir/"images"/filename
+            image = basedir/filename
             binary: bytes = b""
             try:
                 binary = image.read_bytes()

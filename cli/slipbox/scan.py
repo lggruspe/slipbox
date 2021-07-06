@@ -26,7 +26,7 @@ def build_command(input_: Path,
     lua_filter = shlex.quote(str((data/"filter.lua").resolve()))
     cmd = f"{utils.pandoc()} {options} -L{lua_filter} --section-divs " \
         f" -Mlink-citations:true " \
-        "--resource-path {} -o {} --extract-media=images".format(
+        "--resource-path {} -o {} --extract-media=''".format(
             shlex.quote(str(basedir.resolve())),
             shlex.quote(output),
         )
