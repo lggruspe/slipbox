@@ -36,26 +36,3 @@ def test_show_info_stdout(tmp_path: Path,
     stdout, stderr = capsys.readouterr()
     assert stdout
     assert not stderr
-
-
-def test_has_gaps() -> None:
-    """has_gaps should check if input has gaps."""
-    assert not app.has_gaps([])
-    assert not app.has_gaps([1])
-    assert not app.has_gaps([2, 3])
-    assert not app.has_gaps([4, 5, 6])
-
-    assert app.has_gaps([7, 9])
-    assert app.has_gaps([0, 2])
-
-
-def test_find_available_id() -> None:
-    """It should return smallest non-negative integer not in the input."""
-    find = app.find_available_id
-    assert find([]) == 0
-    assert find([0]) == 1
-    assert find([1]) == 0
-    assert find(list(range(1, 10))) == 0
-    assert find(list(range(10))) == 10
-    assert find([0, 2]) == 1
-    assert find([0, 1, 3]) == 2

@@ -1,4 +1,4 @@
-"""Test check.py."""
+"""Test tools/check.py."""
 
 from pathlib import Path
 import pytest
