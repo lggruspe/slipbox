@@ -3,12 +3,34 @@
 from pathlib import Path
 import pytest
 
-from slipbox.check import (
-    check_notes, invalid_links, isolated_notes, unsourced_notes
-)
+from slipbox.tools import check
 from slipbox.initializer import DotSlipbox
 from slipbox.slipbox import Slipbox
 from slipbox.utils import check_requirements
+
+
+def test_print_sequence_empty(capsys: pytest.CaptureFixture[str]) -> None:
+    """print_sequence must not print anything if sequence is empty.
+
+    The result must be False (empty).
+    """
+    assert not check.print_sequence("error", [])
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+
+def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
+    """print_sequence must print header if sequence is not empty.
+
+    The result must be True (non-empty)."""
+    assert check.print_sequence("hello", ["world", "!"])
+    stdout, stderr = capsys.readouterr()
+    assert stdout
+    assert "hello" in stdout
+    assert "world" in stdout
+    assert "!" in stdout
+    assert not stderr
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
@@ -16,7 +38,7 @@ def test_invalid_links(sbox: Slipbox, test_md: Path) -> None:
     """invalid_links must return note and invalid ID."""
     test_md.write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
     sbox.process([test_md])
-    result = list(invalid_links(sbox))
+    result = list(check.invalid_links(sbox))
     assert result == [((0, "Test", "test.md"), 1)]
 
 
@@ -34,7 +56,7 @@ def test_isolated_notes(sbox: Slipbox, test_md: Path) -> None:
 # 2 Baz
 """)
     sbox.process([test_md])
-    result = list(isolated_notes(sbox))
+    result = list(check.isolated_notes(sbox))
     assert result == [(2, "Baz", "test.md")]
 
 
@@ -45,7 +67,7 @@ def test_unsourced_notes_empty_bibliography(sbox: Slipbox,
     """unsourced_notes must be empty if there is no bibliography."""
     test_md.write_text("# 0 Test\n\nTest.\n")
     sbox.process([test_md])
-    result = list(unsourced_notes(sbox))
+    result = list(check.unsourced_notes(sbox))
     assert not result
 
 
@@ -68,7 +90,7 @@ Bar.
 [@test_2020]
 """)
     sbox.process([test_md])
-    result = list(unsourced_notes(sbox))
+    result = list(check.unsourced_notes(sbox))
     assert result == [(0, "Foo", "test.md")]
 
 
@@ -82,7 +104,7 @@ def test_check_notes_empty(capsys: pytest.CaptureFixture[str],
     """
     dot = DotSlipbox(tmp_path)
     with Slipbox(dot) as slipbox:
-        is_ok = check_notes(slipbox)
+        is_ok = check.check_notes(slipbox)
         assert is_ok
         stdout, stderr = capsys.readouterr()
         assert not stdout
@@ -103,7 +125,7 @@ def test_check_notes(sbox: Slipbox,
     sbox.process([test_md])
     dot = DotSlipbox(tmp_path)
     with Slipbox(dot) as slipbox:
-        is_ok = check_notes(slipbox)
+        is_ok = check.check_notes(slipbox)
         assert not is_ok
         stdout, stderr = capsys.readouterr()
         assert stdout

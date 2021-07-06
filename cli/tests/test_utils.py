@@ -56,27 +56,3 @@ def test_run_command_with_kwargs(capsys: pytest.CaptureFixture[str]) -> None:
     assert not stderr
     assert not retcode
     assert "ZZZZZZZZZZ=ZZZZZZZZZZ" in stdout
-
-
-def test_print_sequence_empty(capsys: pytest.CaptureFixture[str]) -> None:
-    """print_sequence must not print anything if sequence is empty.
-
-    The result must be False (empty).
-    """
-    assert not utils.print_sequence("error", [])
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert not stderr
-
-
-def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
-    """print_sequence must print header if sequence is not empty.
-
-    The result must be True (non-empty)."""
-    assert utils.print_sequence("hello", ["world", "!"])
-    stdout, stderr = capsys.readouterr()
-    assert stdout
-    assert "hello" in stdout
-    assert "world" in stdout
-    assert "!" in stdout
-    assert not stderr

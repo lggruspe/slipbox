@@ -4,9 +4,9 @@ from pathlib import Path
 import sys
 import typing as t
 
-from . import check
 from .initializer import DotSlipbox, default_config
 from .slipbox import Slipbox
+from .tools import check
 
 
 def show_info(slipbox: Slipbox, note_id: int) -> None:

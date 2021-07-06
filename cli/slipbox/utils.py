@@ -62,19 +62,3 @@ def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
         )
         for p in files
     ))
-
-
-def print_sequence(header: str, sequence: t.Iterable[str]) -> bool:
-    """Print header and sequence of items if sequence is not empty.
-
-    Return bool to indicate that sequence is non-empty.
-    """
-    empty = True
-    for item in sequence:
-        if empty:
-            empty = False
-            print(header)
-        print(item)
-    if not empty:
-        print()
-    return not empty

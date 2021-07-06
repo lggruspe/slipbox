@@ -1,10 +1,25 @@
 """Check slipbox notes."""
 
 import typing as t
-from .slipbox import Slipbox
-from .utils import print_sequence
+from ..slipbox import Slipbox
 
 _Note = t.Tuple[int, str, str]
+
+
+def print_sequence(header: str, sequence: t.Iterable[str]) -> bool:
+    """Print header and sequence of items if sequence is not empty.
+
+    Return bool to indicate that sequence is non-empty.
+    """
+    empty = True
+    for item in sequence:
+        if empty:
+            empty = False
+            print(header)
+        print(item)
+    if not empty:
+        print()
+    return not empty
 
 
 def invalid_links(slipbox: Slipbox) -> t.Iterator[t.Tuple[_Note, int]]:
