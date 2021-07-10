@@ -40,29 +40,6 @@ def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
     return (html.strip() for html, in conn.execute(sql))
 
 
-def generate_data(conn: Connection) -> t.Iterable[str]:
-    """Generate slipbox data in javascript."""
-    yield "for(const sec of document.querySelectorAll('section.slipbox-note'))"
-    yield "{"
-    yield "  window.slipbox.addNote(sec.id)"
-    yield "}"
-    sql = "SELECT src, dest, tag FROM ValidLinks ORDER BY src, dest, tag"
-    for src, dest, tag in conn.execute(sql):
-        tag = "null" if not tag else repr(tag)
-        yield f"window.slipbox.addLink({str(src)!r}, {str(dest)!r}, {tag})"
-
-
-def generate_javascript(conn: Connection) -> t.Iterable[str]:
-    """Generate slipbox javascript code."""
-    yield '<script type="module" src="app.js" defer></script>'
-    yield '<script>'
-    yield "window.addEventListener('DOMContentLoaded', () => {"
-    yield from generate_data(conn)
-    yield "window.initSlipbox()"
-    yield "})"
-    yield "</script>"
-
-
 def create_bibliography(conn: Connection) -> str:
     """Create bibliography HTML section from database entries."""
     sql = "SELECT key, text FROM Bibliography ORDER BY key"
@@ -170,7 +147,7 @@ def generate_complete_html(conn: Connection,
         extra = tempdir/"extra.html"
         dummy = tempdir/"Slipbox.md"
         dummy.write_text(render_dummy(title), encoding="utf-8")
-        script.write_text('\n'.join(generate_javascript(conn)),
+        script.write_text('<script type="module" src="app.js"></script>',
                           encoding="utf-8")
         html.write_text('\n'.join(generate_active_htmls(conn)),
                         encoding="utf-8")

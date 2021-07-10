@@ -20,7 +20,7 @@ init:
 
 # Run JS tests.
 check-js:
-	cd js; npm run lint; npm test
+	cd js; npm run lint && npm test
 
 # Run lua tests.
 check-lua:
