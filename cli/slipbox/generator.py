@@ -1,10 +1,17 @@
 """Generate site in output directory."""
 
+import json
 from pathlib import Path
 from shutil import rmtree
 from sqlite3 import Connection
 import typing as t
 
+from .graph import (  # type: ignore
+    create_graph,
+    create_graph_data,
+    get_cluster,
+    get_components,
+)
 from .page import generate_complete_html as generate_index
 
 
@@ -73,14 +80,43 @@ class ImagesGenerator:
             image.write_bytes(binary)
 
 
+class CytoscapeDataGenerator:
+    """Generate JSONs for cytoscape.js."""
+    def __init__(self, con: Connection):
+        self.con = con
+        self.graph = create_graph(con)
+
+    def write(self, path: Path, graph: t.Any, layout: str = "fdp") -> None:  # noqa; # pylint: disable=no-self-use
+        """Write graph JSON data to path."""
+        path.write_text(json.dumps(create_graph_data(graph, layout)))
+
+    def run(self, out: Path) -> None:
+        """Generate JSONs for cytoscape.js in out/graph."""
+        (out/"graph").mkdir()
+        self.write(out/"graph"/"data.json", self.graph)
+
+        (out/"graph"/"tag").mkdir()
+        for tag, in self.con.execute("SELECT DISTINCT tag FROM Tags"):
+            path = out/"graph"/"tag"/f"{tag[1:]}.json"
+            self.write(path, get_cluster(self.graph, tag), "dot")
+
+        (out/"graph"/"note").mkdir()
+        for component, subgraph in get_components(self.graph).items():
+            graph_data = create_graph_data(subgraph, "dot")
+            for note_id in component:
+                path = out/"graph"/"note"/f"{note_id}.json"
+                path.write_text(json.dumps(graph_data))
+
+
 def main(con: Connection,
          options: str,
          out: Path,
          title: str = "Slipbox") -> None:
     """Generate all files."""
     OutputDirectory(out).generate(
-        IndexGenerator(con, options, title).run,
+        CytoscapeDataGenerator(con).run,
         ImagesGenerator(con).run,
-        generate_js,
+        IndexGenerator(con, options, title).run,
         generate_css,
+        generate_js,
     )
