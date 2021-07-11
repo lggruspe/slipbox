@@ -1,15 +1,10 @@
-:root {
-  --body-width: 760px;
-  --side-width: 300px;
-}
-
 html {
   font-family: sans-serif;
   line-height: 1.5;
 }
 
-body {
-  max-width: var(--body-width);
+main {
+  max-width: 760px;
   margin: 0 auto;
   padding: 1em;
 }
@@ -30,7 +25,7 @@ img {
 
 .sidebar {
   box-sizing: border-box;
-  width: var(--side-width);
+  width: 300px;
   padding: 1em;
 }
 

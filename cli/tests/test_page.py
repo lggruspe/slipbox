@@ -32,16 +32,6 @@ def test_data_path() -> None:
     assert join("data", "app.js") in str(path)
 
 
-def test_data_shell_path() -> None:
-    """Check if path is constructed and escaped correctly."""
-    path = page.data_shell_path("app.js")
-    assert join("data", "app.js") in str(path)
-
-    path = page.data_shell_path("front end.js")
-    assert path[0] == "'"
-    assert join("data", "front end.js") + "'" in path
-
-
 def test_create_bibliography(mock_db: sqlite3.Connection) -> None:
     """Check create_bibliography output."""
     conn = mock_db

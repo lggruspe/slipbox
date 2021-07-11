@@ -29,11 +29,6 @@ def data_path(filename: str) -> Path:
     return Path(__file__).parent/"data"/filename
 
 
-def data_shell_path(filename: str) -> str:
-    """Return shell-escaped filename in data directory."""
-    return shlex.quote(str(data_path(filename)))
-
-
 def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
     """Get HTML stored in the database for active sections."""
     sql = "SELECT html FROM Notes WHERE html IS NOT NULL ORDER BY id ASC"
@@ -152,28 +147,27 @@ def generate_complete_html(conn: Connection,
                            title: str = "Slipbox") -> None:
     """Create final HTML file with javascript."""
     with temporary_directory() as tempdir:
-        (tempdir/"nav.html").write_text(render_template("nav.html",
-                                                        title=title))
-        script = tempdir/"script.js"
-        html = tempdir/"cached.html"
-        extra = tempdir/"extra.html"
-        dummy = tempdir/"Slipbox.md"
-        dummy.write_text(render_dummy(title), encoding="utf-8")
-        script.write_text('\n'.join(generate_header()), encoding="utf-8")
-        html.write_text('\n'.join(generate_active_htmls(conn)),
-                        encoding="utf-8")
-        with open(extra, "w", encoding="utf-8") as file:
+        header = tempdir/"header.txt"
+        header.write_text('\n'.join(generate_header()), encoding="utf-8")
+
+        with open(tempdir/"after.txt", "a", encoding="utf-8") as file:
+            print(render_template("nav.html", title=title), file=file)
+            print("<main>", file=file)
+            print('\n'.join(generate_active_htmls(conn)), file=file)
             print(create_tag_pages(conn), file=file)
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-        cmd = """{pandoc} Slipbox.md -Hscript.js --metadata title:{title} -Anav.html
-                -Acached.html -Aextra.html -A{search} --section-divs {opts}
-                -o {output} -c style.css
+            print(data_path("search.html").read_text(), file=file)
+            print("</main>", file=file)
+
+        dummy = tempdir/"Slipbox.md"
+        dummy.write_text(render_dummy(title), encoding="utf-8")
+        cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
+                --section-divs {opts} -o {output} -c style.css
             """.format(
             pandoc=pandoc(),
             title=shlex.quote(title),
             opts=options,
-            output=out/"index.html",
-            search=data_shell_path("search.html"))
+            output=out/"index.html")
         subprocess.run(shlex.split(cmd), check=False, cwd=tempdir)
