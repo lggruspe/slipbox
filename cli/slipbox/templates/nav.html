@@ -1,27 +1,78 @@
-<label id="primary-label" for="primary-checkbox">≡</label>
-<input id="primary-checkbox" type="checkbox" checked>
-<nav id="primary" class="sidebar">
-  <header>
-    <h1 class="title"><a href="" class="plain-link">$title</a></h1>
-  </header>
-  <!--
-  <div class="dark-mode-switch">
-    <input type="checkbox" id="js-dark-mode-switch">
-  </div>
-  -->
-  <div class="search-box">
-    <span>⌕</span>
-    <input class="transparent search-input" type="search">
-  </div>
-  <div class="nav-items">
-    <a href="#" class="nav-item plain-link">Home</a>
-    <a href="#tags" class="nav-item plain-link">Tags</a>
-    <a href="#references" class="nav-item plain-link">References</a>
-  </div>
-  <br>
-  <br>
-  <div class="nav-items">
-    <a href="#review/" class="nav-item plain-link">Review</a>
-  </div>
+<nav>
+  <sl-tooltip>
+    <div slot="content">
+      Home
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-home"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip content="Tags">
+    <div slot="content">
+      Tags
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-tag"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip content="Graph">
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-network-chart"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip>
+    <div slot="content">
+      Flashcards
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-carousel"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip>
+    <div slot="content">
+      References
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-library"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip content="Search">
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-search"></sl-icon-button>
+  </sl-tooltip>
+
+  <sl-dialog id="slipbox-search-dialog">
+    <sl-input size="small" pill slot="label" placeholder="Search notes" clearable>
+      <sl-icon slot="prefix" name="bx-search" library="boxicons"></sl-icon>
+    </sl-input>
+  </sl-dialog>
+
+  <script type="module">
+import { registerIconLibrary } from 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/shoelace.js'
+
+registerIconLibrary('boxicons', {
+  resolver: name => {
+    let folder = 'regular'
+    if (name.substring(0, 4) === 'bxs-') folder = 'solid'
+    if (name.substring(0, 4) === 'bxl-') folder = 'logos'
+    return `https://cdn.jsdelivr.net/npm/boxicons@2.0.7/svg/${folder}/${name}.svg`
+  },
+  mutator: svg => svg.setAttribute('fill', 'currentColor')
+})
+
+  document.querySelector('sl-icon-button[name="bx-home"]').addEventListener('click', () => {
+    window.location = '#'
+  })
+
+  document.querySelector('sl-icon-button[name="bx-tag"]').addEventListener('click', () => {
+    window.location = '#tags'
+  })
+
+  document.querySelector('sl-icon-button[name="bx-library"]').addEventListener('click', () => {
+    window.location = '#references'
+  })
+
+  document.querySelector('sl-icon-button[name="bx-carousel"]').addEventListener('click', () => {
+    window.location = '#review/'
+  })
+
+  const searchDialog = document.querySelector('#slipbox-search-dialog')
+  document.querySelector('sl-icon-button[name="bx-search"]').addEventListener('click', () => {
+    searchDialog.show()
+  })
+  </script>
 </nav>
 <nav id="secondary" class="sidebar"></nav>

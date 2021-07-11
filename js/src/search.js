@@ -50,7 +50,7 @@ class Search {
   }
 
   render (container) {
-    container.input.addEventListener('change', () => {
+    container.input.addEventListener('sl-change', () => {
       window.location.hash = '#search'
       const results = this.index.search(container.input.value)
       container.results.textContent = ''
@@ -68,6 +68,6 @@ module.exports.init = function init () {
   const sections = Array.from(document.getElementsByClassName('slipbox-note'))
   new Search(sections).render({
     results: document.querySelector('#search > .search-results'),
-    input: document.querySelector('#primary .search-input')
+    input: document.querySelector('#slipbox-search-dialog sl-input')
   })
 }

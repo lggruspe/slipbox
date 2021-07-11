@@ -134,6 +134,18 @@ def create_reference_pages(conn: Connection) -> str:
     return '\n'.join(create_reference_page(conn, ref) for ref in references)
 
 
+def generate_header() -> t.Iterable[str]:
+    """Generate stuff to put in HTML header."""
+    yield '<link rel="stylesheet"' \
+        'href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace' \
+        '@2.0.0-beta.46/dist/themes/base.css">'
+    yield '<script type="module"' \
+        'src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace' \
+        '@2.0.0-beta.46/dist/shoelace.js">' \
+        '</script>'
+    yield '<script type="module" src="app.js"></script>'
+
+
 def generate_complete_html(conn: Connection,
                            options: str,
                            out: Path,
@@ -147,8 +159,7 @@ def generate_complete_html(conn: Connection,
         extra = tempdir/"extra.html"
         dummy = tempdir/"Slipbox.md"
         dummy.write_text(render_dummy(title), encoding="utf-8")
-        script.write_text('<script type="module" src="app.js"></script>',
-                          encoding="utf-8")
+        script.write_text('\n'.join(generate_header()), encoding="utf-8")
         html.write_text('\n'.join(generate_active_htmls(conn)),
                         encoding="utf-8")
         with open(extra, "w", encoding="utf-8") as file:
