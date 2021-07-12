@@ -34,10 +34,12 @@
     <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-search"></sl-icon-button>
   </sl-tooltip>
 
-  <sl-dialog id="slipbox-search-dialog">
+  <sl-dialog id="slipbox-search-dialog" style="--body-spacing: 0 1em;">
     <sl-input size="small" pill slot="label" placeholder="Search notes" clearable>
+      <a href="https://lunrjs.com/guides/searching.html" target="_blank" slot="help-text">Search help</a>
       <sl-icon slot="prefix" name="bx-search" library="boxicons"></sl-icon>
     </sl-input>
+    <div class="slipbox-search-dialog-results"></div>
   </sl-dialog>
 
   <sl-dialog id="slipbox-graph-dialog" label="Zettelkasten graph" style="--width: 100%;">

@@ -1,7 +1,6 @@
 """Test page.py."""
 
 from pathlib import Path
-from os.path import join
 import sqlite3
 
 import pytest
@@ -24,12 +23,6 @@ SQL = """
     INSERT INTO Citations (note, reference) VALUES
         (0, 'ref-test');
 """
-
-
-def test_data_path() -> None:
-    """Check if path is constructed correctly."""
-    path = page.data_path("app.js")
-    assert join("data", "app.js") in str(path)
 
 
 def test_create_bibliography(mock_db: sqlite3.Connection) -> None:

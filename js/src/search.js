@@ -15,15 +15,11 @@ function extractSummary (section) {
   const fragment = document.createDocumentFragment()
   fragment.appendChild(title)
 
-  const _title = title.textContent
-  let count = 3
-  for (const child of section.children) {
-    if (count-- <= 0) break
-    const clone = child.cloneNode(true)
-    if (clone.tagName === 'H1' && clone.textContent === _title) {
-      continue
-    }
-    fragment.appendChild(clone)
+  const p = section.querySelector('p')
+  if (p) {
+    const textCopy = document.createElement('p')
+    textCopy.textContent = p.textContent
+    fragment.appendChild(textCopy)
   }
   return fragment
 }
@@ -33,41 +29,41 @@ function createResultFromSection (section) {
   if (!summary) return null
 
   const div = document.createElement('div')
-  div.classList.add('search-result')
   div.appendChild(summary)
   return div
 }
 
-class Search {
-  constructor (sections, options = null) {
-    this.index = lunr(function () {
-      this.ref('id')
-      this.field('textContent')
-      sections.forEach(function (sec) {
-        this.add(sec)
-      }, this)
-    })
-  }
-
-  render (container) {
-    container.input.addEventListener('sl-change', () => {
-      window.location.hash = '#search'
-      const results = this.index.search(container.input.value)
-      container.results.textContent = ''
-      for (const result of results) {
-        const element = createResultFromSection(document.getElementById(result.ref))
-        if (element) container.results.appendChild(element)
-        container.results.appendChild(document.createElement('hr'))
-        // TODO style .search-result border instead of adding hr
-      }
-    })
-  }
-}
-
-module.exports.init = function init () {
-  const sections = Array.from(document.getElementsByClassName('slipbox-note'))
-  new Search(sections).render({
-    results: document.querySelector('#search > .search-results'),
-    input: document.querySelector('#slipbox-search-dialog sl-input')
+function createSearchIndex (sections) {
+  return lunr(function () {
+    this.ref('id')
+    this.field('textContent')
+    sections.forEach(function (sec) {
+      this.add(sec)
+    }, this)
   })
 }
+
+function init () {
+  const sections = Array.from(document.getElementsByClassName('slipbox-note'))
+  const index = createSearchIndex(sections)
+
+  const dialog = document.querySelector('#slipbox-search-dialog')
+  const input = dialog.querySelector('sl-input')
+  const resultsContainer = dialog.querySelector('.slipbox-search-dialog-results')
+
+  input.addEventListener('sl-input', () => {
+    try {
+      const results = input.value === '' ? [] : index.search(input.value)
+      resultsContainer.textContent = ''
+      for (const result of results) {
+        const element = createResultFromSection(document.getElementById(result.ref))
+        if (element) resultsContainer.appendChild(element)
+        resultsContainer.appendChild(document.createElement('br'))
+      }
+    } catch (e) {
+      // ignore uncaught error when typing ~
+    }
+  })
+}
+
+module.exports = { init }

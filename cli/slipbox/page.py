@@ -24,11 +24,6 @@ $\,$
 """
 
 
-def data_path(filename: str) -> Path:
-    """Return path in data directory."""
-    return Path(__file__).parent/"data"/filename
-
-
 def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
     """Get HTML stored in the database for active sections."""
     sql = "SELECT html FROM Notes WHERE html IS NOT NULL ORDER BY id ASC"
@@ -158,7 +153,6 @@ def generate_complete_html(conn: Connection,
             print(create_tags(conn), file=file)
             print(create_reference_pages(conn), file=file)
             print(create_bibliography(conn), file=file)
-            print(data_path("search.html").read_text(), file=file)
             print("</main>", file=file)
 
         dummy = tempdir/"Slipbox.md"
