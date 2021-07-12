@@ -1,16 +1,13 @@
 const List = require('./list.js')
 const Search = require('./search.js')
 const { SlipboxCollection } = require('./slipbox.js')
+const { fetchJson } = require('./utils.js')
 
 const cytoscape = require('cytoscape')
 const { Router } = require('@lggruspe/fragment-router')
 const review = require('./review.js')
 const graph = require('./graph.js')
-
-async function fetchJson (url) {
-  const response = await fetch(url)
-  return response.json()
-}
+const graph2 = require('./graph2.js')
 
 window.slipbox = new SlipboxCollection()
 
@@ -38,6 +35,7 @@ function initSlipbox () {
       Search.init()
 
       graph.init()
+      graph2.init()
 
       router.listen()
       dispatchEvent(new CustomEvent('fragment-router'))
