@@ -39,7 +39,7 @@ function createCytoscape (container, data, selectCallback) {
 
 function getGraphDataUrl () {
   const hash = window.location.hash.slice(1)
-  if (hash === '') return 'graph/data.json'
+  if (!hash) return 'graph/data.json'
   if (hash.startsWith('tags/')) return `graph/tag/${hash.slice(5)}.json`
   if (Number.isInteger(Number(hash))) return `graph/note/${hash}.json`
   return 'graph/data.json'

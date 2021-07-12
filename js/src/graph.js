@@ -1,5 +1,4 @@
 const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
-const { isHome } = require('./filters.js')
 const cytoscape = require('cytoscape')
 
 const router = new Router()
@@ -105,7 +104,7 @@ function renderGraph (elements, layout = 'breadthfirst') {
 }
 
 router.route(
-  check(isHome),
+  check(req => req.id === ''),
   req => {
     const elements = window.slipbox.cy.elements()
       .filter(e => e.isNode() || e.data('source') !== e.data('target'))

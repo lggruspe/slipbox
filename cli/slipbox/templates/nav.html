@@ -18,10 +18,10 @@
   </sl-tooltip>
   <sl-tooltip>
     <div slot="content">
-      Flashcards
+      Random note
       <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
     </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-carousel"></sl-icon-button>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-shuffle"></sl-icon-button>
   </sl-tooltip>
   <sl-tooltip>
     <div slot="content">
@@ -71,10 +71,6 @@ registerIconLibrary('boxicons', {
 
   document.querySelector('sl-icon-button[name="bx-library"]').addEventListener('click', () => {
     window.location = '#references'
-  })
-
-  document.querySelector('sl-icon-button[name="bx-carousel"]').addEventListener('click', () => {
-    window.location = '#review/'
   })
 
   const searchDialog = document.querySelector('#slipbox-search-dialog')

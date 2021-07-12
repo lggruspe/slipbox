@@ -5,7 +5,7 @@ const { fetchJson } = require('./utils.js')
 
 const cytoscape = require('cytoscape')
 const { Router } = require('@lggruspe/fragment-router')
-const review = require('./review.js')
+const shuffle = require('./shuffle.js')
 const graph = require('./graph.js')
 const graph2 = require('./graph2.js')
 
@@ -25,7 +25,6 @@ function initSlipbox () {
     })
     .then(() => {
       const router = new Router()
-      router.mount('review/', review.router)
       router.mount('', graph.router)
 
       window.slipbox.colorEntrypoints()
@@ -36,6 +35,8 @@ function initSlipbox () {
 
       graph.init()
       graph2.init()
+
+      shuffle.init()
 
       router.listen()
       dispatchEvent(new CustomEvent('fragment-router'))
