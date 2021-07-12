@@ -1,15 +1,16 @@
 const lunr = require('lunr')
 
-function extractTitle (section) {
-  // Or create clone of h1?
+/// Takes callback that gets invoked when title gets clicked.
+function extractTitle (section, callback) {
   const title = section?.querySelector('h1')?.textContent
   const h3 = document.createElement('h3')
   h3.innerHTML = `<a href="#${section.id}">${title}</a>`
+  if (callback) h3.querySelector('a').onclick = callback
   return title ? h3 : null
 }
 
-function extractSummary (section) {
-  const title = extractTitle(section)
+function extractSummary (section, callback) {
+  const title = extractTitle(section, callback)
   if (!title) return null
 
   const fragment = document.createDocumentFragment()
@@ -24,8 +25,8 @@ function extractSummary (section) {
   return fragment
 }
 
-function createResultFromSection (section) {
-  const summary = extractSummary(section)
+function createResultFromSection (section, callback) {
+  const summary = extractSummary(section, callback)
   if (!summary) return null
 
   const div = document.createElement('div')
@@ -56,7 +57,10 @@ function init () {
       const results = input.value === '' ? [] : index.search(input.value)
       resultsContainer.textContent = ''
       for (const result of results) {
-        const element = createResultFromSection(document.getElementById(result.ref))
+        const element = createResultFromSection(
+          document.getElementById(result.ref),
+          () => dialog.hide()
+        )
         if (element) resultsContainer.appendChild(element)
         resultsContainer.appendChild(document.createElement('br'))
       }
