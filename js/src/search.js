@@ -68,6 +68,11 @@ function init () {
       // ignore uncaught error when typing ~
     }
   })
+
+  dialog.addEventListener('sl-initial-focus', event => {
+    event.preventDefault()
+    input.focus({ preventScroll: true })
+  })
 }
 
 module.exports = { init }
