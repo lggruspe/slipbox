@@ -66,7 +66,12 @@ async function connectGraphDialogAndButton (button, dialog) {
       }
     )
 
-    const id = window.location.hash
+    let id = window.location.hash
+    if (id === '' || id === '#' || !Number.isInteger(Number(id.slice(1)))) {
+      const roots = cy.nodes().roots()
+      const index = Math.floor(Math.random() * roots.length)
+      id = `#${roots[index].data('id')}`
+    }
     const node = cy.$(id)
     node.select()
     cy.center(node)
