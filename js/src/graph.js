@@ -1,127 +1,92 @@
-const { check, DomWriter, Router } = require('@lggruspe/fragment-router')
 const cytoscape = require('cytoscape')
+const { fetchJson } = require('./utils.js')
 
-const router = new Router()
-const writer = new DomWriter(router)
-const secondaryWriter = new DomWriter(router)
-
-function createGraphArea () {
-  const div = document.createElement('div')
-  div.classList.add('slipbox-graph-cytoscape')
-  return div
-}
-
-function createInfoArea () {
-  const div = document.createElement('div')
-  div.classList.add('slipbox-graph-info')
-  div.innerHTML = `
-    <h3><a href=""></a></h3>
-    <p></p>
-  `
-  return div
-}
-
-function createPageCytoscape (container, infoContainer) {
+function createCytoscape (container, data, selectCallback) {
   const cy = cytoscape({
     container,
-    selectionType: 'additive',
     style: [
+      {
+        selector: 'node:selected',
+        style: {
+          'background-color': '#9333ea'
+        }
+      },
       {
         selector: 'node',
         style: {
-          label: 'data(label)',
-          height: '2em',
-          width: '2em',
-          shape: 'round-rectangle',
-          color: 'black',
-          'background-color': 'data(bgColor)',
+          label: 'data(title)',
           'text-wrap': 'wrap',
-          'text-max-width': 100
+          'text-max-width': 120
         }
       },
       {
         selector: 'edge',
         style: {
-          width: 2,
           'curve-style': 'bezier',
-          'line-color': 'black',
-          'line-style': 'solid',
-          'target-arrow-color': 'black',
           'target-arrow-shape': 'triangle'
         }
       }
-    ]
+    ],
+    layout: {
+      name: 'preset'
+    },
+    ...data
   })
-  const a = infoContainer.querySelector('.slipbox-graph-info a')
-  const p = infoContainer.querySelector('.slipbox-graph-info p')
-  cy.on('select', 'node', event => {
-    const id = event.target.data('id')
-    a.textContent = event.target.data('title')
-    a.href = '#' + id
-    p.textContent = event.target.data('filename')
-    event.target.data('label', id)
-  })
-  cy.on('unselect', 'node', event => {
-    a.textContent = ''
-    p.textContent = ''
-    event.target.data('label', event.target.data('title'))
-  })
+
+  if (selectCallback) cy.on('select', 'node', selectCallback)
   return cy
 }
 
-function changePageCytoscapeLayout (cy, layout = 'breadthfirst') {
-  if (layout === 'cose') {
-    cy.layout({
-      name: 'cose',
-      nodeDimensionsIncludeLabels: true,
-      numIter: 300,
-      fit: true
-    }).run()
-  } else {
-    cy.layout({
-      name: 'breadthfirst',
-      spacingFactor: 1.0,
-      fit: true,
-      directed: true,
-      avoidOverlap: true,
-      nodeDimensionsIncludeLabels: true
-    }).run()
-  }
+function getGraphDataUrl () {
+  const hash = window.location.hash.slice(1)
+  if (!hash) return 'graph/data.json'
+  if (hash.startsWith('tags/')) return `graph/tag/${hash.slice(5)}.json`
+  if (Number.isInteger(Number(hash))) return `graph/note/${hash}.json`
+  return 'graph/data.json'
 }
 
-function renderGraph (elements, layout = 'breadthfirst') {
-  const graphContainer = createGraphArea()
-  const infoContainer = createInfoArea()
-  writer.render(graphContainer)
-  secondaryWriter.render(infoContainer)
-  router.onExit(() => {
-    writer.restore()
-    secondaryWriter.restore()
-  })
-  const cy = createPageCytoscape(graphContainer, infoContainer)
-  cy.add(elements)
-  changePageCytoscapeLayout(cy, layout)
-}
+async function connectGraphDialogAndButton (button, dialog) {
+  button.addEventListener('click', async () => {
+    dialog.show()
 
-router.route(
-  check(req => req.id === ''),
-  req => {
-    const elements = window.slipbox.cy.elements()
-      .filter(e => e.isNode() || e.data('source') !== e.data('target'))
-    if (elements.length >= 2) {
-      const layout = elements.nodes().length > 30 ? 'cose' : 'breadthfirst'
-      router.defer(() => renderGraph(elements, layout))
+    const container = dialog.querySelector('div')
+    const cy = await createCytoscape(
+      container,
+      await fetchJson(getGraphDataUrl()),
+      event => {
+        const { title, id } = event.target.data()
+        const span = document.createElement('span')
+        span.innerHTML = `${title} [<a href="#${id}">${id}</a>]`
+        dialog.label = span
+
+        span.querySelector('a').onclick = () => {
+          dialog.hide()
+          return window.location.hash.slice(1) !== id
+        }
+      }
+    )
+
+    let id = window.location.hash
+    if (id === '' || id === '#' || !Number.isInteger(Number(id.slice(1)))) {
+      const roots = cy.nodes().roots()
+      const index = Math.floor(Math.random() * roots.length)
+      id = `#${roots[index].data('id')}`
     }
-  }
-)
-
-router.route(() => writer.restore())
+    const node = cy.$(id)
+    node.select()
+    cy.center(node)
+    cy.zoom({
+      level: 1,
+      renderedPosition: node.renderedPosition()
+    })
+  })
+}
 
 function init () {
-  const container = document.createElement('div')
-  document.body.appendChild(container)
-  writer.options.container = container
-  secondaryWriter.options.container = document.getElementById('secondary')
+  connectGraphDialogAndButton(
+    document.querySelector('sl-icon-button[name="bx-network-chart"]'),
+    document.querySelector('#slipbox-graph-dialog')
+  )
 }
 
-module.exports = { router, init }
+module.exports = { init }

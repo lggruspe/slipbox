@@ -61,9 +61,8 @@ def generate_js(out: Path) -> None:
 
 
 def generate_css(out: Path) -> None:
-    """Generates CSS files: style.css and base.css."""
+    """Generates style.css"""
     copy(data/"style.css", out/"style.css")
-    copy(data/"base.css", out/"base.css")
 
 
 class ImagesGenerator:

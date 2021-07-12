@@ -24,6 +24,13 @@ $\,$
 """
 
 
+def create_home_page(conn: Connection, title: str) -> str:
+    """Create home page HTML section containing a list of all notes."""
+    notes = list(conn.execute("SELECT id FROM Notes"))
+    items = '\n'.join(render(Elem("li", value=str(nid))) for nid, in notes)
+    return render_template("home.html", title=title, items=items)
+
+
 def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
     """Get HTML stored in the database for active sections."""
     sql = "SELECT html FROM Notes WHERE html IS NOT NULL ORDER BY id ASC"
@@ -148,6 +155,7 @@ def generate_complete_html(conn: Connection,
         with open(tempdir/"after.txt", "a", encoding="utf-8") as file:
             print(render_template("nav.html", title=title), file=file)
             print("<main>", file=file)
+            print(create_home_page(conn, title), file=file)
             print('\n'.join(generate_active_htmls(conn)), file=file)
             print(create_tag_pages(conn), file=file)
             print(create_tags(conn), file=file)

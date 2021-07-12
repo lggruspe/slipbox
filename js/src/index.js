@@ -4,10 +4,9 @@ const { SlipboxCollection } = require('./slipbox.js')
 const { fetchJson } = require('./utils.js')
 
 const cytoscape = require('cytoscape')
-const { Router } = require('@lggruspe/fragment-router')
-const shuffle = require('./shuffle.js')
 const graph = require('./graph.js')
-const graph2 = require('./graph2.js')
+const home = require('./home.js')
+const shuffle = require('./shuffle.js')
 
 window.slipbox = new SlipboxCollection()
 
@@ -24,23 +23,15 @@ function initSlipbox () {
       }
     })
     .then(() => {
-      const router = new Router()
-      router.mount('', graph.router)
-
       window.slipbox.colorEntrypoints()
       const title = document.getElementById('title-block-header')
       if (title) { title.remove() }
       List.init()
       Search.init()
-
       graph.init()
-      graph2.init()
-
       shuffle.init()
-
-      router.listen()
-      dispatchEvent(new CustomEvent('fragment-router'))
     })
 }
 
 window.addEventListener('DOMContentLoaded', initSlipbox)
+home.init()
