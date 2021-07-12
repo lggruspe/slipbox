@@ -37,6 +37,14 @@ function createCytoscape (container, data, selectCallback) {
   return cy
 }
 
+function getGraphDataUrl () {
+  const hash = window.location.hash.slice(1)
+  if (hash === '') return 'graph/data.json'
+  if (hash.startsWith('tags/')) return `graph/tag/${hash.slice(5)}.json`
+  if (Number.isInteger(Number(hash))) return `graph/note/${hash}.json`
+  return 'graph/data.json'
+}
+
 async function connectGraphDialogAndButton (button, dialog) {
   button.addEventListener('click', async () => {
     dialog.show()
@@ -44,7 +52,7 @@ async function connectGraphDialogAndButton (button, dialog) {
     const container = dialog.querySelector('div')
     const cy = await createCytoscape(
       container,
-      await fetchJson('graph/data.json'),
+      await fetchJson(getGraphDataUrl()),
       event => {
         const { title, id } = event.target.data()
         const span = document.createElement('span')
