@@ -93,7 +93,8 @@ class CytoscapeDataGenerator:
     def run(self, out: Path) -> None:
         """Generate JSONs for cytoscape.js in out/graph."""
         (out/"graph").mkdir()
-        self.write(out/"graph"/"data.json", self.graph)
+        layout = "dot" if self.graph.order() < 100 else "fdp"
+        self.write(out/"graph"/"data.json", self.graph, layout)
 
         (out/"graph"/"tag").mkdir()
         for tag, in self.con.execute("SELECT DISTINCT tag FROM Tags"):

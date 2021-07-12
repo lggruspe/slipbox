@@ -28,7 +28,7 @@ def get_cluster(graph, tag):
 
 def get_components(graph):
     """Get notes connected to note_id."""
-    components = nx.algorithms.connected_components(graph.to_undirected())
+    components = nx.algorithms.weakly_connected_components(graph)
     return {tuple(c): graph.subgraph(c) for c in components}
 
 
