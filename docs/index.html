@@ -81,47 +81,9 @@
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
-  <script type="module" src="app.js" defer></script>
-  <script>
-  window.addEventListener('DOMContentLoaded', () => {
-  for(const sec of document.querySelectorAll('section.slipbox-note'))
-  {
-    window.slipbox.addNote(sec.id)
-  }
-  window.slipbox.addLink('0', '0', '#getting-started')
-  window.slipbox.addLink('0', '1', '#getting-started')
-  window.slipbox.addLink('1', '1', '#getting-started')
-  window.slipbox.addLink('1', '2', '#getting-started')
-  window.slipbox.addLink('2', '2', '#dot-slipbox')
-  window.slipbox.addLink('2', '2', '#view-notes')
-  window.slipbox.addLink('2', '2', '#writing-notes')
-  window.slipbox.addLink('2', '3', '#writing-notes')
-  window.slipbox.addLink('2', '8', '#view-notes')
-  window.slipbox.addLink('2', '10', '#dot-slipbox')
-  window.slipbox.addLink('3', '3', '#writing-notes')
-  window.slipbox.addLink('3', '4', '#writing-notes')
-  window.slipbox.addLink('3', '7', '#writing-notes')
-  window.slipbox.addLink('4', '4', '#connecting-notes')
-  window.slipbox.addLink('4', '4', '#writing-notes')
-  window.slipbox.addLink('4', '5', '#writing-notes')
-  window.slipbox.addLink('4', '6', null)
-  window.slipbox.addLink('4', '6', '#connecting-notes')
-  window.slipbox.addLink('4', '100', null)
-  window.slipbox.addLink('6', '6', '#hashtags')
-  window.slipbox.addLink('6', '6', '#not')
-  window.slipbox.addLink('6', '6', '#tag')
-  window.slipbox.addLink('6', '100', '#tag')
-  window.slipbox.addLink('6', '101', '#tag')
-  window.slipbox.addLink('6', '102', '#not')
-  window.slipbox.addLink('8', '8', '#view-notes')
-  window.slipbox.addLink('8', '9', '#view-notes')
-  window.slipbox.addLink('8', '12', '#view-notes')
-  window.slipbox.addLink('10', '10', '#dot-slipbox')
-  window.slipbox.addLink('10', '11', '#dot-slipbox')
-  window.slipbox.addLink('12', '6', null)
-  window.initSlipbox()
-  })
-  </script>
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/themes/base.css">
+  <script type="module"src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/shoelace.js"></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
 <header id="title-block-header">
@@ -131,33 +93,111 @@
 <p><span class="math inline"> </span></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
 </div>
-<label id="primary-label" for="primary-checkbox">≡</label>
-<input id="primary-checkbox" type="checkbox" checked>
-<nav id="primary" class="sidebar">
-  <header>
-    <h1 class="title"><a href="" class="plain-link">Slipbox</a></h1>
-  </header>
-  <!--
-  <div class="dark-mode-switch">
-    <input type="checkbox" id="js-dark-mode-switch">
-  </div>
-  -->
-  <div class="search-box">
-    <span>⌕</span>
-    <input class="transparent search-input" type="search">
-  </div>
-  <div class="nav-items">
-    <a href="#" class="nav-item plain-link">Home</a>
-    <a href="#tags" class="nav-item plain-link">Tags</a>
-    <a href="#references" class="nav-item plain-link">References</a>
-  </div>
-  <br>
-  <br>
-  <div class="nav-items">
-    <a href="#review/" class="nav-item plain-link">Review</a>
-  </div>
+<nav>
+  <sl-tooltip>
+    <div slot="content">
+      Home
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-home"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip content="Tags">
+    <div slot="content">
+      Tags
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-tag"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip content="Graph">
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-network-chart"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip>
+    <div slot="content">
+      Random note
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-shuffle"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip>
+    <div slot="content">
+      References
+      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
+    </div>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-library"></sl-icon-button>
+  </sl-tooltip>
+  <sl-tooltip content="Search">
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-search"></sl-icon-button>
+  </sl-tooltip>
+
+  <sl-dialog id="slipbox-search-dialog" style="--body-spacing: 0 1em;">
+    <sl-input size="small" pill slot="label" placeholder="Search notes" clearable>
+      <a href="https://lunrjs.com/guides/searching.html" target="_blank" slot="help-text">Search help</a>
+      <sl-icon slot="prefix" name="bx-search" library="boxicons"></sl-icon>
+    </sl-input>
+    <div class="slipbox-search-dialog-results"></div>
+  </sl-dialog>
+
+  <sl-dialog id="slipbox-graph-dialog" label="Zettelkasten graph" style="--width: 100%;">
+    <div style="height: 100vh; margin: 0; padding: 0;">
+      <hr style="color: transparent; font-size: 1px;" />
+    </div>
+  </sl-dialog>
+
+  <script type="module">
+import { registerIconLibrary } from 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/shoelace.js'
+
+registerIconLibrary('boxicons', {
+  resolver: name => {
+    let folder = 'regular'
+    if (name.substring(0, 4) === 'bxs-') folder = 'solid'
+    if (name.substring(0, 4) === 'bxl-') folder = 'logos'
+    return `https://cdn.jsdelivr.net/npm/boxicons@2.0.7/svg/${folder}/${name}.svg`
+  },
+  mutator: svg => svg.setAttribute('fill', 'currentColor')
+})
+
+  document.querySelector('sl-icon-button[name="bx-home"]').addEventListener('click', () => {
+    window.location = '#home'
+  })
+
+  document.querySelector('sl-icon-button[name="bx-tag"]').addEventListener('click', () => {
+    window.location = '#tags'
+  })
+
+  document.querySelector('sl-icon-button[name="bx-library"]').addEventListener('click', () => {
+    window.location = '#references'
+  })
+
+  const searchDialog = document.querySelector('#slipbox-search-dialog')
+  document.querySelector('sl-icon-button[name="bx-search"]').addEventListener('click', () => {
+    searchDialog.show()
+  })
+  </script>
 </nav>
-<nav id="secondary" class="sidebar"></nav>
+
+<main>
+<section id="home" class="level1" title="Home">
+<h1>Slipbox</h1>
+<ol class="slipbox-list">
+<li value='0'></li>
+<li value='1'></li>
+<li value='2'></li>
+<li value='3'></li>
+<li value='4'></li>
+<li value='5'></li>
+<li value='6'></li>
+<li value='7'></li>
+<li value='8'></li>
+<li value='9'></li>
+<li value='10'></li>
+<li value='11'></li>
+<li value='12'></li>
+<li value='100'></li>
+<li value='101'></li>
+<li value='102'></li>
+</ol>
+</section>
+
 <section id="0" class="level1 slipbox-note" data-filename="index.md" title="What is slipbox?">
 <h1>What is slipbox?</h1>
 <p>slipbox is a static site generator for Zettelkasten notes.</p>
@@ -241,7 +281,7 @@
 <section id="5" class="level1 slipbox-note" data-filename="index.md" title="How to link to images?">
 <h1>How to link to images?</h1>
 <figure>
-<img src="images/69edee39d8acbbb605eb5116c46c3a2eb6b2429f.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
+<img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
 </figure>
 </section>
 <section id="6" class="level1 slipbox-note" data-filename="index.md" title="What are contextual tags?">
@@ -489,8 +529,6 @@ content_options = --bibliography example.bib --citeproc</code></pre>
 </dl>
 </section>
 
-<section id="search" title="Search" class="level1">
-  <div class="search-results"></div>
-</section>
+</main>
 </body>
 </html>
