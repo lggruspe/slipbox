@@ -22,19 +22,19 @@ def show_info(slipbox: Slipbox, note_id: int) -> None:
 
 
 def show_info_wrapper(note_id: str) -> None:
-    """Show information about note."""
+    """Show note info."""
     with Slipbox(DotSlipbox.locate()) as slipbox:
         return show_info(slipbox, int(note_id))
 
 
 def main() -> None:
-    """Compile notes into static page."""
+    """Build website."""
     with Slipbox(DotSlipbox.locate()) as slipbox:
         slipbox.run()
 
 
 def check_notes() -> None:
-    """Check notes in slipbox for invalid links and isolated notes."""
+    """Check for isolated notes and invalid links."""
     with Slipbox(DotSlipbox.locate()) as slipbox:
         if not check.check_notes(slipbox):
             sys.exit(65)

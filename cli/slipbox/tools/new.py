@@ -26,7 +26,7 @@ def take(count: int, items: t.Iterable[t.Any]) -> t.Iterator[t.Any]:
 
 
 def new_note(note_format: t.Optional[str] = None, count: int = 1) -> None:
-    """Get smallest available note ID for new note."""
+    """Get unused note IDs."""
     with Slipbox(DotSlipbox.locate()) as slipbox:
         rows = slipbox.conn.execute("SELECT id FROM Notes ORDER BY (id)")
         ids = [row[0] for row in rows]
