@@ -18,16 +18,12 @@ Source: <https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md>
 
 # 1 How to install slipbox?
 
-Make sure you have pandoc and python installed.
-Your installation of Pandoc needs to have been compiled with
-pandoc-types 1.22.
+Make sure you have graphviz, pandoc and python installed.
+Your installation of Pandoc needs to be compiled with pandoc-types 1.22.
 
 ```bash
 # Install slipbox.
 pip install slipbox
-
-# (Optional) Install genanki to generate Anki flashcards from your notes.
-pip install genanki
 ```
 
 ---
@@ -71,16 +67,12 @@ slipbox -h
 
 # 3 How to write notes?
 
-slipbox supports many formats: markdown, RST, LaTeX, dokuwiki,
+Slipbox supports many formats: markdown, RST, LaTeX, dokuwiki,
 Org-mode, txt2tags, Textile and MediaWiki.
 
-In these formats, a "note" is just a section that begins with a level 1
-header contains a unique ID (number) and a non-empty title.
-
-Your notes don't have to be in separate files.
+A "note" is just a section that begins with a level 1 header.
+The header must contain an ID (number) and a title.
 You can put any number of notes in one file.
-
-Run `slipbox new` to get the next available note ID.
 
 ---
 
@@ -99,40 +91,38 @@ Ex: [link](#100) (`[link](#100)`).
 When you omit the link text, it just shows the target ID.
 Ex: [](#100) (`[](#100)`).
 
-In addition to direct links, slipbox also supports connecting notes
-using [contextual tags](#6).
+You can also connect notes by tagging them.
 
 ---
 
 **#writing-notes**
 
 - How to link to images? [](#5)
-
-**#connecting-notes**
-
-- What are contextual tags? [](#6)
+- How to tag notes? [](#6)
 
 
 
 # 5 How to link to images?
 
+```markdown
+![Example](images/example.png)
+```
+
 ![Example](images/example.png)
 
 
 
-# 6 What are contextual tags?
+# 6 How to tag notes?
 
-slipbox uses #hashtags to tag notes.
-You can click on the hashtag to see all the notes that have the same
-tag.
+Slipbox uses #hashtags to tag notes.
 
-The tags are called contextual, because they also apply to the links
-between the previous tag and the next tag.
+Note: more accurately, hashtags don't apply to notes but to links that
+appear after the tag.
 
 Ex: this #tag applies to [this link](#100) and [this link](#101),
 but #not to [this](#102).
 
-slipbox tags links contextually in order to cluster notes.
+Tagged links show up in the graph of tag pages.
 
 
 
@@ -150,8 +140,8 @@ Here's a sample config file.
 content_options = --bibliography example.bib --citeproc
 ```
 
-Clicking on a citation will open a page with all notes that cite the
-same reference.
+Click citation links to see the other notes that cite the same
+reference.
 
 
 
@@ -163,6 +153,8 @@ slipbox build
 
 # Go to the output directory (public/ by default, see .slipbox/config.cfg).
 python -m http.server
+
+# Go to localhost:8000 in your browser.
 ```
 
 ---
@@ -170,15 +162,15 @@ python -m http.server
 **#view-notes**
 
 - How to use text search? [](#9)
-- How to interpret the notes graph? [](#12)
 
 
 
 # 9 How to use text search?
 
-Slipbox provides text search using lunr.js.
+Click on the search icon at the top of the page and start typing.
+Slipbox uses lunr.js for text search.
 See the [lunr.js docs](https://lunrjs.com/guides/searching.html) to
-learn more about the syntax for complex queries.
+read more about its features.
 
 
 
@@ -201,27 +193,15 @@ The `.slipbox` directory contains
 # 11 What do the configuration options mean?
 
 `content_options`
-: Options that get passed to Pandoc to convert notes to HTML.
-: Use this if you want to apply custom filters or to enable citeproc.
+: Options that get passed to Pandoc to convert notes to HTML fragments.
+: Edit this if you want to apply custom filters or to enable citeproc.
 
 `document_options`
 : Options that get passed to Pandoc to compile all HTML sections into
-: one file.
-: Use this if you want to add HTML, JavaScript, CSS, etc. into the output.
+: one file. Edit this if you want to add HTML, JavaScript, CSS, etc.
 
 `output_directory`
 : Contains the generated site.
 
 `title`
 : Site title.
-
-
-
-# 12 How to interpret the notes graph?
-
-slipbox uses [Cytoscape.js](https://js.cytoscape.org/) to display note
-[clusters](#6).
-
--   Entrypoints are shown in blue.
--   The slipbox Cytoscape object can be accessed from the browser
-    console as `window.slipbox.cy` (for analysis).

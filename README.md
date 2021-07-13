@@ -13,8 +13,7 @@ Features
 
 -   Interactive graph of notes and links
 -   Static text search
--   Flashcards
--   Anki generator
+-   Extensible CLI
 -   Supports notes in markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags,
     Textile and MediaWiki formats
 
@@ -22,8 +21,8 @@ Requirements
 ------------
 
 - `pandoc` (should be compiled with `pandoc-types` 1.22)
-- `python3` (3.8+)
-- `genanki` (only needed to generate Anki cards)
+- `graphviz`
+- `python3` (3.6+)
 
 Installation and usage
 ----------------------
@@ -38,6 +37,11 @@ slipbox build
 
 See [docs-src/index.md](https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md)
 and <https://lggruspe.github.io/slipbox>.
+
+Plugins
+-------
+
+- <https://github.com/lggruspe/slipbox-cli-genanki>
 
 License
 -------

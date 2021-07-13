@@ -191,7 +191,6 @@ registerIconLibrary('boxicons', {
 <li value='9'></li>
 <li value='10'></li>
 <li value='11'></li>
-<li value='12'></li>
 <li value='100'></li>
 <li value='101'></li>
 <li value='102'></li>
@@ -212,12 +211,9 @@ registerIconLibrary('boxicons', {
 </section>
 <section id="1" class="level1 slipbox-note" data-filename="index.md" title="How to install slipbox?">
 <h1>How to install slipbox?</h1>
-<p>Make sure you have pandoc and python installed. Your installation of Pandoc needs to have been compiled with pandoc-types 1.22.</p>
+<p>Make sure you have graphviz, pandoc and python installed. Your installation of Pandoc needs to be compiled with pandoc-types 1.22.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) Install genanki to generate Anki flashcards from your notes.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install genanki</span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <hr />
 <p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
 <ul>
@@ -252,10 +248,8 @@ registerIconLibrary('boxicons', {
 </section>
 <section id="3" class="level1 slipbox-note" data-filename="index.md" title="How to write notes?">
 <h1>How to write notes?</h1>
-<p>slipbox supports many formats: markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags, Textile and MediaWiki.</p>
-<p>In these formats, a “note” is just a section that begins with a level 1 header contains a unique ID (number) and a non-empty title.</p>
-<p>Your notes don’t have to be in separate files. You can put any number of notes in one file.</p>
-<p>Run <code>slipbox new</code> to get the next available note ID.</p>
+<p>Slipbox supports many formats: markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags, Textile and MediaWiki.</p>
+<p>A “note” is just a section that begins with a level 1 header. The header must contain an ID (number) and a title. You can put any number of notes in one file.</p>
 <hr />
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
@@ -267,29 +261,27 @@ registerIconLibrary('boxicons', {
 <h1>How to link to other notes?</h1>
 <p>Use the note ID as the link target. Ex: <a href="#100">link</a> (<code>[link](#100)</code>).</p>
 <p>When you omit the link text, it just shows the target ID. Ex:  [<a href="#100">#100</a>] (<code>[](#100)</code>).</p>
-<p>In addition to direct links, slipbox also supports connecting notes using <a href="#6">contextual tags</a>.</p>
+<p>You can also connect notes by tagging them.</p>
 <hr />
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
 <li>How to link to images?  [<a href="#5">#5</a>]</li>
-</ul>
-<p><strong><a href="#tags/connecting-notes">#connecting-notes</a></strong></p>
-<ul>
-<li>What are contextual tags?  [<a href="#6">#6</a>]</li>
+<li>How to tag notes?  [<a href="#6">#6</a>]</li>
 </ul>
 </section>
 <section id="5" class="level1 slipbox-note" data-filename="index.md" title="How to link to images?">
 <h1>How to link to images?</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="al">![Example](images/example.png)</span></span></code></pre></div>
 <figure>
 <img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
 </figure>
 </section>
-<section id="6" class="level1 slipbox-note" data-filename="index.md" title="What are contextual tags?">
-<h1>What are contextual tags?</h1>
-<p>slipbox uses <a href="#tags/hashtags">#hashtags</a> to tag notes. You can click on the hashtag to see all the notes that have the same tag.</p>
-<p>The tags are called contextual, because they also apply to the links between the previous tag and the next tag.</p>
+<section id="6" class="level1 slipbox-note" data-filename="index.md" title="How to tag notes?">
+<h1>How to tag notes?</h1>
+<p>Slipbox uses <a href="#tags/hashtags">#hashtags</a> to tag notes.</p>
+<p>Note: more accurately, hashtags don’t apply to notes but to links that appear after the tag.</p>
 <p>Ex: this <a href="#tags/tag">#tag</a> applies to <a href="#100">this link</a> and <a href="#101">this link</a>, but <a href="#tags/not">#not</a> to <a href="#102">this</a>.</p>
-<p>slipbox tags links contextually in order to cluster notes.</p>
+<p>Tagged links show up in the graph of tag pages.</p>
 </section>
 <section id="7" class="level1 slipbox-note" data-filename="index.md" title="How to add citations?">
 <h1>How to add citations?</h1>
@@ -298,25 +290,26 @@ registerIconLibrary('boxicons', {
 <p>Here’s a sample config file.</p>
 <pre class="cfg"><code>[slipbox]
 content_options = --bibliography example.bib --citeproc</code></pre>
-<p>Clicking on a citation will open a page with all notes that cite the same reference.</p>
+<p>Click citation links to see the other notes that cite the same reference.</p>
 </section>
 <section id="8" class="level1 slipbox-note" data-filename="index.md" title="How to view the generated site?">
 <h1>How to view the generated site?</h1>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the site.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to the output directory (public/ by default, see .slipbox/config.cfg).</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> http.server</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the site.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to the output directory (public/ by default, see .slipbox/config.cfg).</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> http.server</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to localhost:8000 in your browser.</span></span></code></pre></div>
 <hr />
 <p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
 <ul>
 <li>How to use text search?  [<a href="#9">#9</a>]</li>
-<li>How to interpret the notes graph?  [<a href="#12">#12</a>]</li>
 </ul>
 </section>
 <section id="9" class="level1 slipbox-note" data-filename="index.md" title="How to use text search?">
 <h1>How to use text search?</h1>
-<p>Slipbox provides text search using lunr.js. See the <a href="https://lunrjs.com/guides/searching.html">lunr.js docs</a> to learn more about the syntax for complex queries.</p>
+<p>Click on the search icon at the top of the page and start typing. Slipbox uses lunr.js for text search. See the <a href="https://lunrjs.com/guides/searching.html">lunr.js docs</a> to read more about its features.</p>
 </section>
 <section id="10" class="level1 slipbox-note" data-filename="index.md" title="What does the .slipbox/ directory contain?">
 <h1>What does the <code>.slipbox/</code> directory contain?</h1>
@@ -336,16 +329,14 @@ content_options = --bibliography example.bib --citeproc</code></pre>
 <h1>What do the configuration options mean?</h1>
 <dl>
 <dt><code>content_options</code></dt>
-<dd>Options that get passed to Pandoc to convert notes to HTML.
+<dd>Options that get passed to Pandoc to convert notes to HTML fragments.
 </dd>
-<dd>Use this if you want to apply custom filters or to enable citeproc.
+<dd>Edit this if you want to apply custom filters or to enable citeproc.
 </dd>
 <dt><code>document_options</code></dt>
 <dd>Options that get passed to Pandoc to compile all HTML sections into
 </dd>
-<dd>one file.
-</dd>
-<dd>Use this if you want to add HTML, JavaScript, CSS, etc. into the output.
+<dd>one file. Edit this if you want to add HTML, JavaScript, CSS, etc.
 </dd>
 <dt><code>output_directory</code></dt>
 <dd>Contains the generated site.
@@ -354,14 +345,6 @@ content_options = --bibliography example.bib --citeproc</code></pre>
 <dd>Site title.
 </dd>
 </dl>
-</section>
-<section id="12" class="level1 slipbox-note" data-filename="index.md" title="How to interpret the notes graph?">
-<h1>How to interpret the notes graph?</h1>
-<p>slipbox uses <a href="https://js.cytoscape.org/">Cytoscape.js</a> to display note <a href="#6">clusters</a>.</p>
-<ul>
-<li>Entrypoints are shown in blue.</li>
-<li>The slipbox Cytoscape object can be accessed from the browser console as <code>window.slipbox.cy</code> (for analysis).</li>
-</ul>
 </section>
 <section id="100" class="level1 slipbox-note" data-filename="misc.md" title="Foo">
 <h1>Foo</h1>
@@ -374,15 +357,6 @@ content_options = --bibliography example.bib --citeproc</code></pre>
 <section id="102" class="level1 slipbox-note" data-filename="misc.md" title="Baz">
 <h1>Baz</h1>
 <p>Baz.</p>
-</section>
-<section id='tags/connecting-notes' title='#connecting-notes' class='level1'>
-  <h1>
-    #connecting-notes
-  </h1>
-  <ol class='slipbox-list'>
-    <li value='4'></li>
-    <li value='6'></li>
-  </ol>
 </section>
 <section id='tags/dot-slipbox' title='#dot-slipbox' class='level1'>
   <h1>
@@ -439,7 +413,6 @@ content_options = --bibliography example.bib --citeproc</code></pre>
     <li value='2'></li>
     <li value='8'></li>
     <li value='9'></li>
-    <li value='12'></li>
   </ol>
 </section>
 <section id='tags/writing-notes' title='#writing-notes' class='level1'>
@@ -451,6 +424,7 @@ content_options = --bibliography example.bib --citeproc</code></pre>
     <li value='3'></li>
     <li value='4'></li>
     <li value='5'></li>
+    <li value='6'></li>
     <li value='7'></li>
   </ol>
 </section>
@@ -459,12 +433,6 @@ content_options = --bibliography example.bib --citeproc</code></pre>
     Tags
   </h1>
   <ul>
-    <li>
-      <a href='#tags/connecting-notes'>
-        #connecting-notes
-      </a>
-       (2)
-    </li>
     <li>
       <a href='#tags/dot-slipbox'>
         #dot-slipbox
@@ -499,13 +467,13 @@ content_options = --bibliography example.bib --citeproc</code></pre>
       <a href='#tags/view-notes'>
         #view-notes
       </a>
-       (4)
+       (3)
     </li>
     <li>
       <a href='#tags/writing-notes'>
         #writing-notes
       </a>
-       (5)
+       (6)
     </li>
   </ul>
 </section>

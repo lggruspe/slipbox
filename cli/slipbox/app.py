@@ -41,7 +41,6 @@ def check_notes() -> None:
 
 
 def initialize(directory: t.Optional[str] = None,
-               /,
                content_options: t.Optional[str] = None,
                document_options: t.Optional[str] = None,
                output_directory: t.Optional[str] = None,

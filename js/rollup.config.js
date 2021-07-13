@@ -7,7 +7,7 @@ export default {
     exports: 'auto',
     file: 'dist/app.js',
     paths: {
-      cytoscape: 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.17.1/cytoscape.esm.min.js'
+      cytoscape: 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.19.0/cytoscape.esm.min.js'
     },
   },
   external: ['cytoscape'],
