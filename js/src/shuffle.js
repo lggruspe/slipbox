@@ -1,15 +1,10 @@
-const cytoscape = require('cytoscape')
-const { fetchJson } = require('./utils.js')
-
 function randomChoice (choices) {
   const index = Math.floor(Math.random() * choices.length)
   return choices[index]
 }
 
 /// Return note ID of random outgoer or root.
-async function shuffle () {
-  const cy = cytoscape({ headless: true, ...await fetchJson('graph/data.json') })
-
+function shuffle (cy) {
   const id = window.location.hash.slice(1)
   if (id && Number.isInteger(Number(id))) {
     const outgoers = cy.$(`#${id}`).outgoers().nodes()
@@ -21,11 +16,10 @@ async function shuffle () {
 }
 
 /// Register shuffle button callbacks.
-function init () {
-  const button = document.querySelector('sl-icon-button[name="bx-shuffle"]')
-  button.addEventListener('click', async () => {
-    window.location.hash = `#${await shuffle()}`
+function registerShuffleButton (cy, button) {
+  button.addEventListener('click', () => {
+    window.location.hash = `#${shuffle(cy)}`
   })
 }
 
-module.exports = { init }
+module.exports = { registerShuffleButton }

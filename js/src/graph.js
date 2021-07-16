@@ -45,12 +45,12 @@ function getGraphDataUrl () {
   return 'graph/data.json'
 }
 
-async function connectGraphDialogAndButton (button, dialog) {
+function connectGraphDialogAndButton (button, dialog) {
   button.addEventListener('click', async () => {
     dialog.show()
 
     const container = dialog.querySelector('div')
-    const cy = await createCytoscape(
+    const cy = createCytoscape(
       container,
       await fetchJson(getGraphDataUrl()),
       event => {
@@ -82,11 +82,4 @@ async function connectGraphDialogAndButton (button, dialog) {
   })
 }
 
-function init () {
-  connectGraphDialogAndButton(
-    document.querySelector('sl-icon-button[name="bx-network-chart"]'),
-    document.querySelector('#slipbox-graph-dialog')
-  )
-}
-
-module.exports = { init }
+module.exports = { connectGraphDialogAndButton }
