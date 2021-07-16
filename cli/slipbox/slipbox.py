@@ -4,7 +4,7 @@ from hashlib import sha256
 from pathlib import Path
 import typing as t
 
-from . import generator, scan
+from . import generator
 from .batch import group_by_file_extension
 from .initializer import DotSlipbox
 from .processor import process_batch
@@ -34,28 +34,29 @@ class Slipbox:
 
     def find_new_notes(self, paths: t.Iterable[Path]) -> t.Iterable[Path]:
         """Yield files that are not yet in the database."""
-        is_present = scan.is_file_in_db
+        sql = "SELECT filename FROM Files"
+        in_db = set(r[0] for r in self.conn.execute(sql))
         for path in paths:
-            if not is_present(path.relative_to(self.basedir), self.conn):
+            filename = str(path.relative_to(self.basedir))
+            if filename not in in_db:
                 yield path
 
-    def find_notes(self) -> t.Dict[Path, str]:
-        """Find notes in root with corresponding hash."""
-        digests = {}
+    def find_notes(self) -> t.Iterable[Path]:
+        """Find notes in root."""
         root = self.basedir
         patterns = self.dot.patterns
         for path in root.rglob('*'):
             if path.is_file() and any(path.match(pat) for pat in patterns):
-                digests[path] = sha256(path.read_bytes()).hexdigest()
-        return digests
+                yield path
 
-    def purge(self) -> t.Dict[Path, str]:
+    def purge(self) -> t.Iterable[Path]:
         """Purge outdated/missing files and sections from the database.
 
         Also returns all notes found.
         """
-        digests = self.find_notes()
-
+        digests = {
+            p: sha256(p.read_bytes()).hexdigest() for p in self.find_notes()
+        }
         outdated = []
         cur = self.conn.cursor()
         cur.execute("PRAGMA foreign_keys=ON")
@@ -66,7 +67,7 @@ class Slipbox:
         cur.executemany("DELETE FROM Files WHERE filename IN (?)",
                         ((filename,) for filename in outdated))
         self.conn.commit()
-        return digests
+        return digests.keys()
 
     def process(self, paths: t.Iterable[Path]) -> None:
         """Process input files."""
@@ -84,6 +85,6 @@ class Slipbox:
 
     def run(self) -> None:
         """Run all steps needed to compile output."""
-        notes = self.find_new_notes(self.purge().keys())
+        notes = self.find_new_notes(self.purge())
         self.process(notes)
         self.compile()

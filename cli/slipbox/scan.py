@@ -2,18 +2,8 @@
 
 from pathlib import Path
 import shlex
-from sqlite3 import Connection
 
 from . import utils
-
-
-def is_file_in_db(path: Path, conn: Connection) -> bool:
-    """Check if file is recorded in the database."""
-    cur = conn.cursor()
-    sql = "SELECT filename FROM Files WHERE filename = ?"
-    for _ in cur.execute(sql, (str(path),)):
-        return True
-    return False
 
 
 def build_command(input_: Path,
