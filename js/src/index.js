@@ -1,33 +1,17 @@
-const List = require('./list.js')
-const Search = require('./search.js')
-const { SlipboxCollection } = require('./slipbox.js')
-const { fetchJson } = require('./utils.js')
-
-const cytoscape = require('cytoscape')
 const graph = require('./graph.js')
 const home = require('./home.js')
+const list = require('./list.js')
+const search = require('./search.js')
 const shuffle = require('./shuffle.js')
-
-window.slipbox = new SlipboxCollection()
+const { fetchJson } = require('./utils.js')
 
 function initSlipbox () {
   fetchJson('graph/data.json')
-    .then(json => {
-      const cy = cytoscape({ headless: true, ...json })
-      for (const node of cy.nodes()) {
-        window.slipbox.addNote(node.data('id'))
-      }
-      for (const edge of cy.edges()) {
-        const { source, target, tag } = edge.data()
-        window.slipbox.addLink(source, target, tag)
-      }
-    })
     .then(() => {
-      window.slipbox.colorEntrypoints()
       const title = document.getElementById('title-block-header')
       if (title) { title.remove() }
-      List.init()
-      Search.init()
+      list.init()
+      search.init()
       graph.init()
       shuffle.init()
     })
