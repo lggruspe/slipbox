@@ -23,16 +23,20 @@ def create_graph(con):
 
 
 def get_cluster(graph, tag):
-    """Get subgraph with tag plus neighbors."""
+    """Get subgraph with tag plus neighbors (preds and succs)."""
     tagged = [
         n for n, attrs in graph.nodes.items()
         if tag in attrs.get("tags")
     ]
-    neighbors = sum(
-        (list(graph.neighbors(n)) for n in tagged),
+    predecessors = sum(
+        (list(graph.predecessors(n)) for n in tagged),
         [],
     )
-    return graph.subgraph(tagged + neighbors)
+    successors = sum(
+        (list(graph.successors(n)) for n in tagged),
+        [],
+    )
+    return graph.subgraph(tagged + predecessors + successors)
 
 
 def get_components(graph):

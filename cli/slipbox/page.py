@@ -53,6 +53,9 @@ def create_tags(conn: Connection) -> str:
     """Create HTML section that lists all tags.
 
     Also list untagged notes.
+
+    Note: notes without a tag but are connected to a tagged note are considered
+    "weakly tagged".
     """
     rows = conn.execute(
         "SELECT tag, COUNT(*) FROM Tags GROUP BY tag ORDER BY tag"

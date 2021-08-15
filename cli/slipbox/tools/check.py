@@ -37,7 +37,7 @@ def invalid_links(slipbox: Slipbox) -> t.Iterator[t.Tuple[_Note, int]]:
 
 
 def isolated_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
-    """Generate isolated notes (untagged)."""
+    """Generate isolated notes."""
     yield from slipbox.conn.execute("""
         SELECT DISTINCT id, title, filename FROM Notes
         WHERE id NOT IN (

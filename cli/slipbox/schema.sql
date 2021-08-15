@@ -58,7 +58,25 @@ INSERT OR IGNORE INTO Meta VALUES ('version', '0.0');
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
 
+CREATE VIEW IF NOT EXISTS StronglyTagged AS
+SELECT id FROM Notes WHERE id IN (
+    SELECT id FROM Tags
+);
+
+CREATE VIEW IF NOT EXISTS InTagged AS
+SELECT id FROM Notes JOIN Links ON Notes.id = Links.dest WHERE Links.src IN (
+    SELECT id FROM StronglyTagged
+);
+
+CREATE VIEW IF NOT EXISTS OutTagged AS
+SELECT id FROM Notes JOIN Links ON Notes.id = Links.src WHERE Links.dest IN (
+    SELECT id FROM StronglyTagged
+);
+
+CREATE VIEW IF NOT EXISTS WeaklyTagged AS
+SELECT * FROM InTagged UNION SELECT * FROM OutTagged;
+
 CREATE VIEW IF NOT EXISTS Untagged AS
 SELECT id FROM Notes WHERE id NOT IN (
-    SELECT id FROM Tags
+    SELECT id FROM StronglyTagged UNION SELECT id FROM WeaklyTagged
 );
