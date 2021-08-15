@@ -10,12 +10,16 @@ CREATE TABLE IF NOT EXISTS Notes (
     html
 );
 
+CREATE TABLE IF NOT EXISTS Tags (
+    tag NOT NULL,
+    id NOT NULL REFERENCES Notes ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS Links (
     src NOT NULL REFERENCES Notes ON DELETE CASCADE,
-    dest NOT NULL,  -- not an fk to keep backlink when dest gets deleted
+    dest NOT NULL   -- not an fk to keep backlink when dest gets deleted
                     -- and to allow notes to get scanned incrementally
-    tag,
-    PRIMARY KEY(src, dest, tag)
+                    -- ValidLinks gets subset with valid dest
 );
 
 CREATE TABLE IF NOT EXISTS Images (
@@ -53,16 +57,6 @@ INSERT OR IGNORE INTO Meta VALUES ('version', '0.0');
 
 CREATE VIEW IF NOT EXISTS ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
-
-CREATE VIEW IF NOT EXISTS Tags AS
-SELECT * FROM (
-    SELECT tag, src AS id FROM Links WHERE tag IS NOT NULL AND tag != ''
-    UNION
-    SELECT tag, dest AS id FROM Links WHERE tag IS NOT NULL AND tag != ''
-)
-WHERE id in (
-    SELECT id FROM Notes
-);
 
 CREATE VIEW IF NOT EXISTS Untagged AS
 SELECT id FROM Notes WHERE id NOT IN (

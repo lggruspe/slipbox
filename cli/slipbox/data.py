@@ -56,10 +56,16 @@ def process_notes(conn: Connection, path: Path) -> None:
     run_sql_on_csv(conn, path, sql, (int, str, str), fix)
 
 
+def process_tags(conn: Connection, path: Path) -> None:
+    """Process Tags data in path."""
+    sql = "INSERT OR IGNORE INTO Tags (tag, id) VALUES (?, ?)"
+    run_sql_on_csv(conn, path, sql, (str, int))
+
+
 def process_links(conn: Connection, path: Path) -> None:
     """Process Links data in path."""
-    sql = "INSERT OR IGNORE INTO Links (src, dest, tag) VALUES (?, ?, ?)"
-    run_sql_on_csv(conn, path, sql, (int, int, str))
+    sql = "INSERT OR IGNORE INTO Links (src, dest) VALUES (?, ?)"
+    run_sql_on_csv(conn, path, sql, (int, int))
 
 
 def process_bibliography(conn: Connection, path: Path) -> None:
@@ -105,6 +111,7 @@ def process_csvs(conn: Connection, basedir: Path) -> None:
     """Process CSV data in basedir."""
     process_files(conn, basedir/"files.csv")
     process_notes(conn, basedir/"notes.csv")
+    process_tags(conn, basedir/"tags.csv")
     process_links(conn, basedir/"links.csv")
     process_images(conn, basedir/"images.csv")
     process_image_links(conn, basedir/"image_links.csv")

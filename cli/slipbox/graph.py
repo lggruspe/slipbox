@@ -6,24 +6,33 @@ import networkx as nx
 
 def create_graph(con):
     """Construct graph from slipbox data."""
-    graph = nx.MultiDiGraph()
+    graph = nx.DiGraph()
 
     sql = "SELECT id, title, filename FROM Notes"
     for id_, title, filename in con.execute(sql):
-        graph.add_node(id_, title=title, filename=filename)
+        graph.add_node(id_, title=title, filename=filename, tags=[])
 
-    sql = "SELECT src, dest, tag FROM ValidLinks"
-    for src, dest, tag in con.execute(sql):
-        graph.add_edge(src, dest, tag=tag)
+    sql = "SELECT tag, id FROM Tags"
+    for tag, id_ in con.execute(sql):
+        graph.nodes[id_]["tags"].append(tag)
+
+    sql = "SELECT src, dest FROM ValidLinks"
+    for src, dest in con.execute(sql):
+        graph.add_edge(src, dest)
     return graph
 
 
 def get_cluster(graph, tag):
-    """Get subgraph with tag."""
-    return graph.edge_subgraph(
-        e for e, attrs in graph.edges.items()
-        if attrs.get("tag") == tag
+    """Get subgraph with tag plus neighbors."""
+    tagged = [
+        n for n, attrs in graph.nodes.items()
+        if tag in attrs.get("tags")
+    ]
+    neighbors = sum(
+        (list(graph.neighbors(n)) for n in tagged),
+        [],
     )
+    return graph.subgraph(tagged + neighbors)
 
 
 def get_components(graph):

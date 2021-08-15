@@ -14,10 +14,14 @@ SQL = """
         (0, '0', 'test.md'),
         (1, '1', 'test.md'),
         (2, '2', 'test.md');
-    INSERT INTO Links (tag, src, dest) VALUES
-        ('#test', 0, 0),
-        ('#test', 1, 1),
-        ('##test', 2, 2);
+    INSERT INTO Tags (tag, id) VALUES
+        ('#test', 0),
+        ('#test', 1),
+        ('##test', 2);
+    INSERT INTO Links (src, dest) VALUES
+        (0, 0),
+        (1, 1),
+        (2, 2);
     INSERT INTO Bibliography (key, text) VALUES
         ('ref-test', 'Reference text.');
     INSERT INTO Citations (note, reference) VALUES

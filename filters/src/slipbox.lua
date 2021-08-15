@@ -7,6 +7,7 @@ function SlipBox:new()
   return setmetatable({
     files = {},
     notes = {},
+    tags = {},
     links = {},
     citations = {},
     images = {},
@@ -75,6 +76,16 @@ function SlipBox:save_note(id, title, filename)
   self.notes[id] = {title = title, filename = filename}
 end
 
+function SlipBox:save_tag(id, tag)
+  assert(type(id) == "number")
+  assert(type(tag) == "string")
+  assert(tag ~= "")
+
+  local tags = self.tags[id] or {}
+  table.insert(tags, tag)
+  self.tags[id] = tags
+end
+
 function SlipBox:save_link(link)
   if link and link.src then
     local links = self.links[link.src] or {}
@@ -89,6 +100,17 @@ local function notes_to_csv(notes)
   for id, note in pairs(notes) do
     if note.filename then
       w:write{id, note.title, note.filename}
+    end
+  end
+  return w.data
+end
+
+local function tags_to_csv(all_tags)
+  -- Create CSV data from tags in slipbox.
+  local w = csv.Writer:new{"tag", "id"}
+  for id, tags in pairs(all_tags) do
+    for _, tag in ipairs(tags) do
+      w:write{tag, id}
     end
   end
   return w.data
@@ -154,6 +176,7 @@ function SlipBox:write_data()
   local write = utils.write_text
   write("files.csv", files_to_csv(self.files))
   write("notes.csv", notes_to_csv(self.notes))
+  write("tags.csv", tags_to_csv(self.tags))
   write("links.csv", links_to_csv(self.links))
   write("images.csv", images_to_csv(self.images))
   write("image_links.csv", image_links_to_csv(self.images))

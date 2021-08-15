@@ -97,7 +97,6 @@ function Collector:new(slipbox, div)
     slipbox = slipbox,
     id = id,
     div = div,
-    current_tag = nil,
     has_empty_link_target = false,
   }, self)
 end
@@ -118,7 +117,6 @@ function Collector:Link(elem)
   end
   local link = utils.get_link(self.id, elem)
   if link then
-    link.tag = self.current_tag
     self.slipbox:save_link(link)
   end
 end
@@ -126,8 +124,7 @@ end
 function Collector:Str(elem)
   local tag = utils.hashtag_prefix(elem.text)
   if tag then
-    self.slipbox:save_link { src = self.id, dest = self.id, tag = tag }
-    self.current_tag = tag
+    self.slipbox:save_tag(self.id, tag)
   end
 end
 
