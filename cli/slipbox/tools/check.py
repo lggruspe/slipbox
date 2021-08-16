@@ -41,7 +41,7 @@ def isolated_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
     yield from slipbox.conn.execute("""
         SELECT DISTINCT id, title, filename FROM Notes
         WHERE id NOT IN (
-            SELECT src FROM Links UNION SELECT dest FROM Links
+            SELECT src FROM ValidLinks UNION SELECT dest FROM ValidLinks
         )
     """)
 

@@ -12,11 +12,13 @@ from sqlite3 import Connection
 import sys
 import typing as t
 
+from lxml.html import HtmlElement  # type: ignore
+from pyquery import PyQuery  # type: ignore
+
 from . import utils
 from .batch import Batch
 from .data import process_csvs
 from .scan import build_command
-from .secparse import parse_sections, SectionParser
 
 
 DOKUWIKI_TEMPLATE = """
@@ -114,14 +116,16 @@ def store_html(conn: Connection,
     if not html.strip() or not sources:
         return
     cur = conn.cursor()
+    sql = "UPDATE Notes SET html = ? WHERE id = ?"
 
-    def callback(this: SectionParser) -> None:
-        """Callback for parse_sections."""
-        cur.execute(
-            "UPDATE Notes SET html = ? WHERE id = ?",
-            (this.section, this.id_)
-        )
-    parse_sections(html, callback)
+    def callback(_: int, elem: HtmlElement) -> None:
+        id_ = elem.get("id", "")
+        if id_.isdigit():
+            cur.execute(sql, (PyQuery(elem).outer_html(), int(id_)))
+
+    doc = PyQuery(html)
+    sections = doc("section")
+    sections.map(callback)
 
 
 def create_preprocessed_input(
