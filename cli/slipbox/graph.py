@@ -2,14 +2,18 @@
 """Generate note graph."""
 
 import networkx as nx
+from pyquery import PyQuery
 
 
 def create_graph(con):
     """Construct graph from slipbox data."""
     graph = nx.DiGraph()
 
-    sql = "SELECT id, title, filename FROM Notes"
-    for id_, title, filename in con.execute(sql):
+    sql = "SELECT id, filename, html FROM Notes"
+    for id_, filename, html in con.execute(sql):
+        doc = PyQuery(html)
+        title = doc("h1:first").outer_html()
+        title = f"'{title}'"  # pad with ' to avoid pydot syntax error
         graph.add_node(id_, title=title, filename=filename, tags=[])
 
     sql = "SELECT tag, id FROM Tags"
@@ -55,7 +59,9 @@ def without_self_loop(graph):
 def create_graph_data(graph, layout="fdp"):
     """Create cytoscape.js graph data from Graph.
 
-    Note: removes self-loops."""
+    Note: removes self-loops.
+    Prepares the graph layout and unpads title HTML.
+    """
     copy = without_self_loop(graph)
     data = nx.readwrite.json_graph.cytoscape_data(copy)
     layout = nx.drawing.nx_pydot.graphviz_layout(copy, prog=layout)
@@ -65,4 +71,7 @@ def create_graph_data(graph, layout="fdp"):
         x, y = layout[node_id]  # pylint: disable=invalid-name
         node["position"] = {"x": 2 * x, "y": -2 * y}
         # Scale y by -2 to flip the graph vertically so edges point downward.
+
+        title = node["data"]["title"]
+        node["data"]["title"] = title[1:-1]
     return data

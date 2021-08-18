@@ -33,6 +33,13 @@ function createCytoscape (container, data, selectCallback) {
     ...data
   })
 
+  /// Update titles
+  const template = document.createElement('template')
+  cy.nodes().forEach(ele => {
+    template.innerHTML = ele.data('title')
+    ele.data('title', template.content.textContent)
+  })
+
   if (selectCallback) cy.on('select', 'node', selectCallback)
   return cy
 }

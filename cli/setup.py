@@ -19,7 +19,12 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    install_requires=["genbu==0.2.1", "networkx>=2.5.1", "pydot>=1.4.2"],
+    install_requires=[
+        "genbu==0.2.1",
+        "networkx>=2.5.1",
+        "pydot>=1.4.2",
+        "pyquery>=1.4.3",
+    ],
     python_requires=">=3.6",
     entry_points={
         "console_scripts": [
