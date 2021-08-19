@@ -86,6 +86,8 @@ function connectGraphDialogAndButton (button, dialog) {
       level: 1,
       renderedPosition: node.renderedPosition()
     })
+
+    window.cy = cy // expose cy
   })
 }
 
