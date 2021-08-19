@@ -293,6 +293,27 @@ def test_process_with_empty_link_target(tmp_path: Path,
 
 
 @pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_process_with_external_links(tmp_path: Path,
+                                     capsys: pytest.CaptureFixture[str],
+                                     sbox: Slipbox,
+                                     ) -> None:
+    """External links shouldn't be saved in the db."""
+    markdown = tmp_path/"test.md"
+    markdown.write_text("# 0 Test\n\n[Example](https://example.com)")
+    sbox.process([markdown])
+
+    result = list(sbox.conn.execute("SELECT id, title FROM Notes"))
+    assert (0, "Test") in result
+
+    result = list(sbox.conn.execute("SELECT * FROM Links"))
+    assert not result
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
+
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
 def test_process_with_id_in_scientific_form(tmp_path: Path,
                                             capsys: pytest.CaptureFixture[str],
                                             sbox: Slipbox,
