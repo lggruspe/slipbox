@@ -26,10 +26,16 @@ class OutputDirectory:
         self.path = path
 
     def clear(self) -> None:
-        """Clear contents of output directory."""
-        assert not self.path.exists() or self.path.is_dir()
-        rmtree(self.path, ignore_errors=True)
-        self.path.mkdir()
+        """Clear contents of output directory.
+
+        Create directory if it doesn't exist.
+        """
+        self.path.mkdir(exist_ok=True)
+        for child in self.path.iterdir():
+            if child.is_dir():
+                rmtree(child, ignore_errors=True)
+            else:
+                child.unlink(missing_ok=True)
 
     def generate(self, *args: Generator) -> None:
         """Run generators."""
