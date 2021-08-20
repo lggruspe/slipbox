@@ -11,6 +11,7 @@ from .graph import (  # type: ignore
     create_graph_data,
     get_cluster,
     get_components,
+    get_note_titles,
 )
 from .page import generate_complete_html as generate_index
 
@@ -91,9 +92,12 @@ class CytoscapeDataGenerator:
         self.con = con
         self.graph = create_graph(con)
 
+        self.titles = dict(get_note_titles(self.con))
+
     def write(self, path: Path, graph: t.Any, layout: str = "fdp") -> None:  # noqa; # pylint: disable=no-self-use
         """Write graph JSON data to path."""
-        path.write_text(json.dumps(create_graph_data(graph, layout)))
+        graph_data = create_graph_data(self.titles, graph, layout)
+        path.write_text(json.dumps(graph_data))
 
     def run(self, out: Path) -> None:
         """Generate JSONs for cytoscape.js in out/graph."""
@@ -108,7 +112,7 @@ class CytoscapeDataGenerator:
 
         (out/"graph"/"note").mkdir()
         for component, subgraph in get_components(self.graph).items():
-            graph_data = create_graph_data(subgraph, "dot")
+            graph_data = create_graph_data(self.titles, subgraph, "dot")
             for note_id in component:
                 path = out/"graph"/"note"/f"{note_id}.json"
                 path.write_text(json.dumps(graph_data))

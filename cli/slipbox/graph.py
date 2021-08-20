@@ -9,12 +9,9 @@ def create_graph(con):
     """Construct graph from slipbox data."""
     graph = nx.DiGraph()
 
-    sql = "SELECT id, filename, html FROM Notes"
-    for id_, filename, html in con.execute(sql):
-        doc = PyQuery(html)
-        title = doc("h1:first").outer_html()
-        title = f"'{title}'"  # pad with ' to avoid pydot syntax error
-        graph.add_node(id_, title=title, filename=filename, tags=[])
+    sql = "SELECT id, filename FROM Notes"
+    for id_, filename in con.execute(sql):
+        graph.add_node(id_, filename=filename, tags=[])
 
     sql = "SELECT tag, id FROM Tags"
     for tag, id_ in con.execute(sql):
@@ -56,11 +53,22 @@ def without_self_loop(graph):
     return copy
 
 
-def create_graph_data(graph, layout="fdp"):
+def get_note_titles(con):
+    """Get note title HTMLs."""
+    sql = "SELECT id, html FROM Notes"
+    for id_, html in con.execute(sql):
+        doc = PyQuery(html)
+        title = doc("h1:first").outer_html()
+        yield (id_, title)
+
+
+def create_graph_data(titles, graph, layout="fdp"):
     """Create cytoscape.js graph data from Graph.
 
     Note: removes self-loops.
     Prepares the graph layout and unpads title HTML.
+
+    titles: dict of note IDs and title HTML fragments
     """
     copy = without_self_loop(graph)
     data = nx.readwrite.json_graph.cytoscape_data(copy)
@@ -68,10 +76,8 @@ def create_graph_data(graph, layout="fdp"):
 
     for node in data["elements"]["nodes"]:
         node_id = int(node["data"]["id"])
+        node["data"]["title"] = titles[node_id]
         x, y = layout[node_id]  # pylint: disable=invalid-name
         node["position"] = {"x": 2 * x, "y": -2 * y}
         # Scale y by -2 to flip the graph vertically so edges point downward.
-
-        title = node["data"]["title"]
-        node["data"]["title"] = title[1:-1]
     return data
