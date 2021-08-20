@@ -16,7 +16,7 @@ def test_initialize(tmp_path: Path) -> None:
 
 def test_dot_slipbox_locate(tmp_path: Path) -> None:
     """find_dot_slipbox must look for .slipbox in parent directories."""
-    with pytest.raises(Exception):
+    with pytest.raises(SystemExit):
         DotSlipbox.locate(tmp_path)
 
     dot = DotSlipbox(tmp_path)
@@ -30,9 +30,9 @@ def test_dot_slipbox_locate(tmp_path: Path) -> None:
         file.unlink()
     dot.path.rmdir()
 
-    with pytest.raises(Exception):
+    with pytest.raises(SystemExit):
         DotSlipbox.locate(child)
-    with pytest.raises(Exception):
+    with pytest.raises(SystemExit):
         DotSlipbox.locate(tmp_path)
 
 

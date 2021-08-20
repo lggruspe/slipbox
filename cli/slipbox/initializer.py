@@ -3,6 +3,7 @@
 from configparser import ConfigParser
 from pathlib import Path
 from sqlite3 import Connection, connect
+import sys
 import typing as t
 
 from .processor import METADATA_TEMPLATES
@@ -70,9 +71,10 @@ class DotSlipbox:
 
     @staticmethod
     def locate(path: Path = Path().resolve()) -> "DotSlipbox":
-        """Find .slipbox in parent directories of path, or None.
+        """Find .slipbox in parent directories of path.
 
         Input path must be absolute.
+        Raises SystemExit on failure.
         """
         assert path.is_absolute()
         while not path.is_dir():
@@ -84,7 +86,7 @@ class DotSlipbox:
                 return DotSlipbox(path)
             path = parent
             parent = path.parent
-        raise Exception("could not find '.slipbox' in any parent directory.")
+        sys.exit("could not find '.slipbox' in any parent directory.")
 
     def database(self) -> Connection:
         """Create connection to .slipbox/data.db."""
