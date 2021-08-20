@@ -1,3 +1,5 @@
+PYTHON_VERSION = 3.7
+
 .PHONY:	all init check-js check-lua build-lua bundle check docs examples dist
 .PHONY:	lint test
 
@@ -11,6 +13,7 @@ all:
 	@echo "> dist - Release slipbox."
 	@echo "> lint - Run python linters."
 	@echo "> test - Run python tests."
+	@echo "> docker - Run tests in Docker. (PYTHON_VERSION=$(PYTHON_VERSION))"
 
 # Initialize project.
 init:
@@ -73,3 +76,7 @@ examples:
 # Release slipbox.
 dist:	bundle check
 	cd cli; python setup.py sdist bdist_wheel
+
+docker:
+	docker build -t slipbox-test --build-arg PYTHON_IMAGE=python:$(PYTHON_VERSION)-alpine .
+	docker run slipbox-test

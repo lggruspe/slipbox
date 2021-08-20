@@ -14,7 +14,6 @@ setuptools.setup(
     classifiers=[
         "Environment :: Console",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -25,7 +24,7 @@ setuptools.setup(
         "pydot>=1.4.2",
         "pyquery>=1.4.3",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={
         "console_scripts": [
             "slipbox=slipbox.__main__:main"

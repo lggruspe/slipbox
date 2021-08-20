@@ -35,7 +35,7 @@ class OutputDirectory:
             if child.is_dir():
                 rmtree(child, ignore_errors=True)
             else:
-                child.unlink(missing_ok=True)
+                child.unlink()
 
     def generate(self, *args: Generator) -> None:
         """Run generators."""
