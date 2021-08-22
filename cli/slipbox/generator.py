@@ -1,8 +1,9 @@
 """Generate site in output directory."""
 
+from contextlib import contextmanager
 import json
 from pathlib import Path
-from shutil import rmtree
+from shutil import move, rmtree
 from sqlite3 import Connection
 import typing as t
 
@@ -14,6 +15,7 @@ from .graph import (  # type: ignore
     get_note_titles,
 )
 from .page import generate_complete_html as generate_index
+from .utils import temporary_directory
 
 
 data = Path(__file__).parent/"data"
@@ -21,28 +23,31 @@ data = Path(__file__).parent/"data"
 Generator = t.Callable[[Path], None]
 
 
-class OutputDirectory:
-    """Represents output directory of generated site."""
-    def __init__(self, path: Path):
-        self.path = path
+def clear(directory: Path) -> None:
+    """Clear contents of directory.
 
-    def clear(self) -> None:
-        """Clear contents of output directory.
+    Create directory if it doesn't exist.
+    """
+    directory.mkdir(exist_ok=True)
+    for child in directory.iterdir():
+        if child.is_dir():
+            rmtree(child, ignore_errors=True)
+        else:
+            child.unlink()
 
-        Create directory if it doesn't exist.
-        """
-        self.path.mkdir(exist_ok=True)
-        for child in self.path.iterdir():
-            if child.is_dir():
-                rmtree(child, ignore_errors=True)
-            else:
-                child.unlink()
 
-    def generate(self, *args: Generator) -> None:
-        """Run generators."""
-        self.clear()
-        for arg in args:
-            arg(self.path)
+@contextmanager
+def output_directory_proxy(path: Path) -> t.Iterator[Path]:
+    """Create proxy for output directory.
+
+    Afterwards path is emptied and all contents of tempdir are moved into path.
+    """
+    assert not path.exists() or path.is_dir()
+    with temporary_directory() as tempdir:
+        yield tempdir
+        clear(path)
+        for child in tempdir.iterdir():
+            move(child, path)
 
 
 class IndexGenerator:
@@ -123,10 +128,9 @@ def main(con: Connection,
          out: Path,
          title: str = "Slipbox") -> None:
     """Generate all files."""
-    OutputDirectory(out).generate(
-        CytoscapeDataGenerator(con).run,
-        ImagesGenerator(con).run,
-        IndexGenerator(con, options, title).run,
-        generate_css,
-        generate_js,
-    )
+    with output_directory_proxy(out) as tempdir:
+        CytoscapeDataGenerator(con).run(tempdir)
+        ImagesGenerator(con).run(tempdir)
+        IndexGenerator(con, options, title).run(tempdir)
+        generate_css(tempdir)
+        generate_js(tempdir)
