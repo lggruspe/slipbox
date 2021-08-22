@@ -47,7 +47,7 @@ def output_directory_proxy(path: Path) -> t.Iterator[Path]:
         yield tempdir
         clear(path)
         for child in tempdir.iterdir():
-            move(child, path)
+            move(str(child), str(path))
 
 
 class IndexGenerator:
