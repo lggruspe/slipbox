@@ -9,7 +9,7 @@ def test_build_command(tmp_path: Path) -> None:
     """Sanity check for build_command."""
     input_file = tmp_path/"input.md"
     output = "output.html"
-    options = "--mathjax"
+    options = "--mathml"
     input_file.touch()
 
     cmd = scan.build_command(input_file, output, tmp_path, options)

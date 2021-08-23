@@ -20,8 +20,8 @@ def default_config() -> ConfigParser:
     """Create ConfigParser object with default options."""
     config = ConfigParser()
     config["slipbox"] = {
-        "content_options": "--mathjax --strip-comments",
-        "document_options": "--mathjax -s",
+        "content_options": "--strip-comments",
+        "document_options": "-s",
         "output_directory": "public",
         "title": "Slipbox",
     }
