@@ -1,4 +1,4 @@
-module.exports.init = function init () {
+export function init () {
   const lis = document.querySelectorAll('ol.slipbox-list > li[value]')
   for (let i = 0; i < lis.length; i++) {
     const li = lis[i]

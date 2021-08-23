@@ -1,4 +1,4 @@
-const lunr = require('lunr')
+import lunr from 'lunr'
 
 /// Takes callback that gets invoked when title gets clicked.
 function extractTitle (section, callback) {
@@ -75,4 +75,4 @@ function init () {
   })
 }
 
-module.exports = { init }
+export { init }

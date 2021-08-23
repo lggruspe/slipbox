@@ -4,7 +4,7 @@ function redirectHome () {
   }
 }
 
-module.exports.init = function () {
+export function init () {
   window.addEventListener('DOMContentLoaded', redirectHome)
   window.addEventListener('hashchange', redirectHome)
 }

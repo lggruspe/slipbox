@@ -1,5 +1,6 @@
-const cytoscape = require('cytoscape')
-const { fetchJson } = require('./utils.js')
+import cytoscape from 'cytoscape'
+
+import { fetchJson } from './utils.js'
 
 function createCytoscape (container, data, selectCallback) {
   const cy = cytoscape({
@@ -92,4 +93,4 @@ function connectGraphDialogAndButton (button, dialog) {
   })
 }
 
-module.exports = { connectGraphDialogAndButton }
+export { connectGraphDialogAndButton }

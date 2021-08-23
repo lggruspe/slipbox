@@ -10,6 +10,6 @@ export default {
       cytoscape: 'https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.19.0/cytoscape.esm.min.js'
     },
   },
-  external: ['cytoscape'],
+  external: ['cytoscape', 'mathjax'],
   plugins: [commonjs(), nodeResolve()]
 }

@@ -22,4 +22,4 @@ function registerShuffleButton (cy, button) {
   })
 }
 
-module.exports = { registerShuffleButton }
+export { registerShuffleButton }

@@ -1,10 +1,12 @@
-const cytoscape = require('cytoscape')
-const graph = require('./graph.js')
-const home = require('./home.js')
-const list = require('./list.js')
-const search = require('./search.js')
-const shuffle = require('./shuffle.js')
-const { fetchJson } = require('./utils.js')
+import cytoscape from 'cytoscape'
+
+import * as graph from './graph.js'
+import * as home from './home.js'
+import * as list from './list.js'
+import * as search from './search.js'
+import * as shuffle from './shuffle.js'
+
+import { fetchJson } from './utils.js'
 
 window.addEventListener('DOMContentLoaded', async () => {
   const data = await fetchJson('graph/data.json')
