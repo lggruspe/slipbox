@@ -1,10 +1,10 @@
 slipbox
 =======
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lggruspe/slipbox/Python%20application)
-![PyPI](https://img.shields.io/pypi/v/slipbox)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/slipbox)
-![GitHub](https://img.shields.io/github/license/lggruspe/slipbox)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lggruspe/slipbox/Python%20application)](https://github.com/lggruspe/slipbox)
+[![PyPI](https://img.shields.io/pypi/v/slipbox)](https://pypi.org/project/slipbox/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/slipbox)](https://pypi.org/project/slipbox/)
+[![GitHub](https://img.shields.io/github/license/lggruspe/slipbox)](https://github.com/lggruspe/slipbox)
 
 `slipbox` is a static site generator for Zettelkasten notes.
 
