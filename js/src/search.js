@@ -4,8 +4,12 @@ import lunr from 'lunr'
 function extractTitle (section, callback) {
   const title = section?.querySelector('h1')?.textContent
   const h3 = document.createElement('h3')
-  h3.innerHTML = `<a href="#${section.id}">${title}</a>`
-  if (callback) h3.querySelector('a').onclick = callback
+  const a = document.createElement('a')
+  h3.appendChild(a)
+
+  a.href = `#${section.id}`
+  a.textContent = title
+  if (callback) a.onclick = callback
   return title ? h3 : null
 }
 
