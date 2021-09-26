@@ -19,7 +19,7 @@ all:
 init:
 	cd js; npm ci
 	pip install --upgrade pip wheel
-	cd cli; pip install -r requirements.txt
+	pip install -r requirements.txt
 
 # Run JS tests.
 check-js:
@@ -41,19 +41,19 @@ build-lua:	check-lua
 # Copy JS and Lua filters into slipbox/
 bundle:	check-js build-lua
 	cd js; npm run bundle; npm run minify
-	mkdir -p cli/slipbox/data
-	cp js/dist/app.min.js cli/slipbox/data/app.js
-	cp filters/build/filter.lua cli/slipbox/data
+	mkdir -p slipbox/data
+	cp js/dist/app.min.js slipbox/data/app.js
+	cp filters/build/filter.lua slipbox/data
 
 # Run python linters.
 lint:
-	cd cli; flake8 slipbox tests --max-complexity=10
-	cd cli; pylint slipbox tests --fail-under=10 -d R0903,C0415
-	cd cli; mypy slipbox tests --strict
+	flake8 slipbox tests --max-complexity=10
+	pylint slipbox tests --fail-under=10 -d R0903,C0415
+	mypy slipbox tests --strict
 
 # Run python tests.
 test:
-	cd cli; pytest --cov=slipbox --cov=tests --cov-fail-under=90 --cov-report=term-missing --cov-branch --verbose
+	pytest --cov=slipbox --cov=tests --cov-fail-under=90 --cov-report=term-missing --cov-branch --verbose
 
 # Run all tests.
 check: lint test
@@ -61,21 +61,21 @@ check: lint test
 # Generate docs.
 docs:	bundle
 	cd docs-src; rm -rf .slipbox
-	cd docs-src; PYTHONPATH=../cli python -m slipbox init \
+	cd docs-src; PYTHONPATH=. python -m slipbox init \
 		--content_options " --bibliography example.bib --citeproc" \
 		--document_options " -s" \
 		--output_directory '../docs'
-	cd docs-src; PYTHONPATH=../cli python -m slipbox build
+	cd docs-src; PYTHONPATH=. python -m slipbox build
 
 # Generate examples.
 examples:
 	cd examples; rm -rf .slipbox
-	cd examples; PYTHONPATH=../cli python -m slipbox init
-	cd examples; PYTHONPATH=../cli python -m slipbox build
+	cd examples; PYTHONPATH=. python -m slipbox init
+	cd examples; PYTHONPATH=. python -m slipbox build
 
 # Release slipbox.
 dist:	bundle check
-	cd cli; python setup.py sdist bdist_wheel
+	python setup.py sdist bdist_wheel
 
 docker:
 	docker build -t slipbox-test --build-arg PYTHON_IMAGE=python:$(PYTHON_VERSION)-alpine .

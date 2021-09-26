@@ -10,7 +10,7 @@ RUN apk add libxml2 libxml2-dev libxslt libxslt-dev graphviz
 RUN pip install wheel
 RUN luarocks-5.3 install amalg
 
-COPY cli/requirements.txt /
+COPY requirements.txt /
 RUN pip install -r requirements.txt
 
 COPY . /slipbox

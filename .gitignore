@@ -2,9 +2,9 @@
 *.pyc
 .coverage
 .hypothesis/
-/cli/slipbox/data/*.js
-/cli/slipbox/data/filter.lua
 /docs-src/.slipbox/
+slipbox/data/*.js
+slipbox/data/filter.lua
 __pycache__/
 build/
 dist/
