@@ -1,3 +1,4 @@
+from pathlib import Path
 import setuptools
 
 setuptools.setup(
@@ -6,6 +7,8 @@ setuptools.setup(
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
     description="Static site generator for Zettelkasten notes",
+    long_description=Path("README.md").read_text(),
+    long_description_content_type="text/markdown",
     url="https://github.com/lggruspe/slipbox",
     packages=setuptools.find_packages(),
     package_data={
