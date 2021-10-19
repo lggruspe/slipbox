@@ -10,8 +10,7 @@
   "scripts": {
     "lint": "eslint --fix src test --global MathJax",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env jsdom --coverage",
-    "bundle": "rollup -c",
-    "minify": "terser --compress --mangle -o dist/app.min.js -- dist/app.js"
+    "build": "esbuild src/index.js --bundle --minify --outfile=dist/app.min.js --analyze --format=esm --external:mathjax"
   },
   "repository": {
     "type": "git",
@@ -27,9 +26,7 @@
   },
   "homepage": "https://github.com/lggruspe/slipbox#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^11.1.1",
-    "cytoscape": "^3.18.0",
+    "esbuild": "^0.13.8",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
@@ -37,11 +34,10 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-standard": "^4.1.0",
     "jest": "^27.0.6",
-    "jsdom": "^16.4.0",
-    "rollup": "^2.38.5",
-    "terser": "^5.6.0"
+    "jsdom": "^16.4.0"
   },
   "dependencies": {
+    "cytoscape": "^3.19.1",
     "lunr": "^2.3.9"
   }
 }

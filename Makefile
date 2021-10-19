@@ -40,7 +40,7 @@ build-lua:	check-lua
 
 # Copy JS and Lua filters into slipbox/
 bundle:	check-js build-lua
-	cd js; npm run bundle; npm run minify
+	cd js; npm run build
 	mkdir -p slipbox/data
 	cp js/dist/app.min.js slipbox/data/app.js
 	cp filters/build/filter.lua slipbox/data
@@ -61,17 +61,17 @@ check: lint test
 # Generate docs.
 docs:	bundle
 	cd docs-src; rm -rf .slipbox
-	cd docs-src; PYTHONPATH=. python -m slipbox init \
+	cd docs-src; PYTHONPATH=.. python -m slipbox init \
 		--content_options " --bibliography example.bib --citeproc" \
 		--document_options " -s" \
 		--output_directory '../docs'
-	cd docs-src; PYTHONPATH=. python -m slipbox build
+	cd docs-src; PYTHONPATH=.. python -m slipbox build
 
 # Generate examples.
 examples:
 	cd examples; rm -rf .slipbox
-	cd examples; PYTHONPATH=. python -m slipbox init
-	cd examples; PYTHONPATH=. python -m slipbox build
+	cd examples; PYTHONPATH=.. python -m slipbox init
+	cd examples; PYTHONPATH=.. python -m slipbox build
 
 # Release slipbox.
 dist:	bundle check
