@@ -75,9 +75,9 @@
     code span.va { color: #19177c; } /* Variable */
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -90,7 +90,7 @@
 <h1 class="title">Slipbox</h1>
 </header>
 <div style="display:none">
-<p><span class="math inline"> </span></p>
+<p><span class="math inline">\(\,\)</span></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"></code></pre></div>
 </div>
 <nav>
@@ -178,23 +178,23 @@ registerIconLibrary('boxicons', {
 <main>
 <section id="home" class="level1" title="Home">
 <h1>Slipbox</h1>
-<ol class="slipbox-list">
-<li value='0'></li>
-<li value='1'></li>
-<li value='2'></li>
-<li value='3'></li>
-<li value='4'></li>
-<li value='5'></li>
-<li value='6'></li>
-<li value='7'></li>
-<li value='8'></li>
-<li value='9'></li>
-<li value='10'></li>
-<li value='11'></li>
-<li value='100'></li>
-<li value='101'></li>
-<li value='102'></li>
-</ol>
+<ul class="slipbox-list">
+  <li value="0"></li>
+  <li value="1"></li>
+  <li value="2"></li>
+  <li value="3"></li>
+  <li value="4"></li>
+  <li value="5"></li>
+  <li value="6"></li>
+  <li value="7"></li>
+  <li value="8"></li>
+  <li value="9"></li>
+  <li value="10"></li>
+  <li value="11"></li>
+  <li value="100"></li>
+  <li value="101"></li>
+  <li value="102"></li>
+</ul>
 </section>
 
 <section id="0" class="level1 slipbox-note" data-filename="index.md" title="What is slipbox?">
@@ -203,7 +203,7 @@ registerIconLibrary('boxicons', {
 <p>GitHub: <a href="https://github.com/lggruspe/slipbox" class="uri">https://github.com/lggruspe/slipbox</a></p>
 <p>Slipbox: <a href="https://lggruspe.github.io/slipbox" class="uri">https://lggruspe.github.io/slipbox</a></p>
 <p>Source: <a href="https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md" class="uri">https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md</a></p>
-<hr />
+<hr>
 <p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
 <ul>
 <li>How to install slipbox?  [<a href="#1">#1</a>]</li>
@@ -214,7 +214,7 @@ registerIconLibrary('boxicons', {
 <p>Make sure you have graphviz, pandoc and python installed. Your installation of Pandoc needs to be compiled with pandoc-types 1.22.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
-<hr />
+<hr>
 <p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
 <ul>
 <li>How to run slipbox?  [<a href="#2">#2</a>]</li>
@@ -232,7 +232,7 @@ registerIconLibrary('boxicons', {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Show help.</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> <span class="at">-h</span></span></code></pre></div>
-<hr />
+<hr>
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
 <li>How to write notes?  [<a href="#3">#3</a>]</li>
@@ -250,7 +250,7 @@ registerIconLibrary('boxicons', {
 <h1>How to write notes?</h1>
 <p>Slipbox supports many formats: markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags, Textile and MediaWiki.</p>
 <p>A “note” is just a section that begins with a level 1 header. The header must contain an ID (number) and a title. You can put any number of notes in one file.</p>
-<hr />
+<hr>
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
 <li>How to link to other notes?  [<a href="#4">#4</a>]</li>
@@ -262,7 +262,7 @@ registerIconLibrary('boxicons', {
 <p>Use the note ID as the link target. Ex: <a href="#100">link</a> (<code>[link](#100)</code>).</p>
 <p>When you omit the link text, it just shows the target ID. Ex:  [<a href="#100">#100</a>] (<code>[](#100)</code>).</p>
 <p>You can also connect notes by tagging them.</p>
-<hr />
+<hr>
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
 <li>How to link to images?  [<a href="#5">#5</a>]</li>
@@ -273,7 +273,7 @@ registerIconLibrary('boxicons', {
 <h1>How to link to images?</h1>
 <div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="al">![Example](images/example.png)</span></span></code></pre></div>
 <figure>
-<img src="images/example.png" alt="Example" /><figcaption aria-hidden="true">Example</figcaption>
+<img src="/images/example.png" alt="Example"><figcaption aria-hidden="true">Example</figcaption>
 </figure>
 </section>
 <section id="6" class="level1 slipbox-note" data-filename="index.md" title="How to tag notes?">
@@ -301,7 +301,7 @@ content_options = --bibliography example.bib --citeproc</code></pre>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> http.server</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to localhost:8000 in your browser.</span></span></code></pre></div>
-<hr />
+<hr>
 <p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
 <ul>
 <li>How to use text search?  [<a href="#9">#9</a>]</li>
@@ -319,7 +319,7 @@ content_options = --bibliography example.bib --citeproc</code></pre>
 <li>a patterns file (<code>patterns</code>)</li>
 <li>a configuration file (<code>config.cfg</code>).</li>
 </ul>
-<hr />
+<hr>
 <p><strong><a href="#tags/dot-slipbox">#dot-slipbox</a></strong></p>
 <ul>
 <li>What do the configuration options mean?  [<a href="#11">#11</a>]</li>
@@ -362,71 +362,62 @@ content_options = --bibliography example.bib --citeproc</code></pre>
   <h1>
     #dot-slipbox
   </h1>
-  <ol class='slipbox-list'>
-    <li value='2'></li>
-    <li value='10'></li>
-    <li value='11'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="2"></li>
+    <li value="10"></li>
+  </ul>
 </section>
 <section id='tags/getting-started' title='#getting-started' class='level1'>
   <h1>
     #getting-started
   </h1>
-  <ol class='slipbox-list'>
-    <li value='0'></li>
-    <li value='1'></li>
-    <li value='2'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="0"></li>
+    <li value="1"></li>
+  </ul>
 </section>
 <section id='tags/hashtags' title='#hashtags' class='level1'>
   <h1>
     #hashtags
   </h1>
-  <ol class='slipbox-list'>
-    <li value='6'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="6"></li>
+  </ul>
 </section>
 <section id='tags/not' title='#not' class='level1'>
   <h1>
     #not
   </h1>
-  <ol class='slipbox-list'>
-    <li value='6'></li>
-    <li value='102'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="6"></li>
+  </ul>
 </section>
 <section id='tags/tag' title='#tag' class='level1'>
   <h1>
     #tag
   </h1>
-  <ol class='slipbox-list'>
-    <li value='6'></li>
-    <li value='100'></li>
-    <li value='101'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="6"></li>
+  </ul>
 </section>
 <section id='tags/view-notes' title='#view-notes' class='level1'>
   <h1>
     #view-notes
   </h1>
-  <ol class='slipbox-list'>
-    <li value='2'></li>
-    <li value='8'></li>
-    <li value='9'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="2"></li>
+    <li value="8"></li>
+  </ul>
 </section>
 <section id='tags/writing-notes' title='#writing-notes' class='level1'>
   <h1>
     #writing-notes
   </h1>
-  <ol class='slipbox-list'>
-    <li value='2'></li>
-    <li value='3'></li>
-    <li value='4'></li>
-    <li value='5'></li>
-    <li value='6'></li>
-    <li value='7'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="2"></li>
+    <li value="3"></li>
+    <li value="4"></li>
+  </ul>
 </section>
 <section id='tags' title='Tags' class='level1'>
   <h1>
@@ -437,13 +428,13 @@ content_options = --bibliography example.bib --citeproc</code></pre>
       <a href='#tags/dot-slipbox'>
         #dot-slipbox
       </a>
-       (3)
+       (2)
     </li>
     <li>
       <a href='#tags/getting-started'>
         #getting-started
       </a>
-       (3)
+       (2)
     </li>
     <li>
       <a href='#tags/hashtags'>
@@ -455,25 +446,25 @@ content_options = --bibliography example.bib --citeproc</code></pre>
       <a href='#tags/not'>
         #not
       </a>
-       (2)
+       (1)
     </li>
     <li>
       <a href='#tags/tag'>
         #tag
       </a>
-       (3)
+       (1)
     </li>
     <li>
       <a href='#tags/view-notes'>
         #view-notes
       </a>
-       (3)
+       (2)
     </li>
     <li>
       <a href='#tags/writing-notes'>
         #writing-notes
       </a>
-       (6)
+       (3)
     </li>
   </ul>
 </section>
@@ -484,9 +475,9 @@ content_options = --bibliography example.bib --citeproc</code></pre>
   <p>
     Author. 2020. Title.
   </p>
-  <ol class='slipbox-list'>
-    <li value='7'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="7"></li>
+  </ul>
 </section>
 <section id="references" class="level1" title="References">
 <h1>References</h1>

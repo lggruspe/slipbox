@@ -5,3 +5,4 @@ img { max-width: 100%; }
 #title-block-header { display: none; }
 .level1 { display: none; padding: 1em 1.5em; }
 .level1:target { display: block; }
+ul.slipbox-list { list-style: none; }

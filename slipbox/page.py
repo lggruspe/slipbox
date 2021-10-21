@@ -24,11 +24,18 @@ $\,$
 """
 
 
+def render_slipbox_list(ids: t.Iterable[int]) -> str:
+    """Render slipbox-list HTML for given note IDs."""
+    items = (render_template("list__item.html", id=id_).rstrip()
+             for id_ in ids)
+    return render_template("list.html", items="\n".join(items)).rstrip()
+
+
 def create_home_page(conn: Connection, title: str) -> str:
     """Create home page HTML section containing a list of all notes."""
-    notes = list(conn.execute("SELECT id FROM Notes"))
-    items = '\n'.join(render(Elem("li", value=str(nid))) for nid, in notes)
-    return render_template("home.html", title=title, items=items)
+    ids = (id_ for id_, in conn.execute("SELECT id FROM Notes"))
+    list_ = render_slipbox_list(ids)
+    return render_template("home.html", title=title, list=list_)
 
 
 def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
@@ -71,9 +78,7 @@ def create_tags(conn: Connection) -> str:
     untagged = list(conn.execute("SELECT * FROM Untagged"))
     if untagged:
         section.children.append(Elem("h2", "Untagged notes"))
-        items = (Elem("li", value=str(nid)) for nid, in untagged)
-        section.children.append(Elem("ol", *items,
-                                     **{"class": "slipbox-list"}))
+        section.children.append(render_slipbox_list(nid for nid, in untagged))
     return render(section)
 
 
@@ -82,13 +87,10 @@ def create_tag_page(conn: Connection, tag: str) -> str:
     sql = """
         SELECT id FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
     """
-    items = []
-    for nid, in conn.execute(sql, (tag,)):
-        item = Elem("li", value=str(nid))
-        items.append(item)
+    ids = (id_ for id_, in conn.execute(sql, (tag,)))
     section = Elem("section",
                    Elem("h1", tag),
-                   Elem("ol", *items, **{"class": "slipbox-list"}),
+                   render_slipbox_list(ids),
                    id=f"tags/{tag[1:]}",
                    title=tag,
                    **{"class": "level1"})
@@ -111,16 +113,16 @@ def create_reference_page(conn: Connection, reference: str) -> str:
                     WHERE reference = ?
                         ORDER BY note
     """
-    items = []
+    ids = []
     text = ""
     for note, _text in conn.execute(sql, (reference,)):
+        assert not text or text == _text
         text = _text
-        item = Elem("li", value=str(note))
-        items.append(item)
+        ids.append(note)
     section = Elem("section",
                    Elem("h1", '@' + reference[4:]),
                    Elem("p", text),
-                   Elem("ol", *items, **{"class": "slipbox-list"}),
+                   render_slipbox_list(ids),
                    id=reference,
                    title=reference,
                    **{"class": "level1"})

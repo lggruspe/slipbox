@@ -80,10 +80,10 @@ def test_create_tag_page(mock_db: sqlite3.Connection) -> None:
   <h1>
     #test
   </h1>
-  <ol class='slipbox-list'>
-    <li value='0'></li>
-    <li value='1'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="0"></li>
+    <li value="1"></li>
+  </ul>
 </section>"""
 
 
@@ -99,9 +99,9 @@ def test_create_reference_page(mock_db: sqlite3.Connection) -> None:
   <p>
     Reference text.
   </p>
-  <ol class='slipbox-list'>
-    <li value='0'></li>
-  </ol>
+  <ul class="slipbox-list">
+    <li value="0"></li>
+  </ul>
 </section>"""
 
 
