@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="slipbox",
-    version="0.17.0",
+    version="0.18.0",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
     description="Static site generator for Zettelkasten notes",
