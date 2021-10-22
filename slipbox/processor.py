@@ -86,16 +86,20 @@ METADATA_TEMPLATES = {
 }
 
 
-def render_metadata(template: str, **fields: t.Any) -> str:
+def render_metadata(template: str, prefix: str = "", **fields: t.Any) -> str:
     """Render metadata code block using template."""
-    body = '\n'.join(
+    body = ('\n' + prefix).join(
         f"{k}={v}"
         for k, v in fields.items()
     )
     return template.format(body)
 
 
-def preprocess(template: str, *sources: Path, basedir: Path) -> str:
+def preprocess(template: str,
+               *sources: Path,
+               basedir: Path,
+               prefix: str = "",
+               ) -> str:
     """Preprocess notes (sources) by inserting code blocks generated
     using the template.
     """
@@ -104,7 +108,8 @@ def preprocess(template: str, *sources: Path, basedir: Path) -> str:
         content = source.read_bytes()
         filename = str(source.relative_to(basedir))
         _hash = sha256(content).hexdigest()
-        metadata = render_metadata(template, filename=filename, hash=_hash)
+        metadata = render_metadata(template, prefix, filename=filename,
+                                   hash=_hash)
         return metadata + content.decode(encoding="utf-8")
     return "".join(preprocess_single(source) for source in sources)
 
@@ -135,9 +140,10 @@ def create_preprocessed_input(
 ) -> Path:
     """Create preprocessed input to be passed to Pandoc."""
     template = METADATA_TEMPLATES.get(batch.extension, MARKDOWN_TEMPLATE)
+    prefix = "    " if batch.extension == ".rst" else ""
     path = tempdir/("input" + batch.extension)
     path.write_text(
-        preprocess(template, *batch.paths, basedir=basedir),
+        preprocess(template, *batch.paths, basedir=basedir, prefix=prefix),
         encoding="utf-8"
     )
     return path

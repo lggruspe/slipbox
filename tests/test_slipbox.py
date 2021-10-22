@@ -373,3 +373,31 @@ def test_process_tags_with_trailing_punctuation(
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
+
+
+@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+def test_process_rst(tmp_path: Path,
+                     capsys: pytest.CaptureFixture[str],
+                     sbox: Slipbox,
+                     ) -> None:
+    """Slipbox should run without filters raising metadata-related errors."""
+    rst = tmp_path/"test.rst"
+    rst.write_text("""
+1 Foo
+=====
+
+Foo.
+
+2 Bar
+=====
+
+Bar.""")
+
+    sbox.process([rst])
+    result = list(sbox.conn.execute("SELECT id, title, filename FROM Notes"))
+
+    assert result == [(1, "Foo", "test.rst"), (2, "Bar", "test.rst")]
+
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert not stderr
