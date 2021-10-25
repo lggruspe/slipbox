@@ -22,8 +22,8 @@ SQL = """
         (0, 0),
         (1, 1),
         (2, 2);
-    INSERT INTO Bibliography (key, text) VALUES
-        ('ref-test', 'Reference text.');
+    INSERT INTO Bibliography (key, text, url) VALUES
+        ('ref-test', 'Reference text.', 'https://test.com');
     INSERT INTO Citations (note, reference) VALUES
         (0, 'ref-test');
 """
@@ -39,7 +39,7 @@ def test_create_bibliography(mock_db: sqlite3.Connection) -> None:
 <dl>
 <dt><a href="#ref-test">[@test]</a></dt>
 <dd>Reference text.</dd>
-
+<dt>url :<a href="https://test.com">https://test.com</a></dt>
 </dl>
 </section>
 """

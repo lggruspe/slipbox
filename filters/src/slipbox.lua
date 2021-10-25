@@ -46,13 +46,15 @@ function SlipBox:save_image(id, filename)
   image.notes[id] = true
 end
 
-function SlipBox:save_reference(id, text)
+function SlipBox:save_reference(id, text, url)
   -- Save reference into slipbox.
   assert(type(id) == "string")
   assert(type(text) == "string")
+  assert(type(url) == "string")
   assert(id ~= "")
-  assert(string ~= "")
-  self.bibliography[id] = text
+  assert(text ~= "")
+  assert(url ~= "")
+  self.bibliography[id] = {text, url}
 end
 
 function SlipBox:save_note(id, title, filename)
@@ -128,9 +130,9 @@ local function links_to_csv(links)
 end
 
 local function bibliography_to_csv(refs)
-  local w = csv.Writer:new{"key", "text"}
-  for ref, text in pairs(refs) do
-    w:write{ref, text}
+  local w = csv.Writer:new{"key", "text", "url"}
+  for ref, content in pairs(refs) do
+    w:write{ref, content[1], content[2]}
   end
   return w.data
 end

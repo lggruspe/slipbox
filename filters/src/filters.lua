@@ -242,8 +242,11 @@ local function citations(slipbox)
 
         local function Div(elem)
           -- Save reference text.
-          if utils.is_reference_id(elem.identifier) then
-            slipbox:save_reference(elem.identifier, pandoc.utils.stringify(elem.content))
+            if utils.is_reference_id(elem.identifier) then
+            local link = {}
+            elem =  pandoc.walk_block(elem,
+            { Link = function (e) table.insert(link,e.target) return {} end })
+            slipbox:save_reference(elem.identifier, pandoc.utils.stringify(elem.content), tostring(link[1]))
             return {}
           end
         end

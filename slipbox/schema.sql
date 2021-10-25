@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS ImageLinks (
 
 CREATE TABLE IF NOT EXISTS Bibliography (
     key PRIMARY KEY,
-    text
+    text,
+    url
 );
 
 CREATE TABLE IF NOT EXISTS Citations (

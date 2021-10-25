@@ -58,7 +58,8 @@ def test_bib(tmp_path: Path) -> t.Iterable[Path]:
     title = {Title},
     language = {English},
     author = {Author},
-    year = {2020}
+    year = {2020},
+    url = {https://test.com}
 }
 """)
     yield path
