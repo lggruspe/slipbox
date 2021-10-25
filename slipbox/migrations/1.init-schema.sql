@@ -38,7 +38,8 @@ CREATE TABLE ImageLinks (
 
 CREATE TABLE Bibliography (
     key PRIMARY KEY,
-    text
+    text,
+    url
 );
 
 CREATE TABLE Citations (

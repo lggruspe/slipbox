@@ -70,12 +70,12 @@ def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
 
 def render_references(conn: Connection) -> str:
     """Create bibliography HTML section from database entries."""
-    sql = "SELECT key, text FROM Bibliography ORDER BY key"
+    sql = "SELECT key, text, url FROM Bibliography ORDER BY key"
     items = '\n'.join(
         render_template("bibliography__item.html", **dict(
-            href=f"#{key}", term=f"[@{key[4:]}]", description=text
+            href=f"#{key}", term=f"[@{key[4:]}]", url=url, description=text
         ))
-        for key, text in conn.execute(sql)
+        for key, text, url in conn.execute(sql)
     )
     return render_template("bibliography.html", items=items)
 

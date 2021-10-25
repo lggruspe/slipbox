@@ -5,6 +5,8 @@ local log = require "src.log"
 local metadata = require "src.metadata"
 local utils = require "src.utils"
 
+pandoc.utils = require "pandoc.utils"
+
 local function preprocess()
   -- Create filter that preprocesses headers by setting the filename
   -- attribute of Headers to the name of the file.
@@ -251,7 +253,13 @@ local function citations(slipbox)
         pandoc.walk_block(div, {Div = Div})
         return {}
       end
-    end
+    end,
+    Pandoc = function(doc)
+      local references = pandoc.util.references(doc)
+      for _, ref in ipairs(references) do
+        slipbox.bibliography["ref-" .. ref.id].url = ref.url
+      end
+    end,
   }
 end
 
