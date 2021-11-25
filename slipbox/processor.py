@@ -161,9 +161,9 @@ def process_batch(conn: Connection,
                             config.get("slipbox", "content_options"))
         print(cmd)
         import subprocess
-        subprocess.run(["pandoc", "-v"])
         subprocess.run(["pwd"])
         subprocess.run(["ls", "-l"])
+        subprocess.run(["/result/bin/pandoc", "-v"])
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
