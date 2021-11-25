@@ -43,6 +43,7 @@ def run_command(cmd: str,
     env = os.environ.copy()
     if variables is not None:
         env.update(variables)
+    print(cmd)
     proc = subprocess.run(shlex.split(cmd), env=env, check=False,
                           capture_output=True, **kwargs)
     if proc.stdout:

@@ -158,12 +158,8 @@ def process_batch(conn: Connection,
         preprocessed_input = create_preprocessed_input(tempdir, batch, basedir)
         html = tempdir/"temp.html"
         cmd = build_command(preprocessed_input, str(html), basedir,
+                            Path(config.get("slipbox", "pandoc_path" )),
                             config.get("slipbox", "content_options"))
-        print(cmd)
-        import subprocess
-        subprocess.run(["pwd"])
-        subprocess.run(["ls", "-l"])
-        subprocess.run(["/builds/gt-notebook/nix/wiki-pandoc-nix/pandoc", "-v"])
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)

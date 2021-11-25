@@ -52,14 +52,15 @@ def output_directory_proxy(path: Path) -> t.Iterator[Path]:
 
 class IndexGenerator:
     """Generates index.html."""
-    def __init__(self, con: Connection, options: str, title: str = "Slipbox"):
+    def __init__(self,  con: Connection, pandoc:Path, options: str, title: str = "Slipbox"):
         self.con = con
         self.options = options
         self.title = title
+        self.pandoc = pandoc
 
     def run(self, out: Path) -> None:
         """Generate index.html inside output directory."""
-        generate_index(self.con, self.options, out, self.title)
+        generate_index(self.con, self.pandoc, self.options, out, self.title)
 
 
 def copy(source: Path, dest: Path) -> None:
@@ -124,6 +125,7 @@ class CytoscapeDataGenerator:
 
 
 def main(con: Connection,
+         pandoc: Path,
          options: str,
          out: Path,
          title: str = "Slipbox") -> None:
@@ -131,6 +133,6 @@ def main(con: Connection,
     with output_directory_proxy(out) as tempdir:
         CytoscapeDataGenerator(con).run(tempdir)
         ImagesGenerator(con).run(tempdir)
-        IndexGenerator(con, options, title).run(tempdir)
+        IndexGenerator(con, pandoc, options, title).run(tempdir)
         generate_css(tempdir)
         generate_js(tempdir)

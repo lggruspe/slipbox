@@ -149,6 +149,7 @@ def generate_header() -> t.Iterable[str]:
 
 
 def generate_complete_html(conn: Connection,
+                           pandoc: Path,
                            options: str,
                            out: Path,
                            title: str = "Slipbox") -> None:
@@ -170,10 +171,10 @@ def generate_complete_html(conn: Connection,
 
         dummy = tempdir/"Slipbox.md"
         dummy.write_text(render_dummy(title), encoding="utf-8")
-        cmd = """/builds/gt-notebook/nix/wiki-pandoc-nix/pandoc Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
+        cmd = """{pandoc_path} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
                 --section-divs {opts} -o {output} -c style.css --mathjax
             """.format(
-            pandoc=pandoc(),
+            pandoc_path=pandoc,
             title=shlex.quote(title),
             opts=options,
             output=out/"index.html")

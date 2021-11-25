@@ -24,6 +24,7 @@ def default_config() -> ConfigParser:
         "document_options": "-s",
         "output_directory": "public",
         "title": "Slipbox",
+        "pandoc_path": "./pandoc"
     }
     return config
 
