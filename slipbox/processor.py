@@ -163,7 +163,7 @@ def process_batch(conn: Connection,
         import subprocess
         subprocess.run(["pwd"])
         subprocess.run(["ls", "-l"])
-        subprocess.run(["/result/bin/pandoc", "-v"])
+        subprocess.run(["/builds/gt-notebook/nix/wiki-pandoc-nix/pandoc", "-v"])
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
