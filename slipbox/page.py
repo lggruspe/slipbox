@@ -170,7 +170,7 @@ def generate_complete_html(conn: Connection,
 
         dummy = tempdir/"Slipbox.md"
         dummy.write_text(render_dummy(title), encoding="utf-8")
-        cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
+        cmd = """/builds/gt-notebook/nix/wiki-pandoc-nix/pandoc Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
                 --section-divs {opts} -o {output} -c style.css --mathjax
             """.format(
             pandoc=pandoc(),
