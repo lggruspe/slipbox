@@ -7,8 +7,8 @@ from .utils import check_requirements
 
 def main() -> None:
     """Entrypoint."""
-    if not check_requirements():
-        sys.exit("[ERROR] pandoc not found.")
+    #if not check_requirements():
+    #    sys.exit("[ERROR] pandoc not found.")
     cli.run()
 
 
