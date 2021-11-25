@@ -22,7 +22,7 @@ Requirements
 
 - `pandoc` (should be compiled with `pandoc-types` 1.22)
 - `graphviz`
-- `python3` (3.6+)
+- `python3` (3.7+)
 
 Installation and usage
 ----------------------
@@ -41,7 +41,7 @@ and <https://lggruspe.github.io/slipbox>.
 Plugins
 -------
 
-- <https://github.com/lggruspe/slipbox-cli-genanki>
+- <https://github.com/lggruspe/slipbox-cli-genanki> (WIP)
 
 License
 -------

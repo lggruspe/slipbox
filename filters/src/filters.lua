@@ -17,8 +17,8 @@ local function preprocess()
           _metadata[key] = val or _metadata[key]
         end
       elseif elem.tag == "Header" and elem.level == 1 then
-        assert(_metadata.filename)
-        assert(_metadata.hash)
+        assert(_metadata.filename, 'missing filename')
+        assert(_metadata.hash, 'missing hash')
         elem.attributes.filename = _metadata.filename
         elem.attributes.hash = _metadata.hash
       end
