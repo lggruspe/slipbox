@@ -159,6 +159,11 @@ def process_batch(conn: Connection,
         html = tempdir/"temp.html"
         cmd = build_command(preprocessed_input, str(html), basedir,
                             config.get("slipbox", "content_options"))
+        print(cmd)
+        import subprocess
+        subprocess.run(["pandoc", "-v"])
+        subprocess.run(["pwd"])
+        subprocess.run(["ls", "-l"])
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
