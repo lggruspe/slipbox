@@ -1,11 +1,12 @@
 PYTHON_VERSION = 3.7
 
-.PHONY:	all init check-js check-lua build-lua bundle check docs examples dist
+.PHONY:	all init init-lua check-js check-lua build-lua bundle check docs examples dist
 .PHONY:	lint test
 
 all:
 	@echo "Some valid targets:"
 	@echo "> init - Initialize project."
+	@echo "> init-lua - Initialize lua dev requirements."
 	@echo "> check-js - Run JS tests."
 	@echo "> check-lua - Run lua tests."
 	@echo "> check - Run all tests."
@@ -21,6 +22,12 @@ init:
 	pip install --upgrade pip wheel
 	pip install -r requirements.txt
 
+# Initialize lua dev requirements.
+init-lua:
+	luarocks install amalg
+	luarocks install busted
+	luarocks install luacheck
+
 # Run JS tests.
 check-js:
 	cd js; npm run lint && npm test
@@ -34,7 +41,6 @@ check-lua:
 build-lua:	check-lua
 	mkdir -p filters/build
 	cd filters; \
-		eval `luarocks path`; \
 		amalg.lua src.csv src.filters src.log src.slipbox src.utils src.metadata \
 			-s src/zk.lua -o build/filter.lua
 
