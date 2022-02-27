@@ -46,6 +46,7 @@ def migrate(con: Connection) -> None:
     for version, source in schemas():
         if user_version(con) < version:
             con.executescript(source)
+    con.commit()
 
 
 __all__ = ["migrate"]

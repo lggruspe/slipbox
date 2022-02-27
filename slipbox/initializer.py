@@ -6,14 +6,8 @@ from sqlite3 import Connection, connect
 import sys
 import typing as t
 
+from .database import migrate
 from .processor import METADATA_TEMPLATES
-
-
-def initialize_database(conn: Connection) -> None:
-    """Initialize database with schema.sql."""
-    sql = Path(__file__).with_name("schema.sql").read_text()
-    conn.executescript(sql)
-    conn.commit()
 
 
 def default_config() -> ConfigParser:
@@ -42,8 +36,8 @@ class DotSlipbox:
             self.existing = False
             self.path.mkdir()
             database = self.path.joinpath("data.db")
-            with connect(database) as conn:
-                initialize_database(conn)
+            with connect(database) as con:
+                migrate(con)
             config = default_config()
             if args is not None:
                 config["slipbox"].update(args)

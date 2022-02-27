@@ -6,16 +6,17 @@ import typing as t
 
 import pytest
 
-from slipbox.initializer import initialize_database, DotSlipbox
+from slipbox.initializer import DotSlipbox
+from slipbox.database import migrate
 from slipbox.slipbox import Slipbox
 
 
 @pytest.fixture
 def mock_db() -> t.Iterable[sqlite3.Connection]:
     """Create an empty mock database with all the necessary tables."""
-    with sqlite3.connect(":memory:") as conn:
-        initialize_database(conn)
-        yield conn
+    with sqlite3.connect(":memory:") as con:
+        migrate(con)
+        yield con
 
 
 @pytest.fixture

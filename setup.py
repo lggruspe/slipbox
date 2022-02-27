@@ -12,7 +12,7 @@ setuptools.setup(
     url="https://github.com/lggruspe/slipbox",
     packages=setuptools.find_packages(),
     package_data={
-        "slipbox": ["data/*", "*.sql", "templates/*"]
+        "slipbox": ["data/*", "migrations/*.sql", "templates/*"]
     },
     classifiers=[
         "Environment :: Console",
