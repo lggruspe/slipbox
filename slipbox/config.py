@@ -2,6 +2,7 @@
 
 from configparser import ConfigParser
 from dataclasses import dataclass
+import os
 from pathlib import Path
 import typing as t
 
@@ -9,7 +10,6 @@ import typing as t
 @dataclass
 class Config:
     """Slipbox config class."""
-
     # [slipbox]
     content_options = "--strip-comments"
     document_options = "-s"
@@ -60,6 +60,14 @@ class Config:
         config = ConfigParser()
         config.read_dict(dict_)
         self.read(config)
+
+    def read_env(self) -> None:
+        """Update config from environment variables.
+
+        NOTE Not all options can be set using environment variables.
+        """
+        self.pandoc = os.getenv("PANDOC", self.pandoc)
+        self.dot = os.getenv("DOT", self.dot)
 
     def to_config_parser(self) -> ConfigParser:
         """Convert to ConfigParser object."""
