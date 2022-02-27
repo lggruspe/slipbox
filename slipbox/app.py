@@ -7,6 +7,7 @@ import sys
 import typing as t
 
 from .config import Config
+from .database import migrate
 
 
 def is_root(path: Path) -> bool:
@@ -47,11 +48,16 @@ def startup() -> App:
     """Prepare app."""
     root = find_root()
     config = Config()
+    database = connect(":memory:")
+
     if root:
         config.read_file(root/".slipbox"/"config.cfg")
+        database = connect(root/".slipbox"/"data.db")
+
     config.read_env()
+    migrate(database)
     return App(
         root=root,
         config=config,
-        database=connect(":memory:"),
+        database=database,
     )
