@@ -4,7 +4,7 @@ import sys
 import typing as t
 import uuid
 from genbu import Genbu, Param, combinators as comb, usage
-from .app import check_notes, main, show_info_wrapper, initialize
+from .commands import check_notes, main, show_info_wrapper, initialize
 from .discover_commands import discover_commands
 from .tools.new import new_note
 
