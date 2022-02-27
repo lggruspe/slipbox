@@ -1,6 +1,7 @@
 """App object."""
 
 from dataclasses import dataclass
+from functools import wraps
 from pathlib import Path
 from sqlite3 import Connection, connect
 import sys
@@ -61,3 +62,16 @@ def startup() -> App:
         config=config,
         database=database,
     )
+
+
+Command = t.Callable[[App], None]
+
+
+def require_init(cmd: Command) -> Command:
+    """Wrap command that needs to be initialized."""
+    @wraps(cmd)
+    def wrapper(app: App) -> None:
+        if app.root is None:
+            error("slipbox has not been initialized")
+        return cmd(app)
+    return wrapper
