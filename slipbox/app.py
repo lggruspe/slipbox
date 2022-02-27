@@ -19,10 +19,11 @@ def is_root(path: Path) -> bool:
 
 def find_root() -> t.Optional[Path]:
     """Find slipbox root if it exists."""
-    root = Path()
+    root = Path().resolve()
     while root != root.parent:
         if is_root(root):
             return root
+        root = root.parent
     return root if is_root(root) else None
 
 
