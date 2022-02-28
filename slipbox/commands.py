@@ -16,10 +16,13 @@ def show_info(app: App) -> None:
     cur = app.database.cursor()
     cur.execute(sql, (note_id,))
     note = cur.fetchone()
-    if note is not None:
-        print(note_id)
-        print(note[0])
-        print(note[1])
+
+    if note is None:
+        error(f"note {note_id} does not exist")
+
+    print(note_id)
+    print(note[0])
+    print(note[1])
 
 
 @require_init
