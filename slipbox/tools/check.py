@@ -1,7 +1,8 @@
 """Check slipbox notes."""
 
 import typing as t
-from ..slipbox import Slipbox
+
+from ..app import App
 
 _Note = t.Tuple[int, str, str]
 
@@ -22,7 +23,7 @@ def print_sequence(header: str, sequence: t.Iterable[str]) -> bool:
     return not empty
 
 
-def invalid_links(slipbox: Slipbox) -> t.Iterator[t.Tuple[_Note, int]]:
+def invalid_links(app: App) -> t.Iterator[t.Tuple[_Note, int]]:
     """Generate notes that link to invalid ID."""
     sql = """
         SELECT DISTINCT id, title, filename, dest
@@ -32,13 +33,13 @@ def invalid_links(slipbox: Slipbox) -> t.Iterator[t.Tuple[_Note, int]]:
         )
         ORDER BY id
     """
-    for nid, title, filename, dest in slipbox.conn.execute(sql):
+    for nid, title, filename, dest in app.database.execute(sql):
         yield (nid, title, filename), dest
 
 
-def isolated_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
+def isolated_notes(app: App) -> t.Iterator[_Note]:
     """Generate isolated notes."""
-    yield from slipbox.conn.execute("""
+    yield from app.database.execute("""
         SELECT DISTINCT id, title, filename FROM Notes
         WHERE id NOT IN (
             SELECT src FROM ValidLinks UNION SELECT dest FROM ValidLinks
@@ -46,10 +47,10 @@ def isolated_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
     """)
 
 
-def unsourced_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
+def unsourced_notes(app: App) -> t.Iterator[_Note]:
     """Generate notes that need citations (only if there's a bibliography)."""
-    if "--bibliography" in slipbox.config["slipbox"]["content_options"]:
-        yield from slipbox.conn.execute("""
+    if "--bibliography" in app.config.content_options:
+        yield from app.database.execute("""
             SELECT DISTINCT id, title, filename FROM Notes
             WHERE id NOT IN (
                 SELECT note FROM Citations
@@ -57,7 +58,7 @@ def unsourced_notes(slipbox: Slipbox) -> t.Iterator[_Note]:
         """)
 
 
-def check_notes(slipbox: Slipbox) -> bool:
+def check_notes(app: App) -> bool:
     """Check notes in slipbox.
 
     Returns false is errors are found.
@@ -68,9 +69,9 @@ def check_notes(slipbox: Slipbox) -> bool:
     def format_link(link: t.Tuple[_Note, int]) -> str:
         return f"  {link[0][0]}. {link[0][1]} in {link[0][2]!r} -> {link[1]}."
 
-    _invalid_links = invalid_links(slipbox)
-    _isolated_notes = isolated_notes(slipbox)
-    _unsourced_notes = unsourced_notes(slipbox)
+    _invalid_links = invalid_links(app)
+    _isolated_notes = isolated_notes(app)
+    _unsourced_notes = unsourced_notes(app)
 
     errors = [
         print_sequence("The following notes link to non-existent notes.",
