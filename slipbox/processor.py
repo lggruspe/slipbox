@@ -5,7 +5,6 @@ They are mainly used to pass note metadata to Pandoc filters even when
 the input is the concatenation of several files.
 """
 
-from configparser import ConfigParser
 from hashlib import sha256
 from pathlib import Path
 from sqlite3 import Connection
@@ -16,6 +15,7 @@ from lxml.html import HtmlElement  # type: ignore
 from pyquery import PyQuery  # type: ignore
 
 from . import utils
+from .app import App
 from .batch import Batch
 from .data import process_csvs
 from .scan import build_command
@@ -149,20 +149,18 @@ def create_preprocessed_input(
     return path
 
 
-def process_batch(conn: Connection,
-                  batch: Batch,
-                  config: ConfigParser,
-                  basedir: Path) -> None:
+def process_batch(app: App, batch: Batch) -> None:
     """Process batch of input notes."""
+    assert app.root is not None
     with utils.temporary_directory() as tempdir:
-        preprocessed_input = create_preprocessed_input(tempdir, batch, basedir)
+        preprocessed = create_preprocessed_input(tempdir, batch, app.root)
         html = tempdir/"temp.html"
-        cmd = build_command(preprocessed_input, str(html), basedir,
-                            config.get("slipbox", "content_options"))
+        cmd = build_command(preprocessed, str(html), app.root,
+                            app.config.content_options)
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return
-        process_csvs(conn, tempdir)
-        store_html(conn, html.read_text(encoding="utf-8"), batch.paths)
-        conn.commit()
+        process_csvs(app.database, tempdir)
+        store_html(app.database, html.read_text(encoding="utf-8"), batch.paths)
+        app.database.commit()
