@@ -10,7 +10,7 @@ from slipbox.commands import init
 
 
 @pytest.fixture(autouse=True)
-def change_root(tmp_path: Path, monkeypatch) -> None:
+def change_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Automatically change directory to temp test directory."""
     monkeypatch.chdir(tmp_path)
 

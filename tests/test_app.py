@@ -1,5 +1,7 @@
 """Test app.py."""
 
+import pytest
+
 from slipbox.app import App, find_root
 
 
@@ -10,9 +12,11 @@ def test_find_root_in_current(test_app_with_root: App) -> None:
     assert root == app.root
 
 
-def test_find_root_in_parent(test_app_with_root: App, monkeypatch) -> None:
+def test_find_root_in_parent(test_app_with_root: App,
+                             monkeypatch: pytest.MonkeyPatch) -> None:
     """find_root must find .slipbox if it's in a parent directory."""
     app = test_app_with_root
+    assert app.root is not None
 
     path = app.root/"foo"/"bar"/"baz"
     path.mkdir(parents=True)
@@ -21,6 +25,7 @@ def test_find_root_in_parent(test_app_with_root: App, monkeypatch) -> None:
     assert not path.joinpath(".slipbox").exists()
 
     root = find_root()
+    assert root is not None
     assert app.root == root
     assert root.joinpath(".slipbox").exists()
 

@@ -46,6 +46,8 @@ def test_show_info_in_stdout(capsys: pytest.CaptureFixture[str],
 def test_init_creates_config_file(test_app: App) -> None:
     """init must create .slipbox/config.cfg."""
     commands.init(test_app)
+    assert test_app.root is not None
+
     hidden = test_app.root/".slipbox"
     assert hidden.is_dir()
     assert hidden.joinpath("config.cfg").is_file()
@@ -62,9 +64,17 @@ def test_init_quiet(test_app: App,
     assert not stderr
 
 
+def test_init_root(test_app: App) -> None:
+    """init must set app.root."""
+    assert test_app.root is None
+    commands.init(test_app)
+    assert test_app.root is not None
+
+
 def test_init_patterns(test_app: App) -> None:
     """.slipbox/config.cfg must contain some glob patterns."""
     commands.init(test_app)
+    assert test_app.root is not None
     hidden = test_app.root/".slipbox"
 
     parser = ConfigParser()
