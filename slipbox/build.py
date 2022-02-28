@@ -49,7 +49,7 @@ def compile_site(app: App) -> None:
 @require_init
 def build(app: App) -> None:
     """Build website."""
-    notes = find_notes(app)
+    notes = list(find_notes(app))
 
     # Delete outdated notes
     outdated = find_outdated_notes(app, notes)

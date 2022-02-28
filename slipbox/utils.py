@@ -5,7 +5,6 @@ from hashlib import sha256
 import os
 from pathlib import Path
 import shlex
-import shutil
 from sqlite3 import Connection
 import subprocess
 import sys
@@ -16,11 +15,6 @@ import typing as t
 def pandoc() -> str:
     """Pandoc location."""
     return os.environ.get("PANDOC", "pandoc")
-
-
-def check_requirements() -> bool:
-    """Check if pandoc is installed."""
-    return bool(shutil.which(pandoc()))
 
 
 @contextlib.contextmanager
