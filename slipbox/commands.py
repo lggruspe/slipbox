@@ -2,17 +2,18 @@
 
 from pathlib import Path
 import sys
-import typing as t
 
-from .initializer import DotSlipbox, default_config
-from .slipbox import Slipbox
+from .app import App, error, require_init
+from .processor import METADATA_TEMPLATES
 from .tools import check
 
 
-def show_info(slipbox: Slipbox, note_id: int) -> None:
-    """Print metadata associated with note ID."""
+@require_init
+def show_info(app: App) -> None:
+    """Show note info."""
+    note_id = int(app.args["note_id"])
     sql = "SELECT title, filename FROM Notes WHERE id = ?"
-    cur = slipbox.conn.cursor()
+    cur = app.database.cursor()
     cur.execute(sql, (note_id,))
     note = cur.fetchone()
     if note is not None:
@@ -21,44 +22,27 @@ def show_info(slipbox: Slipbox, note_id: int) -> None:
         print(note[1])
 
 
-def show_info_wrapper(note_id: str) -> None:
-    """Show note info."""
-    with Slipbox(DotSlipbox.locate()) as slipbox:
-        return show_info(slipbox, int(note_id))
-
-
-def main() -> None:
-    """Build website."""
-    with Slipbox(DotSlipbox.locate()) as slipbox:
-        slipbox.run()
-
-
-def check_notes() -> None:
+@require_init
+def check_notes(app: App) -> None:
     """Check for isolated notes and invalid links."""
-    with Slipbox(DotSlipbox.locate()) as slipbox:
-        if not check.check_notes(slipbox):
-            sys.exit(65)
+    if not check.check_notes(app):
+        sys.exit(65)
 
 
-def initialize(directory: t.Optional[str] = None,
-               content_options: t.Optional[str] = None,
-               document_options: t.Optional[str] = None,
-               output_directory: t.Optional[str] = None,
-               title: str = "Slipbox") -> None:
+def list_supported_formats(_: App) -> None:
+    """List supported input file formats."""
+    for key in METADATA_TEMPLATES:
+        print(f"*{key}")
+
+
+def init(app: App) -> None:
     """Initialize notes directory."""
-    parent = Path(directory) if directory else Path()
-    parent.mkdir(parents=True, exist_ok=True)
+    if app.root is not None:
+        root = str(app.root.resolve())
+        error(f"slipbox has already been initialized in {root}")
 
-    defaults = default_config()
-    if not content_options:
-        content_options = defaults.get("slipbox", "content_options")
-    if not document_options:
-        document_options = defaults.get("slipbox", "document_options")
-    if not output_directory:
-        output_directory = defaults.get("slipbox", "output_directory")
-
-    DotSlipbox(parent, dict(content_options=content_options,
-                            document_options=document_options,
-                            output_directory=output_directory,
-                            title=title))
-    print(f"Initialized .slipbox in {parent.resolve()!s}.")
+    app.root = Path()
+    hidden = app.root/".slipbox"
+    hidden.mkdir(parents=True, exist_ok=True)
+    app.config.write(hidden/"config.cfg")
+    print(f"slipbox initialized in {app.root.resolve()!s}")
