@@ -7,8 +7,26 @@ import typing as t
 from . import generator
 from .app import App, require_init
 from .batch import group_by_file_extension
-from .finder import find_notes
 from .processor import process_batch
+
+
+def find_notes(app: App) -> t.Iterable[Path]:
+    """Find notes in slipbox directory."""
+    assert app.root and app.root.is_dir()
+
+    include: t.List[str] = []
+    exclude: t.List[str] = []
+    for pattern, true in app.config.patterns.items():
+        (include if true else exclude).append(pattern)
+
+    for path in app.root.rglob("*"):
+        if not path.is_file():
+            continue
+        if not any(path.match(pat) for pat in include):
+            continue
+        if any(path.match(pat) for pat in exclude):
+            continue
+        yield path
 
 
 def find_outdated_notes(app: App, notes: t.Iterable[Path]) -> t.Iterable[Path]:
@@ -46,6 +64,13 @@ def compile_site(app: App) -> None:
     generator.main(app.database, options, output_directory, title)
 
 
+def process_notes(app: App, notes: t.Iterable[Path]) -> None:
+    """Process new notes (save into database)."""
+    new = find_new_notes(app, notes)
+    for batch in group_by_file_extension(new):
+        process_batch(app, batch)
+
+
 @require_init
 def build(app: App) -> None:
     """Build website."""
@@ -59,12 +84,8 @@ def build(app: App) -> None:
                     ((filename,) for filename in outdated))
     app.database.commit()
 
-    # Process new notes by batch
-    new = list(find_new_notes(app, notes))
-    for batch in group_by_file_extension(new):
-        process_batch(app, batch)
-
+    process_notes(app, notes)
     compile_site(app)
 
 
-__all__ = ["build"]
+__all__ = ["build", "process_notes"]
