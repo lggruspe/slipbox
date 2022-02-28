@@ -5,7 +5,8 @@ import sqlite3
 
 import pytest
 from slipbox import page
-from slipbox.utils import check_requirements
+from slipbox.app import startup
+from slipbox.dependencies import check_requirements
 
 SQL = """
     PRAGMA foreign_keys=ON;
@@ -105,7 +106,7 @@ def test_create_reference_page(mock_db: sqlite3.Connection) -> None:
 </section>"""
 
 
-@pytest.mark.skipif(not check_requirements(), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(startup({})), reason="requires pandoc")
 def test_generate_complete_html(mock_db: sqlite3.Connection,
                                 tmp_path: Path,
                                 ) -> None:
