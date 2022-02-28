@@ -1,6 +1,8 @@
 """Test tools/check.py."""
 
 from pathlib import Path
+import typing as t
+
 import pytest
 
 from slipbox.app import App, startup
@@ -74,6 +76,24 @@ def test_unsourced_notes_empty_bibliography(test_app_with_root: App,
     process_notes(app, [test_md])
     result = list(check.unsourced_notes(app))
     assert not result
+
+
+@pytest.fixture
+def test_bib(tmp_path: Path) -> t.Iterable[Path]:
+    """Test bibliography.
+
+    Used by test_unsourced_notes.
+    """
+    path = tmp_path/"test.bib"
+    path.write_text("""
+@book{test_2020,
+    title = {Title},
+    language = {English},
+    author = {Author},
+    year = {2020}
+}
+""")
+    yield path
 
 
 @pytest.mark.skipif(not check_requirements(startup({})), reason="requires pandoc")

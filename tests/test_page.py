@@ -2,10 +2,12 @@
 
 from pathlib import Path
 import sqlite3
+import typing as t
 
 import pytest
 from slipbox import page
 from slipbox.app import startup
+from slipbox.database import migrate
 from slipbox.dependencies import check_requirements
 
 SQL = """
@@ -28,6 +30,14 @@ SQL = """
     INSERT INTO Citations (note, reference) VALUES
         (0, 'ref-test');
 """
+
+
+@pytest.fixture
+def mock_db() -> t.Iterable[sqlite3.Connection]:
+    """Create an empty mock database with all the necessary tables."""
+    with sqlite3.connect(":memory:") as con:
+        migrate(con)
+        yield con
 
 
 def test_create_bibliography(mock_db: sqlite3.Connection) -> None:
