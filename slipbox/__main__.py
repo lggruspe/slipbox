@@ -7,7 +7,7 @@ from . import commands
 from .app import App, error, startup
 from .build import build
 from .dependencies import check_requirements
-from .cli2 import parse_args
+from .cli import parse_args
 from .tools.new import new_note
 
 
