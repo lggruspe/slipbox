@@ -12,6 +12,7 @@ def parse_args() -> t.Dict[str, t.Any]:
     epilog = """
   build     Build website.
   check     Check for isolated notes and invalid links.
+  formats   List supported input file formats.
   info      Show note info.
   init      Initialize notes directory.
   new       Get unused note IDs.
@@ -38,6 +39,8 @@ def parse_args() -> t.Dict[str, t.Any]:
     subparser = subparsers.add_parser("info", description="Show note info.")
     subparser.add_argument("note_id", type=int)
 
+    subparsers.add_parser("formats",
+                          description="List supported input file formats.")
     subparsers.add_parser("init", description="Initialize notes directory.")
 
     subparser = subparsers.add_parser("new",
