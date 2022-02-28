@@ -71,19 +71,21 @@ def process_notes(app: App, notes: t.Iterable[Path]) -> None:
         process_batch(app, batch)
 
 
+def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
+    """Delete notes from database."""
+    cur = app.database.cursor()
+    cur.execute("PRAGMA foreign_keys=ON")
+    cur.executemany("DELETE FROM Files WHERE filename IN (?)",
+                    ((filename,) for filename in notes))
+    app.database.commit()
+
+
 @require_init
 def build(app: App) -> None:
     """Build website."""
     notes = list(find_notes(app))
-
-    # Delete outdated notes
     outdated = find_outdated_notes(app, notes)
-    cur = app.database.cursor()
-    cur.execute("PRAGMA foreign_keys=ON")
-    cur.executemany("DELETE FROM Files WHERE filename IN (?)",
-                    ((filename,) for filename in outdated))
-    app.database.commit()
-
+    delete_notes(app, outdated)
     process_notes(app, notes)
     compile_site(app)
 
