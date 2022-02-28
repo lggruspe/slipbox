@@ -35,7 +35,7 @@ Copyright (C) 2020-2022 Levi Gruspe
 https://github.com/lggruspe/slipbox""")
         sys.exit()
 
-    handler = handlers[app.args["$subcommand"]]
+    handler = handlers[app.args["(command)"]]
     if handler is not None:
         handler(app)
     app.cleanup()

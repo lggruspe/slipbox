@@ -7,7 +7,7 @@ import typing as t
 def parse_args() -> t.Dict[str, t.Any]:
     """Returns dict of command-line options and arguments.
 
-    Name of subcommand can be accessed using the key: "$subcommand".
+    Name of subcommand can be accessed using the key: "(command)".
     """
     epilog = """
   build     Build website.
@@ -28,7 +28,7 @@ def parse_args() -> t.Dict[str, t.Any]:
                         help="show version number and exit")
 
     # Add subcommands
-    subparsers = parser.add_subparsers(title="commands", dest="$subcommand")
+    subparsers = parser.add_subparsers(title="commands", dest="(command)", required=True)
 
     subparsers.add_parser("build", description="Build website.")
     subparsers.add_parser(
