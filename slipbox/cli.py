@@ -41,7 +41,12 @@ def parse_args() -> t.Dict[str, t.Any]:
 
     subparsers.add_parser("formats",
                           description="List supported input file formats.")
-    subparsers.add_parser("init", description="Initialize notes directory.")
+
+    subparser = subparsers.add_parser(
+        "init",
+        description="Initialize notes directory.",
+    )
+    subparser.add_argument("-q", "--quiet", action="store_true")
 
     subparser = subparsers.add_parser("new",
                                       description="Get unused note IDs.")

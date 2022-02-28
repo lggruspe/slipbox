@@ -25,6 +25,7 @@ def test_app() -> t.Iterable[App]:
 @pytest.fixture
 def test_app_with_root(test_app: App) -> t.Iterable[App]:
     """App object with root."""
+    test_app.args = {"quiet": True}
     init(test_app)
     yield test_app
 

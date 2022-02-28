@@ -45,4 +45,6 @@ def init(app: App) -> None:
     hidden = app.root/".slipbox"
     hidden.mkdir(parents=True, exist_ok=True)
     app.config.write(hidden/"config.cfg")
-    print(f"slipbox initialized in {app.root.resolve()!s}")
+
+    if not app.args.get("quiet"):
+        print(f"slipbox initialized in {app.root.resolve()!s}")
