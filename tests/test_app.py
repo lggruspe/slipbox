@@ -26,5 +26,5 @@ def test_find_root_in_parent(test_app_with_root: App, monkeypatch) -> None:
 
 
 def test_find_root_none(test_app: App) -> None:
-    """find_root should return None if slipbox has not been initizlied."""
+    """find_root should return None if slipbox has not been initialized."""
     assert find_root() is None
