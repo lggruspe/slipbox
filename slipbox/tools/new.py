@@ -3,8 +3,7 @@
 import itertools
 import typing as t
 
-from ..initializer import DotSlipbox
-from ..slipbox import Slipbox
+from ..app import App, require_init
 
 
 def missing_integers(integers: t.Sequence[int]) -> t.Iterator[int]:
@@ -25,13 +24,11 @@ def take(count: int, items: t.Iterable[t.Any]) -> t.Iterator[t.Any]:
     return itertools.islice(items, count)
 
 
-def new_note(note_format: t.Optional[str] = None, count: int = 1) -> None:
+@require_init
+def new_note(app: App) -> None:
     """Get unused note IDs."""
-    with Slipbox(DotSlipbox.locate()) as slipbox:
-        rows = slipbox.conn.execute("SELECT id FROM Notes ORDER BY (id)")
-        ids = [row[0] for row in rows]
+    count = app.args["n"]
+    rows = app.database.execute("SELECT id FROM Notes ORDER BY (id)")
+    ids = [row[0] for row in rows]
     suggest = take(max(1, count), missing_integers(ids))
-    if note_format == "markdown":
-        print(f"# {next(suggest)} New note")
-    else:
-        print(",".join(map(str, suggest)))
+    print(",".join(map(str, suggest)))
