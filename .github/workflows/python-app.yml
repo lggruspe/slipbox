@@ -33,7 +33,7 @@ jobs:
         flake8 slipbox tests --max-complexity=10
     - name: Lint with pylint
       run: |
-        pylint --fail-under=10 slipbox tests -d R0903,C0415
+        pylint --fail-under=10 slipbox tests -d R0903,C0415,W0621
     - name: Run mypy
       run: |
         mypy slipbox tests --strict

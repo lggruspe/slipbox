@@ -54,7 +54,7 @@ bundle:	check-js build-lua
 # Run python linters.
 lint:
 	flake8 slipbox tests --max-complexity=10
-	pylint slipbox tests --fail-under=10 -d R0903,C0415
+	pylint slipbox tests --fail-under=10 -d R0903,C0415,W0621
 	mypy slipbox tests --strict
 
 # Run python tests.

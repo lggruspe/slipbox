@@ -3,7 +3,7 @@
 from slipbox.app import App, find_root
 
 
-def test_find_root_in_current(test_app_with_root: App, monkeypatch) -> None:
+def test_find_root_in_current(test_app_with_root: App) -> None:
     """find_root must find .slipbox if it's in the current directory."""
     app = test_app_with_root
     root = find_root()
@@ -25,6 +25,6 @@ def test_find_root_in_parent(test_app_with_root: App, monkeypatch) -> None:
     assert root.joinpath(".slipbox").exists()
 
 
-def test_find_root_none(test_app: App) -> None:
+def test_find_root_none() -> None:
     """find_root should return None if slipbox has not been initialized."""
     assert find_root() is None

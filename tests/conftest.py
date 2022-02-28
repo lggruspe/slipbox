@@ -1,7 +1,6 @@
 """Testing fixtures."""
 
 from pathlib import Path
-import sqlite3
 import typing as t
 
 import pytest
@@ -11,7 +10,8 @@ from slipbox.commands import init
 
 
 @pytest.fixture(autouse=True)
-def change_root(tmp_path: Path, monkeypatch):
+def change_root(tmp_path: Path, monkeypatch) -> None:
+    """Automatically change directory to temp test directory."""
     monkeypatch.chdir(tmp_path)
 
 
@@ -30,7 +30,7 @@ def test_app_with_root(test_app: App) -> t.Iterable[App]:
 
 
 @pytest.fixture
-def test_note() -> t.Iterable[Path]:
+def _test_note() -> t.Iterable[Path]:
     """Test note."""
     path = Path()/"test.md"
     path.write_text("# 0 Test\n\nTest note.\n")

@@ -10,11 +10,26 @@ from slipbox.build import build
 from slipbox.dependencies import check_requirements
 
 
-# TODO test output if note does not exist
+def test_show_info_missing_note(capsys: pytest.CaptureFixture[str],
+                                test_app_with_root: App,
+                                ) -> None:
+    """show_info should print error message and exit with error code."""
+    app = test_app_with_root
+    app.args = {"note_id": 0}
+
+    with pytest.raises(SystemExit) as system_exit:
+        commands.show_info(app)
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert stderr
+
+    assert system_exit.value.code != 0
+
+
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
 def test_show_info_in_stdout(capsys: pytest.CaptureFixture[str],
-                             test_note: Path,
+                             _test_note: Path,
                              test_app_with_root: App,
                              ) -> None:
     """show_info should output note info in stdout."""

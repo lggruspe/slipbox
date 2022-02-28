@@ -116,7 +116,8 @@ def test_create_reference_page(mock_db: sqlite3.Connection) -> None:
 </section>"""
 
 
-@pytest.mark.skipif(not check_requirements(startup({})), reason="requires pandoc")
+@pytest.mark.skipif(not check_requirements(startup({})),
+                    reason="missing requirements")
 def test_generate_complete_html(mock_db: sqlite3.Connection,
                                 tmp_path: Path,
                                 ) -> None:
