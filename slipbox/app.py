@@ -32,6 +32,7 @@ def find_root() -> t.Optional[Path]:
 @dataclass
 class App:
     """App object."""
+    args: t.Dict[str, t.Any]
     root: t.Optional[Path]
     config: Config
     database: Connection
@@ -45,7 +46,7 @@ class App:
 error = sys.exit
 
 
-def startup() -> App:
+def startup(args: t.Dict[str, t.Any]) -> App:
     """Prepare app."""
     root = find_root()
     config = Config()
@@ -58,6 +59,7 @@ def startup() -> App:
     config.read_env()
     migrate(database)
     return App(
+        args=args,
         root=root,
         config=config,
         database=database,
