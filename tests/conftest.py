@@ -6,9 +6,35 @@ import typing as t
 
 import pytest
 
-from slipbox.initializer import DotSlipbox
+from slipbox.app import App, startup
+from slipbox.commands import init
 from slipbox.database import migrate
-from slipbox.slipbox import Slipbox
+
+
+@pytest.fixture(autouse=True)
+def change_root(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+
+
+@pytest.fixture
+def test_app() -> t.Iterable[App]:
+    """App object without root."""
+    yield startup({})
+
+
+@pytest.fixture
+def test_app_with_root(test_app: App) -> t.Iterable[App]:
+    """App object with root."""
+    init(test_app)
+    yield test_app
+
+
+@pytest.fixture
+def test_note() -> t.Iterable[Path]:
+    """Test note."""
+    path = Path()/"test.md"
+    path.write_text("# 0 Test\n\nTest note.\n")
+    yield path
 
 
 @pytest.fixture
@@ -17,14 +43,6 @@ def mock_db() -> t.Iterable[sqlite3.Connection]:
     with sqlite3.connect(":memory:") as con:
         migrate(con)
         yield con
-
-
-@pytest.fixture
-def sbox(tmp_path: Path) -> t.Iterable[Slipbox]:
-    """Create automatically configured Slipbox object."""
-    dot = DotSlipbox(tmp_path)
-    with Slipbox(dot) as slipbox:
-        yield slipbox
 
 
 @pytest.fixture

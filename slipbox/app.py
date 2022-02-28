@@ -53,7 +53,7 @@ def startup(args: t.Dict[str, t.Any]) -> App:
     database = connect(":memory:")
 
     if root:
-        config.read_file(root/".slipbox"/"config.cfg")
+        config.read(root/".slipbox"/"config.cfg")
         database = connect(root/".slipbox"/"data.db")
 
     config.read_env()

@@ -94,7 +94,7 @@ class Config:
 
     def write(self, path: Path) -> None:
         """Write config to file."""
-        with open(path) as file:
+        with open(path, "w") as file:
             self.to_config_parser().write(file)
 
 

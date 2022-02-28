@@ -41,7 +41,7 @@ def init(app: App) -> None:
         root = str(app.root.resolve())
         error(f"slipbox has already been initialized in {root}")
 
-    app.root = Path()
+    app.root = Path().resolve()
     hidden = app.root/".slipbox"
     hidden.mkdir(parents=True, exist_ok=True)
     app.config.write(hidden/"config.cfg")
