@@ -44,18 +44,16 @@ def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
                     reason="missing requirements")
 class TestsWithRequirements:    # pylint: disable=R0201
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
-    def test_invalid_links(self, test_app_with_root: App) -> None:
+    def test_invalid_links(self, app: App) -> None:
         """invalid_links must return note and invalid ID."""
-        app = test_app_with_root
         Path("test.md").write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
         scan(app)
 
         result = list(check.invalid_links(app))
         assert result == [((0, "Test", "test.md"), 1)]
 
-    def test_isolated_notes(self, test_app_with_root: App) -> None:
+    def test_isolated_notes(self, app: App) -> None:
         """isolated_notes must return untagged notes only."""
-        app = test_app_with_root
         Path("test.md").write_text("""# 0 Foo
 
 #test
@@ -71,21 +69,16 @@ class TestsWithRequirements:    # pylint: disable=R0201
         result = list(check.isolated_notes(app))
         assert result == [(2, "Baz", "test.md")]
 
-    def test_unsourced_notes_empty_bibliography(
-            self,
-            test_app_with_root: App,
-    ) -> None:
+    def test_unsourced_notes_empty_bibliography(self, app: App) -> None:
         """unsourced_notes must be empty if there is no bibliography."""
-        app = test_app_with_root
         Path("test.md").write_text("# 0 Test\n\nTest.\n")
         scan(app)
 
         result = list(check.unsourced_notes(app))
         assert not result
 
-    def test_unsourced_notes(self, test_app_with_root: App) -> None:
+    def test_unsourced_notes(self, app: App) -> None:
         """unsourced_notes must include every note that has no citation."""
-        app = test_app_with_root
         app.config.content_options += " --bibliography test.bib --citeproc"
 
         Path("test.bib").write_text("""
@@ -112,28 +105,29 @@ Bar.
         result = list(check.unsourced_notes(app))
         assert result == [(0, "Foo", "test.md")]
 
-    def test_check_notes_empty(self, test_app_with_root: App,
-                               capsys: pytest.CaptureFixture[str],
-                               ) -> None:
+    def test_check_notes_empty(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
         """check_notes must not output anything if there are no errors.
 
         The result must be True (no errors).
         """
-        assert check.check_notes(test_app_with_root)
+        assert check.check_notes(app)
         stdout, stderr = capsys.readouterr()
         assert not stdout
         assert not stderr
 
     def test_check_notes(
         self,
-        test_app_with_root: App,
+        app: App,
         capsys: pytest.CaptureFixture[str],
     ) -> None:
         """check_notes must output to stdout.
 
         The result must be False (has errors).
         """
-        app = test_app_with_root
         Path("test.md").write_text("# 0 Test\n[](#1)")
         scan(app)
 

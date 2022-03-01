@@ -5,17 +5,16 @@ import pytest
 from slipbox.app import App, find_root
 
 
-def test_find_root_in_current(test_app_with_root: App) -> None:
+def test_find_root_in_current(app: App) -> None:
     """find_root must find .slipbox if it's in the current directory."""
-    app = test_app_with_root
-    root = find_root()
-    assert root == app.root
+    assert find_root() == app.root
 
 
-def test_find_root_in_parent(test_app_with_root: App,
-                             monkeypatch: pytest.MonkeyPatch) -> None:
+def test_find_root_in_parent(
+    app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """find_root must find .slipbox if it's in a parent directory."""
-    app = test_app_with_root
     assert app.root is not None
 
     path = app.root/"foo"/"bar"/"baz"

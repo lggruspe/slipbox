@@ -30,6 +30,12 @@ def test_app_with_root(test_app: App) -> t.Iterable[App]:
 
 
 @pytest.fixture
+def app(test_app_with_root: App) -> t.Iterable[App]:
+    """Alias for test_app_with_root."""
+    yield test_app_with_root
+
+
+@pytest.fixture
 def files_abc(tmp_path: Path) -> t.Iterable[t.List[Path]]:
     """Create files in tmp_path: a.md, b.md, c.md."""
     files = [tmp_path/"a.md", tmp_path/"b.md", tmp_path/"c.md"]

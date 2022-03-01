@@ -10,11 +10,11 @@ from slipbox.build import build
 from slipbox.dependencies import check_requirements
 
 
-def test_show_info_missing_note(capsys: pytest.CaptureFixture[str],
-                                test_app_with_root: App,
-                                ) -> None:
+def test_show_info_missing_note(
+    app: App,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     """show_info should print error message and exit with error code."""
-    app = test_app_with_root
     app.args = {"note_id": 0}
 
     with pytest.raises(SystemExit) as system_exit:
@@ -28,11 +28,11 @@ def test_show_info_missing_note(capsys: pytest.CaptureFixture[str],
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-def test_show_info_in_stdout(capsys: pytest.CaptureFixture[str],
-                             test_app_with_root: App,
-                             ) -> None:
+def test_show_info_in_stdout(
+    app: App,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     """show_info should output note info in stdout."""
-    app = test_app_with_root
     Path("test.md").write_text("# 0 Test\n\nTest note.")
 
     build(app)
