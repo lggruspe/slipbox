@@ -30,14 +30,6 @@ def test_app_with_root(test_app: App) -> t.Iterable[App]:
 
 
 @pytest.fixture
-def _test_note() -> t.Iterable[Path]:
-    """Test note."""
-    path = Path()/"test.md"
-    path.write_text("# 0 Test\n\nTest note.\n")
-    yield path
-
-
-@pytest.fixture
 def files_abc(tmp_path: Path) -> t.Iterable[t.List[Path]]:
     """Create files in tmp_path: a.md, b.md, c.md."""
     files = [tmp_path/"a.md", tmp_path/"b.md", tmp_path/"c.md"]
