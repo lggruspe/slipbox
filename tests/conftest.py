@@ -16,23 +16,18 @@ def change_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture
-def test_app() -> t.Iterable[App]:
+def app_without_root() -> t.Iterable[App]:
     """App object without root."""
     yield startup({})
 
 
 @pytest.fixture
-def test_app_with_root(test_app: App) -> t.Iterable[App]:
+def app(app_without_root: App) -> t.Iterable[App]:
     """App object with root."""
-    test_app.args = {"quiet": True}
-    init(test_app)
-    yield test_app
-
-
-@pytest.fixture
-def app(test_app_with_root: App) -> t.Iterable[App]:
-    """Alias for test_app_with_root."""
-    yield test_app_with_root
+    app = app_without_root
+    app.args = {"quiet": True}
+    init(app)
+    yield app
 
 
 @pytest.fixture

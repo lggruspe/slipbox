@@ -43,39 +43,44 @@ def test_show_info_in_stdout(
     assert not stderr
 
 
-def test_init_creates_config_file(test_app: App) -> None:
+def test_init_creates_config_file(app_without_root: App) -> None:
     """init must create .slipbox/config.cfg."""
-    commands.init(test_app)
-    assert test_app.root is not None
+    app = app_without_root
+    commands.init(app)
+    assert app.root is not None
 
-    hidden = test_app.root/".slipbox"
+    hidden = app.root/".slipbox"
     assert hidden.is_dir()
     assert hidden.joinpath("config.cfg").is_file()
 
 
-def test_init_quiet(test_app: App,
-                    capsys: pytest.CaptureFixture[str],
-                    ) -> None:
+def test_init_quiet(
+    app_without_root: App,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     """init must not print anything in quiet mode."""
-    test_app.args["quiet"] = True
-    commands.init(test_app)
+    app = app_without_root
+    app.args["quiet"] = True
+    commands.init(app)
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert not stderr
 
 
-def test_init_root(test_app: App) -> None:
+def test_init_root(app_without_root: App) -> None:
     """init must set app.root."""
-    assert test_app.root is None
-    commands.init(test_app)
-    assert test_app.root is not None
+    app = app_without_root
+    assert app.root is None
+    commands.init(app)
+    assert app.root is not None
 
 
-def test_init_patterns(test_app: App) -> None:
+def test_init_patterns(app_without_root: App) -> None:
     """.slipbox/config.cfg must contain some glob patterns."""
-    commands.init(test_app)
-    assert test_app.root is not None
-    hidden = test_app.root/".slipbox"
+    app = app_without_root
+    commands.init(app)
+    assert app.root is not None
+    hidden = app.root/".slipbox"
 
     parser = ConfigParser()
     parser.read(hidden/"config.cfg")
