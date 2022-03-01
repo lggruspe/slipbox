@@ -67,10 +67,8 @@ check: lint test
 # Generate docs.
 docs:	bundle
 	cd docs-src; rm -rf .slipbox
-	cd docs-src; PYTHONPATH=.. python -m slipbox init \
-		--content_options " --bibliography example.bib --citeproc" \
-		--document_options " -s" \
-		--output_directory '../docs'
+	cd docs-src; PYTHONPATH=.. python -m slipbox init
+	cd docs-src; cp slipbox.cfg .slipbox/config.cfg
 	cd docs-src; PYTHONPATH=.. python -m slipbox build
 
 # Generate examples.
