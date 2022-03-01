@@ -24,8 +24,12 @@ def parse_args() -> t.Dict[str, t.Any]:
         formatter_class=RawDescriptionHelpFormatter,
         epilog=epilog,
     )
-    parser.add_argument("-v", "--version", action="store_true",
-                        help="show version number and exit")
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="show version number and exit",
+    )
 
     # Add subcommands
     subparsers = parser.add_subparsers(
@@ -34,7 +38,14 @@ def parse_args() -> t.Dict[str, t.Any]:
         required=True,
     )
 
-    subparsers.add_parser("build", description="Build website.")
+    subparser = subparsers.add_parser("build", description="Build website.")
+    subparser.add_argument(
+        "--no-output",
+        action="store_false",
+        dest="output",
+        help="update database only; do not generate site in output directory",
+    )
+
     subparsers.add_parser(
         "check",
         description="Check for isolated notes and invalid links.",
@@ -43,8 +54,10 @@ def parse_args() -> t.Dict[str, t.Any]:
     subparser = subparsers.add_parser("info", description="Show note info.")
     subparser.add_argument("note_id", type=int)
 
-    subparsers.add_parser("formats",
-                          description="List supported input file formats.")
+    subparsers.add_parser(
+        "formats",
+        description="List supported input file formats.",
+    )
 
     subparser = subparsers.add_parser(
         "init",
@@ -52,10 +65,16 @@ def parse_args() -> t.Dict[str, t.Any]:
     )
     subparser.add_argument("-q", "--quiet", action="store_true")
 
-    subparser = subparsers.add_parser("new",
-                                      description="Get unused note IDs.")
-    subparser.add_argument("-n", type=int, default=1,
-                           help="number of note IDs to generate")
+    subparser = subparsers.add_parser(
+        "new",
+        description="Get unused note IDs.",
+    )
+    subparser.add_argument(
+        "-n",
+        type=int,
+        default=1,
+        help="number of note IDs to generate",
+    )
     return vars(parser.parse_args())
 
 
