@@ -6,9 +6,15 @@ import typing as t
 import pytest
 
 from slipbox.app import App, startup
-from slipbox.build import process_notes
+from slipbox.build import build, process_notes
 from slipbox.dependencies import check_requirements
 from slipbox.tools import check
+
+
+def scan(app: App) -> None:
+    """Run 'slipbox build --no-output'."""
+    app.args["output"] = False
+    build(app)
 
 
 def test_print_sequence_empty(capsys: pytest.CaptureFixture[str]) -> None:
@@ -57,23 +63,19 @@ def test_bib(tmp_path: Path) -> t.Iterable[Path]:
                     reason="missing requirements")
 class TestsWithRequirements:    # pylint: disable=R0201
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
-    def test_invalid_links(self,
-                           test_app_with_root: App,
-                           test_md: Path) -> None:
+    def test_invalid_links(self, test_app_with_root: App) -> None:
         """invalid_links must return note and invalid ID."""
         app = test_app_with_root
+        Path("test.md").write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
+        scan(app)
 
-        test_md.write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
-        process_notes(app, [test_md])
         result = list(check.invalid_links(app))
         assert result == [((0, "Test", "test.md"), 1)]
 
-    def test_isolated_notes(self,
-                            test_app_with_root: App,
-                            test_md: Path) -> None:
+    def test_isolated_notes(self, test_app_with_root: App) -> None:
         """isolated_notes must return untagged notes only."""
         app = test_app_with_root
-        test_md.write_text("""# 0 Foo
+        Path("test.md").write_text("""# 0 Foo
 
 #test
 
@@ -83,18 +85,20 @@ class TestsWithRequirements:    # pylint: disable=R0201
 
 # 2 Baz
 """)
-        process_notes(app, [test_md])
+        scan(app)
+
         result = list(check.isolated_notes(app))
         assert result == [(2, "Baz", "test.md")]
 
-    def test_unsourced_notes_empty_bibliography(self, test_app_with_root: App,
-                                                test_md: Path,
-                                                ) -> None:
+    def test_unsourced_notes_empty_bibliography(
+            self,
+            test_app_with_root: App,
+    ) -> None:
         """unsourced_notes must be empty if there is no bibliography."""
         app = test_app_with_root
+        Path("test.md").write_text("# 0 Test\n\nTest.\n")
+        scan(app)
 
-        test_md.write_text("# 0 Test\n\nTest.\n")
-        process_notes(app, [test_md])
         result = list(check.unsourced_notes(app))
         assert not result
 
@@ -132,18 +136,18 @@ Bar.
         assert not stdout
         assert not stderr
 
-    def test_check_notes(self, test_app_with_root: App,
-                         capsys: pytest.CaptureFixture[str],
-                         test_md: Path,
-                         ) -> None:
+    def test_check_notes(
+        self,
+        test_app_with_root: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
         """check_notes must output to stdout.
 
         The result must be False (has errors).
         """
         app = test_app_with_root
-
-        test_md.write_text("# 0 Test\n[](#1)")
-        process_notes(app, [test_md])
+        Path("test.md").write_text("# 0 Test\n[](#1)")
+        scan(app)
 
         assert not check.check_notes(app)
         stdout, stderr = capsys.readouterr()
