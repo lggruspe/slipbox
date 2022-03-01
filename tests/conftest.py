@@ -36,9 +36,3 @@ def files_abc(tmp_path: Path) -> t.Iterable[t.List[Path]]:
     for path in files:
         path.write_text(path.name)
     yield files
-
-
-@pytest.fixture
-def test_md(tmp_path: Path) -> t.Iterable[Path]:
-    """Empty test file (tmp_path/test.md)."""
-    yield tmp_path/"test.md"

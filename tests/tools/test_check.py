@@ -1,12 +1,11 @@
 """Test tools/check.py."""
 
 from pathlib import Path
-import typing as t
 
 import pytest
 
 from slipbox.app import App, startup
-from slipbox.build import build, process_notes
+from slipbox.build import build
 from slipbox.dependencies import check_requirements
 from slipbox.tools import check
 
@@ -39,24 +38,6 @@ def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
     assert "world" in stdout
     assert "!" in stdout
     assert not stderr
-
-
-@pytest.fixture
-def test_bib(tmp_path: Path) -> t.Iterable[Path]:
-    """Test bibliography.
-
-    Used by test_unsourced_notes.
-    """
-    path = tmp_path/"test.bib"
-    path.write_text("""
-@book{test_2020,
-    title = {Title},
-    language = {English},
-    author = {Author},
-    year = {2020}
-}
-""")
-    yield path
 
 
 @pytest.mark.skipif(not check_requirements(startup({})),
@@ -102,15 +83,21 @@ class TestsWithRequirements:    # pylint: disable=R0201
         result = list(check.unsourced_notes(app))
         assert not result
 
-    def test_unsourced_notes(self,
-                             test_app_with_root: App,
-                             test_md: Path,
-                             test_bib: Path) -> None:
+    def test_unsourced_notes(self, test_app_with_root: App) -> None:
         """unsourced_notes must include every note that has no citation."""
         app = test_app_with_root
+        app.config.content_options += " --bibliography test.bib --citeproc"
 
-        app.config.content_options += f" --bibliography {test_bib.resolve()!s}"
-        test_md.write_text("""# 0 Foo
+        Path("test.bib").write_text("""
+@book{test_2020,
+    title = {Title},
+    language = {English},
+    author = {Author},
+    year = {2020},
+}
+""")
+
+        Path("test.md").write_text("""# 0 Foo
 
 Foo.
 
@@ -120,7 +107,8 @@ Bar.
 
 [@test_2020]
 """)
-        process_notes(app, [test_md])
+        scan(app)
+
         result = list(check.unsourced_notes(app))
         assert result == [(0, "Foo", "test.md")]
 
