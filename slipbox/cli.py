@@ -28,7 +28,11 @@ def parse_args() -> t.Dict[str, t.Any]:
                         help="show version number and exit")
 
     # Add subcommands
-    subparsers = parser.add_subparsers(title="commands", dest="(command)", required=True)
+    subparsers = parser.add_subparsers(
+        title="commands",
+        dest="(command)",
+        required=True,
+    )
 
     subparsers.add_parser("build", description="Build website.")
     subparsers.add_parser(
