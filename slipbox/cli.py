@@ -4,7 +4,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import typing as t
 
 
-def parse_args() -> t.Dict[str, t.Any]:
+def parse_args(argv: t.Optional[t.Sequence[str]] = None) -> t.Dict[str, t.Any]:
     """Returns dict of command-line options and arguments.
 
     Name of subcommand can be accessed using the key: "(command)".
@@ -35,7 +35,6 @@ def parse_args() -> t.Dict[str, t.Any]:
     subparsers = parser.add_subparsers(
         title="commands",
         dest="(command)",
-        required=True,
     )
 
     subparser = subparsers.add_parser("build", description="Build website.")
@@ -75,7 +74,7 @@ def parse_args() -> t.Dict[str, t.Any]:
         default=1,
         help="number of note IDs to generate",
     )
-    return vars(parser.parse_args())
+    return vars(parser.parse_args(argv))
 
 
 __all__ = ["parse_args"]
