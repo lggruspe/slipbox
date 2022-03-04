@@ -77,8 +77,8 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/themes/base.css">
-  <script type="module"src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/shoelace.js"></script>
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.70/dist/themes/light.css">
+  <script type="module"src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.70/dist/shoelace.js"></script>
   <script type="module" src="app.js"></script>
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
@@ -101,14 +101,14 @@
       Home
       <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
     </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-home"></sl-icon-button>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-home" href="#home"></sl-icon-button>
   </sl-tooltip>
   <sl-tooltip content="Tags">
     <div slot="content">
       Tags
       <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
     </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-tag"></sl-icon-button>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-tag" href="#tags"></sl-icon-button>
   </sl-tooltip>
   <sl-tooltip content="Graph">
     <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-network-chart"></sl-icon-button>
@@ -125,7 +125,7 @@
       References
       <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
     </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-library"></sl-icon-button>
+    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-library" href="#references"></sl-icon-button>
   </sl-tooltip>
   <sl-tooltip content="Search">
     <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-search"></sl-icon-button>
@@ -146,7 +146,7 @@
   </sl-dialog>
 
   <script type="module">
-import { registerIconLibrary } from 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.46/dist/shoelace.js'
+import { registerIconLibrary } from 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.70/dist/shoelace.js'
 
 registerIconLibrary('boxicons', {
   resolver: name => {
@@ -157,18 +157,6 @@ registerIconLibrary('boxicons', {
   },
   mutator: svg => svg.setAttribute('fill', 'currentColor')
 })
-
-  document.querySelector('sl-icon-button[name="bx-home"]').addEventListener('click', () => {
-    window.location = '#home'
-  })
-
-  document.querySelector('sl-icon-button[name="bx-tag"]').addEventListener('click', () => {
-    window.location = '#tags'
-  })
-
-  document.querySelector('sl-icon-button[name="bx-library"]').addEventListener('click', () => {
-    window.location = '#references'
-  })
 
   const searchDialog = document.querySelector('#slipbox-search-dialog')
   document.querySelector('sl-icon-button[name="bx-search"]').addEventListener('click', () => {

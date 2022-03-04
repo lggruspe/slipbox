@@ -140,10 +140,10 @@ def generate_header() -> t.Iterable[str]:
     """Generate stuff to put in HTML header."""
     yield '<link rel="stylesheet"' \
         'href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace' \
-        '@2.0.0-beta.46/dist/themes/base.css">'
+        '@2.0.0-beta.70/dist/themes/light.css">'
     yield '<script type="module"' \
         'src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace' \
-        '@2.0.0-beta.46/dist/shoelace.js">' \
+        '@2.0.0-beta.70/dist/shoelace.js">' \
         '</script>'
     yield '<script type="module" src="app.js"></script>'
 
