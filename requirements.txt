@@ -4,15 +4,14 @@ coverage==5.5
 cssselect==1.1.0
 decorator==4.4.2
 flake8==3.9.2
-genbu==0.2.1
 hypothesis==6.14.2
 iniconfig==1.1.1
 isort==5.9.2
 lazy-object-proxy==1.6.0
 lxml==4.6.3
 mccabe==0.6.1
-mypy==0.910
 mypy-extensions==0.4.3
+mypy==0.910
 networkx==2.5.1
 numpy==1.21.0
 packaging==21.0
@@ -24,8 +23,8 @@ pyflakes==2.3.1
 pylint==2.9.3
 pyparsing==2.4.7
 pyquery==1.4.3
-pytest==6.2.4
 pytest-cov==2.12.1
+pytest==6.2.4
 sortedcontainers==2.4.0
 toml==0.10.2
 typing-extensions==3.10.0.0

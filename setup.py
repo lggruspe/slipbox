@@ -20,9 +20,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     install_requires=[
-        "genbu==0.2.1",
         "networkx>=2.5.1",
         "pydot>=1.4.2",
         "pyquery>=1.4.3",
