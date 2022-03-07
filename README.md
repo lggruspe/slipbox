@@ -13,14 +13,13 @@ Features
 
 -   Interactive graph of notes and links
 -   Static text search
--   Extensible CLI
 -   Supports notes in markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags,
     Textile and MediaWiki formats
 
 Requirements
 ------------
 
-- `pandoc` (should be compiled with `pandoc-types` 1.22)
+- `pandoc` (2.17.1.1+)
 - `graphviz`
 - `python3` (3.7+)
 
@@ -29,8 +28,9 @@ Installation and usage
 
 ```bash
 pip install slipbox
-slipbox init my-slipbox
-cd my-slipbox
+
+cd my-notes
+slipbox init
 # ...add notes
 slipbox build
 ```
