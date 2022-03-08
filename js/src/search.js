@@ -2,15 +2,17 @@ import lunr from 'lunr'
 
 /// Takes callback that gets invoked when title gets clicked.
 function extractTitle (section, callback) {
-  const title = section?.querySelector('h1')?.textContent
+  const html = section?.querySelector('h1')?.innerHTML
+
   const h3 = document.createElement('h3')
   const a = document.createElement('a')
   h3.appendChild(a)
 
   a.href = `#${section.id}`
-  a.textContent = title
+  a.innerHTML = html
+
   if (callback) a.onclick = callback
-  return title ? h3 : null
+  return html ? h3 : null
 }
 
 function extractSummary (section, callback) {
@@ -22,9 +24,7 @@ function extractSummary (section, callback) {
 
   const p = section.querySelector('p')
   if (p) {
-    const textCopy = document.createElement('p')
-    textCopy.textContent = p.textContent
-    fragment.appendChild(textCopy)
+    fragment.appendChild(p.cloneNode(true))
   }
   return fragment
 }
