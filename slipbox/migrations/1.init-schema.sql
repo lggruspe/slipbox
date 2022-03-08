@@ -62,17 +62,17 @@ CREATE VIEW ValidLinks AS
 SELECT * FROM Links WHERE dest IN (SELECT id FROM Notes);
 
 CREATE VIEW StronglyTagged AS
-SELECT id FROM Notes WHERE id IN (
+SELECT * FROM Notes WHERE id IN (
     SELECT id FROM Tags
 );
 
 CREATE VIEW InTagged AS
-SELECT id FROM Notes JOIN Links ON Notes.id = Links.dest WHERE Links.src IN (
+SELECT id, title, filename, html FROM Notes JOIN Links ON Notes.id = Links.dest WHERE Links.src IN (
     SELECT id FROM StronglyTagged
 );
 
 CREATE VIEW OutTagged AS
-SELECT id FROM Notes JOIN Links ON Notes.id = Links.src WHERE Links.dest IN (
+SELECT id, title, filename, html FROM Notes JOIN Links ON Notes.id = Links.src WHERE Links.dest IN (
     SELECT id FROM StronglyTagged
 );
 
@@ -80,7 +80,7 @@ CREATE VIEW WeaklyTagged AS
 SELECT * FROM InTagged UNION SELECT * FROM OutTagged;
 
 CREATE VIEW Untagged AS
-SELECT id FROM Notes WHERE id NOT IN (
+SELECT * FROM Notes WHERE id NOT IN (
     SELECT id FROM StronglyTagged UNION SELECT id FROM WeaklyTagged
 );
 

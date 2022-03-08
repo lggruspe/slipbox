@@ -6,6 +6,8 @@ from sqlite3 import Connection
 import subprocess
 import typing as t
 
+from pyquery import PyQuery as pq  # type: ignore
+
 from .templates import Elem, render, render_template
 from .utils import pandoc, temporary_directory
 
@@ -24,17 +26,39 @@ $\,$
 """
 
 
-def render_slipbox_list(ids: t.Iterable[int]) -> str:
-    """Render slipbox-list HTML for given note IDs."""
-    items = (render_template("list__item.html", id=id_).rstrip()
-             for id_ in ids)
+class Note(t.NamedTuple):
+    """Data needed to render list of notes."""
+    id: int
+    title_html: str
+
+
+def note_list_item(note: Note) -> str:
+    """Return slipbox-list item HTML for given note."""
+    html = render_template("list__item.html", id=note.id, html=note.title_html)
+    return html.rstrip()
+
+
+def note_list(notes: t.Iterable[Note]) -> str:
+    """Render slipbox-list HTML for given notes."""
+    items = map(note_list_item, sorted(notes))
     return render_template("list.html", items="\n".join(items)).rstrip()
+
+
+def get_section_title(html: str) -> str:
+    """Get innerHTML of section title."""
+    assert html is not None
+    doc = pq(html)
+    header = doc("h1")
+    return t.cast(str, header.html())
 
 
 def create_home_page(conn: Connection, title: str) -> str:
     """Create home page HTML section containing a list of all notes."""
-    ids = (id_ for id_, in conn.execute("SELECT id FROM Notes"))
-    list_ = render_slipbox_list(ids)
+    notes = (
+        Note(id_, get_section_title(html))
+        for id_, html in conn.execute("SELECT id, html FROM Notes")
+    )
+    list_ = note_list(notes)
     return render_template("home.html", title=title, list=list_)
 
 
@@ -75,22 +99,28 @@ def create_tags(conn: Connection) -> str:
                    id="tags",
                    title="Tags",
                    **{"class": "level1"})
-    untagged = list(conn.execute("SELECT * FROM Untagged"))
+    untagged = list(
+        Note(id_, get_section_title(html))
+        for id_, html in conn.execute("SELECT id, html FROM Untagged")
+    )
     if untagged:
         section.children.append(Elem("h2", "Untagged notes"))
-        section.children.append(render_slipbox_list(nid for nid, in untagged))
+        section.children.append(note_list(untagged))
     return render(section)
 
 
 def create_tag_page(conn: Connection, tag: str) -> str:
     """Create HTML section that lists all notes with the tag."""
     sql = """
-        SELECT id FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
+        SELECT id, html FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
     """
-    ids = (id_ for id_, in conn.execute(sql, (tag,)))
+    notes = (
+        Note(id_, get_section_title(html))
+        for id_, html in conn.execute(sql, (tag,))
+    )
     section = Elem("section",
                    Elem("h1", tag),
-                   render_slipbox_list(ids),
+                   note_list(notes),
                    id=f"tags/{tag[1:]}",
                    title=tag,
                    **{"class": "level1"})
@@ -107,22 +137,22 @@ def create_tag_pages(conn: Connection) -> str:
 def create_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""
     sql = """
-        SELECT note, text FROM Citations
+        SELECT note, text, html FROM Citations
             JOIN Notes ON Citations.note = Notes.id
                 JOIN Bibliography ON Bibliography.key = Citations.reference
                     WHERE reference = ?
                         ORDER BY note
     """
-    ids = []
+    notes = []
     text = ""
-    for note, _text in conn.execute(sql, (reference,)):
+    for note, _text, html in conn.execute(sql, (reference,)):
         assert not text or text == _text
         text = _text
-        ids.append(note)
+        notes.append(Note(note, get_section_title(html)))
     section = Elem("section",
                    Elem("h1", '@' + reference[4:]),
                    Elem("p", text),
-                   render_slipbox_list(ids),
+                   note_list(notes),
                    id=reference,
                    title=reference,
                    **{"class": "level1"})

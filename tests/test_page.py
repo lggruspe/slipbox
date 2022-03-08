@@ -13,10 +13,10 @@ from slipbox.dependencies import check_requirements
 SQL = """
     PRAGMA foreign_keys=ON;
     INSERT INTO Files (filename) VALUES ('test.md');
-    INSERT INTO Notes (id, title, filename) VALUES
-        (0, '0', 'test.md'),
-        (1, '1', 'test.md'),
-        (2, '2', 'test.md');
+    INSERT INTO Notes (id, title, filename, html) VALUES
+        (0, '0', 'test.md', '<section><h1>0</h1><p>Foo.</p></section>'),
+        (1, '1', 'test.md', '<section><h1>1</h1><p>Bar.</p></section>'),
+        (2, '2', 'test.md', '<section><h1>2</h1><p>Baz.</p></section>');
     INSERT INTO Tags (tag, id) VALUES
         ('#test', 0),
         ('#test', 1),
@@ -92,8 +92,8 @@ def test_create_tag_page(mock_db: sqlite3.Connection) -> None:
     #test
   </h1>
   <ul class="slipbox-list">
-    <li value="0"></li>
-    <li value="1"></li>
+    <li value="0">0 – <a href="#0">0</a></li>
+    <li value="1">1 – <a href="#1">1</a></li>
   </ul>
 </section>"""
 
@@ -111,7 +111,7 @@ def test_create_reference_page(mock_db: sqlite3.Connection) -> None:
     Reference text.
   </p>
   <ul class="slipbox-list">
-    <li value="0"></li>
+    <li value="0">0 – <a href="#0">0</a></li>
   </ul>
 </section>"""
 

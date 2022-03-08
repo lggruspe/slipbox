@@ -2,7 +2,6 @@ import cytoscape from 'cytoscape'
 
 import * as graph from './graph.js'
 import * as home from './home.js'
-import * as list from './list.js'
 import * as search from './search.js'
 import * as shuffle from './shuffle.js'
 
@@ -13,7 +12,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   const title = document.getElementById('title-block-header')
   if (title) title.remove()
-  list.init()
   search.init()
   graph.connectGraphDialogAndButton(
     document.querySelector('sl-icon-button[name="bx-network-chart"]'),
