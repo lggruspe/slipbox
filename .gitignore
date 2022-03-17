@@ -4,10 +4,11 @@
 .coverage
 .hypothesis/
 /docs-src/.slipbox/
-slipbox/data/*.js
-slipbox/data/filter.lua
 __pycache__/
 build/
 dist/
 env/
 node_modules/
+slipbox/data/*.js
+slipbox/data/components.min.css
+slipbox/data/filter.lua
