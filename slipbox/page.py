@@ -19,7 +19,6 @@ title: {title}
 ...
 
 ::: {{style="display:none"}}
-$\,$
 ```c
 ```
 :::
