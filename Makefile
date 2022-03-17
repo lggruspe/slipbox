@@ -48,6 +48,7 @@ build-lua:	check-lua
 bundle:	check-js build-lua
 	cd js; npm run build
 	mkdir -p slipbox/data
+	cp js/dist/app.min.css slipbox/data/app.css
 	cp js/dist/app.min.js slipbox/data/app.js
 	cp filters/build/filter.lua slipbox/data
 

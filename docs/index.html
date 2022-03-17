@@ -77,8 +77,7 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.70/dist/themes/light.css">
-  <script type="module"src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.70/dist/shoelace.js"></script>
+  <link rel="stylesheet" href="app.css">
   <script type="module" src="app.js"></script>
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
@@ -146,18 +145,6 @@
   </sl-dialog>
 
   <script type="module">
-import { registerIconLibrary } from 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.70/dist/shoelace.js'
-
-registerIconLibrary('boxicons', {
-  resolver: name => {
-    let folder = 'regular'
-    if (name.substring(0, 4) === 'bxs-') folder = 'solid'
-    if (name.substring(0, 4) === 'bxl-') folder = 'logos'
-    return `https://cdn.jsdelivr.net/npm/boxicons@2.0.7/svg/${folder}/${name}.svg`
-  },
-  mutator: svg => svg.setAttribute('fill', 'currentColor')
-})
-
   const searchDialog = document.querySelector('#slipbox-search-dialog')
   document.querySelector('sl-icon-button[name="bx-search"]').addEventListener('click', () => {
     searchDialog.show()

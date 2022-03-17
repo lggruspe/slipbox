@@ -74,6 +74,7 @@ def generate_js(out: Path) -> None:
 
 def generate_css(out: Path) -> None:
     """Generates style.css"""
+    copy(data/"app.css", out/"app.css")
     copy(data/"style.css", out/"style.css")
 
 

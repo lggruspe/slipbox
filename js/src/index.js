@@ -1,3 +1,6 @@
+import '@shoelace-style/shoelace'
+import '@shoelace-style/shoelace/dist/themes/light.css'
+
 import cytoscape from 'cytoscape'
 
 import * as graph from './graph.js'
@@ -6,6 +9,8 @@ import * as search from './search.js'
 import * as shuffle from './shuffle.js'
 
 import { fetchJson } from './utils.js'
+
+import './icons.js'
 
 window.addEventListener('DOMContentLoaded', async () => {
   const data = await fetchJson('graph/data.json')
