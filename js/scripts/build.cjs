@@ -4,11 +4,28 @@ const { exit } = require('process')
 
 const { analyzeMetafile, build } = require('esbuild')
 
+const copyBoxicons = {
+  name: 'copyBoxicons',
+  setup (build) {
+    const boxicons = dirname(dirname(require.resolve('boxicons')))
+    const dest = dirname(build.initialOptions.outfile)
+    build.onEnd(() => {
+      const options = {
+        recursive: true,
+        filter: path => {
+          const relpath = relative(boxicons, path)
+          return relpath === '' || relpath.startsWith('svg')
+        }
+      }
+      fs.cp(boxicons, dest, options)
+    })
+  }
+}
+
 const copyMathjax = {
   name: 'copyMathjax',
   setup (build) {
-    const es5 = dirname(require.resolve('mathjax'))
-    const mathjax = dirname(es5)
+    const mathjax = dirname(dirname(require.resolve('mathjax')))
     const dest = dirname(build.initialOptions.outfile)
     build.onEnd(() => {
       const options = {
@@ -33,7 +50,7 @@ async function main () {
     metafile: true,
     format: 'esm',
     external: ['mathjax'],
-    plugins: [copyMathjax]
+    plugins: [copyBoxicons, copyMathjax]
   })
 
   const text = await analyzeMetafile(result.metafile)

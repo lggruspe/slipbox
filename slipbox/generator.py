@@ -78,6 +78,11 @@ def generate_css(out: Path) -> None:
     copy(data/"style.css", out/"style.css")
 
 
+def copy_boxicons(out: Path) -> None:
+    """Copy boxicons svgs."""
+    copytree(data/"svg", out/"assets"/"boxicons"/"svg")
+
+
 def copy_mathjax(out: Path) -> None:
     """Copy mathjax files."""
     copytree(data/"es5", out/"es5")
@@ -140,4 +145,5 @@ def main(con: Connection,
         IndexGenerator(con, options, title).run(tempdir)
         generate_css(tempdir)
         generate_js(tempdir)
+        copy_boxicons(tempdir)
         copy_mathjax(tempdir)
