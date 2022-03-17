@@ -8,9 +8,10 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "eslint --fix src test --global MathJax",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env jsdom --coverage",
-    "build": "esbuild src/index.js --bundle --minify --outfile=dist/app.min.js --analyze --format=esm --external:mathjax"
+    "build": "node scripts/build.cjs",
+    "lint": "eslint src test scripts/*.cjs --global MathJax",
+    "lint:fix": "eslint src test scripts/*.cjs --global MathJax --fix",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env jsdom --coverage"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
   "dependencies": {
     "@shoelace-style/shoelace": "^2.0.0-beta.71",
     "cytoscape": "^3.19.1",
-    "lunr": "^2.3.9"
+    "lunr": "^2.3.9",
+    "mathjax": "^3.2.0"
   }
 }

@@ -10,5 +10,6 @@ dist/
 env/
 node_modules/
 slipbox/data/*.js
-slipbox/data/app.css
+slipbox/data/app.min.css
+slipbox/data/es5/
 slipbox/data/filter.lua

@@ -3,7 +3,7 @@
 from contextlib import contextmanager
 import json
 from pathlib import Path
-from shutil import move, rmtree
+from shutil import copytree, move, rmtree
 from sqlite3 import Connection
 import typing as t
 
@@ -69,13 +69,18 @@ def copy(source: Path, dest: Path) -> None:
 
 def generate_js(out: Path) -> None:
     """Generate app.js inside output directory."""
-    copy(data/"app.js", out/"app.js")
+    copy(data/"app.min.js", out/"app.min.js")
 
 
 def generate_css(out: Path) -> None:
     """Generates style.css"""
-    copy(data/"app.css", out/"app.css")
+    copy(data/"app.min.css", out/"app.min.css")
     copy(data/"style.css", out/"style.css")
+
+
+def copy_mathjax(out: Path) -> None:
+    """Copy mathjax files."""
+    copytree(data/"es5", out/"es5")
 
 
 class ImagesGenerator:
@@ -135,3 +140,4 @@ def main(con: Connection,
         IndexGenerator(con, options, title).run(tempdir)
         generate_css(tempdir)
         generate_js(tempdir)
+        copy_mathjax(tempdir)
