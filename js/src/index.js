@@ -1,6 +1,3 @@
-import '@shoelace-style/shoelace'
-import '@shoelace-style/shoelace/dist/themes/light.css'
-
 import cytoscape from 'cytoscape'
 
 import * as graph from './graph.js'
@@ -10,7 +7,7 @@ import * as shuffle from './shuffle.js'
 
 import { fetchJson } from './utils.js'
 
-import './icons.js'
+import './components.js'
 
 window.addEventListener('DOMContentLoaded', async () => {
   const data = await fetchJson('graph/data.json')
@@ -24,7 +21,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   )
   shuffle.registerShuffleButton(
     cytoscape({ headless: true, ...data }),
-    document.querySelector('sl-icon-button[name="bx-shuffle"]')
+    document.querySelector('sb-nav-item[title="Random note"]')
   )
 })
 

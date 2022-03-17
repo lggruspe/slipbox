@@ -1,35 +1,11 @@
 <nav>
-  <sl-tooltip>
-    <div slot="content">
-      Home
-      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
-    </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-home" href="#home"></sl-icon-button>
-  </sl-tooltip>
-  <sl-tooltip content="Tags">
-    <div slot="content">
-      Tags
-      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
-    </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-tag" href="#tags"></sl-icon-button>
-  </sl-tooltip>
+  <sb-nav-item title="Home" external icon="boxicons/bx-home" href="#home"></sb-nav-item>
+  <sb-nav-item title="Tags" external icon="boxicons/bx-tag" href="#tags"></sb-nav-item>
+  <sb-nav-item title="References" external icon="boxicons/bx-library" href="#references"></sb-nav-item>
   <sl-tooltip content="Graph">
     <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-network-chart"></sl-icon-button>
   </sl-tooltip>
-  <sl-tooltip>
-    <div slot="content">
-      Random note
-      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
-    </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-shuffle"></sl-icon-button>
-  </sl-tooltip>
-  <sl-tooltip>
-    <div slot="content">
-      References
-      <sl-icon library="boxicons" name="bx-link-external"></sl-icon>
-    </div>
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-library" href="#references"></sl-icon-button>
-  </sl-tooltip>
+  <sb-nav-item title="Random note" external icon="boxicons/bx-shuffle"></sb-nav-item>
   <sl-tooltip content="Search">
     <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-search"></sl-icon-button>
   </sl-tooltip>
