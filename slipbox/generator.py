@@ -64,7 +64,7 @@ class IndexGenerator:
 
 def copy(source: Path, dest: Path) -> None:
     """Copy text from source to dest Path."""
-    dest.write_text(source.read_text())
+    dest.write_bytes(source.read_bytes())
 
 
 def generate_js(out: Path) -> None:
@@ -76,6 +76,13 @@ def generate_css(out: Path) -> None:
     """Generates style.css"""
     copy(data/"app.min.css", out/"app.min.css")
     copy(data/"style.css", out/"style.css")
+
+
+def generate_favicons(out: Path) -> None:
+    """Copy favicons."""
+    for path in data.joinpath("favicons").iterdir():
+        if path.name != "about.txt":
+            copy(path, out/path.name)
 
 
 def copy_boxicons(out: Path) -> None:
@@ -145,5 +152,6 @@ def main(con: Connection,
         IndexGenerator(con, options, title).run(tempdir)
         generate_css(tempdir)
         generate_js(tempdir)
+        generate_favicons(tempdir)
         copy_boxicons(tempdir)
         copy_mathjax(tempdir)

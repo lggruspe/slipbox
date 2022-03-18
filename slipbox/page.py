@@ -165,12 +165,9 @@ def create_reference_pages(conn: Connection) -> str:
     return '\n'.join(create_reference_page(conn, ref) for ref in references)
 
 
-def generate_header() -> t.Iterable[str]:
-    """Generate stuff to put in HTML header."""
-    yield '<link rel="stylesheet" href="app.min.css">'
-    yield '<script type="module" src="app.min.js"></script>'
-    yield """<script src="/es5/tex-chtml-full.js" id="MathJax-script" async>
-</script>"""
+def _write(path: Path, text: str) -> None:
+    """Write text to file in path."""
+    path.write_text(text, encoding="utf-8")
 
 
 def generate_complete_html(conn: Connection,
@@ -179,8 +176,8 @@ def generate_complete_html(conn: Connection,
                            title: str = "Slipbox") -> None:
     """Create final HTML file with javascript."""
     with temporary_directory() as tempdir:
-        header = tempdir/"header.txt"
-        header.write_text('\n'.join(generate_header()), encoding="utf-8")
+        _write(tempdir/"header.txt", render_template("header.html"))
+        _write(tempdir/"Slipbox.md", render_dummy(title))
 
         with open(tempdir/"after.txt", "a", encoding="utf-8") as file:
             print(render_template("nav.html", title=title), file=file)
@@ -193,8 +190,6 @@ def generate_complete_html(conn: Connection,
             print(create_bibliography(conn), file=file)
             print("</main>", file=file)
 
-        dummy = tempdir/"Slipbox.md"
-        dummy.write_text(render_dummy(title), encoding="utf-8")
         cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
                 --section-divs {opts} -o {output} -c style.css
             """.format(
