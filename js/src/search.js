@@ -1,4 +1,4 @@
-import lunr from 'lunr'
+import flexsearch from 'flexsearch'
 
 /// Takes callback that gets invoked when title gets clicked.
 function extractTitle (section, callback) {
@@ -39,13 +39,10 @@ function createResultFromSection (section, callback) {
 }
 
 function createSearchIndex (sections) {
-  return lunr(function () {
-    this.ref('id')
-    this.field('textContent')
-    sections.forEach(function (sec) {
-      this.add(sec)
-    }, this)
-  })
+  const options = { tokenize: 'forward' }
+  const index = new flexsearch.Index(options)
+  sections.forEach(sec => index.add(Number(sec.id), sec.textContent))
+  return index
 }
 
 function init () {
@@ -62,7 +59,7 @@ function init () {
       resultsContainer.textContent = ''
       for (const result of results) {
         const element = createResultFromSection(
-          document.getElementById(result.ref),
+          document.getElementById(result),
           () => dialog.hide()
         )
         if (element) resultsContainer.appendChild(element)
