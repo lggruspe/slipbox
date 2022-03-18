@@ -65,13 +65,14 @@ function connectGraphDialogAndButton (button, dialog) {
       event => {
         const { title, id } = event.target.data()
         const span = document.createElement('span')
+        span.slot = 'label'
         span.innerHTML = `${title} [<a href="#${id}">${id}</a>]`
-        dialog.label = span
-
         span.querySelector('a').onclick = () => {
           dialog.hide()
           return window.location.hash.slice(1) !== id
         }
+
+        dialog.querySelector('span[slot="label"]').replaceWith(span)
       }
     )
 
