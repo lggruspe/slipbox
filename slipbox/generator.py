@@ -8,7 +8,7 @@ from sqlite3 import Connection
 import typing as t
 
 from .app import App
-from .graph import (  # type: ignore
+from .graph import (
     create_graph,
     create_graph_data,
     get_cluster,
