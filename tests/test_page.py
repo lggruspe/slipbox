@@ -60,25 +60,15 @@ def test_render_tags(mock_db: sqlite3.Connection) -> None:
     conn = mock_db
     conn.executescript(SQL)
     html = page.render_tags(conn)
-    assert html == """<section id='tags' title='Tags' class='level1'>
-  <h1>
-    Tags
-  </h1>
-  <ul>
-    <li>
-      <a href='#tags/#test'>
-        ##test
-      </a>
-       (1)
-    </li>
-    <li>
-      <a href='#tags/test'>
-        #test
-      </a>
-       (2)
-    </li>
-  </ul>
-</section>"""
+    assert html == """<section id="tags" title="Tags" class="level1">
+<h1>Tags</h1>
+<ul>
+<li><a href="#tags/#test">##test</a> (1)</li>
+<li><a href="#tags/test">#test</a> (2)</li>
+</ul>
+
+</section>
+"""
 
 
 def test_render_tag_page(mock_db: sqlite3.Connection) -> None:

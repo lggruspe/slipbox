@@ -80,6 +80,18 @@ def render_references(conn: Connection) -> str:
     return render_template("bibliography.html", items=items)
 
 
+def render_untagged(con: Connection) -> str:
+    """Render HTML for list of untagged notes."""
+    rows = con.execute("SELECT id, html FROM Untagged")
+    notes = list(
+        Note(id_, get_section_title(html))
+        for id_, html in rows
+    )
+    if not notes:
+        return ""
+    return render_template("untagged.html", notes=note_list(notes))
+
+
 def render_tags(conn: Connection) -> str:
     """Create HTML section that lists all tags.
 
@@ -91,22 +103,15 @@ def render_tags(conn: Connection) -> str:
     rows = conn.execute(
         "SELECT tag, COUNT(*) FROM Tags GROUP BY tag ORDER BY tag"
     )
-    items = (Elem("li", Elem("a", tag, href=f"#tags/{tag[1:]}"), f" ({count})")
-             for tag, count in rows)
-    section = Elem("section",
-                   Elem("h1", "Tags"),
-                   Elem("ul", *items),
-                   id="tags",
-                   title="Tags",
-                   **{"class": "level1"})
-    untagged = list(
-        Note(id_, get_section_title(html))
-        for id_, html in conn.execute("SELECT id, html FROM Untagged")
+    tags = (
+        f'<li><a href="#tags/{tag[1:]}">{tag}</a> ({count})</li>'
+        for tag, count in rows
     )
-    if untagged:
-        section.children.append(Elem("h2", "Untagged notes"))
-        section.children.append(note_list(untagged))
-    return render(section)
+    return render_template(
+        "tags.html",
+        tags="\n".join(tags),
+        untagged=render_untagged(conn),
+    )
 
 
 def render_tag_page(conn: Connection, tag: str) -> str:
