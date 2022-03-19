@@ -5,7 +5,7 @@ import typing as t
 
 import pytest
 
-from slipbox.app import App, startup
+from slipbox.app import App, RootlessApp, startup
 from slipbox.commands import init
 
 
@@ -16,7 +16,7 @@ def change_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture
-def app_without_root() -> t.Iterable[App]:
+def app_without_root() -> t.Iterable[RootlessApp]:
     """App object without root."""
     yield startup({})
 

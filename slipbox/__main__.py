@@ -4,14 +4,15 @@ import sys
 import typing as t
 
 from . import commands
-from .app import App, error, startup
+from .app import error, RootlessApp, startup
 from .build import build
 from .dependencies import check_requirements
 from .cli import parse_args
 from .tools.new import new_note
 
 
-Command = t.Callable[[App], None]
+Command = t.Callable[[RootlessApp], None]
+
 
 handlers: t.Dict[str, Command] = {
     "build": build,

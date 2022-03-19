@@ -119,7 +119,6 @@ def test_render_reference_page(mock_db: sqlite3.Connection) -> None:
                     reason="missing requirements")
 def test_generate_index(mock_db: sqlite3.Connection, app: App) -> None:
     """Sanity check."""
-    assert app.root is not None
     app.config.document_options = ""
     app.database = mock_db
     page.generate_index(app, app.root)

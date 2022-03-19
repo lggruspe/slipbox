@@ -30,8 +30,8 @@ def find_root() -> t.Optional[Path]:
 
 
 @dataclass
-class App:
-    """App object."""
+class RootlessApp:
+    """App object before being initialized with a root directory."""
     args: t.Dict[str, t.Any]
     root: t.Optional[Path]
     config: Config
@@ -42,38 +42,44 @@ class App:
         self.database.close()
 
 
+@dataclass
+class App(RootlessApp):
+    """App object with a root directory."""
+    root: Path
+
+
 # Show error message and exit.
 error = sys.exit
 
 
-def startup(args: t.Dict[str, t.Any]) -> App:
+def startup(args: t.Dict[str, t.Any]) -> t.Union[App, RootlessApp]:
     """Prepare app."""
-    root = find_root()
-    config = Config()
-    database = connect(":memory:")
-
-    if root:
-        config.read_file(root/".slipbox"/"config.cfg")
-        database = connect(root/".slipbox"/"data.db")
-
-    config.read_env()
-    migrate(database)
-    return App(
+    app = RootlessApp(
         args=args,
-        root=root,
-        config=config,
-        database=database,
+        root=find_root(),
+        config=Config(),
+        database=connect(":memory:"),
     )
 
+    root = app.root
+    if root:
+        app.config.read_file(root/".slipbox"/"config.cfg")
+        app.database = connect(root/".slipbox"/"data.db")
+        app = t.cast(App, app)
 
-Command = t.Callable[[App], None]
+    app.config.read_env()
+    migrate(app.database)
+    return app
 
 
-def require_init(cmd: Command) -> Command:
+Command = t.Callable[[RootlessApp], None]
+
+
+def require_init(cmd: t.Callable[[App], None]) -> Command:
     """Wrap command that needs to be initialized."""
     @wraps(cmd)
-    def wrapper(app: App) -> None:
+    def wrapper(app: RootlessApp) -> None:
         if app.root is None:
             error("slipbox has not been initialized")
-        return cmd(app)
+        return cmd(t.cast(App, app))
     return wrapper

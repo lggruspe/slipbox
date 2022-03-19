@@ -3,7 +3,7 @@
 from pathlib import Path
 import sys
 
-from .app import App, error, require_init
+from .app import App, error, require_init, RootlessApp
 from .processor import METADATA_TEMPLATES
 from .tools import check
 
@@ -32,13 +32,13 @@ def check_notes(app: App) -> None:
         sys.exit(65)
 
 
-def list_supported_formats(_: App) -> None:
+def list_supported_formats(_: RootlessApp) -> None:
     """List supported input file formats."""
     for key in METADATA_TEMPLATES:
         print(f"*{key}")
 
 
-def init(app: App) -> None:
+def init(app: RootlessApp) -> None:
     """Initialize notes directory."""
     if app.root is not None:
         root = str(app.root.resolve())

@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from slipbox import commands
-from slipbox.app import App, startup
+from slipbox.app import App, RootlessApp, startup
 from slipbox.build import build
 from slipbox.dependencies import check_requirements
 
@@ -43,7 +43,7 @@ def test_show_info_in_stdout(
     assert not stderr
 
 
-def test_init_creates_config_file(app_without_root: App) -> None:
+def test_init_creates_config_file(app_without_root: RootlessApp) -> None:
     """init must create .slipbox/config.cfg."""
     app = app_without_root
     commands.init(app)
@@ -67,7 +67,7 @@ def test_init_quiet(
     assert not stderr
 
 
-def test_init_root(app_without_root: App) -> None:
+def test_init_root(app_without_root: RootlessApp) -> None:
     """init must set app.root."""
     app = app_without_root
     assert app.root is None
@@ -75,7 +75,7 @@ def test_init_root(app_without_root: App) -> None:
     assert app.root is not None
 
 
-def test_init_patterns(app_without_root: App) -> None:
+def test_init_patterns(app_without_root: RootlessApp) -> None:
     """.slipbox/config.cfg must contain some glob patterns."""
     app = app_without_root
     commands.init(app)

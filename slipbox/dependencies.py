@@ -2,10 +2,10 @@
 
 from shutil import which
 
-from .app import App
+from .app import RootlessApp
 
 
-def check_requirements(app: App) -> bool:
+def check_requirements(app: RootlessApp) -> bool:
     """Check if all runtime requirements are satisfied."""
     requirements = [
         app.config.pandoc,

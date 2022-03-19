@@ -15,8 +15,6 @@ def test_find_root_in_parent(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """find_root must find .slipbox if it's in a parent directory."""
-    assert app.root is not None
-
     path = app.root/"foo"/"bar"/"baz"
     path.mkdir(parents=True)
     monkeypatch.chdir(path)

@@ -17,8 +17,6 @@ def test_find_new_notes(app: App) -> None:
     """find_new_notes must only return existing files that aren't yet in the
     database and match the input patterns (*.md by default).
     """
-    assert app.root is not None
-
     present = app.root/"present.md"
     absent = app.root/"absent.md"
     directory = app.root/"directory"
@@ -37,8 +35,6 @@ def test_find_new_notes(app: App) -> None:
 def test_added_notes_pattern(app: App) -> None:
     """Results of find_new_notes must match the input pattern."""
     app.config.patterns = {"*.md": True, "*.txt": True}
-    assert app.root is not None
-
     directory = app.root/"directory"
     markdown = app.root/"input.md"
     txt = app.root/"input.txt"
@@ -54,8 +50,6 @@ def test_added_notes_pattern(app: App) -> None:
 
 def test_added_notes_in_db(app: App) -> None:
     """Results of find_new_notes must not already be in the database."""
-    assert app.root is not None
-
     new = app.root/"new.md"
     skip = app.root/"skip.md"
     new.touch()
@@ -68,8 +62,6 @@ def test_added_notes_in_db(app: App) -> None:
 
 def test_added_notes_recursive(app: App) -> None:
     """find_new_notes must find files recursively."""
-    assert app.root is not None
-
     directory = app.root/"directory"
     new = app.root/"new.md"
     directory.mkdir()
@@ -83,8 +75,6 @@ def test_modified_notes(app: App) -> None:
     """find_new_notes must find modified notes after they are deleted from the
     database.
     """
-    assert app.root is not None
-
     modified = app.root/"modified.md"
     not_modified = app.root/"not_modified.md"
     added = app.root/"added.md"
@@ -106,8 +96,6 @@ def test_modified_notes(app: App) -> None:
 
 def test_purge(app: App, files_abc: t.List[Path]) -> None:
     """Input files must be purged from the database."""
-    assert app.root is not None
-
     a_md, b_md, c_md = files_abc
     insert_files(app.database, a_md, b_md, c_md, basedir=app.root)
     a_md.write_text(a_md.read_text())
@@ -143,8 +131,6 @@ class TestsWithRequirements:    # pylint: disable=R0201
 
     def test_process(self, app: App) -> None:
         """Smoke test for slipbox.process."""
-        assert app.root is not None
-
         input_file = app.root/"input.md"
         input_file.write_text("# 1 Test note\n\nHello, world!\n")
         assert not list(app.database.execute(
@@ -159,8 +145,6 @@ class TestsWithRequirements:    # pylint: disable=R0201
 
     def test_process_empty_file(self, app: App) -> None:
         """Empty files shouldn't have entries in the database."""
-        assert app.root is not None
-
         empty = app.root/"empty.md"
         empty.touch()
         process_notes(app, [empty])
@@ -176,8 +160,6 @@ class TestsWithRequirements:    # pylint: disable=R0201
         app: App,
     ) -> None:
         """Check if clusters are stored in db."""
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("""# 0 Test
 
@@ -198,8 +180,6 @@ Test.
 
     def test_process_filenames(self, app: App) -> None:
         """Filenames must be scanned correctly."""
-        assert app.root is not None
-
         markdown = app.root/"foo.md"
         skip = app.root/"bar.md"
         markdown.write_text("# 0 Note\n\nBody.\n")
@@ -213,8 +193,6 @@ Test.
 
     def test_process_filenames0(self, app: App) -> None:
         """Filenames must be scanned correctly."""
-        assert app.root is not None
-
         markdown = app.root/"bar.md"
         skip = app.root/"foo.md"
         markdown.write_text("# 0 Note\n\nBody.\n")
@@ -228,8 +206,6 @@ Test.
 
     def test_process_non_level1_headers(self, app: App) -> None:
         """Only level 1 headers must be considered as note headers."""
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("""# 0 Valid note header
 
@@ -254,8 +230,6 @@ Bar.
 
         The warning message must show the filenames of both notes.
         """
-        assert app.root is not None
-
         file_a = app.root/"a.md"
         file_a.write_text("# 0 Existing note\n\nTest.\n")
 
@@ -291,8 +265,6 @@ Bar.
 
         slipbox.process must show a warning when this happens.
         """
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("""# 0 First note
 
@@ -318,8 +290,6 @@ Bar.
         """slipbox.process must show a warning if there is a link with an empty
         target.
         """
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("# 0 Foo\n\n[Empty]().\n")
         process_notes(app, [markdown])
@@ -335,8 +305,6 @@ Bar.
                                          app: App,
                                          ) -> None:
         """External links shouldn't be saved in the db."""
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("# 0 Test\n\n[Example](https://example.com)")
         process_notes(app, [markdown])
@@ -357,8 +325,6 @@ Bar.
         app: App,
     ) -> None:
         """Headers with non-integer IDs should be ignored."""
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("# 1e1 Invalid note ID\n\nTest.\n")
         process_notes(app, [markdown])
@@ -376,8 +342,6 @@ Bar.
                                           ) -> None:
         """Notes with non-text titles in the header must still be recognized.
         """
-        assert app.root is not None
-
         file_a = app.root/"a.md"
         file_b = app.root/"b.md"
         file_c = app.root/"c.md"
@@ -408,8 +372,6 @@ Bar.
         """If a hashtag has trailing invalid symbols, only the prefix must be
         saved.
         """
-        assert app.root is not None
-
         markdown = app.root/"test.md"
         markdown.write_text("# 0 Test\n\n#tag.\n#tags.\n#0.\n")
         process_notes(app, [markdown])
@@ -425,8 +387,6 @@ Bar.
                          app: App,
                          ) -> None:
         """Slipbox filters shouldn't raise metadata-related errors."""
-        assert app.root is not None
-
         rst = app.root/"test.rst"
         rst.write_text("""
 1 Foo
