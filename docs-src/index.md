@@ -196,10 +196,6 @@ The `.slipbox` directory contains
 : Options that get passed to Pandoc to convert notes to HTML fragments.
 : Edit this if you want to apply custom filters or to enable citeproc.
 
-`document_options`
-: Options that get passed to Pandoc to compile all HTML sections into
-: one file. Edit this if you want to add HTML, JavaScript, CSS, etc.
-
 `output_directory`
 : Contains the generated site.
 

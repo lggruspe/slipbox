@@ -12,7 +12,6 @@ class Config:
     """Slipbox config class."""
     # [slipbox]
     content_options = "--strip-comments"
-    document_options = "-s"
     output_directory = Path("public")
     title = "Slipbox"
 
@@ -31,8 +30,6 @@ class Config:
         """Update from configparser."""
         self.content_options = config.get("slipbox", "content_options",
                                           fallback=self.content_options)
-        self.document_options = config.get("slipbox", "document_options",
-                                           fallback=self.document_options)
         self.output_directory = Path(config.get("slipbox", "output_directory",
                                                 fallback=self.output_directory)
                                      )
@@ -79,7 +76,6 @@ class Config:
                 config.add_section(section)
 
         config.set("slipbox", "content_options", self.content_options)
-        config.set("slipbox", "document_options", self.document_options)
         config.set("slipbox", "output_directory",
                    str(self.output_directory.resolve()))
         config.set("slipbox", "title", self.title)

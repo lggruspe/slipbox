@@ -193,7 +193,7 @@ def _write(path: Path, text: str) -> None:
 def generate_index(app: App, out: Path) -> None:
     """Create final HTML file with javascript."""
     con = app.database
-    options = app.config.document_options
+    options = "-s"
     title = app.config.title
 
     with temporary_directory() as tempdir:
