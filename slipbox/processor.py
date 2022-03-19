@@ -7,6 +7,7 @@ the input is the concatenation of several files.
 
 from hashlib import sha256
 from pathlib import Path
+import shlex
 from sqlite3 import Connection
 import sys
 import typing as t
@@ -18,7 +19,6 @@ from . import utils
 from .app import App
 from .batch import Batch
 from .data import process_csvs
-from .scan import build_command
 
 
 DOKUWIKI_TEMPLATE = """
@@ -147,6 +147,23 @@ def create_preprocessed_input(
         encoding="utf-8"
     )
     return path
+
+
+def build_command(input_: Path,
+                  output: str,
+                  basedir: Path,
+                  options: str = "") -> str:
+    """Construct a single pandoc command to run on input."""
+    assert input_.exists()
+    data = Path(__file__).parent/"data"
+    lua_filter = shlex.quote(str((data/"filter.lua").resolve()))
+    cmd = f"{utils.pandoc()} {options} -L{lua_filter} --section-divs " \
+        f" -Mlink-citations:true --mathjax " \
+        "--resource-path {} -o {} --extract-media=''".format(
+            shlex.quote(str(basedir.resolve())),
+            shlex.quote(output),
+        )
+    return cmd + ' ' + shlex.quote(str(input_.resolve()))
 
 
 def process_batch(app: App, batch: Batch) -> None:
