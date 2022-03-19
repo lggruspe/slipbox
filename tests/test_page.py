@@ -40,11 +40,11 @@ def mock_db() -> t.Iterable[sqlite3.Connection]:
         yield con
 
 
-def test_create_bibliography(mock_db: sqlite3.Connection) -> None:
-    """Check create_bibliography output."""
+def test_render_references(mock_db: sqlite3.Connection) -> None:
+    """Check render_references output."""
     conn = mock_db
     conn.executescript(SQL)
-    html = page.create_bibliography(conn)
+    html = page.render_references(conn)
     assert html == """<section id="references" class="level1" title="References">
 <h1>References</h1>
 <dl>
@@ -56,11 +56,11 @@ def test_create_bibliography(mock_db: sqlite3.Connection) -> None:
 """
 
 
-def test_create_tags(mock_db: sqlite3.Connection) -> None:
-    """Check create_tags output."""
+def test_render_tags(mock_db: sqlite3.Connection) -> None:
+    """Check render_tags output."""
     conn = mock_db
     conn.executescript(SQL)
-    html = page.create_tags(conn)
+    html = page.render_tags(conn)
     assert html == """<section id='tags' title='Tags' class='level1'>
   <h1>
     Tags
@@ -82,11 +82,11 @@ def test_create_tags(mock_db: sqlite3.Connection) -> None:
 </section>"""
 
 
-def test_create_tag_page(mock_db: sqlite3.Connection) -> None:
-    """Check create_tag_page output."""
+def test_render_tag_page(mock_db: sqlite3.Connection) -> None:
+    """Check render_tag_page output."""
     conn = mock_db
     conn.executescript(SQL)
-    html = page.create_tag_page(conn, "#test")
+    html = page.render_tag_page(conn, "#test")
     assert html == """<section id='tags/test' title='#test' class='level1'>
   <h1>
     #test
@@ -98,11 +98,11 @@ def test_create_tag_page(mock_db: sqlite3.Connection) -> None:
 </section>"""
 
 
-def test_create_reference_page(mock_db: sqlite3.Connection) -> None:
-    """Check create_reference_page output."""
+def test_render_reference_page(mock_db: sqlite3.Connection) -> None:
+    """Check render_reference_page output."""
     conn = mock_db
     conn.executescript(SQL)
-    html = page.create_reference_page(conn, "ref-test")
+    html = page.render_reference_page(conn, "ref-test")
     assert html == """<section id='ref-test' title='ref-test' class='level1'>
   <h1>
     @test

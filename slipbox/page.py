@@ -51,7 +51,7 @@ def get_section_title(html: str) -> str:
     return t.cast(str, header.html())
 
 
-def create_home_page(conn: Connection, title: str) -> str:
+def render_home(conn: Connection, title: str) -> str:
     """Create home page HTML section containing a list of all notes."""
     notes = (
         Note(id_, get_section_title(html))
@@ -67,7 +67,7 @@ def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
     return (html.strip() for html, in conn.execute(sql))
 
 
-def create_bibliography(conn: Connection) -> str:
+def render_references(conn: Connection) -> str:
     """Create bibliography HTML section from database entries."""
     sql = "SELECT key, text FROM Bibliography ORDER BY key"
     items = '\n'.join(
@@ -79,7 +79,7 @@ def create_bibliography(conn: Connection) -> str:
     return render_template("bibliography.html", items=items)
 
 
-def create_tags(conn: Connection) -> str:
+def render_tags(conn: Connection) -> str:
     """Create HTML section that lists all tags.
 
     Also list untagged notes.
@@ -108,7 +108,7 @@ def create_tags(conn: Connection) -> str:
     return render(section)
 
 
-def create_tag_page(conn: Connection, tag: str) -> str:
+def render_tag_page(conn: Connection, tag: str) -> str:
     """Create HTML section that lists all notes with the tag."""
     sql = """
         SELECT id, html FROM Tags NATURAL JOIN Notes WHERE tag = ? ORDER BY id
@@ -126,14 +126,14 @@ def create_tag_page(conn: Connection, tag: str) -> str:
     return render(section)
 
 
-def create_tag_pages(conn: Connection) -> str:
+def render_tag_pages(conn: Connection) -> str:
     """Create all tag pages."""
     rows = conn.execute("SELECT DISTINCT tag FROM Tags ORDER BY tag")
     tags = (row[0] for row in rows)
-    return '\n'.join(create_tag_page(conn, tag) for tag in tags)
+    return '\n'.join(render_tag_page(conn, tag) for tag in tags)
 
 
-def create_reference_page(conn: Connection, reference: str) -> str:
+def render_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""
     sql = """
         SELECT note, text, html FROM Citations
@@ -158,11 +158,25 @@ def create_reference_page(conn: Connection, reference: str) -> str:
     return render(section)
 
 
-def create_reference_pages(conn: Connection) -> str:
+def render_reference_pages(conn: Connection) -> str:
     """Create all reference pages."""
     rows = conn.execute("SELECT key FROM Bibliography ORDER BY key")
     references = (row[0] for row in rows)
-    return '\n'.join(create_reference_page(conn, ref) for ref in references)
+    return '\n'.join(render_reference_page(conn, ref) for ref in references)
+
+
+def render_main(conn: Connection, title: str = "Slipbox") -> str:
+    """Main content of index.html."""
+    return render_template(
+        "main.html",
+        nav=render_template("nav.html"),
+        home=render_home(conn, title),
+        sections="\n".join(generate_active_htmls(conn)),
+        tag_pages=render_tag_pages(conn),
+        tags=render_tags(conn),
+        reference_pages=render_reference_pages(conn),
+        references=render_references(conn),
+    )
 
 
 def _write(path: Path, text: str) -> None:
@@ -178,17 +192,7 @@ def generate_complete_html(conn: Connection,
     with temporary_directory() as tempdir:
         _write(tempdir/"header.txt", render_template("header.html"))
         _write(tempdir/"Slipbox.md", render_dummy(title))
-
-        with open(tempdir/"after.txt", "a", encoding="utf-8") as file:
-            print(render_template("nav.html", title=title), file=file)
-            print("<main>", file=file)
-            print(create_home_page(conn, title), file=file)
-            print('\n'.join(generate_active_htmls(conn)), file=file)
-            print(create_tag_pages(conn), file=file)
-            print(create_tags(conn), file=file)
-            print(create_reference_pages(conn), file=file)
-            print(create_bibliography(conn), file=file)
-            print("</main>", file=file)
+        _write(tempdir/"after.txt", render_main(conn, title))
 
         cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
                 --section-divs {opts} -o {output} -c style.css
