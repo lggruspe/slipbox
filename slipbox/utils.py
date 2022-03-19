@@ -12,11 +12,6 @@ import tempfile
 import typing as t
 
 
-def pandoc() -> str:
-    """Pandoc location."""
-    return os.environ.get("PANDOC", "pandoc")
-
-
 @contextlib.contextmanager
 def temporary_directory() -> t.Iterator[Path]:
     """Path to temporary directory."""

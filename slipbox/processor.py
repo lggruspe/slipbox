@@ -159,7 +159,7 @@ def build_command(app: App, input_: Path, output: str) -> str:
 
     data = Path(__file__).parent/"data"
     lua_filter = shlex.quote(str((data/"filter.lua").resolve()))
-    cmd = f"{utils.pandoc()} {options} -L{lua_filter} --section-divs " \
+    cmd = f"{app.config.pandoc} {options} -L{lua_filter} --section-divs " \
         f" -Mlink-citations:true --mathjax " \
         "--resource-path {} -o {} --extract-media=''".format(
             shlex.quote(str(basedir.resolve())),

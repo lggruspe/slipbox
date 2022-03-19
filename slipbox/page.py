@@ -10,7 +10,7 @@ from pyquery import PyQuery as pq  # type: ignore
 
 from .app import App
 from .templates import Elem, render, render_template
-from .utils import pandoc, temporary_directory
+from .utils import temporary_directory
 
 
 def render_dummy(title: str) -> str:
@@ -199,7 +199,7 @@ def generate_index(app: App, out: Path) -> None:
         cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
                 --section-divs {opts} -o {output} -c style.css
             """.format(
-            pandoc=pandoc(),
+            pandoc=app.config.pandoc,
             title=shlex.quote(title),
             opts=options,
             output=out/"index.html")
