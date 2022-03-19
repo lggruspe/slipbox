@@ -1,6 +1,8 @@
 """Test slipbox.py."""
 
+from hashlib import sha256
 from pathlib import Path
+from sqlite3 import Connection
 import typing as t
 
 import pytest
@@ -10,7 +12,18 @@ from slipbox.build import (
     process_notes,
 )
 from slipbox.dependencies import check_requirements
-from slipbox.utils import insert_files
+
+
+def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
+    """Insert files into database."""
+    sql = "INSERT INTO Files (filename, hash) VALUES (?, ?)"
+    con.executemany(sql, (
+        (
+            str(p.relative_to(basedir)),
+            sha256(p.read_bytes()).hexdigest()
+        )
+        for p in files
+    ))
 
 
 def test_find_new_notes(app: App) -> None:

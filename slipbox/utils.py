@@ -1,11 +1,9 @@
 """Utils."""
 
 import contextlib
-from hashlib import sha256
 import os
 from pathlib import Path
 import shlex
-from sqlite3 import Connection
 import subprocess
 import sys
 import tempfile
@@ -39,15 +37,3 @@ def run_command(cmd: str,
     if proc.stderr:
         print(proc.stderr.decode(), file=sys.stderr)
     return proc.returncode
-
-
-def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
-    """Insert files into database."""
-    sql = "INSERT INTO Files (filename, hash) VALUES (?, ?)"
-    con.executemany(sql, (
-        (
-            str(p.relative_to(basedir)),
-            sha256(p.read_bytes()).hexdigest()
-        )
-        for p in files
-    ))
