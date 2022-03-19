@@ -118,9 +118,10 @@ def test_render_reference_page(mock_db: sqlite3.Connection) -> None:
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-def test_generate_complete_html(mock_db: sqlite3.Connection,
-                                tmp_path: Path,
-                                ) -> None:
+def test_generate_index(
+    mock_db: sqlite3.Connection,
+    tmp_path: Path,
+) -> None:
     """Sanity check."""
     options = ""
-    page.generate_complete_html(mock_db, options, tmp_path)
+    page.generate_index(mock_db, options, tmp_path)

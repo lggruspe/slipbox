@@ -184,10 +184,12 @@ def _write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def generate_complete_html(conn: Connection,
-                           options: str,
-                           out: Path,
-                           title: str = "Slipbox") -> None:
+def generate_index(
+    conn: Connection,
+    options: str,
+    out: Path,
+    title: str = "Slipbox",
+) -> None:
     """Create final HTML file with javascript."""
     with temporary_directory() as tempdir:
         _write(tempdir/"header.txt", render_template("header.html"))

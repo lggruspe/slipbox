@@ -14,7 +14,7 @@ from .graph import (  # type: ignore
     get_components,
     get_note_titles,
 )
-from .page import generate_complete_html as generate_index
+from .page import generate_index
 from .utils import temporary_directory
 
 
