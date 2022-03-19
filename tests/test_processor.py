@@ -6,6 +6,7 @@ import typing as t
 
 import pytest
 
+from slipbox.app import App
 from slipbox.processor import build_command, preprocess, MARKDOWN_TEMPLATE
 
 
@@ -44,21 +45,24 @@ def test_preprocess_markdown_with_no_sources(tmp_path: Path) -> None:
     assert not content
 
 
-def test_build_command(tmp_path: Path) -> None:
+def test_build_command(app: App) -> None:
     """Sanity check for build_command."""
-    input_file = tmp_path/"input.md"
+    assert app.root
+
+    app.config.content_options = "--mathml"
+    input_file = app.root/"input.md"
     output = "output.html"
-    options = "--mathml"
     input_file.touch()
 
-    cmd = build_command(input_file, output, tmp_path, options)
+    cmd = build_command(app, input_file, output)
     assert str(input_file) in cmd
     assert f"-o {output}" in cmd
-    assert options in cmd
+    assert "--mathml" in cmd
 
 
 @pytest.mark.xfail
-def test_build_command_when_input_file_does_not_exist(tmp_path: Path) -> None:
+def test_build_command_when_input_file_does_not_exist(app: App) -> None:
     """build_command must fail if input file does not exist."""
-    input_file = tmp_path/"input.md"
-    build_command(input_file, "output.html", tmp_path, "")
+    assert app.root
+    input_file = app.root/"input.md"
+    build_command(app, input_file, "output.html")

@@ -149,12 +149,14 @@ def create_preprocessed_input(
     return path
 
 
-def build_command(input_: Path,
-                  output: str,
-                  basedir: Path,
-                  options: str = "") -> str:
-    """Construct a single pandoc command to run on input."""
+def build_command(app: App, input_: Path, output: str) -> str:
+    """Construct pandoc command to run on input."""
+    basedir = app.root
+    options = app.config.content_options or ""
+
     assert input_.exists()
+    assert basedir
+
     data = Path(__file__).parent/"data"
     lua_filter = shlex.quote(str((data/"filter.lua").resolve()))
     cmd = f"{utils.pandoc()} {options} -L{lua_filter} --section-divs " \
@@ -172,8 +174,7 @@ def process_batch(app: App, batch: Batch) -> None:
     with utils.temporary_directory() as tempdir:
         preprocessed = create_preprocessed_input(tempdir, batch, app.root)
         html = tempdir/"temp.html"
-        cmd = build_command(preprocessed, str(html), app.root,
-                            app.config.content_options)
+        cmd = build_command(app, preprocessed, str(html))
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
