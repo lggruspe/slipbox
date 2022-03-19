@@ -47,15 +47,21 @@ def test_preprocess_markdown_with_no_sources(tmp_path: Path) -> None:
 
 def test_build_command(app: App) -> None:
     """Sanity check for build_command."""
-    app.config.content_options = "--mathml"
     input_file = app.root/"input.md"
     output = "output.html"
     input_file.touch()
 
+    app.config.strip_comments = False
+
     cmd = build_command(app, input_file, output)
     assert str(input_file) in cmd
     assert f"-o {output}" in cmd
-    assert "--mathml" in cmd
+
+    assert "--strip-comments" not in cmd
+
+    app.config.strip_comments = True
+    cmd = build_command(app, input_file, output)
+    assert "--strip-comments" in cmd
 
 
 @pytest.mark.xfail

@@ -79,7 +79,7 @@ class TestsWithRequirements:    # pylint: disable=R0201
 
     def test_unsourced_notes(self, app: App) -> None:
         """unsourced_notes must include every note that has no citation."""
-        app.config.content_options += " --bibliography test.bib --citeproc"
+        app.config.bibliography = Path("test.bib")
 
         Path("test.bib").write_text("""
 @book{test_2020,

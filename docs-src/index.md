@@ -133,11 +133,9 @@ Tagged links show up in the graph of tag pages.
 To enable citations, you need to specify a bibliography file in
 `.slipbox/config.cfg`.
 
-Here's a sample config file.
-
 ```cfg
-[slipbox]
-content_options = --bibliography example.bib --citeproc
+[pandoc-options]
+bibliography = example.bib
 ```
 
 Click citation links to see the other notes that cite the same
@@ -191,10 +189,6 @@ The `.slipbox` directory contains
 
 
 # 11 What do the configuration options mean?
-
-`content_options`
-: Options that get passed to Pandoc to convert notes to HTML fragments.
-: Edit this if you want to apply custom filters or to enable citeproc.
 
 `output_directory`
 : Contains the generated site.

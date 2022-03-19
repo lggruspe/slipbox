@@ -11,7 +11,6 @@ import typing as t
 class Config:
     """Slipbox config class."""
     # [slipbox]
-    content_options = "--strip-comments"
     output_directory = Path("public")
     title = "Slipbox"
 
@@ -26,13 +25,19 @@ class Config:
     pandoc = "pandoc"
     dot = "dot"
 
+    # [pandoc-options]
+    bibliography = None
+    strip_comments = True
+
     def read(self, config: ConfigParser) -> None:
         """Update from configparser."""
-        self.content_options = config.get("slipbox", "content_options",
-                                          fallback=self.content_options)
-        self.output_directory = Path(config.get("slipbox", "output_directory",
-                                                fallback=self.output_directory)
-                                     )
+        self.output_directory = Path(
+            config.get(
+                "slipbox",
+                "output_directory",
+                fallback=self.output_directory,
+            ),
+        )
         self.title = config.get("slipbox", "title", fallback=self.title)
 
         for key, _ in config.items("note-patterns"):
@@ -45,6 +50,20 @@ class Config:
 
         self.pandoc = config.get("paths", "pandoc", fallback=self.pandoc)
         self.dot = config.get("paths", "dot", fallback=self.dot)
+
+        bibliography = config.get(
+            "pandoc-options",
+            "bibliography",
+            fallback=None,
+        )
+        self.bibliography = (
+            Path(bibliography) if bibliography else self.bibliography
+        )
+        self.strip_comments = config.getboolean(
+            "pandoc-options",
+            "strip-comments",
+            fallback=self.strip_comments,
+        )
 
     def read_file(self, path: Path) -> None:
         """Update config from file."""
@@ -70,12 +89,11 @@ class Config:
         """Convert to ConfigParser object."""
         config = ConfigParser()
 
-        sections = ["slipbox", "note-patterns", "paths"]
+        sections = ["slipbox", "note-patterns", "paths", "pandoc-options"]
         for section in sections:
             if not config.has_section(section):
                 config.add_section(section)
 
-        config.set("slipbox", "content_options", self.content_options)
         config.set("slipbox", "output_directory",
                    str(self.output_directory.resolve()))
         config.set("slipbox", "title", self.title)
@@ -86,6 +104,18 @@ class Config:
 
         config.set("paths", "pandoc", self.pandoc)
         config.set("paths", "dot", self.dot)
+
+        if self.bibliography is not None:
+            config.set(
+                "pandoc-options",
+                "bibliography",
+                str(self.bibliography.resolve()),
+            )
+        config.set(
+            "pandoc-options",
+            "strip-comments",
+            "true" if self.strip_comments else "false",
+        )
         return config
 
     def write(self, path: Path) -> None:

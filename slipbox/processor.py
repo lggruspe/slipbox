@@ -149,10 +149,23 @@ def create_preprocessed_input(
     return path
 
 
+def build_options(app: App) -> str:
+    """Build list of options to pass to pandoc based on user config."""
+    options = ""
+    config = app.config
+
+    if config.strip_comments:
+        options += " --strip-comments "
+    if config.bibliography is not None:
+        path = str((app.root/config.bibliography).resolve())
+        options += f" --bibliography {path} --citeproc "
+    return options
+
+
 def build_command(app: App, input_: Path, output: str) -> str:
     """Construct pandoc command to run on input."""
     basedir = app.root
-    options = app.config.content_options or ""
+    options = build_options(app)
 
     assert input_.exists()
     assert basedir

@@ -251,9 +251,8 @@ link</a> and <a href="#101">this link</a>, but <a href="#tags/not">#not</a> to <
 <p><span class="citation" data-cites="cite2020">(Cite <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
 <p>To enable citations, you need to specify a bibliography file in
 <code>.slipbox/config.cfg</code>.</p>
-<p>Here’s a sample config file.</p>
-<pre class="cfg"><code>[slipbox]
-content_options = --bibliography example.bib --citeproc</code></pre>
+<pre class="cfg"><code>[pandoc-options]
+bibliography = example.bib</code></pre>
 <p>Click citation links to see the other notes that cite the same
 reference.</p>
 </section>
@@ -295,13 +294,6 @@ more about its features.</p>
 <section id="11" class="level1 slipbox-note" data-filename="index.md" title="What do the configuration options mean?">
 <h1>What do the configuration options mean?</h1>
 <dl>
-<dt><code>content_options</code></dt>
-<dd>
-Options that get passed to Pandoc to convert notes to HTML fragments.
-</dd>
-<dd>
-Edit this if you want to apply custom filters or to enable citeproc.
-</dd>
 <dt><code>output_directory</code></dt>
 <dd>
 Contains the generated site.

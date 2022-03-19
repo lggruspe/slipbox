@@ -49,7 +49,7 @@ def isolated_notes(app: App) -> t.Iterator[_Note]:
 
 def unsourced_notes(app: App) -> t.Iterator[_Note]:
     """Generate notes that need citations (only if there's a bibliography)."""
-    if "--bibliography" in app.config.content_options:
+    if app.config.bibliography is not None:
         yield from app.database.execute("""
             SELECT DISTINCT id, title, filename FROM Notes
             WHERE id NOT IN (
