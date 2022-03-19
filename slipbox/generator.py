@@ -7,6 +7,7 @@ from shutil import copytree, move, rmtree
 from sqlite3 import Connection
 import typing as t
 
+from .app import App
 from .graph import (  # type: ignore
     create_graph,
     create_graph_data,
@@ -52,14 +53,12 @@ def output_directory_proxy(path: Path) -> t.Iterator[Path]:
 
 class IndexGenerator:
     """Generates index.html."""
-    def __init__(self, con: Connection, options: str, title: str = "Slipbox"):
-        self.con = con
-        self.options = options
-        self.title = title
+    def __init__(self, app: App):
+        self.app = app
 
     def run(self, out: Path) -> None:
         """Generate index.html inside output directory."""
-        generate_index(self.con, self.options, out, self.title)
+        generate_index(self.app, out)
 
 
 def copy(source: Path, dest: Path) -> None:
@@ -141,15 +140,16 @@ class CytoscapeDataGenerator:
                 path.write_text(json.dumps(graph_data))
 
 
-def main(con: Connection,
-         options: str,
-         out: Path,
-         title: str = "Slipbox") -> None:
-    """Generate all files."""
-    with output_directory_proxy(out) as tempdir:
+def compile_site(app: App) -> None:
+    """Copy files into output directory."""
+    assert app.root is not None
+    con = app.database
+    output_directory = app.root/app.config.output_directory
+
+    with output_directory_proxy(output_directory) as tempdir:
         CytoscapeDataGenerator(con).run(tempdir)
         ImagesGenerator(con).run(tempdir)
-        IndexGenerator(con, options, title).run(tempdir)
+        IndexGenerator(app).run(tempdir)
         generate_css(tempdir)
         generate_js(tempdir)
         generate_favicons(tempdir)

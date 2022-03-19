@@ -1,12 +1,11 @@
 """Test page.py."""
 
-from pathlib import Path
 import sqlite3
 import typing as t
 
 import pytest
 from slipbox import page
-from slipbox.app import startup
+from slipbox.app import App, startup
 from slipbox.database import migrate
 from slipbox.dependencies import check_requirements
 
@@ -118,10 +117,9 @@ def test_render_reference_page(mock_db: sqlite3.Connection) -> None:
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-def test_generate_index(
-    mock_db: sqlite3.Connection,
-    tmp_path: Path,
-) -> None:
+def test_generate_index(mock_db: sqlite3.Connection, app: App) -> None:
     """Sanity check."""
-    options = ""
-    page.generate_index(mock_db, options, tmp_path)
+    assert app.root is not None
+    app.config.document_options = ""
+    app.database = mock_db
+    page.generate_index(app, app.root)

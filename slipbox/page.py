@@ -8,6 +8,7 @@ import typing as t
 
 from pyquery import PyQuery as pq  # type: ignore
 
+from .app import App
 from .templates import Elem, render, render_template
 from .utils import pandoc, temporary_directory
 
@@ -184,17 +185,16 @@ def _write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def generate_index(
-    conn: Connection,
-    options: str,
-    out: Path,
-    title: str = "Slipbox",
-) -> None:
+def generate_index(app: App, out: Path) -> None:
     """Create final HTML file with javascript."""
+    con = app.database
+    options = app.config.document_options
+    title = app.config.title
+
     with temporary_directory() as tempdir:
         _write(tempdir/"header.txt", render_template("header.html"))
         _write(tempdir/"Slipbox.md", render_dummy(title))
-        _write(tempdir/"after.txt", render_main(conn, title))
+        _write(tempdir/"after.txt", render_main(con, title))
 
         cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
                 --section-divs {opts} -o {output} -c style.css

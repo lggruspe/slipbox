@@ -4,9 +4,9 @@ from hashlib import sha256
 from pathlib import Path
 import typing as t
 
-from . import generator
 from .app import App, require_init
 from .batch import group_by_file_extension
+from .generator import compile_site
 from .processor import process_batch
 
 
@@ -53,15 +53,6 @@ def find_new_notes(app: App, notes: t.Iterable[Path]) -> t.Iterable[Path]:
         filename = str(path.relative_to(app.root))
         if filename not in in_db:
             yield path
-
-
-def compile_site(app: App) -> None:
-    """Compile processed HTML into final output."""
-    assert app.root is not None
-    options = app.config.document_options
-    output_directory = app.root/app.config.output_directory
-    title = app.config.title
-    generator.main(app.database, options, output_directory, title)
 
 
 def process_notes(app: App, notes: t.Iterable[Path]) -> None:
