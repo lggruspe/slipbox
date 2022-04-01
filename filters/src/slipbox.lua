@@ -11,7 +11,7 @@ function SlipBox:new()
     links = {},
     citations = {},
     images = {},
-    bibliography = {}, -- { text = text, url = url }
+    bibliography = {}, -- { text, url }
     invalid = {
       has_empty_link_target = {},
     },
@@ -130,7 +130,7 @@ end
 local function bibliography_to_csv(refs)
   local w = csv.Writer:new{"key", "text", "url"}
   for ref, content in pairs(refs) do
-    w:write{ref, content[1], content[2]}
+    w:write{ref, content.text, content.url}
   end
   return w.data
 end

@@ -255,7 +255,7 @@ local function citations(slipbox)
       end
     end,
     Pandoc = function(doc)
-      local references = pandoc.util.references(doc)
+      local references = pandoc.utils.references(doc)
       for _, ref in ipairs(references) do
         slipbox.bibliography["ref-" .. ref.id].url = ref.url
       end

@@ -74,7 +74,7 @@ def render_references(conn: Connection) -> str:
     items = '\n'.join(
         render_template("bibliography__item.html", **dict(
             href=f"#{key}", term=f"[@{key[4:]}]", url=url, description=text
-        ))
+        )).strip()
         for key, text, url in conn.execute(sql)
     )
     return render_template("bibliography.html", items=items)

@@ -108,6 +108,7 @@ def process_image_links(conn: Connection, path: Path) -> None:
     sql = "INSERT OR IGNORE INTO ImageLinks (note, image) VALUES (?, ?)"
     run_sql_on_csv(conn, path, sql, (int, str))
 
+
 def process_csvs(conn: Connection, basedir: Path) -> None:
     """Process CSV data in basedir."""
     process_files(conn, basedir/"files.csv")
