@@ -80,11 +80,11 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="app.min.css">
   <script type="module" src="app.min.js"></script>
-  <script src="/es5/tex-chtml-full.js" id="MathJax-script" async></script>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+  <script src="es5/tex-chtml-full.js" id="MathJax-script" async></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -396,18 +396,23 @@ Site title.
     @cite2020
   </h1>
   <p>
-    Author. 2020. Title.
+    <div class="csl-entry" role="doc-biblioentry">
+    Author. 2020. <em>Title</em>. <a
+    href="https://example.com">https://example.com</a>.
+    </div>
   </p>
   <ul class="slipbox-list">
     <li value="7">7 – <a href="#7">How to add citations?</a></li>
   </ul>
 </section>
-	<section id="references" class="level1" title="References">
+	<section id="references" class="level1" title="References" role="doc-bibliography">
 <h1>References</h1>
 <dl>
-<dt><a href="#ref-cite2020">[@cite2020]</a></dt>
-<dd>Author. 2020. Title.</dd>
-
+<dt role="doc-biblioentry"><a href="#ref-cite2020">[@cite2020]</a></dt>
+<dd><div class="csl-entry" role="doc-biblioentry">
+Author. 2020. <em>Title</em>. <a
+href="https://example.com">https://example.com</a>.
+</div></dd>
 </dl>
 </section>
 
