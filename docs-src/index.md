@@ -18,8 +18,10 @@ Source: <https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md>
 
 # 1 How to install slipbox?
 
-Make sure you have graphviz, pandoc and python installed.
+First, make sure that you have graphviz, pandoc and python installed.
 Your installation of Pandoc needs to be compiled with pandoc-types 1.22.
+
+Then install using `pip`.
 
 ```bash
 # Install slipbox.
@@ -30,19 +32,18 @@ pip install slipbox
 
 **#getting-started**
 
-- How to run slipbox? [](#2)
+- How to use slipbox? [](#2)
 
 
 
-# 2 How to run slipbox?
+# 2 How to use slipbox?
 
 ```bash
-# Create slipbox directory.
-# This creates a .slipbox/ directory inside my-slipbox.
-slipbox init my-slipbox
+# Initialize `slipbox` in your notes directory.
+cd my-notes
+slipbox init
 
 # Generate site.
-cd my-slipbox
 slipbox build
 
 # Show help.
@@ -91,14 +92,13 @@ Ex: [link](#100) (`[link](#100)`).
 When you omit the link text, it just shows the target ID.
 Ex: [](#100) (`[](#100)`).
 
-You can also connect notes by tagging them.
+You can also connect notes indirectly by #tagging them.
 
 ---
 
 **#writing-notes**
 
 - How to link to images? [](#5)
-- How to tag notes? [](#6)
 
 
 
@@ -112,20 +112,6 @@ You can also connect notes by tagging them.
 
 
 
-# 6 How to tag notes?
-
-Slipbox uses #hashtags to tag notes.
-
-Note: more accurately, hashtags don't apply to notes but to links that
-appear after the tag.
-
-Ex: this #tag applies to [this link](#100) and [this link](#101),
-but #not to [this](#102).
-
-Tagged links show up in the graph of tag pages.
-
-
-
 # 7 How to add citations?
 
 [Cite @cite2020].
@@ -133,7 +119,7 @@ Tagged links show up in the graph of tag pages.
 To enable citations, you need to specify a bibliography file in
 `.slipbox/config.cfg`.
 
-```cfg
+```ini
 [pandoc-options]
 bibliography = example.bib
 ```
@@ -155,20 +141,7 @@ python -m http.server
 # Go to localhost:8000 in your browser.
 ```
 
----
-
-**#view-notes**
-
-- How to use text search? [](#9)
-
-
-
-# 9 How to use text search?
-
-Click on the search icon at the top of the page and start typing.
-Slipbox uses lunr.js for text search.
-See the [lunr.js docs](https://lunrjs.com/guides/searching.html) to
-read more about its features.
+Tags: #view-notes
 
 
 
@@ -177,21 +150,40 @@ read more about its features.
 The `.slipbox` directory contains
 
 - an sqlite3 database (`data.db`)
-- a patterns file (`patterns`)
 - a configuration file (`config.cfg`).
 
 ---
 
 **#dot-slipbox**
 
-- What do the configuration options mean? [](#11)
+- Which settings can you configure in `./slipbox/config.cfg`? [](#11)
 
 
 
-# 11 What do the configuration options mean?
+# 11 Which settings can you configure in `./slipbox/config.cfg`?
+
+### `[slipbox]` section
 
 `output_directory`
-: Contains the generated site.
+: Contains the generated site
 
 `title`
-: Site title.
+: Site title
+
+### `[note-patterns]`
+
+Contains glob patterns for finding notes.
+
+Example:
+
+```ini
+[note-patterns]
+*.md = true
+*.markdown = true
+*.draft.md = false
+```
+
+### `[pandoc-options]`
+
+`bibliography`
+: Bibliography file to be used by Pandoc

@@ -1,15 +1,3 @@
-# 100 Foo
+# 100 Foobar
 
-Foo.
-
-
-
-# 101 Bar
-
-Bar.
-
-
-
-# 102 Baz
-
-Baz.
+Foobar.

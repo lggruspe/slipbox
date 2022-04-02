@@ -136,19 +136,16 @@
 <ul class="slipbox-list">
   <li value="0">0 – <a href="#0">What is slipbox?</a></li>
   <li value="1">1 – <a href="#1">How to install slipbox?</a></li>
-  <li value="2">2 – <a href="#2">How to run slipbox?</a></li>
+  <li value="2">2 – <a href="#2">How to use slipbox?</a></li>
   <li value="3">3 – <a href="#3">How to write notes?</a></li>
   <li value="4">4 – <a href="#4">How to link to other notes?</a></li>
   <li value="5">5 – <a href="#5">How to link to images?</a></li>
-  <li value="6">6 – <a href="#6">How to tag notes?</a></li>
   <li value="7">7 – <a href="#7">How to add citations?</a></li>
   <li value="8">8 – <a href="#8">How to view the generated site?</a></li>
-  <li value="9">9 – <a href="#9">How to use text search?</a></li>
   <li value="10">10 – <a href="#10">What does the <code>.slipbox/</code> directory contain?</a></li>
-  <li value="11">11 – <a href="#11">What do the configuration options mean?</a></li>
-  <li value="100">100 – <a href="#100">Foo</a></li>
-  <li value="101">101 – <a href="#101">Bar</a></li>
-  <li value="102">102 – <a href="#102">Baz</a></li>
+  <li value="11">11 – <a href="#11">Which settings can you configure in
+<code>./slipbox/config.cfg</code>?</a></li>
+  <li value="100">100 – <a href="#100">Foobar</a></li>
 </ul>
 </section>
 
@@ -166,28 +163,29 @@
 </section>
 <section id="1" class="level1 slipbox-note" data-filename="index.md" title="How to install slipbox?">
 <h1>How to install slipbox?</h1>
-<p>Make sure you have graphviz, pandoc and python installed. Your
-installation of Pandoc needs to be compiled with pandoc-types 1.22.</p>
+<p>First, make sure that you have graphviz, pandoc and python installed.
+Your installation of Pandoc needs to be compiled with pandoc-types
+1.22.</p>
+<p>Then install using <code>pip</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install slipbox.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install slipbox</span></code></pre></div>
 <hr>
 <p><strong><a href="#tags/getting-started">#getting-started</a></strong></p>
 <ul>
-<li>How to run slipbox? [<a href="#2">#2</a>]</li>
+<li>How to use slipbox? [<a href="#2">#2</a>]</li>
 </ul>
 </section>
-<section id="2" class="level1 slipbox-note" data-filename="index.md" title="How to run slipbox?">
-<h1>How to run slipbox?</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create slipbox directory.</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates a .slipbox/ directory inside my-slipbox.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> init my-slipbox</span>
+<section id="2" class="level1 slipbox-note" data-filename="index.md" title="How to use slipbox?">
+<h1>How to use slipbox?</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize `slipbox` in your notes directory.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-notes</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> init</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate site.</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-slipbox</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Show help.</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> <span class="at">-h</span></span></code></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> build</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Show help.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">slipbox</span> <span class="at">-h</span></span></code></pre></div>
 <hr>
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
@@ -221,12 +219,11 @@ of notes in one file.</p>
 <p>Use the note ID as the link target. Ex: <a href="#100">link</a>
 (<code>[link](#100)</code>).</p>
 <p>When you omit the link text, it just shows the target ID. Ex: [<a href="#100">#100</a>] (<code>[](#100)</code>).</p>
-<p>You can also connect notes by tagging them.</p>
+<p>You can also connect notes indirectly by <a href="#tags/tagging">#tagging</a> them.</p>
 <hr>
 <p><strong><a href="#tags/writing-notes">#writing-notes</a></strong></p>
 <ul>
 <li>How to link to images? [<a href="#5">#5</a>]</li>
-<li>How to tag notes? [<a href="#6">#6</a>]</li>
 </ul>
 </section>
 <section id="5" class="level1 slipbox-note" data-filename="index.md" title="How to link to images?">
@@ -237,22 +234,13 @@ of notes in one file.</p>
 <figcaption aria-hidden="true">Example</figcaption>
 </figure>
 </section>
-<section id="6" class="level1 slipbox-note" data-filename="index.md" title="How to tag notes?">
-<h1>How to tag notes?</h1>
-<p>Slipbox uses <a href="#tags/hashtags">#hashtags</a> to tag notes.</p>
-<p>Note: more accurately, hashtags don’t apply to notes but to links
-that appear after the tag.</p>
-<p>Ex: this <a href="#tags/tag">#tag</a> applies to <a href="#100">this
-link</a> and <a href="#101">this link</a>, but <a href="#tags/not">#not</a> to <a href="#102">this</a>.</p>
-<p>Tagged links show up in the graph of tag pages.</p>
-</section>
 <section id="7" class="level1 slipbox-note" data-filename="index.md" title="How to add citations?">
 <h1>How to add citations?</h1>
 <p><span class="citation" data-cites="cite2020">(Cite <a href="#ref-cite2020" role="doc-biblioref">Author 2020</a>)</span>.</p>
 <p>To enable citations, you need to specify a bibliography file in
 <code>.slipbox/config.cfg</code>.</p>
-<pre class="cfg"><code>[pandoc-options]
-bibliography = example.bib</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[pandoc-options]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bibliography </span><span class="ot">=</span><span class="st"> example.bib</span></span></code></pre></div>
 <p>Click citation links to see the other notes that cite the same
 reference.</p>
 </section>
@@ -265,63 +253,67 @@ reference.</p>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> http.server</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Go to localhost:8000 in your browser.</span></span></code></pre></div>
-<hr>
-<p><strong><a href="#tags/view-notes">#view-notes</a></strong></p>
-<ul>
-<li>How to use text search? [<a href="#9">#9</a>]</li>
-</ul>
-</section>
-<section id="9" class="level1 slipbox-note" data-filename="index.md" title="How to use text search?">
-<h1>How to use text search?</h1>
-<p>Click on the search icon at the top of the page and start typing.
-Slipbox uses lunr.js for text search. See the <a href="https://lunrjs.com/guides/searching.html">lunr.js docs</a> to read
-more about its features.</p>
+<p>Tags: <a href="#tags/view-notes">#view-notes</a></p>
 </section>
 <section id="10" class="level1 slipbox-note" data-filename="index.md" title="What does the .slipbox/ directory contain?">
 <h1>What does the <code>.slipbox/</code> directory contain?</h1>
 <p>The <code>.slipbox</code> directory contains</p>
 <ul>
 <li>an sqlite3 database (<code>data.db</code>)</li>
-<li>a patterns file (<code>patterns</code>)</li>
 <li>a configuration file (<code>config.cfg</code>).</li>
 </ul>
 <hr>
 <p><strong><a href="#tags/dot-slipbox">#dot-slipbox</a></strong></p>
 <ul>
-<li>What do the configuration options mean? [<a href="#11">#11</a>]</li>
+<li>Which settings can you configure in
+<code>./slipbox/config.cfg</code>? [<a href="#11">#11</a>]</li>
 </ul>
 </section>
-<section id="11" class="level1 slipbox-note" data-filename="index.md" title="What do the configuration options mean?">
-<h1>What do the configuration options mean?</h1>
+<section id="11" class="level1 slipbox-note" data-filename="index.md" title="Which settings can you configure in ./slipbox/config.cfg?">
+<h1>Which settings can you configure in
+<code>./slipbox/config.cfg</code>?</h1>
+<section id="slipbox-section" class="level3">
+<h3><code>[slipbox]</code> section</h3>
 <dl>
 <dt><code>output_directory</code></dt>
 <dd>
-Contains the generated site.
+Contains the generated site
 </dd>
 <dt><code>title</code></dt>
 <dd>
-Site title.
+Site title
 </dd>
 </dl>
 </section>
-<section id="100" class="level1 slipbox-note" data-filename="misc.md" title="Foo">
-<h1>Foo</h1>
-<p>Foo.</p>
+<section id="note-patterns" class="level3">
+<h3><code>[note-patterns]</code></h3>
+<p>Contains glob patterns for finding notes.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[note-patterns]</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">*.md </span><span class="ot">=</span><span class="st"> </span><span class="kw">true</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">*.markdown </span><span class="ot">=</span><span class="st"> </span><span class="kw">true</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dt">*.draft.md </span><span class="ot">=</span><span class="st"> </span><span class="kw">false</span></span></code></pre></div>
 </section>
-<section id="101" class="level1 slipbox-note" data-filename="misc.md" title="Bar">
-<h1>Bar</h1>
-<p>Bar.</p>
+<section id="pandoc-options" class="level3">
+<h3><code>[pandoc-options]</code></h3>
+<dl>
+<dt><code>bibliography</code></dt>
+<dd>
+Bibliography file to be used by Pandoc
+</dd>
+</dl>
 </section>
-<section id="102" class="level1 slipbox-note" data-filename="misc.md" title="Baz">
-<h1>Baz</h1>
-<p>Baz.</p>
+</section>
+<section id="100" class="level1 slipbox-note" data-filename="misc.md" title="Foobar">
+<h1>Foobar</h1>
+<p>Foobar.</p>
 </section>
 	<section id='tags/dot-slipbox' title='#dot-slipbox' class='level1'>
   <h1>
     #dot-slipbox
   </h1>
   <ul class="slipbox-list">
-    <li value="2">2 – <a href="#2">How to run slipbox?</a></li>
+    <li value="2">2 – <a href="#2">How to use slipbox?</a></li>
     <li value="10">10 – <a href="#10">What does the <code>.slipbox/</code> directory contain?</a></li>
   </ul>
 </section>
@@ -334,28 +326,12 @@ Site title.
     <li value="1">1 – <a href="#1">How to install slipbox?</a></li>
   </ul>
 </section>
-<section id='tags/hashtags' title='#hashtags' class='level1'>
+<section id='tags/tagging' title='#tagging' class='level1'>
   <h1>
-    #hashtags
+    #tagging
   </h1>
   <ul class="slipbox-list">
-    <li value="6">6 – <a href="#6">How to tag notes?</a></li>
-  </ul>
-</section>
-<section id='tags/not' title='#not' class='level1'>
-  <h1>
-    #not
-  </h1>
-  <ul class="slipbox-list">
-    <li value="6">6 – <a href="#6">How to tag notes?</a></li>
-  </ul>
-</section>
-<section id='tags/tag' title='#tag' class='level1'>
-  <h1>
-    #tag
-  </h1>
-  <ul class="slipbox-list">
-    <li value="6">6 – <a href="#6">How to tag notes?</a></li>
+    <li value="4">4 – <a href="#4">How to link to other notes?</a></li>
   </ul>
 </section>
 <section id='tags/view-notes' title='#view-notes' class='level1'>
@@ -363,7 +339,7 @@ Site title.
     #view-notes
   </h1>
   <ul class="slipbox-list">
-    <li value="2">2 – <a href="#2">How to run slipbox?</a></li>
+    <li value="2">2 – <a href="#2">How to use slipbox?</a></li>
     <li value="8">8 – <a href="#8">How to view the generated site?</a></li>
   </ul>
 </section>
@@ -372,7 +348,7 @@ Site title.
     #writing-notes
   </h1>
   <ul class="slipbox-list">
-    <li value="2">2 – <a href="#2">How to run slipbox?</a></li>
+    <li value="2">2 – <a href="#2">How to use slipbox?</a></li>
     <li value="3">3 – <a href="#3">How to write notes?</a></li>
     <li value="4">4 – <a href="#4">How to link to other notes?</a></li>
   </ul>
@@ -382,9 +358,7 @@ Site title.
 <ul>
 <li><a href="#tags/dot-slipbox">#dot-slipbox</a> (2)</li>
 <li><a href="#tags/getting-started">#getting-started</a> (2)</li>
-<li><a href="#tags/hashtags">#hashtags</a> (1)</li>
-<li><a href="#tags/not">#not</a> (1)</li>
-<li><a href="#tags/tag">#tag</a> (1)</li>
+<li><a href="#tags/tagging">#tagging</a> (1)</li>
 <li><a href="#tags/view-notes">#view-notes</a> (2)</li>
 <li><a href="#tags/writing-notes">#writing-notes</a> (3)</li>
 </ul>
