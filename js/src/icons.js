@@ -5,7 +5,7 @@ registerIconLibrary('boxicons', {
     let folder = 'regular'
     if (name.substring(0, 4) === 'bxs-') folder = 'solid'
     if (name.substring(0, 4) === 'bxl-') folder = 'logos'
-    return `/assets/boxicons/svg/${folder}/${name}.svg`
+    return `assets/boxicons/svg/${folder}/${name}.svg`
   },
   mutator: svg => svg.setAttribute('fill', 'currentColor')
 })
