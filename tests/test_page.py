@@ -24,8 +24,8 @@ SQL = """
         (0, 0),
         (1, 1),
         (2, 2);
-    INSERT INTO Bibliography (key, text, url) VALUES
-        ('ref-test', 'Reference text.', 'https://example.com');
+    INSERT INTO Bibliography (key, html) VALUES
+        ('ref-test', 'Reference text.');
     INSERT INTO Citations (note, reference) VALUES
         (0, 'ref-test');
 """
@@ -44,17 +44,15 @@ def test_render_references(mock_db: sqlite3.Connection) -> None:
     conn = mock_db
     conn.executescript(SQL)
     html = page.render_references(conn)
-    assert html == """<section id="references" class="level1" title="References">
+    # pylint: disable=line-too-long
+    assert html == """<section id="references" class="level1" title="References" role="doc-bibliography">
 <h1>References</h1>
 <dl>
-<dt><a href="#ref-test">[@test]</a></dt>
-<dd>
-Reference text.
-<a href="https://example.com">https://example.com</a>
-</dd>
+<dt role="doc-biblioentry"><a href="#ref-test">[@test]</a></dt>
+<dd>Reference text.</dd>
 </dl>
 </section>
-"""
+"""  # noqa
 
 
 def test_render_tags(mock_db: sqlite3.Connection) -> None:

@@ -236,28 +236,28 @@ local function modify()
   }
 end
 
+local function to_html(block)
+  local doc = pandoc.Pandoc{block}
+  return pandoc.write(doc, "html")
+end
+
 local function citations(slipbox)
   return {
     Div = function(div)
-      -- Suppress bibliography and update SQL.
+      -- Suppress bibliography.
       if div.identifier == "refs" then
 
         local function Div(elem)
-          -- Save reference text.
-          if utils.is_reference_id(elem.identifier) then
-            slipbox:save_reference(elem.identifier, pandoc.utils.stringify(elem.content))
-            return {}
+          -- Save reference HTML entry.
+          local identifier = elem.identifier
+          if utils.is_reference_id(identifier) then
+            elem.identifier = ""
+            slipbox:save_reference(identifier, to_html(elem))
           end
         end
 
         pandoc.walk_block(div, {Div = Div})
         return {}
-      end
-    end,
-    Pandoc = function(doc)
-      local references = pandoc.utils.references(doc)
-      for _, ref in ipairs(references) do
-        slipbox.bibliography["ref-" .. ref.id].url = ref.url
       end
     end,
   }

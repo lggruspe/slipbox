@@ -70,10 +70,8 @@ def process_links(conn: Connection, path: Path) -> None:
 
 def process_bibliography(conn: Connection, path: Path) -> None:
     """Process Bibliography data in path."""
-    sql = """INSERT OR IGNORE INTO Bibliography (key, text, url)
-        VALUES (?, ?, ?)
-        """
-    run_sql_on_csv(conn, path, sql, (str, str, str))
+    sql = "INSERT OR IGNORE INTO Bibliography (key, html) VALUES (?, ?)"
+    run_sql_on_csv(conn, path, sql, (str, str))
 
 
 def process_citations(conn: Connection, path: Path) -> None:

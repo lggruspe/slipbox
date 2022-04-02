@@ -70,12 +70,12 @@ def generate_active_htmls(conn: Connection) -> t.Iterable[str]:
 
 def render_references(conn: Connection) -> str:
     """Create bibliography HTML section from database entries."""
-    sql = "SELECT key, text, url FROM Bibliography ORDER BY key"
+    sql = "SELECT key, html FROM Bibliography ORDER BY key"
     items = '\n'.join(
         render_template("bibliography__item.html", **dict(
-            href=f"#{key}", term=f"[@{key[4:]}]", url=url, description=text
+            href=f"#{key}", term=f"[@{key[4:]}]", description=html
         )).strip()
-        for key, text, url in conn.execute(sql)
+        for key, html in conn.execute(sql)
     )
     return render_template("bibliography.html", items=items)
 
@@ -142,7 +142,7 @@ def render_tag_pages(conn: Connection) -> str:
 def render_reference_page(conn: Connection, reference: str) -> str:
     """Create HTML section that lists all notes that cite the reference."""
     sql = """
-        SELECT note, text, html FROM Citations
+        SELECT note, Bibliography.html,Notes.html FROM Citations
             JOIN Notes ON Citations.note = Notes.id
                 JOIN Bibliography ON Bibliography.key = Citations.reference
                     WHERE reference = ?

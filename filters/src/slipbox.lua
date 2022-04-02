@@ -11,7 +11,7 @@ function SlipBox:new()
     links = {},
     citations = {},
     images = {},
-    bibliography = {}, -- { text, url }
+    bibliography = {},
     invalid = {
       has_empty_link_target = {},
     },
@@ -46,13 +46,13 @@ function SlipBox:save_image(id, filename)
   image.notes[id] = true
 end
 
-function SlipBox:save_reference(id, text, url)
+function SlipBox:save_reference(id, html)
   -- Save reference into slipbox.
   assert(type(id) == "string")
-  assert(type(text) == "string")
+  assert(type(html) == "string")
   assert(id ~= "")
-  assert(text ~= "")
-  self.bibliography[id] = {text = text, url = url}
+  assert(html ~= "")
+  self.bibliography[id] = html
 end
 
 function SlipBox:save_note(id, title, filename)
@@ -128,9 +128,9 @@ local function links_to_csv(links)
 end
 
 local function bibliography_to_csv(refs)
-  local w = csv.Writer:new{"key", "text", "url"}
-  for ref, content in pairs(refs) do
-    w:write{ref, content.text, content.url}
+  local w = csv.Writer:new{"key", "html"}
+  for ref, html in pairs(refs) do
+    w:write{ref, html}
   end
   return w.data
 end
