@@ -1,5 +1,6 @@
 """Test __main__.py."""
 
+import shutil
 import sys
 
 import pytest
@@ -7,6 +8,7 @@ import pytest
 from slipbox.__main__ import main
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_main_no_args(
     capsys: pytest.CaptureFixture[str],
     monkeypatch: pytest.MonkeyPatch,
