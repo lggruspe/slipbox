@@ -64,8 +64,8 @@ def process_tags(conn: Connection, path: Path) -> None:
 
 def process_links(conn: Connection, path: Path) -> None:
     """Process Links data in path."""
-    sql = "INSERT OR IGNORE INTO Links (src, dest) VALUES (?, ?)"
-    run_sql_on_csv(conn, path, sql, (int, int))
+    sql = "INSERT OR IGNORE INTO Links (src, dest, direction) VALUES (?, ?, ?)"
+    run_sql_on_csv(conn, path, sql, (int, int, str))
 
 
 def process_bibliography(conn: Connection, path: Path) -> None:

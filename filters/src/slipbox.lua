@@ -118,10 +118,10 @@ end
 
 local function links_to_csv(links)
   -- Create CSV data from direct links in slipbox.
-  local w = csv.Writer:new{"src", "dest"}
+  local w = csv.Writer:new{"src", "dest", "direction"}
   for src, dests in pairs(links) do
     for _, dest in ipairs(dests) do
-      w:write{src, dest.dest}
+      w:write{src, dest.dest, dest.direction}
     end
   end
   return w.data

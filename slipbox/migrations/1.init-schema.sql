@@ -20,9 +20,10 @@ CREATE TABLE Tags (
 
 CREATE TABLE Links (
     src NOT NULL REFERENCES Notes ON DELETE CASCADE,
-    dest NOT NULL   -- not an fk to keep backlink when dest gets deleted
+    dest NOT NULL,  -- not an fk to keep backlink when dest gets deleted
                     -- and to allow notes to get scanned incrementally
                     -- ValidLinks gets subset with valid dest
+    direction
 );
 
 CREATE TABLE Images (

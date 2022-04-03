@@ -19,9 +19,12 @@ def create_graph(con: Connection) -> nx.DiGraph:
     for tag, id_ in con.execute(sql):
         graph.nodes[id_]["tags"].append(tag)
 
-    sql = "SELECT src, dest FROM ValidLinks"
-    for src, dest in con.execute(sql):
-        graph.add_edge(src, dest)
+    sql = "SELECT src, dest, direction FROM ValidLinks"
+    for src, dest, direction in con.execute(sql):
+        if direction == "<":
+            graph.add_edge(dest, src)
+        else:
+            graph.add_edge(src, dest)
     return graph
 
 
