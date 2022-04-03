@@ -26,6 +26,12 @@ def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
     ))
 
 
+def is_quiet(capsys: pytest.CaptureFixture[str]) -> bool:
+    """Check if there's no output in stdout or stderr."""
+    stdout, stderr = capsys.readouterr()
+    return not stdout and not stderr
+
+
 def test_find_new_notes(app: App) -> None:
     """find_new_notes must only return existing files that aren't yet in the
     database and match the input patterns (*.md by default).
@@ -123,7 +129,7 @@ def test_purge(app: App, files_abc: t.List[Path]) -> None:
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-class TestsWithRequirements:    # pylint: disable=R0201
+class TestsWithRequirements:    # pylint: disable=no-self-use
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
     def test_run(
         self,
@@ -138,9 +144,7 @@ class TestsWithRequirements:    # pylint: disable=R0201
         file_c.write_text("# 2 C\n\nC.\n")
 
         build(app)
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
 
     def test_process(self, app: App) -> None:
         """Smoke test for slipbox.process."""
@@ -251,9 +255,7 @@ Bar.
         assert len(result) == 1
         assert result == [(0, "Existing note")]
 
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
 
         file_b = app.root/"b.md"
         file_b.write_text("# 0 Duplicate note\n\nTest.\n")
@@ -328,9 +330,7 @@ Bar.
         result = list(app.database.execute("SELECT * FROM Links"))
         assert not result
 
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
 
     def test_process_with_id_in_scientific_form(
         self,
@@ -345,9 +345,7 @@ Bar.
         result = list(app.database.execute("SELECT * FROM Notes"))
         assert not result
 
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
 
     def test_process_with_non_text_titles(self,
                                           capsys: pytest.CaptureFixture[str],
@@ -373,9 +371,7 @@ Bar.
             (2, "print('Title')"),
         ]
 
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
 
     def test_process_tags_with_trailing_punctuation(
         self,
@@ -391,9 +387,7 @@ Bar.
         result = app.database.execute("SELECT tag FROM Tags ORDER BY tag")
         assert list(result) == [("#0",), ("#tag",), ("#tags",)]
 
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
 
     def test_process_rst(self,
                          capsys: pytest.CaptureFixture[str],
@@ -419,6 +413,65 @@ Bar.""")
 
         assert result == [(1, "Foo", "test.rst"), (2, "Bar", "test.rst")]
 
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert not stderr
+        assert is_quiet(capsys)
+
+
+@pytest.mark.skipif(not check_requirements(startup({})),
+                    reason="missing requirements")
+class TestDirectionalLinks:  # pylint: disable=no-self-use
+    """Test directional links (e.g. [foo](<#123))."""
+
+    def write_test_md(self, app: App) -> None:
+        """Write test note to test.md."""
+        app.root.joinpath("test.md").write_text("""
+# 0 Foo
+
+[Bar](#1)
+
+# 1 Bar
+
+[Baz](>#2)
+
+# 2 Baz
+
+[Foo](<#0)
+""")
+
+    def test_process_with_directional_links(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Direction in prefix of link target should be removed."""
+        self.write_test_md(app)
+        build(app)
+        assert is_quiet(capsys)
+
+        sql = "SELECT html FROM Notes"
+        notes = list(app.database.execute(sql))
+        assert notes
+        for html, in notes:
+            assert "%3" not in html
+            assert "<#" not in html
+            assert ">#" not in html
+
+    def test_process_direction_in_db(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Link "direction" should be stored in the database."""
+        self.write_test_md(app)
+        build(app)
+        assert is_quiet(capsys)
+
+        sql = "SELECT direction FROM Links WHERE src = ? AND dest = ?"
+        cur = app.database.cursor()
+        cur.execute(sql, (0, 1))
+        assert cur.fetchone()[0] == ""
+
+        cur.execute(sql, (1, 2))
+        assert cur.fetchone()[0] == ">"
+
+        cur.execute(sql, (2, 0))
+        assert cur.fetchone()[0] == "<"
