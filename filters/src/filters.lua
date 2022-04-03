@@ -184,22 +184,28 @@ function Modifier:new()
 end
 
 function Modifier.Link(elem)
-  -- Rewrite links with empty targets/text.
+  -- Rewrite links with empty targets/text, and remove direction prefix from
+  -- URL targets.
   if not elem.target or elem.target == "" then
     return elem.content
   end
 
-  local content = pandoc.utils.stringify(elem.content or "")
-  if content == "" then
-    return {
-      pandoc.Str " [",
-      pandoc.Link(
-        {pandoc.Str(elem.target)},
-        elem.target,
-        elem.title),
-      pandoc.Str "]",
-    }
+  local link = links.parse_note_link(elem.target)
+  if link ~= nil then
+    elem.target = link.target
   end
+
+  local content = pandoc.utils.stringify(elem.content or "")
+
+  if content ~= "" then return elem end
+  return {
+    pandoc.Str " [",
+    pandoc.Link(
+      {pandoc.Str(elem.target)},
+      elem.target,
+      elem.title),
+    pandoc.Str "]",
+  }
 end
 
 function Modifier:Note(elem)
