@@ -41,7 +41,7 @@ check-lua:
 build-lua:	check-lua
 	mkdir -p filters/build
 	cd filters; \
-		amalg.lua src.csv src.filters src.log src.slipbox src.utils src.metadata \
+		amalg.lua src.csv src.filters src.links src.log src.slipbox src.utils src.metadata \
 			-s src/zk.lua -o build/filter.lua
 
 # Copy JS and Lua filters into slipbox/

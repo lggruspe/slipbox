@@ -2,17 +2,6 @@ local function hashtag_prefix(s)
   return s:match '^#[-_a-zA-Z0-9]+'
 end
 
-local function get_link(src, link)
-  assert(link.tag == "Link")
-  assert(type(src) == "number")
-  if not link.target:match('^#%d+$') then return end
-  return {
-    src = src,
-    dest = tonumber(link.target:sub(2)),
-    description = link.title,
-  }
-end
-
 local function append_text(filename, text)
   local file = io.open(filename, 'a')
   if not file then return false end
@@ -37,7 +26,6 @@ end
 return {
   is_reference_id = is_reference_id,
   hashtag_prefix = hashtag_prefix,
-  get_link = get_link,
   write_text = write_text,
   append_text = append_text,
 }

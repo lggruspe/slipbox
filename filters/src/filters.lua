@@ -1,6 +1,7 @@
 -- Pandoc filters.
 
 local pandoc = require "pandoc"
+local links = require "src.links"
 local log = require "src.log"
 local metadata = require "src.metadata"
 local utils = require "src.utils"
@@ -117,9 +118,14 @@ function Collector:Link(elem)
   if not elem.target or elem.target == "" then
     self.has_empty_link_target = true
   end
-  local link = utils.get_link(self.id, elem)
+  local link = links.parse_note_link(elem.target)
   if link then
-    self.slipbox:save_link(link)
+    self.slipbox:save_link {
+      src = self.id,
+      dest = tonumber(link.target:sub(2)),
+      description = elem.title,
+      direction = link.direction,
+    }
   end
 end
 
