@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="slipbox",
-    version="0.19.0a1",
+    version="0.19.0a2",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",
     description="Static site generator for Zettelkasten notes",
@@ -12,7 +12,14 @@ setuptools.setup(
     url="https://github.com/lggruspe/slipbox",
     packages=setuptools.find_packages(),
     package_data={
-        "slipbox": ["data/*", "migrations/*.sql", "templates/*"]
+        "slipbox": [
+            "data/*",
+            "data/es5/*/*/*/*/*",
+            "data/favicons/*",
+            "data/svg/*/*.svg",
+            "migrations/*.sql",
+            "templates/*",
+        ]
     },
     classifiers=[
         "Environment :: Console",
