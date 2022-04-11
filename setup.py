@@ -1,8 +1,19 @@
 from pathlib import Path
+import re
 import setuptools
+
+
+def get_version() -> str:
+    """Get version string from slipbox/__init__.py."""
+    pattern = re.compile(r'^__version__ = "(.+)"$')
+    init = Path(__file__).with_name("slipbox")/"__init__.py"
+    result = pattern.match(init.read_text())
+    result.groups()[0]
+
 
 setuptools.setup(
     name="slipbox",
+    version=get_version(),
     version="0.19.0",
     author="Levi Gruspe",
     author_email="mail.levig@gmail.com",

@@ -3,7 +3,7 @@
 import sys
 import typing as t
 
-from . import commands
+from . import __version__, commands
 from .app import error, RootlessApp, startup
 from .build import build
 from .dependencies import check_requirements
@@ -31,8 +31,8 @@ def main() -> None:
         error("pandoc not found")
 
     if app.args.get("version"):
-        print("""slipbox 0.18.0
-Copyright (C) 2020-2022 Levi Gruspe
+        print(f"""slipbox {__version__}
+Copyright (C) 2020 Levi Gruspe
 https://github.com/lggruspe/slipbox""")
         sys.exit()
 
