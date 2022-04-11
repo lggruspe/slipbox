@@ -8,7 +8,7 @@ def get_version() -> str:
     pattern = re.compile(r'^__version__ = "(.+)"$')
     init = Path(__file__).with_name("slipbox")/"__init__.py"
     result = pattern.match(init.read_text())
-    result.groups()[0]
+    return result.groups()[0]
 
 
 setuptools.setup(
