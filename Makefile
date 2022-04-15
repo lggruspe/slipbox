@@ -1,5 +1,6 @@
 PANDOC_VERSION = 2.17
 PYTHON_VERSION = 3.7
+DOCKER_IMAGE = slipbox-test-pandoc$(PANDOC_VERSION)-python$(PYTHON_VERSION)
 
 .PHONY:	all init init-lua check-js check-lua build-lua bundle check docs examples dist
 .PHONY:	lint test
@@ -21,7 +22,7 @@ all:
 init:
 	cd js; npm ci
 	pip install --upgrade pip wheel
-	pip install -r requirements.txt
+	pip install -r requirements/dev.requirements.txt
 
 # Initialize lua dev requirements.
 init-lua:
@@ -83,5 +84,5 @@ dist:	bundle check
 	python setup.py sdist bdist_wheel
 
 docker:
-	docker build -t slipbox-test --build-arg PYTHON_VERSION=$(PYTHON_VERSION) --build-arg PANDOC_VERSION=$(PANDOC_VERSION) .
-	docker run slipbox-test
+	docker build -t $(DOCKER_IMAGE) --build-arg PANDOC_VERSION=$(PANDOC_VERSION) --build-arg PYTHON_VERSION=$(PYTHON_VERSION) .
+	docker run $(DOCKER_IMAGE)

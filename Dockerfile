@@ -10,8 +10,8 @@ RUN pip install wheel
 RUN apk add make gcc libc-dev
 RUN apk add libxml2 libxml2-dev libxslt libxslt-dev graphviz
 
-COPY requirements.txt /
-RUN pip install -r requirements.txt
+COPY requirements requirements
+RUN pip install -r requirements/dev.requirements.txt
 
 COPY . slipbox
 WORKDIR slipbox
