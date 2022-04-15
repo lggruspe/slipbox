@@ -1,3 +1,4 @@
+PANDOC_VERSION = 2.17
 PYTHON_VERSION = 3.7
 
 .PHONY:	all init init-lua check-js check-lua build-lua bundle check docs examples dist
@@ -14,7 +15,7 @@ all:
 	@echo "> dist - Release slipbox."
 	@echo "> lint - Run python linters."
 	@echo "> test - Run python tests."
-	@echo "> docker - Run tests in Docker. (PYTHON_VERSION=$(PYTHON_VERSION))"
+	@echo "> docker - Run tests in Docker. (PYTHON_VERSION=$(PYTHON_VERSION), PANDOC_VERSION=$(PANDOC_VERSION))"
 
 # Initialize project.
 init:
@@ -82,5 +83,5 @@ dist:	bundle check
 	python setup.py sdist bdist_wheel
 
 docker:
-	docker build -t slipbox-test --build-arg PYTHON_IMAGE=python:$(PYTHON_VERSION)-alpine .
+	docker build -t slipbox-test --build-arg PYTHON_VERSION=$(PYTHON_VERSION) --build-arg PANDOC_VERSION=$(PANDOC_VERSION) .
 	docker run slipbox-test
