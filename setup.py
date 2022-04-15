@@ -45,7 +45,7 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.10",
         ],
         install_requires=[
-            "networkx>=2.5.1",
+            "networkx>=2.6.3",
             "pydot>=1.4.2",
             "pyquery>=1.4.3",
         ],
