@@ -118,7 +118,7 @@ class CytoscapeDataGenerator:
 
     def write(self, path: Path, graph: t.Any, layout: str = "fdp") -> None:  # noqa; # pylint: disable=no-self-use
         """Write graph JSON data to path."""
-        graph_data = create_graph_data(self.titles, graph, layout)
+        graph_data = create_graph_data(self.con, self.titles, graph, layout)
         path.write_text(json.dumps(graph_data))
 
     def run(self, out: Path) -> None:
@@ -134,7 +134,12 @@ class CytoscapeDataGenerator:
 
         (out/"graph"/"note").mkdir()
         for component, subgraph in get_components(self.graph).items():
-            graph_data = create_graph_data(self.titles, subgraph, "dot")
+            graph_data = create_graph_data(
+                self.con,
+                self.titles,
+                subgraph,
+                "dot",
+            )
             for note_id in component:
                 path = out/"graph"/"note"/f"{note_id}.json"
                 path.write_text(json.dumps(graph_data))
