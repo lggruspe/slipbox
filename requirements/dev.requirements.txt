@@ -1,6 +1,6 @@
 -r install.requirements.txt
 flake8==3.9.2
-hypothesis==6.14.2
+hypothesis==6.16.0
 mypy==0.910
 numpy==1.21.0
 pylint==2.9.3

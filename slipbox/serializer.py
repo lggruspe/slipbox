@@ -1,5 +1,6 @@
 """Graph serialiation."""
 
+from itertools import chain
 import typing as t
 
 import networkx as nx   # type: ignore
@@ -8,7 +9,7 @@ import networkx as nx   # type: ignore
 def serialize(graph: nx.DiGraph) -> str:
     """Serialize directed graph."""
     return "\n".join(
-        str(node) + " ".join(map(str, sorted(graph.adj[node])))
+        " ".join(chain([str(node)], map(str, sorted(graph.adj[node]))))
         for node in sorted(graph.nodes)
     )
 
@@ -24,6 +25,7 @@ def deserialize(adjacency: str) -> t.Optional[nx.DiGraph]:
             node, *dests = [int(node) for node in line.split()]
         except ValueError:
             return None
+        graph.add_node(node)
         for dest in dests:
             graph.add_edge(node, dest)
     return graph
