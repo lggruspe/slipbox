@@ -1,0 +1,6 @@
+BEGIN TRANSACTION;
+PRAGMA user_version = 2;
+
+DROP TABLE Meta;
+
+COMMIT;
