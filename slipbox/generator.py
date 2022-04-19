@@ -143,6 +143,7 @@ class CytoscapeDataGenerator:
             for note_id in component:
                 path = out/"graph"/"note"/f"{note_id}.json"
                 path.write_text(json.dumps(graph_data))
+        self.con.commit()
 
 
 def compile_site(app: App) -> None:

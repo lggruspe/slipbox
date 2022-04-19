@@ -6,8 +6,8 @@ import typing as t
 from . import __version__, commands
 from .app import error, RootlessApp, startup
 from .build import build
-from .dependencies import check_requirements
 from .cli import parse_args
+from .dependencies import check_requirements
 from .tools.new import new_note
 
 

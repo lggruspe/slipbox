@@ -103,6 +103,8 @@ def save_graph_layout(con: Connection, key: str, value: str) -> None:
 
     Assume that value is a valid JSON.
     Note: JSON keys are always strings.
+
+    Caller is expected to commit changes afterward.
     """
     sql = """
         INSERT INTO LayoutCache (key, layout) VALUES (?, ?)
@@ -110,7 +112,6 @@ def save_graph_layout(con: Connection, key: str, value: str) -> None:
         UPDATE SET layout = excluded.layout
         """
     con.execute(sql, (key, value))
-    con.commit()
 
 
 def get_graph_layout(
