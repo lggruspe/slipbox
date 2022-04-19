@@ -1,6 +1,10 @@
+"""setup.py for slipbox."""
+
 from pathlib import Path
 import re
-import setuptools
+import typing as t
+
+import setuptools   # type: ignore
 
 
 def get_version() -> str:
@@ -11,6 +15,13 @@ def get_version() -> str:
 
     assert result
     return result.groups()[0]
+
+
+def get_install_requires() -> t.List[str]:
+    """Get install requires from requirements/install.requirements.txt."""
+    path = Path(__file__).with_name("requirements")/"install.requirements.txt"
+    lines = path.read_text().splitlines()
+    return [">=".join(line.split("==")) for line in lines]
 
 
 if __name__ == "__main__":
@@ -44,11 +55,7 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
         ],
-        install_requires=[
-            "networkx>=2.6.3",
-            "pydot>=1.4.2",
-            "pyquery>=1.4.3",
-        ],
+        install_requires=get_install_requires(),
         python_requires=">=3.7",
         entry_points={
             "console_scripts": [
