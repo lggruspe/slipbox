@@ -207,5 +207,5 @@ def generate_index(app: App, out: Path) -> None:
             pandoc=app.config.pandoc,
             title=shlex.quote(title),
             opts=options,
-            output=out/"index.html")
+            output=shlex.quote(str(out/"index.html")))
         subprocess.run(shlex.split(cmd), check=False, cwd=tempdir)
