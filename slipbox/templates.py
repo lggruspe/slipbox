@@ -12,9 +12,9 @@ import typing as t
 class Template(StringTemplate):
     """Extended string.Template with file loader."""
     @staticmethod
-    def load(path: Path) -> "Template":
+    def load(path: Path, encoding: t.Optional[str] = None) -> "Template":
         """Load template from file."""
-        return Template(path.read_text())
+        return Template(path.read_text(encoding=encoding))
 
     def render(self, **kwargs: t.Any) -> str:
         """Substitute template variables."""
@@ -24,7 +24,7 @@ class Template(StringTemplate):
 def render_template(path: t.Union[str, Path], **kwargs: t.Any) -> str:
     """Render template from templates directory."""
     basedir = Path(__file__).parent/"templates"
-    template = Template.load(basedir/path)
+    template = Template.load(basedir/path, encoding="utf-8")
     return template.render(**kwargs)
 
 
