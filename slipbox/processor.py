@@ -157,7 +157,7 @@ def build_options(app: App) -> str:
     if config.strip_comments:
         options += " --strip-comments "
     if config.bibliography is not None:
-        path = str((app.root/config.bibliography).resolve())
+        path = shlex.quote(str((app.root/config.bibliography).resolve()))
         options += f" --bibliography {path} --citeproc "
     return options
 
