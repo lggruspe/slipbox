@@ -1,9 +1,9 @@
 import cytoscape from "cytoscape";
 
 import * as graph from "./graph.js";
-import * as home from "./home.js";
 import * as shuffle from "./shuffle.js";
 
+import { initRouter } from "./router.js";
 import { GraphSchema } from "./schema.js";
 import { fetchJson } from "./utils.js";
 
@@ -25,4 +25,4 @@ window.addEventListener("DOMContentLoaded", async() => {
     );
 });
 
-home.init();
+initRouter();
