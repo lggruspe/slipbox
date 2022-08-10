@@ -3,7 +3,7 @@ import SlIconButton from "@shoelace-style/shoelace/dist/components/icon-button/i
 import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import "@shoelace-style/shoelace/dist/components/input/input.js";
 import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
-import "@shoelace-style/shoelace/dist/themes/light.css";
+import "./index.css";
 
 import "./icons.js";
 

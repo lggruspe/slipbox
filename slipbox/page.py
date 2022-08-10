@@ -202,7 +202,7 @@ def generate_index(app: App, out: Path) -> None:
         _write(tempdir/"after.txt", render_main(con, title))
 
         cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
-                --section-divs {opts} -o {output} -c style.css
+                --section-divs {opts} -o {output} -c slipbox.css
             """.format(
             pandoc=app.config.pandoc,
             title=shlex.quote(title),
