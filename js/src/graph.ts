@@ -27,7 +27,7 @@ function createCytoscape(container: HTMLElement, data: GraphSchema, selectCallba
                 style: {
                     label: "data(title)",
                     "text-wrap": "wrap",
-                    "text-max-width": 120
+                    "text-max-width": "120"
                 }
             },
             {
