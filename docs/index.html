@@ -77,7 +77,7 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="slipbox.css" />
   <link rel="stylesheet" href="slipbox.css">
   <script type="module" src="slipbox.js"></script>
   <script src="es5/tex-chtml-full.js" id="MathJax-script" async></script>
@@ -104,30 +104,13 @@
     <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-network-chart"></sl-icon-button>
   </sl-tooltip>
   <sb-nav-item title="Random note" external icon="boxicons/bx-shuffle"></sb-nav-item>
-  <sl-tooltip content="Search">
-    <sl-icon-button style="font-size: 1.25rem;" library="boxicons" name="bx-search"></sl-icon-button>
-  </sl-tooltip>
-
-  <sl-dialog id="slipbox-search-dialog" style="--body-spacing: 0 1em;">
-    <sl-input size="small" pill slot="label" placeholder="Search notes" clearable>
-      <sl-icon slot="prefix" name="bx-search" library="boxicons"></sl-icon>
-    </sl-input>
-    <div class="slipbox-search-dialog-results"></div>
-  </sl-dialog>
-
+  <sb-nav-item title="Search" external icon="boxicons/bx-search" href="#search"></sb-nav-item>
   <sl-dialog id="slipbox-graph-dialog" style="--width: 100%;">
     <span slot="label">Zettelkasten graph</span>
     <div style="height: 100vh; margin: 0; padding: 0;">
       <hr style="color: transparent; font-size: 1px;" />
     </div>
   </sl-dialog>
-
-  <script type="module">
-  const searchDialog = document.querySelector('#slipbox-search-dialog')
-  document.querySelector('sl-icon-button[name="bx-search"]').addEventListener('click', () => {
-    searchDialog.show()
-  })
-  </script>
 </nav>
 
 <main>
@@ -390,6 +373,7 @@ href="https://example.com">https://example.com</a>.
 </dl>
 </section>
 
+	<sb-search-section></sb-search-section>
 </main>
 </body>
 </html>
