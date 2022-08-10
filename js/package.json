@@ -29,6 +29,8 @@
   },
   "homepage": "https://github.com/lggruspe/slipbox#readme",
   "devDependencies": {
+    "@types/cytoscape": "^3.19.7",
+    "@types/flexsearch": "^0.7.3",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "esbuild": "^0.13.8",

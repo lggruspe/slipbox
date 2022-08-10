@@ -1,5 +1,5 @@
 import "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
-import "@shoelace-style/shoelace/dist/components/icon-button/icon-button.js";
+import SlIconButton from "@shoelace-style/shoelace/dist/components/icon-button/icon-button.js";
 import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import "@shoelace-style/shoelace/dist/components/input/input.js";
 import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
@@ -7,23 +7,19 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 
 import "./icons.js";
 
-/**
- * @param title string
- * @param external boolean
- * @return HTMLElement
- */
-function tooltip(title, external) {
+type Icon = {
+    library: string;
+    name: string;
+};
+
+function tooltip(title: string, external: boolean): HTMLElement {
     const elem = document.createElement("sl-tooltip");
     const icon = "<sl-icon library=\"boxicons\" name=\"bx-link-external\"></sl-icon>";
     elem.innerHTML = `<div slot="content">${title} ${external ? icon : ""}</div>`;
     return elem;
 }
 
-/**
- * @param icon string
- * @return { library: string, name: string } | null
- */
-function parseIcon(icon) {
+function parseIcon(icon: string): Icon | null {
     const parts = icon.split("/");
     if (parts.length < 2) {
         return null;
@@ -33,12 +29,7 @@ function parseIcon(icon) {
     return { library, name };
 }
 
-/**
- * @param icon { library: string, name: string }
- * @param href string?
- * @return HTMLButtonElement
- */
-function iconButton(icon, href) {
+function iconButton(icon: Icon, href: string | null): SlIconButton {
     const btn = document.createElement("sl-icon-button");
     btn.style.fontSize = "1.25rem";
     btn.library = icon.library;
@@ -49,12 +40,7 @@ function iconButton(icon, href) {
     return btn;
 }
 
-/**
- * @param tooltip HTMLElement
- * @param iconButton HTMLButtonElement
- * @return HTMLElement
- */
-function navItem(tooltip, iconButton) {
+function navItem(tooltip: HTMLElement, iconButton: SlIconButton): HTMLElement {
     tooltip.append(iconButton);
     return tooltip;
 }
@@ -77,6 +63,6 @@ customElements.define("sb-nav-item", class extends HTMLElement {
             tooltip(title, external),
             iconButton(icon, href)
         );
-        this.shadowRoot.append(child);
+        this.shadowRoot!.append(child);
     }
 });

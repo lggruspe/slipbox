@@ -16,12 +16,12 @@ window.addEventListener("DOMContentLoaded", async() => {
     if (title) title.remove();
     search.init();
     graph.connectGraphDialogAndButton(
-        document.querySelector("sl-icon-button[name=\"bx-network-chart\"]"),
-        document.querySelector("#slipbox-graph-dialog")
+        document.querySelector("sl-icon-button[name=\"bx-network-chart\"]")!,
+        document.querySelector("#slipbox-graph-dialog")!
     );
     shuffle.registerShuffleButton(
         cytoscape({ headless: true, ...data }),
-        document.querySelector("sb-nav-item[title=\"Random note\"]")
+        document.querySelector("sb-nav-item[title=\"Random note\"]")!
     );
 });
 
