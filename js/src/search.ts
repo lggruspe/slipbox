@@ -1,3 +1,4 @@
+import "./search.css";
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js";
 
 import { Index, Tokenizer } from "flexsearch";
@@ -86,6 +87,7 @@ function createResultSummary(id: number): HTMLDivElement | null {
     }
 
     const div = document.createElement("div");
+    div.classList.add("search-result");
     div.appendChild(summary);
     return div;
 }
