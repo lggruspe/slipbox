@@ -32,7 +32,7 @@ init-lua:
 
 # Run JS tests.
 check-js:
-	cd js; npm run lint && npm test
+	cd js; npm run check && npm test
 
 # Run lua tests.
 check-lua:
