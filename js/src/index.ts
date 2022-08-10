@@ -2,10 +2,10 @@ import cytoscape from "cytoscape";
 
 import * as graph from "./graph.js";
 import * as home from "./home.js";
-import * as search from "./search.js";
 import * as shuffle from "./shuffle.js";
 
 import { GraphSchema } from "./schema.js";
+import { createSearchSection } from "./search.js";
 import { fetchJson } from "./utils.js";
 
 import "./components.js";
@@ -13,9 +13,12 @@ import "./components.js";
 window.addEventListener("DOMContentLoaded", async() => {
     const data = await fetchJson<GraphSchema>("graph/data.json");
 
+    const main = document.querySelector("main")!;
+
     const title = document.getElementById("title-block-header");
     if (title) title.remove();
-    search.init();
+
+    main.appendChild(createSearchSection());
     graph.connectGraphDialogAndButton(
         document.querySelector("sl-icon-button[name=\"bx-network-chart\"]")!,
         document.querySelector("#slipbox-graph-dialog")!

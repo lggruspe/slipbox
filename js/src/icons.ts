@@ -1,3 +1,4 @@
+import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import { registerIconLibrary } from "@shoelace-style/shoelace/dist/utilities/icon-library.js";
 
 registerIconLibrary("boxicons", {
@@ -9,3 +10,10 @@ registerIconLibrary("boxicons", {
     },
     mutator: svg => svg.setAttribute("fill", "currentColor")
 });
+
+export function createBoxicon(name: string): SlIcon {
+    const icon = document.createElement("sl-icon");
+    icon.name = name;
+    icon.library = "boxicons";
+    return icon;
+}
