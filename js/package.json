@@ -2,7 +2,7 @@
   "name": "slipbox-js",
   "version": "0.0.0",
   "description": "Slipbox JS",
-  "main": "index.js",
+  "main": "dist/slipbox.js",
   "type": "module",
   "directories": {
     "test": "test"

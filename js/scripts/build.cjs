@@ -47,7 +47,7 @@ async function main () {
         bundle: true,
         minify: true,
         sourcemap: true,
-        outfile: "dist/app.js",
+        outfile: "dist/slipbox.js",
         metafile: true,
         format: "esm",
         external: ["mathjax"],

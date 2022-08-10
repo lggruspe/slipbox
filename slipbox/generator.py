@@ -68,12 +68,12 @@ def copy(source: Path, dest: Path) -> None:
 
 def generate_js(out: Path) -> None:
     """Generate app.js inside output directory."""
-    copy(data/"app.min.js", out/"app.min.js")
+    copy(data/"slipbox.js", out/"slipbox.js")
 
 
 def generate_css(out: Path) -> None:
     """Generates style.css"""
-    copy(data/"app.min.css", out/"app.min.css")
+    copy(data/"slipbox.css", out/"slipbox.css")
     copy(data/"style.css", out/"style.css")
 
 
