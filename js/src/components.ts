@@ -6,6 +6,7 @@ import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
 import "./index.css";
 
 import "./icons.js";
+import * as router from "./router.js";
 import { createSearchSection } from "./search.js";
 
 type Icon = {
@@ -71,8 +72,9 @@ customElements.define("sb-nav-item", class extends HTMLElement {
 export class SearchSection extends HTMLElement {
     constructor() {
         super();
-        const [section, _] = createSearchSection();
+        const [section, autoFocus] = createSearchSection();
         this.append(section);
+        router.on("#search", autoFocus);
     }
 }
 
