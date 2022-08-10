@@ -5,12 +5,13 @@ import * as home from "./home.js";
 import * as search from "./search.js";
 import * as shuffle from "./shuffle.js";
 
+import { GraphSchema } from "./schema.js";
 import { fetchJson } from "./utils.js";
 
 import "./components.js";
 
 window.addEventListener("DOMContentLoaded", async() => {
-    const data = await fetchJson("graph/data.json");
+    const data = await fetchJson<GraphSchema>("graph/data.json");
 
     const title = document.getElementById("title-block-header");
     if (title) title.remove();

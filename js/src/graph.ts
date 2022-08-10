@@ -1,6 +1,7 @@
 import cytoscape from "cytoscape";
 import { Core, EventHandler } from "cytoscape";
 
+import { GraphSchema } from "./schema.js";
 import { fetchJson } from "./utils.js";
 
 import SlDialog from "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
@@ -11,7 +12,7 @@ declare global {
     }
 }
 
-function createCytoscape(container: HTMLElement, data: unknown, selectCallback: EventHandler): Core {
+function createCytoscape(container: HTMLElement, data: GraphSchema, selectCallback: EventHandler): Core {
     const cy = cytoscape({
         container,
         style: [
@@ -70,7 +71,7 @@ function connectGraphDialogAndButton(button: HTMLButtonElement, dialog: SlDialog
         const container = dialog.querySelector("div")!;
         const cy = createCytoscape(
             container,
-            await fetchJson(getGraphDataUrl()),
+            await fetchJson<GraphSchema>(getGraphDataUrl()),
             event => {
                 const { title, id } = event.target!.data();
                 const span = document.createElement("span");
