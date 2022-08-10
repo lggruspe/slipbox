@@ -9,8 +9,8 @@
   },
   "scripts": {
     "build": "node scripts/build.cjs",
-    "lint": "eslint src test scripts/*.cjs --global MathJax",
-    "lint:fix": "eslint src test scripts/*.cjs --global MathJax --fix",
+    "lint": "eslint src test --global MathJax",
+    "lint:fix": "eslint src test --global MathJax --fix",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env jsdom --coverage"
   },
   "repository": {
@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/lggruspe/slipbox#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
     "esbuild": "^0.13.8",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.2",
@@ -35,7 +37,8 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-standard": "^4.1.0",
     "jest": "^27.0.6",
-    "jsdom": "^16.4.0"
+    "jsdom": "^16.4.0",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@shoelace-style/shoelace": "^2.0.0-beta.71",
