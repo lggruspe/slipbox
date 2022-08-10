@@ -6,6 +6,10 @@ import { fetchJson } from "./utils.js";
 
 import SlDialog from "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
 
+declare const MathJax: {
+    typeset: (divs: [HTMLDivElement]) => void;
+};
+
 declare global {
     interface Window {
         cy: Core | undefined;
