@@ -43,7 +43,7 @@ const copyMathjax = {
 
 async function main () {
     const result = await build({
-        entryPoints: ["src/index.js"],
+        entryPoints: ["src/index.ts"],
         bundle: true,
         minify: true,
         outfile: "dist/app.min.js",
