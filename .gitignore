@@ -9,8 +9,7 @@ build/
 dist/
 env/
 node_modules/
-slipbox/data/*.js
-slipbox/data/app.min.css
+slipbox/data/slipbox.*
 slipbox/data/es5/
 slipbox/data/filter.lua
 slipbox/data/svg/
