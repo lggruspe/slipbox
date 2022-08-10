@@ -6,6 +6,7 @@ import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
 import "./index.css";
 
 import "./icons.js";
+import { createSearchSection } from "./search.js";
 
 type Icon = {
     library: string;
@@ -66,3 +67,12 @@ customElements.define("sb-nav-item", class extends HTMLElement {
         this.shadowRoot!.append(child);
     }
 });
+
+export class SearchSection extends HTMLElement {
+    constructor() {
+        super();
+        this.append(createSearchSection());
+    }
+}
+
+customElements.define("sb-search-section", SearchSection);
