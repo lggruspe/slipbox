@@ -43,6 +43,7 @@ if __name__ == "__main__":
                 "data/*/*/*/*",
                 "data/*/*/*/*/*",
                 "data/*/*/*/*/*/*",
+                "favicons/*",
                 "migrations/*.sql",
                 "templates/*",
             ]

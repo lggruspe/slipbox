@@ -80,9 +80,9 @@ def generate_css(out: Path) -> None:
 
 def generate_favicons(out: Path) -> None:
     """Copy favicons."""
-    for path in data.joinpath("favicons").iterdir():
-        if path.name != "about.txt":
-            copy(path, out/path.name)
+    favicons = Path(__file__).parent/"favicons"
+    for path in favicons.iterdir():
+        copy(path, out/path.name)
 
 
 def copy_boxicons(out: Path) -> None:
