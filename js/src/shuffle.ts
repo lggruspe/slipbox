@@ -11,7 +11,8 @@ function shuffle(cy: Core): number {
     if (id && Number.isInteger(Number(id))) {
         const outgoers = cy.$(`#${id}`).outgoers().nodes();
         if (outgoers.length > 0) {
-            return randomChoice(outgoers)!.data("id");
+            const node = randomChoice(outgoers) as NodeSingular;
+            return node.data("id");
         }
     }
     return randomChoice(cy.nodes().roots())?.data("id");
