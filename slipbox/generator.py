@@ -69,11 +69,13 @@ def copy(source: Path, dest: Path) -> None:
 def generate_js(out: Path) -> None:
     """Copy slipbox.js inside output directory."""
     copy(data/"slipbox.js", out/"slipbox.js")
+    copy(data/"slipbox.js.map", out/"slipbox.js.map")
 
 
 def generate_css(out: Path) -> None:
     """Copy slipbox.css into output directory."""
     copy(data/"slipbox.css", out/"slipbox.css")
+    copy(data/"slipbox.css.map", out/"slipbox.css.map")
 
 
 def generate_favicons(out: Path) -> None:
