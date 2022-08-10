@@ -9,9 +9,11 @@
   },
   "scripts": {
     "build": "node scripts/build.cjs",
+    "check": "npm run lint:fix && npm run typecheck",
     "lint": "eslint src test --global MathJax",
     "lint:fix": "eslint src test --global MathJax --fix",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env jsdom --coverage"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env jsdom --coverage",
+    "typecheck": "tsc"
   },
   "repository": {
     "type": "git",
