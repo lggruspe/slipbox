@@ -103,7 +103,8 @@ function createResultsList(results: number[]): HTMLDivElement {
     return div;
 }
 
-export function createSearchSection(): HTMLElement {
+// Also returns hook for focusing input.
+export function createSearchSection(): [HTMLElement, () => void] {
     let results = createResultsList([]);
 
     const index = indexNotes();
@@ -119,5 +120,5 @@ export function createSearchSection(): HTMLElement {
     section.classList.add("level1");
     section.title = "Search notes";
     section.append(input, results);
-    return section;
+    return [section, () => input.focus()];
 }

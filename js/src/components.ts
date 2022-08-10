@@ -71,7 +71,8 @@ customElements.define("sb-nav-item", class extends HTMLElement {
 export class SearchSection extends HTMLElement {
     constructor() {
         super();
-        this.append(createSearchSection());
+        const [section, _] = createSearchSection();
+        this.append(section);
     }
 }
 
