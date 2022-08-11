@@ -50,7 +50,7 @@ function navItem(tooltip: HTMLElement, iconButton: SlIconButton): HTMLElement {
 customElements.define("sb-nav-item", class extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        const shadowRoot = this.attachShadow({ mode: "open" });
 
         const title = this.getAttribute("title") || "";
         const external = this.getAttribute("external") != null;
@@ -65,7 +65,7 @@ customElements.define("sb-nav-item", class extends HTMLElement {
             tooltip(title, external),
             iconButton(icon, href)
         );
-        this.shadowRoot!.append(child);
+        shadowRoot.append(child);
     }
 });
 
