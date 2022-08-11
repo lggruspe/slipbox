@@ -1,7 +1,14 @@
-export function on(hash: string, callback: () => void): () => void {
-    const listener = () => {
+export type RouterCallback = (oldHash?: string) => void;
+
+export function on(hash: string, callback: RouterCallback): (event: Event) => void {
+    const listener = (event: Event) => {
         if (window.location.hash === hash) {
-            callback();
+            if (event instanceof HashChangeEvent) {
+                const url = new URL(event.oldURL);
+                callback(url.hash);
+            } else {
+                callback();
+            }
         }
     };
     window.addEventListener("DOMContentLoaded", listener);
@@ -9,7 +16,7 @@ export function on(hash: string, callback: () => void): () => void {
     return listener;
 }
 
-export function off(hash: string, listener: () => void) {
+export function off(hash: string, listener: (event: Event) => void) {
     window.removeEventListener("DOMContentLoaded", listener);
     window.removeEventListener("hashchange", listener);
 }
