@@ -14,7 +14,7 @@ window.addEventListener("DOMContentLoaded", async() => {
     const title = document.getElementById("title-block-header");
     if (title) title.remove();
 
-    const graphBtn = document.querySelector("sl-icon-button[name=\"bx-network-chart\"]");
+    const graphBtn = document.querySelector("sb-icon-button[title=\"Graph\"]");
     initGraphButton(graphBtn as HTMLButtonElement);
     initShuffleButton(cytoscape({ headless: true, ...data }));
 });
