@@ -1,7 +1,6 @@
 import cytoscape from "cytoscape";
 
-import * as graph from "./graph.js";
-
+import { initGraphButton } from "./graph.js";
 import { initRouter } from "./router.js";
 import { GraphSchema } from "./schema.js";
 import { initShuffleButton } from "./shuffle.js";
@@ -15,10 +14,8 @@ window.addEventListener("DOMContentLoaded", async() => {
     const title = document.getElementById("title-block-header");
     if (title) title.remove();
 
-    graph.connectGraphDialogAndButton(
-        document.querySelector("sl-icon-button[name=\"bx-network-chart\"]")!,
-        document.querySelector("#slipbox-graph-dialog")!
-    );
+    const graphBtn = document.querySelector("sl-icon-button[name=\"bx-network-chart\"]");
+    initGraphButton(graphBtn as HTMLButtonElement);
     initShuffleButton(cytoscape({ headless: true, ...data }));
 });
 

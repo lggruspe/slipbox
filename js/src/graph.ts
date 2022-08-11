@@ -16,6 +16,18 @@ declare global {
     }
 }
 
+function createGraphDialog(): SlDialog {
+    const dialog = document.createElement("sl-dialog");
+    dialog.style.setProperty("--width", "100%");
+    dialog.innerHTML = `
+        <span slot="label">Zettelkasten graph</span>
+        <div style="height: 100vh; margin: 0; padding: 0;">
+            <hr style="color: transparent; font-size: 1px;" />
+        </div>
+    `;
+    return dialog;
+}
+
 function createCytoscape(container: HTMLElement, data: GraphSchema, selectCallback: EventHandler): Core {
     const cy = cytoscape({
         container,
@@ -68,7 +80,9 @@ function getGraphDataUrl(): string {
     return "graph/data.json";
 }
 
-function connectGraphDialogAndButton(button: HTMLButtonElement, dialog: SlDialog) {
+function initGraphButton(button: HTMLButtonElement) {
+    const dialog = createGraphDialog();
+    button.insertAdjacentElement("afterend", dialog);
     button.addEventListener("click", async() => {
         dialog.show();
 
@@ -108,4 +122,4 @@ function connectGraphDialogAndButton(button: HTMLButtonElement, dialog: SlDialog
     });
 }
 
-export { connectGraphDialogAndButton };
+export { initGraphButton };
