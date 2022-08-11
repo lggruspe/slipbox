@@ -14,13 +14,6 @@ type Icon = {
     name: string;
 };
 
-function tooltip(title: string, external: boolean): HTMLElement {
-    const elem = document.createElement("sl-tooltip");
-    const icon = "<sl-icon library=\"boxicons\" name=\"bx-link-external\"></sl-icon>";
-    elem.innerHTML = `<div slot="content">${title} ${external ? icon : ""}</div>`;
-    return elem;
-}
-
 function parseIcon(icon: string): Icon | null {
     const parts = icon.split("/");
     if (parts.length < 2) {
@@ -42,32 +35,18 @@ function iconButton(icon: Icon, href: string | null): SlIconButton {
     return btn;
 }
 
-function navItem(tooltip: HTMLElement, iconButton: SlIconButton): HTMLElement {
-    tooltip.append(iconButton);
-    return tooltip;
-}
-
-customElements.define("sb-nav-item", class extends HTMLElement {
+export class IconButton extends HTMLElement {
     constructor() {
         super();
         const shadowRoot = this.attachShadow({ mode: "open" });
-
-        const title = this.getAttribute("title") || "";
-        const external = this.getAttribute("external") != null;
-
         const href = this.getAttribute("href");
         const icon = parseIcon(this.getAttribute("icon") || "");
         if (icon == null) {
-            throw new Error("sb-nav-item: invalid icon");
+            throw new Error("sb-icon-button: invalid icon");
         }
-
-        const child = navItem(
-            tooltip(title, external),
-            iconButton(icon, href)
-        );
-        shadowRoot.append(child);
+        shadowRoot.append(iconButton(icon, href));
     }
-});
+}
 
 export class SearchSection extends HTMLElement {
     constructor() {
@@ -78,4 +57,5 @@ export class SearchSection extends HTMLElement {
     }
 }
 
+customElements.define("sb-icon-button", IconButton);
 customElements.define("sb-search-section", SearchSection);
