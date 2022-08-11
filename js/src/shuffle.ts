@@ -8,8 +8,8 @@ function randomChoice(choices: NodeCollection): NodeSingular | undefined {
 }
 
 /// Return note ID of random outgoer or root.
-function shuffle(cy: Core): number {
-    const id = window.location.hash.slice(1);
+function shuffle(cy: Core, hash: string): number {
+    const id = hash.slice(1);
     if (id && Number.isInteger(Number(id))) {
         const outgoers = cy.$(`#${id}`).outgoers().nodes();
         if (outgoers.length > 0) {
@@ -21,7 +21,8 @@ function shuffle(cy: Core): number {
 }
 
 export function initShuffleButton(cy: Core) {
-    router.on("#random", () => {
-        window.location.replace(`#${shuffle(cy)}`);
+    router.on("#random", (oldHash?: string) => {
+        const next = shuffle(cy, oldHash || "");
+        window.location.replace(`#${next}`);
     });
 }
