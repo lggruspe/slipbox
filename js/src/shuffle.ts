@@ -1,5 +1,7 @@
 import { Core, NodeCollection, NodeSingular } from "cytoscape";
 
+import * as router from "./router.js";
+
 function randomChoice(choices: NodeCollection): NodeSingular | undefined {
     const index = Math.floor(Math.random() * choices.length);
     return choices[index];
@@ -18,11 +20,8 @@ function shuffle(cy: Core): number {
     return randomChoice(cy.nodes().roots())?.data("id");
 }
 
-/// Register shuffle button callbacks.
-function registerShuffleButton(cy: Core, button: HTMLButtonElement) {
-    button.addEventListener("click", () => {
-        window.location.hash = `#${shuffle(cy)}`;
+export function initShuffleButton(cy: Core) {
+    router.on("#random", () => {
+        window.location.replace(`#${shuffle(cy)}`);
     });
 }
-
-export { registerShuffleButton };

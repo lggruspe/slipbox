@@ -1,10 +1,10 @@
 import cytoscape from "cytoscape";
 
 import * as graph from "./graph.js";
-import * as shuffle from "./shuffle.js";
 
 import { initRouter } from "./router.js";
 import { GraphSchema } from "./schema.js";
+import { initShuffleButton } from "./shuffle.js";
 import { fetchJson } from "./utils.js";
 
 import "./components.js";
@@ -19,10 +19,7 @@ window.addEventListener("DOMContentLoaded", async() => {
         document.querySelector("sl-icon-button[name=\"bx-network-chart\"]")!,
         document.querySelector("#slipbox-graph-dialog")!
     );
-    shuffle.registerShuffleButton(
-        cytoscape({ headless: true, ...data }),
-        document.querySelector("sb-nav-item[title=\"Random note\"]")!
-    );
+    initShuffleButton(cytoscape({ headless: true, ...data }));
 });
 
 initRouter();
