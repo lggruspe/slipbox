@@ -106,7 +106,7 @@ function initGraphButton(button: HTMLButtonElement) {
     button.addEventListener("click", async() => {
         dialog.show();
 
-        const container = dialog.querySelector("div")!;
+        const container = dialog.querySelector("div") as HTMLDivElement;
         const cy = createCytoscape(
             container,
             await fetchJson<GraphSchema>(getGraphDataUrl()),
