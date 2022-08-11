@@ -16,7 +16,8 @@ declare global {
     }
 }
 
-function createGraphDialog(): SlDialog {
+// Returns graph dialog and rename hook for renaming label.
+function createGraphDialog(): [SlDialog, (title: string, id: number) => void] {
     const dialog = document.createElement("sl-dialog");
     dialog.style.setProperty("--width", "100%");
     dialog.innerHTML = `
@@ -25,7 +26,14 @@ function createGraphDialog(): SlDialog {
             <hr style="color: transparent; font-size: 1px;" />
         </div>
     `;
-    return dialog;
+
+    let label = dialog.querySelector("span") as HTMLSpanElement;
+    const rename = (title: string, id: number) => {
+        const replacement = createDialogLabel(title, id, () => dialog.hide());
+        label.replaceWith(replacement);
+        label = replacement;
+    };
+    return [dialog, rename];
 }
 
 function createCytoscape(container: HTMLElement, data: GraphSchema, selectCallback: EventHandler): Core {
@@ -80,8 +88,20 @@ function getGraphDataUrl(): string {
     return "graph/data.json";
 }
 
+function createDialogLabel(title: string, id: number, callback?: ()=> void): HTMLSpanElement {
+    const span = document.createElement("span");
+    span.slot = "label";
+    span.innerHTML = `${title} [<a href="#${id}">${id}</a>]`;
+
+    if (callback) {
+        const a = span.querySelector("a") as HTMLAnchorElement;
+        a.addEventListener("click", callback);
+    }
+    return span;
+}
+
 function initGraphButton(button: HTMLButtonElement) {
-    const dialog = createGraphDialog();
+    const [dialog, rename] = createGraphDialog();
     button.insertAdjacentElement("afterend", dialog);
     button.addEventListener("click", async() => {
         dialog.show();
@@ -91,16 +111,8 @@ function initGraphButton(button: HTMLButtonElement) {
             container,
             await fetchJson<GraphSchema>(getGraphDataUrl()),
             event => {
-                const { title, id } = event.target!.data();
-                const span = document.createElement("span");
-                span.slot = "label";
-                span.innerHTML = `${title} [<a href="#${id}">${id}</a>]`;
-                span.querySelector("a")!.onclick = () => {
-                    dialog.hide();
-                    return window.location.hash.slice(1) !== id;
-                };
-
-                dialog.querySelector("span[slot=\"label\"]")!.replaceWith(span);
+                const { title, id } = event.target.data();
+                rename(title, id);
             }
         );
 
