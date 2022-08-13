@@ -55,3 +55,4 @@ def init(app: RootlessApp) -> None:
 
     if not app.args.get("quiet"):
         print(f"slipbox initialized in {app.root.resolve()!s}")
+        print("You can configure slipbox by editing .slipbox/config.cfg.")
