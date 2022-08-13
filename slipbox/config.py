@@ -94,8 +94,11 @@ class Config:
             if not config.has_section(section):
                 config.add_section(section)
 
-        config.set("slipbox", "output_directory",
-                   str(self.output_directory.resolve()))
+        config.set(
+            "slipbox",
+            "output_directory",
+            str(self.output_directory),
+        )
         config.set("slipbox", "title", self.title)
 
         for pattern, include in self.patterns.items():
@@ -109,7 +112,7 @@ class Config:
             config.set(
                 "pandoc-options",
                 "bibliography",
-                str(self.bibliography.resolve()),
+                str(self.bibliography),
             )
         config.set(
             "pandoc-options",
