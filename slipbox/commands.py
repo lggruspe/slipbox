@@ -44,6 +44,10 @@ def init(app: RootlessApp) -> None:
         root = str(app.root.resolve())
         error(f"slipbox has already been initialized in {root}")
 
+    config = app.args.get("config")
+    if config is not None:
+        app.config.read_file(Path(config))
+
     app.root = Path().resolve()
     hidden = app.root/".slipbox"
     hidden.mkdir(parents=True, exist_ok=True)

@@ -62,6 +62,7 @@ def parse_args(argv: t.Optional[t.Sequence[str]] = None) -> t.Dict[str, t.Any]:
         "init",
         description="Initialize notes directory.",
     )
+    subparser.add_argument("config", nargs="?", help="config file")
     subparser.add_argument("-q", "--quiet", action="store_true")
 
     subparser = subparsers.add_parser(

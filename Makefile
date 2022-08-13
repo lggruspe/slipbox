@@ -69,8 +69,7 @@ check: lint test
 # Generate docs.
 docs:	bundle
 	cd docs-src; rm -rf .slipbox
-	cd docs-src; PYTHONPATH=.. python -m slipbox init
-	cd docs-src; cp slipbox.cfg .slipbox/config.cfg
+	cd docs-src; PYTHONPATH=.. python -m slipbox init slipbox.cfg
 	cd docs-src; PYTHONPATH=.. python -m slipbox build
 
 # Generate examples.
