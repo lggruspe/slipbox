@@ -7,7 +7,7 @@ from . import __version__, commands
 from .app import error, RootlessApp, startup
 from .build import build
 from .cli import parse_args
-from .dependencies import check_requirements
+from .dependencies import has_dot, has_pandoc
 from .tools.new import new_note
 
 
@@ -27,8 +27,10 @@ handlers: t.Dict[str, Command] = {
 def main() -> None:
     """Entrypoint."""
     app = startup(parse_args())
-    if not check_requirements(app):
+    if not has_pandoc(app):
         error("pandoc not found")
+    if not has_dot(app):
+        error("dot (graphviz) not found")
 
     if app.args.get("version"):
         print(f"""slipbox {__version__}
