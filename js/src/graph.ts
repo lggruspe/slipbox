@@ -20,6 +20,7 @@ declare global {
 function createGraphDialog(): [SlDialog, (title: string, id: number) => void] {
     const dialog = document.createElement("sl-dialog");
     dialog.style.setProperty("--width", "100%");
+    dialog.style.setProperty("--body-spacing", "0");
     dialog.innerHTML = `
         <span slot="label">Zettelkasten graph</span>
         <div style="height: 100vh; margin: 0; padding: 0;">
