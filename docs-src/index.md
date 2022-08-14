@@ -81,6 +81,7 @@ You can put any number of notes in one file.
 
 - How to link to other notes? [](#4)
 - How to add citations? [](#7)
+- Note with timestamp ID [](#20200101123000)
 
 
 
