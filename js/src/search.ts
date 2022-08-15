@@ -66,9 +66,9 @@ export function summarize(note: HTMLElement): DocumentFragment | null {
     const fragment = document.createDocumentFragment();
     fragment.appendChild(title);
 
-    const p = note.querySelector("p");
-    if (p != null) {
-        fragment.appendChild(p.cloneNode(true));
+    const summary = note.querySelector("p, ol, ul, dl");
+    if (summary != null) {
+        fragment.appendChild(summary.cloneNode(true));
     }
     return fragment;
 }
