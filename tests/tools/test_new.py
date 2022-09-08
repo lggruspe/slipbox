@@ -1,15 +1,9 @@
 """Test tools/new.py."""
 
-import itertools
 import typing as t
 
 from hypothesis import given, strategies as st
-from slipbox.tools.new import missing_integers
-
-
-def take(count: int, items: t.Iterable[t.Any]) -> t.Iterable[t.Any]:
-    """Take 'count' items from 'items'."""
-    return itertools.islice(items, count)
+from slipbox.tools.new import missing_integers, take
 
 
 @given(st.lists(st.integers(min_value=0, max_value=1000)).map(sorted))  # type: ignore # noqa

@@ -73,12 +73,10 @@ def test_equal_graphs_serialize_the_same(random_graph: nx.DiGraph) -> None:
     assert serialize(random_graph) == serialize(shuffled_graph)
 
 
-def is_sorted(items: t.Sequence[int]) -> bool:
+def assert_is_sorted(items: t.Sequence[int]) -> None:
     """Check if all items are in sorted order."""
     for i in range(1, len(items)):
-        if items[i-1] > items[i]:
-            return False
-    return True
+        assert items[i-1] <= items[i]
 
 
 @given(random_graph())
@@ -88,5 +86,5 @@ def test_serialized_elements_are_sorted(random_graph: nx.DiGraph) -> None:
     for line in lines:
         node, *rest = line.split()
         nodes.append(int(node))
-        assert is_sorted([int(node) for node in rest])
-    assert is_sorted(nodes)
+        assert_is_sorted([int(node) for node in rest])
+    assert_is_sorted(nodes)

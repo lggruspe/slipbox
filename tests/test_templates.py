@@ -17,6 +17,12 @@ def test_render_element() -> None:
 </a>"""
 
 
+def test_render_childless_element() -> None:
+    """Resulting string must be a single-line."""
+    elem = Elem("div", **{"class": "button-group"})
+    assert render(elem) == "<div class='button-group'></div>"
+
+
 def test_render_nested() -> None:
     """Nested element must render with proper indentation."""
     elem = Elem("p", Elem("a", "link", href="#"))
