@@ -6,9 +6,9 @@ describe("parse", function()
   describe("with invalid header", function()
     --- NOTE header ends with \n
     it("should return nil", function()
-      assert.falsy(metadata.parse "")
-      assert.falsy(metadata.parse "[metadata]")
-      assert.falsy(metadata.parse "[slipbox-metadata]")
+      assert.is_nil(metadata.parse "")
+      assert.is_nil(metadata.parse "[metadata]")
+      assert.is_nil(metadata.parse "[slipbox-metadata]")
     end)
   end)
 
@@ -46,8 +46,8 @@ key2 = val2
 
     describe("with invalid body", function()
       it("should return nil", function()
-        assert.falsy(metadata.parse "[slipbox-metadata]\nkey")
-        assert.falsy(metadata.parse "[slipbox-metadata]\nkey1=val1\nkey\nkey2=val2")
+        assert.is_nil(metadata.parse "[slipbox-metadata]\nkey")
+        assert.is_nil(metadata.parse "[slipbox-metadata]\nkey1=val1\nkey\nkey2=val2")
       end)
     end)
   end)
