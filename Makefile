@@ -7,20 +7,16 @@ DOCKER_IMAGE = slipbox-test-pandoc$(PANDOC_VERSION)-python$(PYTHON_VERSION)
 all:
 	@echo "Some valid targets:"
 	@echo "> init - Initialize dev requirements."
-	@echo "> check-js - Run JS tests."
-	@echo "> check-lua - Run lua tests."
-	@echo "> check - Run all tests."
-	@echo "> docs - Generate docs."
-	@echo "> dist - Release slipbox."
+	@echo "> check - Run tests and linters."
 	@echo "> lint - Run python linters."
 	@echo "> test - Run python tests."
+	@echo "> docs - Generate docs."
+	@echo "> dist - Release slipbox."
 	@echo "> docker - Run tests in Docker. (PYTHON_VERSION=$(PYTHON_VERSION), PANDOC_VERSION=$(PANDOC_VERSION))"
 
 # Initialize dev requirements.
 .PHONY:	init
 init:	init-js init-lua init-python
-	pip install --upgrade pip wheel
-	pip install -r requirements/dev.requirements.txt
 
 .PHONY:	init-js
 init-js:
@@ -35,20 +31,32 @@ init-python:
 	pip install --upgrade pip wheel
 	pip install -r requirements/dev.requirements.txt
 
-# Run JS tests.
+# Run tests and linters.
+.PHONY:	check
+check: check-js check-lua check-python
+
 .PHONY:	check-js
 check-js:
 	cd js; npm run check && npm test
 
-# Run lua tests.
 .PHONY:	check-lua
 check-lua:
 	cd filters; lua scripts/check.lua
 
-# Build Lua filters.
-.PHONY:	bundle-lua
-bundle-lua:	check-lua
-	cd filters; lua scripts/bundle.lua
+.PHONY:	check-python
+check-python:	lint test
+
+# Run python linters
+.PHONY:	lint
+lint:
+	flake8 setup.py slipbox tests --max-complexity=6
+	pylint setup.py slipbox tests --fail-under=10 -d R0903,W0621
+	mypy setup.py slipbox tests --strict
+
+# Run python tests
+.PHONY:	test
+test:
+	tox -e py310
 
 # Copy JS and Lua filters into slipbox/
 .PHONY:	bundle
@@ -58,21 +66,10 @@ bundle:	check-js bundle-lua
 	cp -r js/dist/* slipbox/data
 	cp filters/build/filter.lua slipbox/data
 
-# Run python linters.
-.PHONY:	lint
-lint:
-	flake8 setup.py slipbox tests --max-complexity=6
-	pylint setup.py slipbox tests --fail-under=10 -d R0903,W0621
-	mypy setup.py slipbox tests --strict
-
-# Run python tests.
-.PHONY:	test
-test:
-	pytest --cov=slipbox --cov=tests --cov-fail-under=90 --cov-report=term-missing --cov-branch --verbose
-
-# Run all tests.
-.PHONY:	check
-check: lint test
+# Build Lua filters.
+.PHONY:	bundle-lua
+bundle-lua:	check-lua
+	cd filters; lua scripts/bundle.lua
 
 # Generate docs.
 .PHONY:	docs
@@ -93,6 +90,7 @@ examples:
 dist:	bundle check
 	python setup.py sdist bdist_wheel
 
+# Run tests in docker.
 .PHONY:	docker
 docker:
 	$(DOCKER) build -t $(DOCKER_IMAGE) --build-arg PANDOC_VERSION=$(PANDOC_VERSION) --build-arg PYTHON_VERSION=$(PYTHON_VERSION) .
