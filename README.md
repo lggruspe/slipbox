@@ -21,7 +21,7 @@ Requirements
 
 - `pandoc` (2.17.1.1+)
 - `graphviz`
-- `python3` (3.7+)
+- `python3` (3.8+)
 
 Installation and usage
 ----------------------

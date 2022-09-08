@@ -1,6 +1,6 @@
 # Dockerfile for testing
 ARG PANDOC_VERSION=2.17
-ARG PYTHON_VERSION=3.7
+ARG PYTHON_VERSION=3.8
 
 FROM pandoc/core:$PANDOC_VERSION-alpine
 FROM python:$PYTHON_VERSION-alpine

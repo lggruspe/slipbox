@@ -51,13 +51,12 @@ if __name__ == "__main__":
         classifiers=[
             "Environment :: Console",
             "License :: OSI Approved :: MIT License",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
         ],
         install_requires=get_install_requires(),
-        python_requires=">=3.7",
+        python_requires=">=3.8",
         entry_points={
             "console_scripts": [
                 "slipbox=slipbox.__main__:main"

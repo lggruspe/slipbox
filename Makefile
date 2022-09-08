@@ -1,5 +1,5 @@
 PANDOC_VERSION = 2.17
-PYTHON_VERSION = 3.7
+PYTHON_VERSION = 3.8
 DOCKER = $(shell command -v podman || command -v docker)
 DOCKER_IMAGE = slipbox-test-pandoc$(PANDOC_VERSION)-python$(PYTHON_VERSION)
 
