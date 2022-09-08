@@ -3,6 +3,8 @@
 local utils = require "scripts.utils"
 local run = utils.run
 
+local lfs = require "lfs"
+
 local function bundle()
    local sources = {
       "src.csv",
@@ -20,5 +22,5 @@ local function bundle()
    run(command:format(prog, args))
 end
 
-run "mkdir -p build"
+lfs.mkdir "build"
 bundle()
