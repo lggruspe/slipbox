@@ -62,7 +62,7 @@ bundle:	check-js bundle-lua
 .PHONY:	lint
 lint:
 	flake8 setup.py slipbox tests --max-complexity=6
-	pylint setup.py slipbox tests --fail-under=10 -d R0903,C0415,W0621
+	pylint setup.py slipbox tests --fail-under=10 -d R0903,W0621
 	mypy setup.py slipbox tests --strict
 
 # Run python tests.
