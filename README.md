@@ -19,7 +19,7 @@ Features
 Requirements
 ------------
 
-- `pandoc` (2.17.1.1+)
+- `pandoc` (2.17+)
 - `graphviz`
 - `python3` (3.8+)
 
