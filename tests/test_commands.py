@@ -6,6 +6,7 @@ import pytest
 
 from slipbox import commands
 from slipbox.app import App, RootlessApp, startup
+from slipbox.config import Config
 from slipbox.build import build
 from slipbox.dependencies import check_requirements
 
@@ -87,3 +88,28 @@ def test_init_patterns(app_without_root: RootlessApp) -> None:
 
     assert parser.getboolean("note-patterns", "*.md")
     assert parser.getboolean("note-patterns", "*.rst")
+
+
+def test_init_config(app_without_root: RootlessApp) -> None:
+    """init must copy config arg if it's specified.
+
+    In particular, input and output config files should have the same
+    note-patterns.
+    """
+    app = app_without_root
+
+    Path("slipbox.cfg").write_text("""
+[note-patterns]
+notes/*.tex = True
+    """, encoding="utf-8")
+    app.args["config"] = Path("slipbox.cfg")
+    commands.init(app)
+    assert app.root is not None
+
+    first = Config()
+    first.read_file(Path("slipbox.cfg"))
+
+    second = Config()
+    second.read_file(app.root/".slipbox"/"config.cfg")
+
+    assert first.patterns == second.patterns
