@@ -1,5 +1,6 @@
 PANDOC_VERSION = 2.17
 PYTHON_VERSION = 3.7
+DOCKER = $(shell command -v podman || command -v docker)
 DOCKER_IMAGE = slipbox-test-pandoc$(PANDOC_VERSION)-python$(PYTHON_VERSION)
 
 .PHONY:	all
@@ -94,5 +95,5 @@ dist:	bundle check
 
 .PHONY:	docker
 docker:
-	docker build -t $(DOCKER_IMAGE) --build-arg PANDOC_VERSION=$(PANDOC_VERSION) --build-arg PYTHON_VERSION=$(PYTHON_VERSION) .
-	docker run $(DOCKER_IMAGE)
+	$(DOCKER) build -t $(DOCKER_IMAGE) --build-arg PANDOC_VERSION=$(PANDOC_VERSION) --build-arg PYTHON_VERSION=$(PYTHON_VERSION) .
+	$(DOCKER) run $(DOCKER_IMAGE)
