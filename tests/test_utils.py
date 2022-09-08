@@ -1,4 +1,5 @@
 """Test utils.py."""
+# pylint: disable=consider-using-f-string
 
 from pathlib import Path
 import shlex

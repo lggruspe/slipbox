@@ -129,7 +129,7 @@ def test_purge(app: App, files_abc: t.List[Path]) -> None:
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-class TestsWithRequirements:    # pylint: disable=no-self-use
+class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
     def test_run(
         self,
@@ -242,8 +242,8 @@ Bar.
         app: App,
         capsys: pytest.CaptureFixture[str],
     ) -> None:
-        """slipbox.process must show a warning if a new note shares the ID of an
-        existing note.
+        """slipbox.process must show a warning if a new note shares the ID of
+        an existing note.
 
         The warning message must show the filenames of both notes.
         """
@@ -276,7 +276,7 @@ Bar.
         capsys: pytest.CaptureFixture[str],
         app: App,
     ) -> None:
-        """If there are duplicate IDs in a file, only the first one must be saved.
+        """If there are duplicate IDs in a file, only save the first one.
 
         slipbox.process must show a warning when this happens.
         """
@@ -418,7 +418,7 @@ Bar.""")
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-class TestDirectionalLinks:  # pylint: disable=no-self-use
+class TestDirectionalLinks:
     """Test directional links (e.g. [foo](<#123))."""
 
     def write_test_md(self, app: App) -> None:

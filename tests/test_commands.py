@@ -33,7 +33,7 @@ def test_show_info_in_stdout(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     """show_info should output note info in stdout."""
-    Path("test.md").write_text("# 0 Test\n\nTest note.")
+    Path("test.md").write_text("# 0 Test\n\nTest note.", encoding="utf-8")
 
     build(app)
     app.args = {"note_id": 0}

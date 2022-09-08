@@ -1,4 +1,5 @@
 """Generate complete HTML containing all slipbox notes."""
+# pylint: disable=consider-using-f-string
 
 from pathlib import Path
 import shlex
@@ -201,8 +202,8 @@ def generate_index(app: App, out: Path) -> None:
         _write(tempdir/"Slipbox.md", render_dummy(title))
         _write(tempdir/"after.txt", render_main(con, title))
 
-        cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title} -Aafter.txt
-                --section-divs {opts} -o {output} -c slipbox.css
+        cmd = """{pandoc} Slipbox.md -Hheader.txt --metadata title:{title}
+                -Aafter.txt --section-divs {opts} -o {output} -c slipbox.css
             """.format(
             pandoc=app.config.pandoc,
             title=shlex.quote(title),

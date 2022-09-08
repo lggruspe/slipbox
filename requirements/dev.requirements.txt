@@ -1,8 +1,7 @@
 -r install.requirements.txt
-flake8==3.9.2
-hypothesis==6.16.0
-mypy==0.910
-numpy==1.21.0
-pylint==2.9.3
-pytest-cov==2.12.1
-pytest==6.2.4
+flake8==5.0.4
+hypothesis==6.54.5
+mypy==0.971
+pylint==2.15.2
+pytest-cov==3.0.0
+pytest==7.1.3

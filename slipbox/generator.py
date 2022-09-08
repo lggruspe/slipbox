@@ -117,7 +117,7 @@ class CytoscapeDataGenerator:
 
         self.titles = dict(get_note_titles(self.con))
 
-    def write(self, path: Path, graph: t.Any, layout: str = "fdp") -> None:  # noqa; # pylint: disable=no-self-use
+    def write(self, path: Path, graph: t.Any, layout: str = "fdp") -> None:
         """Write graph JSON data to path."""
         graph_data = create_graph_data(self.con, self.titles, graph, layout)
         path.write_text(json.dumps(graph_data))

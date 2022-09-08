@@ -42,11 +42,14 @@ def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
 
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
-class TestsWithRequirements:    # pylint: disable=R0201
+class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
     def test_invalid_links(self, app: App) -> None:
         """invalid_links must return note and invalid ID."""
-        Path("test.md").write_text("# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n")
+        Path("test.md").write_text(
+            "# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n",
+            encoding="utf-8",
+        )
         scan(app)
 
         result = list(check.invalid_links(app))
@@ -63,7 +66,7 @@ class TestsWithRequirements:    # pylint: disable=R0201
 # 1 Bar
 
 # 2 Baz
-""")
+""", encoding="utf-8")
         scan(app)
 
         result = list(check.isolated_notes(app))
@@ -71,7 +74,7 @@ class TestsWithRequirements:    # pylint: disable=R0201
 
     def test_unsourced_notes_empty_bibliography(self, app: App) -> None:
         """unsourced_notes must be empty if there is no bibliography."""
-        Path("test.md").write_text("# 0 Test\n\nTest.\n")
+        Path("test.md").write_text("# 0 Test\n\nTest.\n", encoding="utf-8")
         scan(app)
 
         result = list(check.unsourced_notes(app))
@@ -99,7 +102,7 @@ Foo.
 Bar.
 
 [@test_2020]
-""")
+""", encoding="utf-8")
         scan(app)
 
         result = list(check.unsourced_notes(app))
@@ -128,7 +131,7 @@ Bar.
 
         The result must be False (has errors).
         """
-        Path("test.md").write_text("# 0 Test\n[](#1)")
+        Path("test.md").write_text("# 0 Test\n[](#1)", encoding="utf-8")
         scan(app)
 
         assert not check.check_notes(app)
