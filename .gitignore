@@ -3,6 +3,7 @@
 *.swp
 .coverage
 .hypothesis/
+.tox/
 /docs-src/.slipbox/
 __pycache__/
 build/
