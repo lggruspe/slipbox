@@ -1,46 +1,41 @@
 export type RouterCallback = (oldHash?: string) => void;
 
-function createStringListener(hash: string, callback: RouterCallback): (event: Event) => void {
-    return (event: Event) => {
-        if (window.location.hash === hash) {
-            if (event instanceof HashChangeEvent) {
-                const url = new URL(event.oldURL);
-                callback(url.hash);
-            } else {
-                callback();
-            }
+const routes: Array<[string | RegExp, RouterCallback]> = [];
+
+function resolveRoute(hash: string): RouterCallback {
+    const callbacks: RouterCallback[] = [];
+
+    for (const [route, callback] of routes) {
+        const ok = route instanceof RegExp ? route.test(hash) : route === hash;
+        if (ok) {
+            callbacks.push(callback);
+        }
+    }
+    return (oldHash?: string) => {
+        for (const callback of callbacks) {
+            callback(oldHash);
         }
     };
 }
 
-function createPatternListener(pattern: RegExp, callback: RouterCallback): (event: Event) => void {
-    return (event: Event) => {
-        if (pattern.test(window.location.hash)) {
-            if (event instanceof HashChangeEvent) {
-                const url = new URL(event.oldURL);
-                callback(url.hash);
-            } else {
-                callback();
-            }
-        }
-    };
+function listen(event: Event): void {
+    const callback = resolveRoute(window.location.hash);
+    if (event instanceof HashChangeEvent) {
+        const url = new URL(event.oldURL);
+        callback(url.hash);
+    } else {
+        callback();
+    }
 }
 
-export function on(hash: string | RegExp, callback: RouterCallback): (event: Event) => void {
-    const listener = hash instanceof RegExp
-        ? createPatternListener(hash, callback)
-        : createStringListener(hash, callback);
-    window.addEventListener("DOMContentLoaded", listener);
-    window.addEventListener("hashchange", listener);
-    return listener;
-}
-
-export function off(hash: string, listener: (event: Event) => void) {
-    window.removeEventListener("DOMContentLoaded", listener);
-    window.removeEventListener("hashchange", listener);
+export function on(hash: string | RegExp, callback: RouterCallback): void {
+    routes.push([hash, callback]);
 }
 
 export function initRouter() {
+    window.addEventListener("DOMContentLoaded", listen);
+    window.addEventListener("hashchange", listen);
+
     const goHome = () => window.location.replace("#home");
     on("", goHome);
     on("#", goHome);
