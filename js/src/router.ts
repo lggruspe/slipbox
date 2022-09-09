@@ -39,4 +39,5 @@ export function initRouter() {
     const goHome = () => window.location.replace("#home");
     on("", goHome);
     on("#", goHome);
+    on(/.*/, () => window.scrollTo(0, 0));
 }
