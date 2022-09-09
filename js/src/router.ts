@@ -1,7 +1,7 @@
 export type RouterCallback = (oldHash?: string) => void;
 
-export function on(hash: string, callback: RouterCallback): (event: Event) => void {
-    const listener = (event: Event) => {
+function createStringListener(hash: string, callback: RouterCallback): (event: Event) => void {
+    return (event: Event) => {
         if (window.location.hash === hash) {
             if (event instanceof HashChangeEvent) {
                 const url = new URL(event.oldURL);
@@ -11,6 +11,25 @@ export function on(hash: string, callback: RouterCallback): (event: Event) => vo
             }
         }
     };
+}
+
+function createPatternListener(pattern: RegExp, callback: RouterCallback): (event: Event) => void {
+    return (event: Event) => {
+        if (pattern.test(window.location.hash)) {
+            if (event instanceof HashChangeEvent) {
+                const url = new URL(event.oldURL);
+                callback(url.hash);
+            } else {
+                callback();
+            }
+        }
+    };
+}
+
+export function on(hash: string | RegExp, callback: RouterCallback): (event: Event) => void {
+    const listener = hash instanceof RegExp
+        ? createPatternListener(hash, callback)
+        : createStringListener(hash, callback);
     window.addEventListener("DOMContentLoaded", listener);
     window.addEventListener("hashchange", listener);
     return listener;
