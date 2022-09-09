@@ -183,6 +183,12 @@ function Modifier:new()
   }, self)
 end
 
+function Modifier.Image(elem)
+  -- Lazy load images.
+  elem.attributes.loading = "lazy"
+  return elem
+end
+
 function Modifier.Link(elem)
   -- Rewrite links with empty targets/text, and remove direction prefix from
   -- URL targets.
@@ -217,6 +223,7 @@ end
 
 function Modifier:filter()
   return {
+    Image = function(elem) return self.Image(elem) end,
     Link = function(elem) return self.Link(elem) end,
     Note = function(elem) return self:Note(elem) end,
   }
