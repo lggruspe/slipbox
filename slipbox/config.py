@@ -40,12 +40,9 @@ class Config:
         )
         self.title = config.get("slipbox", "title", fallback=self.title)
 
+        self.patterns = {}
         for key, _ in config.items("note-patterns"):
-            try:
-                val = config.getboolean("note-patterns", key,
-                                        fallback=self.patterns[key])
-            except KeyError:
-                continue
+            val = config.getboolean("note-patterns", key, fallback=False)
             self.patterns[key] = val
 
         self.pandoc = config.get("paths", "pandoc", fallback=self.pandoc)
@@ -102,8 +99,11 @@ class Config:
         config.set("slipbox", "title", self.title)
 
         for pattern, include in self.patterns.items():
-            config.set("note-patterns", pattern,
-                       "true" if include else "false")
+            config.set(
+                "note-patterns",
+                pattern,
+                "true" if include else "false",
+            )
 
         config.set("paths", "pandoc", self.pandoc)
         config.set("paths", "dot", self.dot)
