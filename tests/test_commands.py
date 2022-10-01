@@ -10,20 +10,15 @@ from slipbox.build import build
 from slipbox.dependencies import check_requirements
 
 
-def test_show_info_missing_note(
-    app: App,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
+def test_show_info_missing_note(app: App) -> None:
     """show_info should print error message and exit with error code."""
     app.args = {"note_id": 0}
 
     with pytest.raises(SystemExit) as system_exit:
         commands.show_info(app)
-        stdout, stderr = capsys.readouterr()
-        assert not stdout
-        assert stderr
 
     assert system_exit.value.code != 0
+    assert "does not exist" in system_exit.value.args[0]
 
 
 @pytest.mark.skipif(not check_requirements(startup({})),
@@ -87,3 +82,12 @@ def test_init_patterns(app_without_root: RootlessApp) -> None:
 
     assert parser.getboolean("note-patterns", "*.md")
     assert parser.getboolean("note-patterns", "*.rst")
+
+
+def test_init_already_initialized(app: App) -> None:
+    """init must exit with error."""
+    with pytest.raises(SystemExit) as system_exit:
+        commands.init(app)
+
+    assert system_exit.value.code != 0
+    assert "has already been initialized" in system_exit.value.args[0]
