@@ -1,5 +1,6 @@
 """slipbox CLI commands."""
 
+import configparser
 from pathlib import Path
 import sys
 
@@ -46,7 +47,10 @@ def init(app: RootlessApp) -> None:
 
     config = app.args.get("config")
     if config is not None:
-        app.config.read_file(Path(config))
+        try:
+            app.config.read_file(Path(config))
+        except configparser.Error:
+            error(f"invalid config file: {config}")
 
     app.root = Path().resolve()
     hidden = app.root/".slipbox"

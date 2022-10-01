@@ -91,3 +91,17 @@ def test_init_already_initialized(app: App) -> None:
 
     assert system_exit.value.code != 0
     assert "has already been initialized" in system_exit.value.args[0]
+
+
+def test_init_invalid_config(app_without_root: RootlessApp) -> None:
+    """slipbox must not crash, but must exit with error instead."""
+    Path("slipbox.cfg").write_text("invalid config file", encoding="utf-8")
+
+    app = app_without_root
+    app.args["config"] = "slipbox.cfg"
+
+    with pytest.raises(SystemExit) as system_exit:
+        commands.init(app)
+
+    assert system_exit.value.code != 0
+    assert "invalid config file" in system_exit.value.args[0]
