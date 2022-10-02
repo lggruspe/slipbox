@@ -371,6 +371,25 @@ Foo.
         assert "Bar" in stderr
         assert "#0" in stderr
 
+    def test_build_with_codeblock(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """CodeBlocks shouldn't crash metadata parser in filters."""
+        Path("test.md").write_text("""# 0 Hello
+
+```
+print("Hello :)")
+```
+
+# 1 Bye
+
+Bye-bye.
+""")
+        build(app)
+        assert is_quiet(capsys)
+
     def test_process_with_empty_link_target(
         self,
         app: App,

@@ -16,7 +16,10 @@ local function preprocess()
       local _metadata = {}
       for _, elem in ipairs(doc.blocks) do
         if elem.tag == "CodeBlock" then
-          _metadata = metadata.parse(elem.text) or {}
+          -- Overwrite only if parsed code block contains valid slipbox metadata.
+          for key, val in pairs(metadata.parse(elem.text) or {}) do
+            _metadata[key] = val
+          end
         elseif elem.tag == "Header" and elem.level == 1 then
           assert(_metadata.filename, "missing filename")
           assert(_metadata.hash, "missing hash")
