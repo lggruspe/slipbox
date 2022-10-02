@@ -14,6 +14,10 @@ end
 
 function Writer:record(fields)
   -- Create CSV record.
+  if #fields ~= self.columns then
+    error(string.format("expected %d columns, got %d", self.columns, #fields))
+  end
+
   local record = quoted(fields[1])
   for i = 2, self.columns do
     if not fields[i] then
