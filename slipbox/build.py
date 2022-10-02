@@ -4,7 +4,7 @@ from hashlib import sha256
 from pathlib import Path
 import typing as t
 
-from .app import App, require_init
+from .app import App, error, require_init
 from .batch import group_by_file_extension
 from .generator import compile_site
 from .processor import process_batch
@@ -55,11 +55,16 @@ def find_new_notes(app: App, notes: t.Iterable[Path]) -> t.Iterable[Path]:
             yield path
 
 
-def process_notes(app: App, notes: t.Iterable[Path]) -> None:
-    """Process new notes (save into database)."""
+def process_notes(app: App, notes: t.Iterable[Path]) -> bool:
+    """Process new notes (save into database).
+
+    Returns False on error.
+    """
+    is_ok = True
     new = find_new_notes(app, notes)
     for batch in group_by_file_extension(new):
-        process_batch(app, batch)
+        is_ok = is_ok and process_batch(app, batch)
+    return is_ok
 
 
 def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
@@ -74,11 +79,14 @@ def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
 @require_init
 def build(app: App) -> None:
     """Build website."""
-    notes = list(find_notes(app))
-    outdated = find_outdated_notes(app, notes)
-    delete_notes(app, outdated)
-    process_notes(app, notes)
-    compile_site(app)
+    try:
+        notes = list(find_notes(app))
+        outdated = find_outdated_notes(app, notes)
+        delete_notes(app, outdated)
+        assert process_notes(app, notes)
+        compile_site(app)
+    except AssertionError:
+        error(1)
 
 
 __all__ = ["build", "process_notes"]

@@ -208,8 +208,11 @@ def output_errors(path: Path) -> bool:
     return has_errors
 
 
-def process_batch(app: App, batch: Batch) -> None:
-    """Process batch of input notes."""
+def process_batch(app: App, batch: Batch) -> bool:
+    """Process batch of input notes.
+
+    Returns False on error.
+    """
     assert app.root is not None
     with utils.temporary_directory() as tempdir:
         preprocessed = create_preprocessed_input(tempdir, batch, app.root)
@@ -218,12 +221,13 @@ def process_batch(app: App, batch: Batch) -> None:
         retcode = utils.run_command(cmd, cwd=tempdir)
         if retcode:
             print("Scan failed.", file=sys.stderr)
-            return
+            return False
 
         if output_errors(tempdir/"log.csv"):
             print("Scan failed.", file=sys.stderr)
-            return
+            return False
 
         process_csvs(app.database, tempdir)
         store_html(app.database, html.read_text(encoding="utf-8"), batch.paths)
         app.database.commit()
+    return True

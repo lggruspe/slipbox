@@ -127,8 +127,10 @@ def test_purge(app: App, files_abc: t.List[Path]) -> None:
     assert len(remaining) == 1
 
 
-@pytest.mark.skipif(not check_requirements(startup({})),
-                    reason="missing requirements")
+@pytest.mark.skipif(
+    not check_requirements(startup({})),
+    reason="missing requirements",
+)
 class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
     def test_run(
@@ -302,10 +304,41 @@ Bar.
         assert "Duplicate" in stderr
         assert "test.md" in stderr
 
-    def test_process_with_empty_link_target(self,
-                                            capsys: pytest.CaptureFixture[str],
-                                            app: App,
-                                            ) -> None:
+    def test_build_with_duplicate_ids_in_batch(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """If there are duplicate IDs in a batch, it should exit with error.
+
+        It should also display an error message containing the filenames
+        containing the duplicate IDs, and make sure that the database isn't
+        modified.
+        """
+        Path("foo.md").write_text("# 0 Foo\n\nFoo.", encoding="utf-8")
+        Path("bar.md").write_text("# 0 Bar\n\nBar.", encoding="utf-8")
+
+        before = "\n".join(app.database.iterdump())
+
+        with pytest.raises(SystemExit) as system_exit:
+            build(app)
+
+        after = "\n".join(app.database.iterdump())
+
+        assert before == after
+        assert system_exit.value.code != 0
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert stderr
+        assert "foo.md" in stderr
+        assert "bar.md" in stderr
+
+    def test_process_with_empty_link_target(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
         """slipbox.process must show a warning if there is a link with an empty
         target.
         """
