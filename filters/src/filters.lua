@@ -9,34 +9,57 @@ local utils = require "src.utils"
 pandoc.utils = require "pandoc.utils"
 
 local function preprocess()
-  -- Create filter that preprocesses headers by setting the filename
-  -- attribute of Headers to the name of the file.
-
-  local function Pandoc(doc)
-    local _metadata = {}
-    for _, elem in ipairs(doc.blocks) do
-      if elem.tag == "CodeBlock" then
-        for key, val in pairs(metadata.parse(elem.text) or {}) do
-          _metadata[key] = val or _metadata[key]
-        end
-      elseif elem.tag == "Header" and elem.level == 1 then
-        assert(_metadata.filename, 'missing filename')
-        assert(_metadata.hash, 'missing hash')
-        elem.attributes.filename = _metadata.filename
-        elem.attributes.hash = _metadata.hash
-      end
-    end
-    return doc
-  end
-
+  -- Set filename and hash attributes of level 1 Headers.
+  -- The attribute values are taken from preceding metadata CodeBlocks.
   return {
-    Pandoc = Pandoc,
+    Pandoc = function(doc)
+      local _metadata = {}
+      for _, elem in ipairs(doc.blocks) do
+        if elem.tag == "CodeBlock" then
+          _metadata = metadata.parse(elem.text) or {}
+        elseif elem.tag == "Header" and elem.level == 1 then
+          assert(_metadata.filename, "missing filename")
+          assert(_metadata.hash, "missing hash")
+          elem.attributes.filename = _metadata.filename
+          elem.attributes.hash = _metadata.hash
+        end
+      end
+      return doc
+    end,
   }
 end
 
+local function parse_note_header(elem)
+  -- Parse note header content.
+  -- Returns ok, note ID and title.
+  -- If it's not a proper header, ok is false and the rest of the results are nil.
+  local content = elem.content
+
+  -- Get note ID.
+  local id
+  if content[1].tag == "Str" then
+    id = tonumber(content[1].text:match '^%d+$')
+  end
+  if id == nil then
+    return false
+  end
+
+  -- Strip note ID and whitespace prefix.
+  repeat
+    table.remove(content, 1)
+  until #content == 0 or content[1].tag ~= "Space"
+
+  -- Get note title.
+  local title = pandoc.utils.stringify(content)
+  if not title or title == "" then
+    return false
+  end
+
+  return true, id, title
+end
+
 local function init(slipbox)
-  -- Create filter that preprocesses headers by splitting the document
-  -- into sections.
+  -- Split the document into sections with level 1 headers.
 
   local function CodeBlock(elem)
       -- Strip slipbox-metadata code block.
@@ -46,26 +69,15 @@ local function init(slipbox)
   end
 
   local function Header(elem)
-    -- Only scan level 1 headers.
-    if elem.level ~= 1 then return end
-
-    local id
-    local content = elem.content
-    if content[1].tag == "Str" then
-      id = tonumber(content[1].text:match '^%d+$')
+    -- Save slipbox notes and set ID and title attributes in the Header.
+    if elem.level ~= 1 then
+      return
     end
-    if id == nil then return end
 
-    table.remove(content, 1)
-    while #content > 0 do
-      if content[1].tag == "Space" then
-        table.remove(content, 1)
-      else
-        break
-      end
+    local ok, id, title = parse_note_header(elem)
+    if not ok then
+      return
     end
-    local title = pandoc.utils.stringify(content)
-    if not title or title == "" then return end
 
     local filename = elem.attributes.filename
     slipbox:save_file(filename, elem.attributes.hash)
