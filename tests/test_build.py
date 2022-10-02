@@ -276,9 +276,10 @@ Bar.
         capsys: pytest.CaptureFixture[str],
         app: App,
     ) -> None:
-        """If there are duplicate IDs in a file, only save the first one.
+        """If there are duplicate IDs in a file, save neither note.
 
-        slipbox.process must show a warning when this happens.
+        slipbox.process must show an error message when this happens,
+        containing the note ID, the filename and the note titles.
         """
         markdown = app.root/"test.md"
         markdown.write_text("""# 0 First note
@@ -291,12 +292,15 @@ Bar.
 """)
         process_notes(app, [markdown])
         result = list(app.database.execute("SELECT id, title FROM Notes"))
-        assert len(result) == 1
-        assert result == [(0, "First note")]
+        assert not result
 
         stdout, stderr = capsys.readouterr()
         assert not stdout
-        assert stderr
+
+        assert "0" in stderr
+        assert "First note" in stderr
+        assert "Duplicate" in stderr
+        assert "test.md" in stderr
 
     def test_process_with_empty_link_target(self,
                                             capsys: pytest.CaptureFixture[str],

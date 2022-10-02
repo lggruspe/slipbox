@@ -81,8 +81,11 @@ local function init(slipbox)
 
     local filename = elem.attributes.filename
     slipbox:save_file(filename, elem.attributes.hash)
-    local err = slipbox:save_note(id, title, filename)
-    if err then log.warning(err) end
+
+    ok = slipbox:save_note(id, title, filename)
+    if not ok then
+      return
+    end
 
     elem.identifier = id
     elem.attributes.title = title
@@ -304,7 +307,7 @@ local function serialize(slipbox)
 end
 
 local function check(slipbox)
-  -- Create filter that prints warning messages for invalid notes.
+  -- Log warning messages for invalid notes.
   return {
     Pandoc = function()
       local has_empty_link_target = {}
@@ -328,7 +331,9 @@ local function check(slipbox)
           table.insert(messages, message)
         end
       end
-      log.warning(messages)
+
+      assert(#messages > 1)
+      log.warning(table.concat(messages, "\n"))
     end
   }
 end
@@ -342,6 +347,10 @@ local function cleanup()
     Div = function(elem)
       elem.attributes.hash = nil
       return elem
+    end,
+    Pandoc = function()
+      -- Output all logged errors.
+      log.done()
     end,
   }
 end

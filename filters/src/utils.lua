@@ -4,7 +4,9 @@ end
 
 local function append_text(filename, text)
   local file = io.open(filename, 'a')
-  if not file then return false end
+  if not file then
+    return false
+  end
   file:write(text)
   file:close()
   return true
@@ -12,7 +14,9 @@ end
 
 local function write_text(filename, text)
   local file = io.open(filename, 'w')
-  if not file then return false end
+  if not file then
+    return false
+  end
   file:write(text)
   file:close()
   return true

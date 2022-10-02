@@ -5,6 +5,7 @@ They are mainly used to pass note metadata to Pandoc filters even when
 the input is the concatenation of several files.
 """
 
+import csv
 from hashlib import sha256
 from pathlib import Path
 import shlex
@@ -181,6 +182,32 @@ def build_command(app: App, input_: Path, output: str) -> str:
     return cmd + ' ' + shlex.quote(str(input_.resolve()))
 
 
+def show_error(verbosity: t.Literal["error", "warning"], message: str) -> None:
+    """Print error message to stderr."""
+    print(f"[{verbosity}]", message, file=sys.stderr)
+
+
+def output_errors(path: Path) -> bool:
+    """Output errors logged in path to stderr.
+
+    Returns whether or not there are errors.
+    """
+    has_errors = False
+    try:
+        with open(path, encoding="utf-8") as file:
+            reader = csv.reader(file)
+            for verbosity, message in reader:
+                if verbosity == "error":
+                    has_errors = True
+                show_error(
+                    t.cast(t.Literal["error", "warning"], verbosity),
+                    message,
+                )
+    except FileNotFoundError:
+        pass
+    return has_errors
+
+
 def process_batch(app: App, batch: Batch) -> None:
     """Process batch of input notes."""
     assert app.root is not None
@@ -192,6 +219,11 @@ def process_batch(app: App, batch: Batch) -> None:
         if retcode:
             print("Scan failed.", file=sys.stderr)
             return
+
+        if output_errors(tempdir/"log.csv"):
+            print("Scan failed.", file=sys.stderr)
+            return
+
         process_csvs(app.database, tempdir)
         store_html(app.database, html.read_text(encoding="utf-8"), batch.paths)
         app.database.commit()

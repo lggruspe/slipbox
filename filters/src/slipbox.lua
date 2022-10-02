@@ -1,4 +1,5 @@
 local csv = require "src.csv"
+local log = require "src.log"
 local utils = require "src.utils"
 
 local SlipBox = {}
@@ -57,8 +58,8 @@ end
 
 function SlipBox:save_note(id, title, filename)
   -- Save note into slipbox.
-  -- Return list of error messages if a note with the same ID already
-  -- exists.
+  -- Returns false if a note with the same ID already exists, true otherwise.
+  -- Logs errors if any.
   assert(type(id) == "number")
   assert(type(title) == "string")
   assert(type(filename) == "string")
@@ -66,14 +67,16 @@ function SlipBox:save_note(id, title, filename)
   assert(filename ~= "")
 
   local note = self.notes[id]
-  if note then
-    return {
-      string.format("Duplicate ID: %d.", id),
-      string.format("Could not insert note '%s'.", title),
-      string.format("Note '%s' already uses the ID.", note.title)
-    }
+  if note and (note.title ~= title or note.filename ~= filename) then
+    local template = [[Duplicate note ID (#%d). See:
+- %s (%s)
+- %s (%s)]]
+    local message = template:format(id, note.title, note.filename, title, filename)
+    log.error(message)
+    return false
   end
   self.notes[id] = {title = title, filename = filename}
+  return true
 end
 
 function SlipBox:save_tag(id, tag)
