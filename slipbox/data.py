@@ -3,15 +3,9 @@
 import csv
 from pathlib import Path
 from sqlite3 import Connection, IntegrityError
-import sys
 import typing as t
 
-
-def warning(message: str, *information: str) -> None:
-    """Show warning message."""
-    print(f"[WARNING] {message}", file=sys.stderr)
-    for info in information:
-        print(f"  {info}", file=sys.stderr)
+from .utils import show_error
 
 
 def run_sql_on_csv(conn: Connection,
@@ -39,21 +33,27 @@ def process_files(conn: Connection, path: Path) -> None:
     run_sql_on_csv(conn, path, sql, (str, str))
 
 
-def process_notes(conn: Connection, path: Path) -> None:
-    """Process Notes data in path."""
+def process_notes(conn: Connection, path: Path) -> bool:
+    """Process Notes data in path.
+
+    Returns False on error.
+    """
+    is_ok = True
+
     def fix(nid: int, title: str, filename: str) -> None:
+        nonlocal is_ok
+        is_ok = False
         cur = conn.cursor()
         cur.execute("SELECT title, filename FROM Notes WHERE id = ?", (nid,))
         existing = cur.fetchone()
-        warning(
-            f"Duplicate ID: {nid}.",
-            f"Could not insert note {title!r}.",
-            f"Note {existing[0]!r} already uses the ID.",
-            f"See {filename!r} or {existing[1]!r}."
-        )
+        message = f"""Duplicate note ID (#{nid}). See:
+- {existing[0]} ({existing[1]})
+- {title} ({filename})"""
+        show_error("error", message)
 
     sql = "INSERT INTO Notes (id, title, filename) VALUES (?, ?, ?)"
     run_sql_on_csv(conn, path, sql, (int, str, str), fix)
+    return is_ok
 
 
 def process_tags(conn: Connection, path: Path) -> None:
@@ -107,13 +107,18 @@ def process_image_links(conn: Connection, path: Path) -> None:
     run_sql_on_csv(conn, path, sql, (int, str))
 
 
-def process_csvs(conn: Connection, basedir: Path) -> None:
-    """Process CSV data in basedir."""
+def process_csvs(conn: Connection, basedir: Path) -> bool:
+    """Process CSV data in basedir.
+
+    Returns False on error.
+    """
     process_files(conn, basedir/"files.csv")
-    process_notes(conn, basedir/"notes.csv")
+    if not process_notes(conn, basedir/"notes.csv"):
+        return False
     process_tags(conn, basedir/"tags.csv")
     process_links(conn, basedir/"links.csv")
     process_images(conn, basedir/"images.csv")
     process_image_links(conn, basedir/"image_links.csv")
     process_bibliography(conn, basedir/"bibliography.csv")
     process_citations(conn, basedir/"citations.csv")
+    return True

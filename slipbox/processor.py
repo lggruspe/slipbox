@@ -20,6 +20,7 @@ from . import utils
 from .app import App
 from .batch import Batch
 from .data import process_csvs
+from .utils import show_error
 
 
 DOKUWIKI_TEMPLATE = """
@@ -182,11 +183,6 @@ def build_command(app: App, input_: Path, output: str) -> str:
     return cmd + ' ' + shlex.quote(str(input_.resolve()))
 
 
-def show_error(verbosity: t.Literal["error", "warning"], message: str) -> None:
-    """Print error message to stderr."""
-    print(f"[{verbosity}]", message, file=sys.stderr)
-
-
 def output_errors(path: Path) -> bool:
     """Output errors logged in path to stderr.
 
@@ -227,7 +223,8 @@ def process_batch(app: App, batch: Batch) -> bool:
             print("Scan failed.", file=sys.stderr)
             return False
 
-        process_csvs(app.database, tempdir)
+        if not process_csvs(app.database, tempdir):
+            return False
         store_html(app.database, html.read_text(encoding="utf-8"), batch.paths)
         app.database.commit()
     return True

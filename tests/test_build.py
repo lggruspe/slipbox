@@ -330,9 +330,46 @@ Bar.
 
         stdout, stderr = capsys.readouterr()
         assert not stdout
-        assert stderr
         assert "foo.md" in stderr
         assert "bar.md" in stderr
+        assert "Foo" in stderr
+        assert "Bar" in stderr
+        assert "#0" in stderr
+
+    def test_build_with_duplicate_ids_in_multiple_batches(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Similar to test_build_with_duplicate_ids_in_batch.
+
+        This time, with different note formats.
+        """
+        Path("foo.rst").write_text("""
+0 Foo
+=====
+
+Foo.
+""", encoding="utf-8")
+        Path("bar.md").write_text("# 0 Bar\n\nBar.", encoding="utf-8")
+
+        before = "\n".join(app.database.iterdump())
+
+        with pytest.raises(SystemExit) as system_exit:
+            build(app)
+
+        after = "\n".join(app.database.iterdump())
+
+        assert before == after
+        assert system_exit.value.code != 0
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert "foo.rst" in stderr
+        assert "bar.md" in stderr
+        assert "Foo" in stderr
+        assert "Bar" in stderr
+        assert "#0" in stderr
 
     def test_process_with_empty_link_target(
         self,
@@ -352,10 +389,11 @@ Bar.
         assert not stdout
         assert stderr
 
-    def test_process_with_external_links(self,
-                                         capsys: pytest.CaptureFixture[str],
-                                         app: App,
-                                         ) -> None:
+    def test_process_with_external_links(
+        self,
+        capsys: pytest.CaptureFixture[str],
+        app: App,
+    ) -> None:
         """External links shouldn't be saved in the db."""
         markdown = app.root/"test.md"
         markdown.write_text("# 0 Test\n\n[Example](https://example.com)")
@@ -384,10 +422,11 @@ Bar.
 
         assert is_quiet(capsys)
 
-    def test_process_with_non_text_titles(self,
-                                          capsys: pytest.CaptureFixture[str],
-                                          app: App,
-                                          ) -> None:
+    def test_process_with_non_text_titles(
+        self,
+        capsys: pytest.CaptureFixture[str],
+        app: App,
+    ) -> None:
         """Notes with non-text titles in the header must still be recognized.
         """
         file_a = app.root/"a.md"
@@ -426,10 +465,11 @@ Bar.
 
         assert is_quiet(capsys)
 
-    def test_process_rst(self,
-                         capsys: pytest.CaptureFixture[str],
-                         app: App,
-                         ) -> None:
+    def test_process_rst(
+        self,
+        capsys: pytest.CaptureFixture[str],
+        app: App,
+    ) -> None:
         """Slipbox filters shouldn't raise metadata-related errors."""
         rst = app.root/"test.rst"
         rst.write_text("""
@@ -453,8 +493,10 @@ Bar.""")
         assert is_quiet(capsys)
 
 
-@pytest.mark.skipif(not check_requirements(startup({})),
-                    reason="missing requirements")
+@pytest.mark.skipif(
+    not check_requirements(startup({})),
+    reason="missing requirements",
+)
 class TestDirectionalLinks:
     """Test directional links (e.g. [foo](<#123))."""
 

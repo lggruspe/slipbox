@@ -30,10 +30,20 @@ def run_command(cmd: str,
     env = os.environ.copy()
     if variables is not None:
         env.update(variables)
-    proc = subprocess.run(shlex.split(cmd), env=env, check=False,
-                          capture_output=True, **kwargs)
+    proc = subprocess.run(
+        shlex.split(cmd),
+        env=env,
+        check=False,
+        capture_output=True,
+        **kwargs,
+    )
     if proc.stdout:
         print(proc.stdout.decode())
     if proc.stderr:
         print(proc.stderr.decode(), file=sys.stderr)
     return proc.returncode
+
+
+def show_error(verbosity: t.Literal["error", "warning"], message: str) -> None:
+    """Print error message to stderr."""
+    print(f"[{verbosity}]", message, file=sys.stderr)

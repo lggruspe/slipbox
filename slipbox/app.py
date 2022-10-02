@@ -41,6 +41,22 @@ class RootlessApp:
         """Clean up."""
         self.database.close()
 
+    def backup_database(self) -> None:
+        """Create database backup."""
+        assert self.root
+        backup = str((self.root/".slipbox"/"data.db.bak").resolve())
+        with connect(backup) as destination:
+            self.database.backup(destination)
+
+    def restore_database_backup(self) -> None:
+        """Restore database backup."""
+        assert self.root
+        self.cleanup()
+        database = self.root/".slipbox"/"data.db"
+        backup = self.root/".slipbox"/"data.db.bak"
+        backup.replace(database)
+        self.database = connect(str(database.resolve()))
+
 
 @dataclass
 class App(RootlessApp):

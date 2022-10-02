@@ -79,6 +79,7 @@ def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
 @require_init
 def build(app: App) -> None:
     """Build website."""
+    app.backup_database()
     try:
         notes = list(find_notes(app))
         outdated = find_outdated_notes(app, notes)
@@ -86,6 +87,7 @@ def build(app: App) -> None:
         assert process_notes(app, notes)
         compile_site(app)
     except AssertionError:
+        app.restore_database_backup()
         error(1)
 
 
