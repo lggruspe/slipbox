@@ -1,6 +1,7 @@
 -- Pandoc filters.
 
 local pandoc = require "pandoc"
+local errors = require "src.errors"
 local links = require "src.links"
 local log = require "src.log"
 local metadata = require "src.metadata"
@@ -332,6 +333,7 @@ local function check(slipbox)
         if title and filename then
           local message = template:format(id, title, filename)
           table.insert(messages, message)
+          errors.empty_link_target{id = id, title = title, filename = filename}
         end
       end
 
@@ -354,6 +356,7 @@ local function cleanup()
     Pandoc = function()
       -- Output all logged errors.
       log.done()
+      errors.write()
     end,
   }
 end

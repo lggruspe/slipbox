@@ -1,4 +1,5 @@
 local csv = require "src.csv"
+local errors = require "src.errors"
 local log = require "src.log"
 local utils = require "src.utils"
 
@@ -73,6 +74,7 @@ function SlipBox:save_note(id, title, filename)
 - %s (%s)]]
     local message = template:format(id, note.title, note.filename, title, filename)
     log.error(message)
+    errors.duplicate_note_id(id, {note, {title = title, filename = filename}})
     return false
   end
   self.notes[id] = {title = title, filename = filename}

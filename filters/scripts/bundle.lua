@@ -8,12 +8,14 @@ local lfs = require "lfs"
 local function bundle()
    local sources = {
       "src.csv",
+      "src.errors",
       "src.filters",
       "src.links",
       "src.log",
       "src.slipbox",
       "src.utils",
       "src.metadata",
+      "dkjson",
    }
 
    local command = "%s %s -s src/zk.lua -o build/filter.lua"
