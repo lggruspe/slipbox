@@ -1,6 +1,6 @@
 """App object."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import wraps
 from pathlib import Path
 from sqlite3 import Connection, connect
@@ -9,6 +9,7 @@ import typing as t
 
 from .config import Config
 from .database import migrate
+from .errors import ErrorFormatter
 
 
 def is_root(path: Path) -> bool:
@@ -36,6 +37,8 @@ class RootlessApp:
     root: t.Optional[Path]
     config: Config
     database: Connection
+
+    error_formatter: ErrorFormatter = field(default_factory=ErrorFormatter)
 
     def cleanup(self) -> None:
         """Clean up."""
