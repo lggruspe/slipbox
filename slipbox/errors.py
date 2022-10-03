@@ -41,11 +41,18 @@ def format_section(description: str, notes: t.Iterable[Note]) -> str:
     if not notes:
         return ""
     section = description.strip() + "\n"
+    written = set()
     for note in notes:
         id_ = note["id"]
         title = note["title"]
         filename = note["filename"]
-        section += f"  #{id_} {title} ({filename})\n"
+        line = f"  #{id_} {title} ({filename})\n"
+
+        if line in written:
+            continue
+        written.add(line)
+
+        section += line
     return section + "\n"
 
 
@@ -72,9 +79,6 @@ class ErrorFormatter:
                     ))
             elif name == "empty-link-target":
                 empty_link_targets.append(t.cast(Note, value).copy())
-            else:
-                raise NotImplementedError("unsupported message name")
-
         return (
             format_section("error: Duplicate note ID", duplicate_note_ids)
             + format_section("warning: Empty link target", empty_link_targets)
