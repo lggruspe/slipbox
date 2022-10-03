@@ -2,6 +2,7 @@
 
 from hashlib import sha256
 from pathlib import Path
+import sys
 import typing as t
 
 from .app import App, error, require_init
@@ -80,15 +81,17 @@ def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
 def build(app: App) -> None:
     """Build website."""
     app.backup_database()
-    try:
-        notes = list(find_notes(app))
-        outdated = find_outdated_notes(app, notes)
-        delete_notes(app, outdated)
-        assert process_notes(app, notes)
-        compile_site(app)
-    except AssertionError:
+    notes = list(find_notes(app))
+    outdated = find_outdated_notes(app, notes)
+    delete_notes(app, outdated)
+    is_ok = process_notes(app, notes)
+    print(app.error_formatter.format(), end="", file=sys.stderr)
+
+    if not is_ok:
         app.restore_database_backup()
         error(1)
+    else:
+        compile_site(app)
 
 
 __all__ = ["build", "process_notes"]

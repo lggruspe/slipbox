@@ -5,7 +5,6 @@ They are mainly used to pass note metadata to Pandoc filters even when
 the input is the concatenation of several files.
 """
 
-import csv
 from hashlib import sha256
 from pathlib import Path
 import shlex
@@ -20,7 +19,6 @@ from . import utils
 from .app import App
 from .batch import Batch
 from .data import process_csvs
-from .utils import show_error
 
 
 DOKUWIKI_TEMPLATE = """
@@ -183,27 +181,6 @@ def build_command(app: App, input_: Path, output: str) -> str:
     return cmd + ' ' + shlex.quote(str(input_.resolve()))
 
 
-def output_errors(path: Path) -> bool:
-    """Output errors logged in path to stderr.
-
-    Returns whether or not there are errors.
-    """
-    has_errors = False
-    try:
-        with open(path, encoding="utf-8") as file:
-            reader = csv.reader(file)
-            for verbosity, message in reader:
-                if verbosity == "error":
-                    has_errors = True
-                show_error(
-                    t.cast(t.Literal["error", "warning"], verbosity),
-                    message,
-                )
-    except FileNotFoundError:
-        pass
-    return has_errors
-
-
 def process_batch(app: App, batch: Batch) -> bool:
     """Process batch of input notes.
 
@@ -219,8 +196,7 @@ def process_batch(app: App, batch: Batch) -> bool:
             print("Scan failed.", file=sys.stderr)
             return False
 
-        if output_errors(tempdir/"log.csv"):
-            print("Scan failed.", file=sys.stderr)
+        if app.error_formatter.add_errors(tempdir/"messages.json"):
             return False
 
         if not process_csvs(app.database, tempdir):

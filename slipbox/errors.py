@@ -34,7 +34,12 @@ MessageSchema = t.Union[DuplicateNoteIDSchema, EmptyTargetLinkSchema]
 
 
 def format_section(description: str, notes: t.Iterable[Note]) -> str:
-    """Format section in ErrorFormatter output."""
+    """Format section in ErrorFormatter output.
+
+    If there are no notes, returns an empty string.
+    """
+    if not notes:
+        return ""
     section = description.strip() + "\n"
     for note in notes:
         id_ = note["id"]
@@ -75,7 +80,11 @@ class ErrorFormatter:
             + format_section("warning: Empty link target", empty_link_targets)
         )
 
-    def add_errors(self, path: Path) -> None:
-        """Collect errors from json file in path."""
+    def add_errors(self, path: Path) -> bool:
+        """Collect errors from json file in path.
+
+        Returns True if errors are found.
+        """
         messages = json.loads(path.read_text(encoding="utf-8"))
         self.messages.extend(messages)
+        return any(m["name"] == "duplicate-note-id" for m in messages)
