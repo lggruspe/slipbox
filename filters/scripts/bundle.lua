@@ -11,7 +11,6 @@ local function bundle()
       "src.errors",
       "src.filters",
       "src.links",
-      "src.log",
       "src.slipbox",
       "src.utils",
       "src.metadata",

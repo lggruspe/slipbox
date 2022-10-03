@@ -3,7 +3,6 @@
 local pandoc = require "pandoc"
 local errors = require "src.errors"
 local links = require "src.links"
-local log = require "src.log"
 local metadata = require "src.metadata"
 local utils = require "src.utils"
 
@@ -311,7 +310,7 @@ local function serialize(slipbox)
 end
 
 local function check(slipbox)
-  -- Log warning messages for invalid notes.
+  -- Check for empty link targets.
   return {
     Pandoc = function()
       local has_empty_link_target = {}
@@ -324,21 +323,14 @@ local function check(slipbox)
 
       table.sort(has_empty_link_target)
 
-      local messages = {"The notes below contain links with an empty target."}
-      local template = "%d. %s in '%s'."
       for _, id in ipairs(has_empty_link_target) do
         local note = slipbox.notes[id] or {}
         local title = note.title
         local filename = note.filename
         if title and filename then
-          local message = template:format(id, title, filename)
-          table.insert(messages, message)
           errors.empty_link_target{id = id, title = title, filename = filename}
         end
       end
-
-      assert(#messages > 1)
-      log.warning(table.concat(messages, "\n"))
     end
   }
 end
@@ -354,8 +346,7 @@ local function cleanup()
       return elem
     end,
     Pandoc = function()
-      -- Output all logged errors.
-      log.done()
+      -- Output all recorded errors.
       errors.write()
     end,
   }
