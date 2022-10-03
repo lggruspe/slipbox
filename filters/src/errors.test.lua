@@ -46,11 +46,6 @@ describe("duplicate_note_id", function()
       table.remove(errors._messages)
     end)
 
-    it("level = error", function()
-      local message = errors._messages[1]
-      assert.are.equals(message.level, "error")
-    end)
-
     it("name = duplicate-note-id", function()
       local message = errors._messages[1]
       assert.are.equals(message.name, "duplicate-note-id")
@@ -118,11 +113,6 @@ describe("empty_link_target", function()
 
     after_each(function()
       table.remove(errors._messages)
-    end)
-
-    it("level = warning", function()
-      local message = errors._messages[1]
-      assert.are.equals(message.level, "warning")
     end)
 
     it("name = empty-link-target", function()

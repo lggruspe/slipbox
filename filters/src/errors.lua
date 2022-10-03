@@ -18,7 +18,6 @@ local function duplicate_note_id(id, notes)
   end
 
   local message = {
-    level = "error",
     name = "duplicate-note-id",
     value = {
       id = id,
@@ -34,7 +33,6 @@ local function empty_link_target(note)
   assert(type(note.title) == "string" and note.title ~= "")
   assert(type(note.filename) == "string" and note.filename ~= "")
   local message = {
-    level = "warning",
     name = "empty-link-target",
     value = {
       id = note.id,
