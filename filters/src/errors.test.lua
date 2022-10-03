@@ -63,6 +63,7 @@ describe("duplicate_note_id", function()
       assert.are.equals(#value.notes, #notes)
 
       for i = 1, #notes do
+        assert.are.equals(value.notes[i].id, value.id)
         assert.are.equals(value.notes[i].title, notes[i].title)
         assert.are.equals(value.notes[i].filename, notes[i].filename)
       end

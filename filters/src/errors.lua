@@ -14,7 +14,7 @@ local function duplicate_note_id(id, notes)
   for _, note in ipairs(notes) do
     assert(type(note.title) == "string" and note.title ~= "")
     assert(type(note.filename) == "string" and note.filename ~= "")
-    table.insert(copy, {title = note.title, filename = note.filename})
+    table.insert(copy, {id = id, title = note.title, filename = note.filename})
   end
 
   local message = {

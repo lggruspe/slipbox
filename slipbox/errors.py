@@ -6,23 +6,20 @@ from pathlib import Path
 import typing as t
 
 
-class NoteInfo(t.TypedDict):
+class Note(t.TypedDict):
+    id: int
     title: str
     filename: str
 
 
 class DuplicateNoteIDValue(t.TypedDict):
     id: int
-    notes: t.List[NoteInfo]
+    notes: t.List[Note]
 
 
 class DuplicateNoteIDSchema(t.TypedDict):
     name: t.Literal["duplicate-note-id"]
     value: DuplicateNoteIDValue
-
-
-class Note(NoteInfo):
-    id: int
 
 
 class EmptyTargetLinkSchema(t.TypedDict):
