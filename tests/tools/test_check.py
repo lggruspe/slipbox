@@ -16,47 +16,32 @@ def scan(app: App) -> None:
     build(app)
 
 
-def test_print_sequence_empty(capsys: pytest.CaptureFixture[str]) -> None:
-    """print_sequence must not print anything if sequence is empty.
-
-    The result must be False (empty).
-    """
-    assert not check.print_sequence("error", [])
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert not stderr
-
-
-def test_print_sequence_not_empty(capsys: pytest.CaptureFixture[str]) -> None:
-    """print_sequence must print header if sequence is not empty.
-
-    The result must be True (non-empty)."""
-    assert check.print_sequence("hello", ["world", "!"])
-    stdout, stderr = capsys.readouterr()
-    assert stdout
-    assert "hello" in stdout
-    assert "world" in stdout
-    assert "!" in stdout
-    assert not stderr
-
-
 @pytest.mark.skipif(not check_requirements(startup({})),
                     reason="missing requirements")
 class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
-    def test_invalid_links(self, app: App) -> None:
-        """invalid_links must return note and invalid ID."""
+    def test_check_invalid_links(self, app: App) -> None:
+        """check_invalid_links must return note and invalid ID."""
         Path("test.md").write_text(
             "# 0 Test\n[](#1)\n\n# 2 Test\n[](#0)\n",
             encoding="utf-8",
         )
         scan(app)
 
-        result = list(check.invalid_links(app))
-        assert result == [((0, "Test", "test.md"), 1)]
+        result = list(check.check_invalid_links(app))
+        assert result == [
+            dict(
+                note=dict(
+                    id=0,
+                    title="Test",
+                    filename="test.md",
+                ),
+                target=1,
+            ),
+        ]
 
-    def test_isolated_notes(self, app: App) -> None:
-        """isolated_notes must return untagged notes only."""
+    def test_check_isolated_notes(self, app: App) -> None:
+        """check_isolated_notes must return untagged notes only."""
         Path("test.md").write_text("""# 0 Foo
 
 #test
@@ -69,19 +54,25 @@ class TestsWithRequirements:
 """, encoding="utf-8")
         scan(app)
 
-        result = list(check.isolated_notes(app))
-        assert result == [(2, "Baz", "test.md")]
+        result = list(check.check_isolated_notes(app))
+        assert result == [
+            dict(
+                id=2,
+                title="Baz",
+                filename="test.md",
+            ),
+        ]
 
-    def test_unsourced_notes_empty_bibliography(self, app: App) -> None:
-        """unsourced_notes must be empty if there is no bibliography."""
+    def test_check_unsourced_notes_empty_bibliography(self, app: App) -> None:
+        """check_unsourced_notes must be empty if there is no bibliography."""
         Path("test.md").write_text("# 0 Test\n\nTest.\n", encoding="utf-8")
         scan(app)
 
-        result = list(check.unsourced_notes(app))
+        result = list(check.check_unsourced_notes(app))
         assert not result
 
-    def test_unsourced_notes(self, app: App) -> None:
-        """unsourced_notes must include every note that has no citation."""
+    def test_check_unsourced_notes(self, app: App) -> None:
+        """check_unsourced_notes must include every note without a citation."""
         app.config.bibliography = Path("test.bib")
 
         Path("test.bib").write_text("""
@@ -105,8 +96,14 @@ Bar.
 """, encoding="utf-8")
         scan(app)
 
-        result = list(check.unsourced_notes(app))
-        assert result == [(0, "Foo", "test.md")]
+        result = list(check.check_unsourced_notes(app))
+        assert result == [
+            dict(
+                id=0,
+                title="Foo",
+                filename="test.md",
+            ),
+        ]
 
     def test_check_notes_empty(
         self,

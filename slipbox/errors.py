@@ -98,6 +98,9 @@ class ErrorFormatter:
         """Minimized output for all errors and warnings."""
         duplicate_note_ids: t.List[Note] = []
         empty_link_targets: t.List[Note] = []
+        invalid_links: t.List[Note] = []
+        isolated_notes: t.List[Note] = []
+        missing_citations: t.List[Note] = []
 
         for message in self.messages:
             name = message["name"]
@@ -113,9 +116,21 @@ class ErrorFormatter:
                     ))
             elif name == "empty-link-target":
                 empty_link_targets.append(t.cast(Note, value).copy())
+            elif name == "invalid-link":
+                invalid_links.append(
+                    t.cast(InvalidLinkValue, value)["note"].copy(),
+                )
+            elif name == "isolated-note":
+                isolated_notes.append(t.cast(Note, value).copy())
+            elif name == "missing-citations":
+                missing_citations.append(t.cast(Note, value).copy())
+
         return (
             format_section("error: Duplicate note ID", duplicate_note_ids)
             + format_section("warning: Empty link target", empty_link_targets)
+            + format_section("error: Invalid link", invalid_links)
+            + format_section("warning: Isolated note", isolated_notes)
+            + format_section("warning: Missing citations", missing_citations)
         )
 
     def add_error(self, message: MessageSchema) -> bool:
