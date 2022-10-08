@@ -27,7 +27,35 @@ class EmptyTargetLinkSchema(t.TypedDict):
     value: Note
 
 
-MessageSchema = t.Union[DuplicateNoteIDSchema, EmptyTargetLinkSchema]
+class InvalidLinkValue(t.TypedDict):
+    note: Note
+    target: int
+
+
+class InvalidLinkSchema(t.TypedDict):
+    """Note links to non-existent note."""
+    name: t.Literal["invalid-link"]
+    value: InvalidLinkValue
+
+
+class IsolatedNoteSchema(t.TypedDict):
+    """Note is not reachable from other notes."""
+    name: t.Literal["isolated-note"]
+    value: Note
+
+
+class MissingCitationsSchema(t.TypedDict):
+    name: t.Literal["missing-citations"]
+    value: Note
+
+
+MessageSchema = t.Union[
+    DuplicateNoteIDSchema,
+    EmptyTargetLinkSchema,
+    InvalidLinkSchema,
+    IsolatedNoteSchema,
+    MissingCitationsSchema,
+]
 
 
 def format_section(description: str, notes: t.Iterable[Note]) -> str:
@@ -68,7 +96,8 @@ class ErrorFormatter:
             value = message["value"]
 
             if name == "duplicate-note-id":
-                for note in t.cast(DuplicateNoteIDValue, value)["notes"]:
+                value = t.cast(DuplicateNoteIDValue, value)
+                for note in value["notes"]:
                     duplicate_note_ids.append(dict(
                         id=value["id"],
                         title=note["title"],
