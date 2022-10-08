@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
+from slipbox import check
 from slipbox.app import App, startup
 from slipbox.build import build
 from slipbox.dependencies import check_requirements
-from slipbox.tools import check
 
 
 def scan(app: App) -> None:

@@ -4,9 +4,9 @@ import configparser
 from pathlib import Path
 import sys
 
+from . import check
 from .app import App, error, require_init, RootlessApp
 from .processor import METADATA_TEMPLATES
-from .tools import check
 
 
 @require_init

@@ -2,8 +2,8 @@
 
 import typing as t
 
-from ..app import App
-from ..errors import (
+from .app import App
+from .errors import (
     InvalidLinkValue, InvalidLinkSchema, IsolatedNoteSchema,
     MissingCitationsSchema, Note,
 )
