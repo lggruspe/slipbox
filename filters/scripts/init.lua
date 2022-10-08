@@ -9,7 +9,7 @@ local function install(rock)
    run(command:format(rock))
 end
 
-local requirements = {"amalg", "busted", "luacheck", "luafilesystem"}
+local requirements = {"amalg", "busted", "dkjson", "luacheck", "luafilesystem"}
 
 for _, requirement in ipairs(requirements) do
    install(requirement)
