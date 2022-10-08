@@ -58,6 +58,14 @@ MessageSchema = t.Union[
 ]
 
 
+def is_error(message: MessageSchema) -> bool:
+    """Check if message describes an error."""
+    return message["name"] in (
+        "duplicate-note-id",
+        "invalid-link",
+    )
+
+
 def format_section(description: str, notes: t.Iterable[Note]) -> str:
     """Format section in ErrorFormatter output.
 
@@ -110,6 +118,14 @@ class ErrorFormatter:
             + format_section("warning: Empty link target", empty_link_targets)
         )
 
+    def add_error(self, message: MessageSchema) -> bool:
+        """Add warning/error message.
+
+        Returns True if it's an error.
+        """
+        self.messages.append(message)
+        return is_error(message)
+
     def add_errors(self, path: Path) -> bool:
         """Collect errors from json file in path.
 
@@ -117,4 +133,4 @@ class ErrorFormatter:
         """
         messages = json.loads(path.read_text(encoding="utf-8"))
         self.messages.extend(messages)
-        return any(m["name"] == "duplicate-note-id" for m in messages)
+        return any(is_error(m) for m in messages)
