@@ -93,7 +93,7 @@ def format_section(
 
     section += "\n"
     if footer:
-        section += f"{footer.strip()}\n"
+        section += f"  {footer.strip()}\n\n"
     return section
 
 
@@ -136,9 +136,21 @@ class ErrorFormatter:
         return (
             format_section(duplicate_note_ids, "error: Duplicate note ID")
             + format_section(empty_link_targets, "warning: Empty link target")
-            + format_section(invalid_links, "error: Invalid link")
-            + format_section(isolated_notes, "warning: Isolated note")
-            + format_section(missing_citations, "warning: Missing citations")
+            + format_section(
+                invalid_links,
+                header="error: Invalid link",
+                footer="These notes link to non-existent notes.",
+            )
+            + format_section(
+                isolated_notes,
+                header="warning: Isolated note",
+                footer="These notes are not reachable from other notes.",
+            )
+            + format_section(
+                missing_citations,
+                header="warning: Missing citations",
+                footer="These notes do not cite sources.",
+            )
         )
 
     def add_error(self, message: MessageSchema) -> bool:
