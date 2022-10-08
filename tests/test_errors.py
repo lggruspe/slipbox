@@ -46,9 +46,32 @@ def test_error_formatter_duplicate_messages() -> None:
     formatter = ErrorFormatter()
     formatter.add_errors(Path("test.json"))
 
-    result = formatter.format()
-    assert result.strip() == """error: Duplicate note ID
+    result = formatter.format().strip()
+    assert result == """error: Duplicate note ID
 
   #0 Foo (foo.md)
   #0 Bar (bar.md)
-  #0 Baz (baz.md)"""
+  #0 Baz (baz.md)
+
+Found errors :("""
+
+
+def test_error_formatter_warnings_only() -> None:
+    """'Found errors :(' text shouldn't appear in output."""
+    Path("test.json").write_text("""
+[
+    {
+        "name": "empty-link-target",
+        "value": {
+            "id": 0,
+            "title": "Test",
+            "filename": "test.md"
+        }
+    }
+]
+""", encoding="utf-8")
+    formatter = ErrorFormatter()
+    formatter.add_errors(Path("test.json"))
+
+    result = formatter.format().strip()
+    assert "Found errors" not in result

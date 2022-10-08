@@ -133,7 +133,7 @@ class ErrorFormatter:
             elif name == "missing-citations":
                 missing_citations.append(t.cast(Note, value).copy())
 
-        return (
+        result = (
             format_section(duplicate_note_ids, "error: Duplicate note ID")
             + format_section(empty_link_targets, "warning: Empty link target")
             + format_section(
@@ -152,6 +152,11 @@ class ErrorFormatter:
                 footer="These notes do not cite sources.",
             )
         )
+
+        has_errors = len(duplicate_note_ids + invalid_links) > 0
+        if has_errors:
+            result += "Found errors :(\n"
+        return result
 
     def add_error(self, message: MessageSchema) -> bool:
         """Add warning/error message.
