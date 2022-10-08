@@ -80,7 +80,7 @@ def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
 @require_init
 def build(app: App) -> None:
     """Build website."""
-    app.backup_database()
+    backup = app.backup_database()
     notes = list(find_notes(app))
     outdated = find_outdated_notes(app, notes)
     delete_notes(app, outdated)
@@ -90,8 +90,8 @@ def build(app: App) -> None:
     if not is_ok:
         app.restore_database_backup()
         error(1)
-    else:
-        compile_site(app)
+    compile_site(app)
+    backup.unlink(missing_ok=True)
 
 
 __all__ = ["build", "process_notes"]

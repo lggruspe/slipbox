@@ -133,6 +133,12 @@ def test_purge(app: App, files_abc: t.List[Path]) -> None:
 )
 class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
+    def test_build_backup_database(self, app: App) -> None:
+        """Backup database must be deleted after build."""
+        build(app)
+        backup = app.root/".slipbox"/"data.db.bak"
+        assert not backup.exists()
+
     def test_run(
         self,
         files_abc: t.List[Path],
