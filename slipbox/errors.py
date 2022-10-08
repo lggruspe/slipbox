@@ -66,14 +66,18 @@ def is_error(message: MessageSchema) -> bool:
     )
 
 
-def format_section(description: str, notes: t.Iterable[Note]) -> str:
+def format_section(
+    notes: t.Iterable[Note],
+    header: str,
+    footer: str = "",
+) -> str:
     """Format section in ErrorFormatter output.
 
     If there are no notes, returns an empty string.
     """
     if not notes:
         return ""
-    section = description.strip() + "\n"
+    section = header.strip() + "\n\n"
     written = set()
     for note in notes:
         id_ = note["id"]
@@ -86,7 +90,11 @@ def format_section(description: str, notes: t.Iterable[Note]) -> str:
         written.add(line)
 
         section += line
-    return section + "\n"
+
+    section += "\n"
+    if footer:
+        section += f"{footer.strip()}\n"
+    return section
 
 
 class ErrorFormatter:
@@ -126,11 +134,11 @@ class ErrorFormatter:
                 missing_citations.append(t.cast(Note, value).copy())
 
         return (
-            format_section("error: Duplicate note ID", duplicate_note_ids)
-            + format_section("warning: Empty link target", empty_link_targets)
-            + format_section("error: Invalid link", invalid_links)
-            + format_section("warning: Isolated note", isolated_notes)
-            + format_section("warning: Missing citations", missing_citations)
+            format_section(duplicate_note_ids, "error: Duplicate note ID")
+            + format_section(empty_link_targets, "warning: Empty link target")
+            + format_section(invalid_links, "error: Invalid link")
+            + format_section(isolated_notes, "warning: Isolated note")
+            + format_section(missing_citations, "warning: Missing citations")
         )
 
     def add_error(self, message: MessageSchema) -> bool:

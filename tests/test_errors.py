@@ -48,6 +48,7 @@ def test_error_formatter_duplicate_messages() -> None:
 
     result = formatter.format()
     assert result.strip() == """error: Duplicate note ID
+
   #0 Foo (foo.md)
   #0 Bar (bar.md)
   #0 Baz (baz.md)"""
