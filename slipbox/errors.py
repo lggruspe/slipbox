@@ -74,6 +74,11 @@ def yellow(text: str) -> str:
     return t.cast(str, Fore.YELLOW + Style.BRIGHT + text + Style.RESET_ALL)
 
 
+def bright(text: str) -> str:
+    """Brighten text."""
+    return t.cast(str, Style.BRIGHT + text + Style.RESET_ALL)
+
+
 def dim(text: str) -> str:
     """Dim text."""
     return t.cast(str, Style.DIM + text + Style.RESET_ALL)
@@ -87,18 +92,26 @@ def is_error(message: MessageSchema) -> bool:
     )
 
 
-def format_line(note: Note) -> str:
-    """Format line in ErrorFormatter output."""
+def format_line(note: Note, info: str = "") -> str:
+    """Format line in ErrorFormatter output.
+
+    info: Optional info text to include.
+    """
     id_ = dim(f"#{note['id']}")
     title = note["title"]
     filename = dim(f"({note['filename']})")
-    return f"  {id_} {title} {filename}"
+
+    result = f"  {id_} {title} {filename}"
+    if info:
+        result += f"\n    {info}"
+    return result
 
 
 def format_section(
     notes: t.Iterable[Note],
     header: str,
     footer: str = "",
+    info: t.Optional[t.Dict[int, str]] = None,
 ) -> str:
     """Format section in ErrorFormatter output.
 
@@ -106,10 +119,15 @@ def format_section(
     """
     if not notes:
         return ""
+
+    if info is None:
+        info = {}
+
     section = header.strip() + "\n\n"
     written = set()
     for note in notes:
-        line = format_line(note) + "\n"
+        id_ = note["id"]
+        line = format_line(note, info=info.get(id_, "")) + "\n"
         if line in written:
             continue
         written.add(line)
@@ -129,11 +147,15 @@ class ErrorFormatter:
 
     def format(self) -> str:
         """Minimized output for all errors and warnings."""
-        duplicate_note_ids: t.List[Note] = []
-        empty_link_targets: t.List[Note] = []
-        invalid_links: t.List[Note] = []
-        isolated_notes: t.List[Note] = []
-        missing_citations: t.List[Note] = []
+        notes: t.Dict[str, t.List[Note]] = {
+            "duplicate-note-id": [],
+            "empty-link-target": [],
+            "invalid-link": [],
+            "isolated-note": [],
+            "missing-citations": [],
+        }
+
+        invalid_link_targets: t.Dict[int, t.List[int]] = {}
 
         for message in self.messages:
             name = message["name"]
@@ -142,49 +164,61 @@ class ErrorFormatter:
             if name == "duplicate-note-id":
                 value = t.cast(DuplicateNoteIDValue, value)
                 for note in value["notes"]:
-                    duplicate_note_ids.append(dict(
+                    notes[name].append(dict(
                         id=value["id"],
                         title=note["title"],
                         filename=note["filename"],
                     ))
             elif name == "empty-link-target":
-                empty_link_targets.append(t.cast(Note, value).copy())
+                notes[name].append(t.cast(Note, value).copy())
             elif name == "invalid-link":
-                invalid_links.append(
-                    t.cast(InvalidLinkValue, value)["note"].copy(),
+                value = t.cast(InvalidLinkValue, value)
+                note = value["note"].copy()
+                notes[name].append(note)
+                invalid_link_targets.setdefault(int(note["id"]), []).append(
+                    value["target"],
                 )
             elif name == "isolated-note":
-                isolated_notes.append(t.cast(Note, value).copy())
+                notes[name].append(t.cast(Note, value).copy())
             elif name == "missing-citations":
-                missing_citations.append(t.cast(Note, value).copy())
+                notes[name].append(t.cast(Note, value).copy())
 
+        invalid_link_info = {}
+        for id_, targets in invalid_link_targets.items():
+            invalid_link_info[id_] = "-> " + " ".join(
+                bright(f"#{target}") for target in targets
+            )
         result = (
             format_section(
-                duplicate_note_ids,
+                notes["duplicate-note-id"],
                 header=red("error") + ": Duplicate note ID",
             ) +
             format_section(
-                empty_link_targets,
+                notes["empty-link-target"],
                 header=yellow("warning") + ": Empty link target",
             ) +
             format_section(
-                invalid_links,
+                notes["invalid-link"],
                 header=red("error") + ": Invalid link",
                 footer="These notes link to non-existent notes.",
+                info=invalid_link_info,
             ) +
             format_section(
-                isolated_notes,
+                notes["isolated-note"],
                 header=yellow("warning") + ": Isolated note",
                 footer="These notes are not reachable from other notes.",
             ) +
             format_section(
-                missing_citations,
+                notes["missing-citations"],
                 header=yellow("warning") + ": Missing citations",
                 footer="These notes do not cite sources.",
             )
         )
 
-        has_errors = len(duplicate_note_ids + invalid_links) > 0
+        has_errors = (
+            bool(notes["duplicate-note-id"])
+            or bool(notes["invalid-link"])
+        )
         if has_errors:
             result += "Found errors :(\n"
         return result
