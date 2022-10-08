@@ -5,6 +5,12 @@ import json
 from pathlib import Path
 import typing as t
 
+import colorama  # type: ignore
+from colorama import Fore, Style
+
+
+colorama.init()
+
 
 class Note(t.TypedDict):
     id: int
@@ -58,12 +64,35 @@ MessageSchema = t.Union[
 ]
 
 
+def red(text: str) -> str:
+    """Color text red."""
+    return t.cast(str, Fore.RED + Style.BRIGHT + text + Style.RESET_ALL)
+
+
+def yellow(text: str) -> str:
+    """Color text yellow."""
+    return t.cast(str, Fore.YELLOW + Style.BRIGHT + text + Style.RESET_ALL)
+
+
+def dim(text: str) -> str:
+    """Dim text."""
+    return t.cast(str, Style.DIM + text + Style.RESET_ALL)
+
+
 def is_error(message: MessageSchema) -> bool:
     """Check if message describes an error."""
     return message["name"] in (
         "duplicate-note-id",
         "invalid-link",
     )
+
+
+def format_line(note: Note) -> str:
+    """Format line in ErrorFormatter output."""
+    id_ = dim(f"#{note['id']}")
+    title = note["title"]
+    filename = dim(f"({note['filename']})")
+    return f"  {id_} {title} {filename}"
 
 
 def format_section(
@@ -80,11 +109,7 @@ def format_section(
     section = header.strip() + "\n\n"
     written = set()
     for note in notes:
-        id_ = note["id"]
-        title = note["title"]
-        filename = note["filename"]
-        line = f"  #{id_} {title} ({filename})\n"
-
+        line = format_line(note) + "\n"
         if line in written:
             continue
         written.add(line)
@@ -134,21 +159,27 @@ class ErrorFormatter:
                 missing_citations.append(t.cast(Note, value).copy())
 
         result = (
-            format_section(duplicate_note_ids, "error: Duplicate note ID")
-            + format_section(empty_link_targets, "warning: Empty link target")
-            + format_section(
+            format_section(
+                duplicate_note_ids,
+                header=red("error") + ": Duplicate note ID",
+            ) +
+            format_section(
+                empty_link_targets,
+                header=yellow("warning") + ": Empty link target",
+            ) +
+            format_section(
                 invalid_links,
-                header="error: Invalid link",
+                header=red("error") + ": Invalid link",
                 footer="These notes link to non-existent notes.",
-            )
-            + format_section(
+            ) +
+            format_section(
                 isolated_notes,
-                header="warning: Isolated note",
+                header=yellow("warning") + ": Isolated note",
                 footer="These notes are not reachable from other notes.",
-            )
-            + format_section(
+            ) +
+            format_section(
                 missing_citations,
-                header="warning: Missing citations",
+                header=yellow("warning") + ": Missing citations",
                 footer="These notes do not cite sources.",
             )
         )

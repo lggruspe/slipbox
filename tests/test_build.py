@@ -308,8 +308,10 @@ Bar.
         stdout, stderr = capsys.readouterr()
         assert not stdout
 
-        assert "#0 First note (test.md)" in stderr
-        assert "#0 Duplicate (test.md)" in stderr
+        assert "#0" in stderr
+        assert "First note" in stderr
+        assert "Duplicate" in stderr
+        assert "test.md" in stderr
 
     def test_build_with_duplicate_ids_in_batch(
         self,
@@ -413,7 +415,9 @@ Bye-bye.
 
         stdout, stderr = capsys.readouterr()
         assert not stdout
-        assert "#0 Foo (test.md)" in stderr
+        assert "#0" in stderr
+        assert "Foo" in stderr
+        assert "test.md" in stderr
 
     def test_process_with_external_links(
         self,
