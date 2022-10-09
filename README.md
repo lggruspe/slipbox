@@ -38,6 +38,11 @@ slipbox build
 See [docs-src/index.md](https://github.com/lggruspe/slipbox/blob/master/docs-src/index.md)
 and <https://lggruspe.github.io/slipbox>.
 
+Contributing
+------------
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 License
 -------
 
