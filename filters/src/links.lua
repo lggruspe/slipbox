@@ -12,14 +12,19 @@ local function normalize_direction(direction)
 end
 
 local function parse_note_link(target)
+  -- Return ok and parsed result.
   local pattern = "^(.*)(#%d+)$"
   local prefix, target_ = string.match(target, pattern)
 
-  if target_ == nil then return nil end
+  if target_ == nil then
+    return false
+  end
 
   local direction = normalize_direction(prefix)
-  if direction == nil then return nil end
-  return {
+  if direction == nil then
+    return false
+  end
+  return true, {
     direction = normalize_direction(prefix),
     target = target_,
   }

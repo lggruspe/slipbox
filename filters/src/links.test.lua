@@ -26,9 +26,9 @@ describe("parse_note_link", function()
       "100",
     }
 
-    it("returns nil", function()
+    it("returns false", function()
       for _, example in ipairs(examples) do
-        assert.is_nil(parse_note_link(example))
+        assert.falsy(parse_note_link(example))
       end
     end)
   end)
@@ -42,7 +42,8 @@ describe("parse_note_link", function()
 
     it("result contains target ID and direction", function()
       for _, example in ipairs(examples) do
-        local result = parse_note_link(join(example))
+        local ok, result = parse_note_link(join(example))
+        assert.truthy(ok)
         assert.equals(type(result.target), "string")
         assert.is_not.equals(result.target, "")
 

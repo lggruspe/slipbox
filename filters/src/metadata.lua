@@ -31,18 +31,21 @@ local function parse_line(line)
 end
 
 local function parse(text)
+  -- Return ok, parsed metadata.
   local body = strip_header(text)
-  if not body then return end
+  if not body then
+    return false
+  end
 
   local metadata = {}
   for line in lines(strip(body)) do
     local key, val = parse_line(line)
     if not (key and val) then
-      return
+      return false
     end
     metadata[key] = val
   end
-  return metadata
+  return true, metadata
 end
 
 return {parse = parse}

@@ -16,9 +16,9 @@ local function preprocess()
       local _metadata = {}
       for _, elem in ipairs(doc.blocks) do
         if elem.tag == "CodeBlock" then
-          -- Overwrite only if parsed code block contains valid slipbox metadata.
-          for key, val in pairs(metadata.parse(elem.text) or {}) do
-            _metadata[key] = val
+          local ok, result = metadata.parse(elem.text)
+          if ok then
+            _metadata = result
           end
         elseif elem.tag == "Header" and elem.level == 1 then
           assert(_metadata.filename, "missing filename")
@@ -111,7 +111,9 @@ end
 local Collector = {}
 function Collector:new(slipbox, div)
   local id = tonumber(div.identifier)
-  if not id then return end
+  if not id then
+    return
+  end
 
   self.__index = self
   return setmetatable({
@@ -136,8 +138,8 @@ function Collector:Link(elem)
   if not elem.target or elem.target == "" then
     self.has_empty_link_target = true
   end
-  local link = links.parse_note_link(elem.target)
-  if link then
+  local ok, link = links.parse_note_link(elem.target)
+  if ok then
     self.slipbox:save_link {
       src = self.id,
       dest = tonumber(link.target:sub(2)),
@@ -214,8 +216,8 @@ function Modifier.Link(elem)
     return elem.content
   end
 
-  local link = links.parse_note_link(elem.target)
-  if link ~= nil then
+  local ok, link = links.parse_note_link(elem.target)
+  if ok then
     elem.target = link.target
   end
 
