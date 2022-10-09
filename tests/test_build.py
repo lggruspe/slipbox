@@ -14,6 +14,12 @@ from slipbox.build import (
 from slipbox.dependencies import check_requirements
 
 
+def scan(app: App) -> None:
+    """Run 'slipbox build --no-output'."""
+    app.args["output"] = False
+    build(app)
+
+
 def insert_files(con: Connection, *files: Path, basedir: Path) -> None:
     """Insert files into database."""
     sql = "INSERT INTO Files (filename, hash) VALUES (?, ?)"
@@ -278,6 +284,25 @@ Bar.
         assert stderr
         assert str(file_a.relative_to(app.root)) in stderr
         assert str(file_b.relative_to(app.root)) in stderr
+
+    def test_build_duplicate_tags(
+        self,
+        capsys: pytest.CaptureFixture[str],
+        app: App,
+    ) -> None:
+        """Database should only have one entry for note-tag pair."""
+        Path("test.md").write_text("""
+# 0 Test
+
+Test.
+
+#test #test
+""", encoding="utf-8")
+        scan(app)
+        assert is_quiet(capsys)
+
+        result = list(app.database.execute("SELECT id, tag FROM Tags"))
+        assert result == [(0, "#test")]
 
     def test_build_with_duplicate_ids_in_a_file(
         self,

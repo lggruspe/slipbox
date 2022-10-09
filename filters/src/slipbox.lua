@@ -81,7 +81,7 @@ function SlipBox:save_tag(id, tag)
   assert(tag ~= "")
 
   local tags = self.tags[id] or {}
-  table.insert(tags, tag)
+  tags[tag] = true
   self.tags[id] = tags
 end
 
@@ -108,7 +108,7 @@ local function tags_to_csv(all_tags)
   -- Create CSV data from tags in slipbox.
   local w = csv.Writer:new{"tag", "id"}
   for id, tags in pairs(all_tags) do
-    for _, tag in ipairs(tags) do
+    for tag, _ in pairs(tags) do
       w:write{tag, id}
     end
   end
