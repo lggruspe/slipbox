@@ -152,7 +152,17 @@ def resolve_checkers(
             "isolated-note",
             "missing-citations",
         }
-    return set((enabled or "").split(",")) - set((disabled or "").split(","))
+    checkers = (
+        set((enabled or "").split(",")) - set((disabled or "").split(","))
+    )
+    if "all" not in checkers:
+        return checkers
+    # use all checkers (!= default)
+    return {
+        "empty-target-link",
+        "isolated-note",
+        "missing-citations",
+    }
 
 
 class ErrorFormatter:
