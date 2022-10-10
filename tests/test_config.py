@@ -13,9 +13,8 @@ def test_config_paths(tmp_path: Path) -> None:
     config.output_directory = Path("public")
     config.write(file)
 
-    config.read_file(file)
-
-    output_directory = Path(config.output_directory)
+    result = Config.from_file(file)
+    output_directory = Path(result.output_directory)
     assert str(output_directory) == "public"
 
 
@@ -30,8 +29,7 @@ def test_config_read() -> None:
 notes/*.tex = True
 """, encoding="utf-8")
 
-    config = Config()
-    config.read_file(Path("config.cfg"))
+    config = Config.from_file(Path("config.cfg"))
 
     assert not config.patterns.get("*.md")
     assert config.patterns.get("*.txt")

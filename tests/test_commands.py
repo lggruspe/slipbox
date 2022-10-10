@@ -1,12 +1,12 @@
 """Test commands.py."""
 
-from configparser import ConfigParser
 from pathlib import Path
 import pytest
 
 from slipbox import commands
 from slipbox.app import App, RootlessApp, startup
 from slipbox.build import build
+from slipbox.config import Config
 from slipbox.dependencies import check_requirements
 
 
@@ -77,11 +77,9 @@ def test_init_patterns(app_without_root: RootlessApp) -> None:
     assert app.root is not None
     hidden = app.root/".slipbox"
 
-    parser = ConfigParser()
-    parser.read(hidden/"config.cfg")
-
-    assert parser.getboolean("note-patterns", "*.md")
-    assert parser.getboolean("note-patterns", "*.rst")
+    config = Config.from_file(hidden/"config.cfg")
+    assert config.patterns["*.md"]
+    assert config.patterns["*.rst"]
 
 
 def test_init_already_initialized(app: App) -> None:

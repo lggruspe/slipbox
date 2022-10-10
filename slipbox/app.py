@@ -86,7 +86,7 @@ def startup(args: t.Dict[str, t.Any]) -> t.Union[App, RootlessApp]:
 
     root = app.root
     if root:
-        app.config.read_file(root/".slipbox"/"config.cfg")
+        app.config = Config.from_file(root/".slipbox"/"config.cfg")
         app.database = connect(root/".slipbox"/"data.db")
         app = t.cast(App, app)
 

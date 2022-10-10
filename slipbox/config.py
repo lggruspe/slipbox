@@ -1,4 +1,8 @@
-"""Slipbox configuration."""
+"""Slipbox configuration.
+
+Config overriding strategy:
+command-line args > environment variables > config file > default config.
+"""
 
 from configparser import ConfigParser
 from dataclasses import dataclass
@@ -28,44 +32,49 @@ class Config:
     bibliography = None
     strip_comments = True
 
-    def read(self, config: ConfigParser) -> None:
-        """Update from configparser."""
-        self.output_directory = Path(
-            config.get(
+    @staticmethod
+    def from_file(path: Path) -> "Config":
+        """Return Config object from file."""
+        parser = ConfigParser()
+        parser.read_string(path.read_text())
+
+        default = Config()
+
+        # [slipbox]
+        default.output_directory = Path(
+            parser.get(
                 "slipbox",
                 "output_directory",
-                fallback=self.output_directory,
+                fallback=default.output_directory,
             ),
         )
-        self.title = config.get("slipbox", "title", fallback=self.title)
+        default.title = parser.get("slipbox", "title", fallback=default.title)
 
-        self.patterns = {}
-        for key, _ in config.items("note-patterns"):
-            val = config.getboolean("note-patterns", key, fallback=False)
-            self.patterns[key] = val
+        # [paths]
+        default.pandoc = parser.get("paths", "pandoc", fallback=default.pandoc)
+        default.dot = parser.get("paths", "dot", fallback=default.dot)
 
-        self.pandoc = config.get("paths", "pandoc", fallback=self.pandoc)
-        self.dot = config.get("paths", "dot", fallback=self.dot)
+        # [note-patterns]
+        default.patterns = {}
+        for key, _ in parser.items("note-patterns"):
+            val = parser.getboolean("note-patterns", key, fallback=False)
+            default.patterns[key] = val
 
-        bibliography = config.get(
+        # [pandoc-options]
+        bibliography = parser.get(
             "pandoc-options",
             "bibliography",
             fallback=None,
         )
-        self.bibliography = (
-            Path(bibliography) if bibliography else self.bibliography
-        )
-        self.strip_comments = config.getboolean(
+        if bibliography:
+            default.bibliography = Path(bibliography)
+
+        default.strip_comments = parser.getboolean(
             "pandoc-options",
             "strip-comments",
-            fallback=self.strip_comments,
+            fallback=default.strip_comments,
         )
-
-    def read_file(self, path: Path) -> None:
-        """Update config from file."""
-        config = ConfigParser()
-        config.read_string(path.read_text())
-        self.read(config)
+        return default
 
     def read_env(self) -> None:
         """Update config from environment variables.

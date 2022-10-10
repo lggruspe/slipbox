@@ -6,6 +6,7 @@ import sys
 
 from . import check
 from .app import App, error, require_init, RootlessApp
+from .config import Config
 from .processor import METADATA_TEMPLATES
 
 
@@ -48,7 +49,7 @@ def init(app: RootlessApp) -> None:
     config = app.args.get("config")
     if config is not None:
         try:
-            app.config.read_file(Path(config))
+            app.config = Config.from_file(Path(config))
         except configparser.Error:
             error(f"invalid config file: {config}")
 
