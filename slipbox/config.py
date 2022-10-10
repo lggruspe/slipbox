@@ -32,6 +32,9 @@ class Config:
     bibliography = None
     strip_comments = True
 
+    def __post_init__(self) -> None:
+        self._update_from_env()
+
     @staticmethod
     def from_file(path: Path) -> "Config":
         """Return Config object from file."""
@@ -74,13 +77,11 @@ class Config:
             "strip-comments",
             fallback=default.strip_comments,
         )
+        default._update_from_env()  # pylint: disable=protected-access
         return default
 
-    def read_env(self) -> None:
-        """Update config from environment variables.
-
-        NOTE Not all options can be set using environment variables.
-        """
+    def _update_from_env(self) -> None:
+        """Update some config variables from environment variables."""
         self.pandoc = os.getenv("PANDOC", self.pandoc)
         self.dot = os.getenv("DOT", self.dot)
 

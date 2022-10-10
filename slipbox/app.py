@@ -90,7 +90,6 @@ def startup(args: t.Dict[str, t.Any]) -> t.Union[App, RootlessApp]:
         app.database = connect(root/".slipbox"/"data.db")
         app = t.cast(App, app)
 
-    app.config.read_env()
     migrate(app.database)
     return app
 
