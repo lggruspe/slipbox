@@ -29,7 +29,7 @@ jobs:
         pip install -r requirements/dev.requirements.txt
     - name: Lint with flake8
       run: |
-        flake8 slipbox tests --max-complexity=10
+        flake8 slipbox tests --max-complexity=15
     - name: Lint with pylint
       run: |
         pylint --fail-under=10 slipbox tests -d R0903,W0621

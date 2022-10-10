@@ -49,7 +49,7 @@ check-python:	lint test
 # Run python linters
 .PHONY:	lint
 lint:
-	flake8 setup.py slipbox tests --max-complexity=10
+	flake8 setup.py slipbox tests --max-complexity=15
 	pylint setup.py slipbox tests --fail-under=10 -d R0903,W0621
 	mypy setup.py slipbox tests --strict
 
