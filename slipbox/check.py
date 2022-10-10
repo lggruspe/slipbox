@@ -1,3 +1,4 @@
+# pylint: disable=use-a-generator
 """Check slipbox notes."""
 
 import typing as t
@@ -173,12 +174,15 @@ def check_notes(app: App) -> bool:
     Returns False is errors are found.
     """
     has_error = check_invalid_links(app)
-    has_warning = (
-        check_empty_links(app)
-        or check_graph_cycles(app)
-        or check_isolated_notes(app)
-        or check_unsourced_notes(app)
-    )
+    has_warning = False
+
+    checkers = [
+        check_empty_links,
+        check_graph_cycles,
+        check_isolated_notes,
+        check_unsourced_notes,
+    ]
+    has_warning = any([check(app) for check in checkers])
     strict = app.args.get("strict", False)
     if has_error or has_warning:
         enabled = app.args.get("enable")

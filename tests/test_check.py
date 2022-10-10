@@ -231,7 +231,6 @@ Bar.
         capsys: pytest.CaptureFixture[str],
     ) -> None:
         """Only notes in the cycle should appear in the warning message."""
-        Path("test.md").write_text("# 0 Test\n[](#0)", encoding="utf-8")
         Path("test.md").write_text("""
 # 0 Foo
 
@@ -267,3 +266,50 @@ Baz.
 
         assert "warning" in stdout
         assert "error" not in stdout
+
+    def test_check_notes_all_graph_cycle(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """'all' should enable 'graph-cycle'."""
+        Path("test.md").write_text("# 0 Test\n[](#0)", encoding="utf-8")
+        app.args["enable"] = "all"
+        scan(app)
+
+        assert check.check_notes(app)
+        stdout, stderr = capsys.readouterr()
+        assert stdout
+        assert not stderr
+
+        assert "Graph cycle" in stdout
+        assert "#0" in stdout
+        assert "Test" in stdout
+        assert "test.md" in stdout
+        assert "warning" in stdout
+        assert "error" not in stdout
+
+    def test_check_notes_with_multiple_errors(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """`slipbox check` should catch all errors, not just the first one."""
+        Path("test.md").write_text("""
+# 0 Foo
+
+[]()
+
+[](#0)
+""", encoding="utf-8")
+        app.args["enable"] = "all"
+        scan(app)
+
+        assert check.check_notes(app)
+        stdout, stderr = capsys.readouterr()
+
+        assert stdout
+        assert not stderr
+
+        assert "Empty link target" in stdout
+        assert "Graph cycle" in stdout
