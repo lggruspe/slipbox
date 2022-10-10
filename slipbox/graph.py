@@ -31,6 +31,17 @@ def create_graph(con: Connection) -> nx.DiGraph:
     return graph
 
 
+def find_cycles(graph: nx.DiGraph) -> t.List[t.Tuple[int, int]]:
+    """Return a cycle in the graph, if there's any.
+
+    The result is a list of links (pairs of ints).
+    """
+    try:
+        return t.cast(t.List[t.Tuple[int, int]], nx.find_cycle(graph))
+    except nx.exception.NetworkXNoCycle:
+        return []
+
+
 def concatenate(seqs: t.Iterable[t.Iterable[t.Any]]) -> t.List[t.Any]:
     """Concatenate sequences."""
     return sum(map(list, seqs), [])

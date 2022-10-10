@@ -5,12 +5,14 @@ import typing as t
 from .app import App
 from .errors import (
     EmptyTargetLinkSchema,
+    GraphCycleSchema,
     InvalidLinkValue,
     InvalidLinkSchema,
     IsolatedNoteSchema,
     MissingCitationsSchema,
     Note,
 )
+from .graph import create_graph, find_cycles
 
 
 def check_empty_links(app: App) -> t.List[Note]:
@@ -39,6 +41,36 @@ def check_empty_links(app: App) -> t.List[Note]:
         app.error_formatter.add_error(message)
         notes.append(value)
     return notes
+
+
+def check_graph_cycles(app: App) -> t.List[Note]:
+    """Check for cycles in the notes graph.
+
+    Results are reflected in app.error_formatter.
+    Returns list of notes in the cycle.
+    """
+    cycle = []
+    edges = find_cycles(create_graph(app.database))
+
+    query = "SELECT id, title, filename FROM Notes WHERE id = ?"
+
+    cur = app.database.cursor()
+    for src, _ in edges:
+        cur.execute(query, (src,))
+        row = cur.fetchone()
+
+        value: Note = dict(
+            id=int(row[0]),
+            title=row[1],
+            filename=row[2],
+        )
+        message: GraphCycleSchema = dict(
+            name="graph-cycle",
+            value=value,
+        )
+        app.error_formatter.add_error(message)
+        cycle.append(value)
+    return sorted(cycle, key=lambda note: note["id"])
 
 
 def check_invalid_links(app: App) -> t.List[InvalidLinkValue]:
@@ -143,6 +175,7 @@ def check_notes(app: App) -> bool:
     has_error = check_invalid_links(app)
     has_warning = (
         check_empty_links(app)
+        or check_graph_cycles(app)
         or check_isolated_notes(app)
         or check_unsourced_notes(app)
     )

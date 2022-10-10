@@ -71,8 +71,10 @@ def delete_notes(app: App, notes: t.Iterable[Path]) -> None:
     """Delete notes from database."""
     cur = app.database.cursor()
     cur.execute("PRAGMA foreign_keys=ON")
-    cur.executemany("DELETE FROM Files WHERE filename IN (?)",
-                    ((filename,) for filename in notes))
+    cur.executemany(
+        "DELETE FROM Files WHERE filename IN (?)",
+        ((filename,) for filename in notes),
+    )
     app.database.commit()
 
 

@@ -188,3 +188,82 @@ Bar.
         assert "test.md" in stdout
 
         assert not stderr
+
+    def test_check_notes_graph_cycle_default(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """graph-cycle check should be disabled by default."""
+        Path("test.md").write_text("# 0 Test\n[](#0)", encoding="utf-8")
+        scan(app)
+
+        assert check.check_notes(app)
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert not stderr
+
+    def test_check_notes_graph_cycle_enabled_with_one_note(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """check_notes should catch graph cycles."""
+        Path("test.md").write_text("# 0 Test\n[](#0)", encoding="utf-8")
+        app.args["enable"] = "graph-cycle"
+        scan(app)
+
+        assert check.check_notes(app)
+        stdout, stderr = capsys.readouterr()
+        assert stdout
+        assert not stderr
+
+        assert "Graph cycle" in stdout
+        assert "#0" in stdout
+        assert "Test" in stdout
+        assert "test.md" in stdout
+        assert "warning" in stdout
+        assert "error" not in stdout
+
+    def test_check_notes_graph_cycle_enabled_with_multiple_notes(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Only notes in the cycle should appear in the warning message."""
+        Path("test.md").write_text("# 0 Test\n[](#0)", encoding="utf-8")
+        Path("test.md").write_text("""
+# 0 Foo
+
+Foo. [](#1)
+
+# 1 Bar
+
+Bar. [](#0)
+
+# 2 Baz
+
+Baz.
+""", encoding="utf-8")
+        app.args["enable"] = "graph-cycle"
+        scan(app)
+
+        assert check.check_notes(app)
+        stdout, stderr = capsys.readouterr()
+        assert stdout
+        assert not stderr
+
+        assert "Graph cycle" in stdout
+        assert "test.md" in stdout
+
+        assert "#0" in stdout
+        assert "Foo" in stdout
+
+        assert "#1" in stdout
+        assert "Bar" in stdout
+
+        assert "#2" not in stdout
+        assert "Baz" not in stdout
+
+        assert "warning" in stdout
+        assert "error" not in stdout

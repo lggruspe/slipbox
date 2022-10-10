@@ -33,6 +33,11 @@ class EmptyTargetLinkSchema(t.TypedDict):
     value: Note
 
 
+class GraphCycleSchema(t.TypedDict):
+    name: t.Literal["graph-cycle"]
+    value: Note
+
+
 class InvalidLinkValue(t.TypedDict):
     note: Note
     target: int
@@ -58,6 +63,7 @@ class MissingCitationsSchema(t.TypedDict):
 MessageSchema = t.Union[
     DuplicateNoteIDSchema,
     EmptyTargetLinkSchema,
+    GraphCycleSchema,
     InvalidLinkSchema,
     IsolatedNoteSchema,
     MissingCitationsSchema,
@@ -160,6 +166,7 @@ def resolve_checkers(
     # use all checkers (!= default)
     return {
         "empty-target-link",
+        "graph-cycle",
         "isolated-note",
         "missing-citations",
     }
@@ -185,6 +192,7 @@ class ErrorFormatter:
         notes: t.Dict[str, t.List[Note]] = {
             "duplicate-note-id": [],
             "empty-link-target": [],
+            "graph-cycle": [],
             "invalid-link": [],
             "isolated-note": [],
             "missing-citations": [],
@@ -205,6 +213,8 @@ class ErrorFormatter:
                         filename=note["filename"],
                     ))
             elif name == "empty-link-target":
+                notes[name].append(t.cast(Note, value).copy())
+            elif name == "graph-cycle":
                 notes[name].append(t.cast(Note, value).copy())
             elif name == "invalid-link":
                 value = t.cast(InvalidLinkValue, value)
@@ -250,6 +260,13 @@ class ErrorFormatter:
                 notes["empty-link-target"],
                 header=f"{warning}: Empty link target",
                 footer="These notes contain links with an empty target.",
+            )
+        if "graph-cycle" in checkers:
+            has_warnings = True
+            result += format_section(
+                notes["graph-cycle"],
+                header=f"{warning}: Graph cycle",
+                footer="A cycle was found in the notes graph.",
             )
         if "isolated-note" in checkers:
             has_warnings = True
