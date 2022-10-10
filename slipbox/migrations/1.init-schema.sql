@@ -23,6 +23,7 @@ CREATE TABLE Links (
     dest NOT NULL,  -- not an fk to keep backlink when dest gets deleted
                     -- and to allow notes to get scanned incrementally
                     -- ValidLinks gets subset with valid dest
+                    -- dest == -1 means src contains an empty link.
     direction
 );
 

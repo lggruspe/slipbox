@@ -450,12 +450,16 @@ Bye-bye.
     ) -> None:
         """slipbox.build must show a warning if there is a link with an empty
         target.
+
+        The link should be saved in the database, but the dest value should be
+        negative.
         """
         Path("test.md").write_text("# 0 Foo\n\n[Empty]().\n", encoding="utf-8")
         build(app)
 
-        result = list(app.database.execute("SELECT * FROM Links"))
-        assert not result
+        query = "SELECT src, dest, direction FROM Links"
+        result = list(app.database.execute(query))
+        assert result == [(0, -1, "")]
 
         stdout, stderr = capsys.readouterr()
         assert "#0" in stdout

@@ -137,7 +137,15 @@ end
 function Collector:Link(elem)
   if not elem.target or elem.target == "" then
     self.has_empty_link_target = true
+    self.slipbox:save_link {
+      src = self.id,
+      dest = -1,
+      description = "",
+      direction = "",
+    }
+    return
   end
+
   local ok, link = links.parse_note_link(elem.target)
   if ok then
     self.slipbox:save_link {
