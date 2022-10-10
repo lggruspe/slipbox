@@ -105,3 +105,116 @@ def test_init_invalid_config(app_without_root: RootlessApp) -> None:
 
     assert system_exit.value.code != 0
     assert "invalid config file" in system_exit.value.args[0]
+
+
+@pytest.mark.skipif(
+    not check_requirements(startup({})),
+    reason="missing requirements",
+)
+class TestsWithRequirements:
+    """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
+    def test_check_notes_with_enabled_checks(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Only the enabled checks should be used.
+
+        Checks that are enabled by default but aren't specified shouldn't be
+        used.
+        """
+        Path("test.md").write_text("""
+# 0 Foo
+
+[Foo]().
+
+# 1 Bar
+
+Bar.
+
+""", encoding="utf-8")
+        app.args["enable"] = "missing-citations"
+        build(app)
+        capsys.readouterr()
+        commands.check_notes(app)
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert not stderr
+
+    def test_check_notes_with_disabled_checks(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Disabled checks shouldn't be used."""
+        Path("test.md").write_text("""
+# 0 Foo
+
+[Foo]().
+
+[Bar](#1).
+
+# 1 Bar
+
+Bar.
+""", encoding="utf-8")
+        build(app)
+        capsys.readouterr()
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert not stderr
+
+        app.args["disable"] = "empty-link-target"
+        app.error_formatter.reset()
+        commands.check_notes(app)
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout   # empty-link-target should be ignored.
+        assert not stderr
+
+    def test_check_notes_with_enabled_and_disabled_checks(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Only enabled checks that aren't disabled should be used."""
+        Path("test.md").write_text("""
+# 0 Foo
+
+Foo. []()
+
+# 1 Bar
+
+Bar.
+
+# 2 Baz.
+""", encoding="utf-8")
+        build(app)
+        capsys.readouterr()
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert not stderr
+
+        # Only empty-link-target should be used.
+        app.args["enable"] = "isolated-note,empty-link-target"
+        app.args["disable"] = "isolated-note"
+        app.error_formatter.reset()
+        commands.check_notes(app)
+
+        stdout, stderr = capsys.readouterr()
+        assert stdout
+        assert not stderr
+
+        assert "Empty link target" in stdout
+        assert "#0" in stdout
+        assert "Foo" in stdout
+        assert "test.md" in stdout
+
+        assert "#1" not in stdout
+        assert "Bar" not in stdout
+
+        assert "#2" not in stdout
+        assert "Baz" not in stdout
