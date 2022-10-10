@@ -4,9 +4,41 @@ import typing as t
 
 from .app import App
 from .errors import (
-    InvalidLinkValue, InvalidLinkSchema, IsolatedNoteSchema,
-    MissingCitationsSchema, Note,
+    EmptyTargetLinkSchema,
+    InvalidLinkValue,
+    InvalidLinkSchema,
+    IsolatedNoteSchema,
+    MissingCitationsSchema,
+    Note,
 )
+
+
+def check_empty_links(app: App) -> t.List[Note]:
+    """Check for notes with empty links.
+
+    Results are reflected in app.error_formatter.
+    Returns list of notes with empty links.
+    """
+    notes = []
+    sql = """
+        SELECT DISTINCT id, title, filename
+        FROM Links JOIN Notes ON src = id
+        WHERE dest < 0
+        ORDER BY id
+    """
+    for nid, title, filename in app.database.execute(sql):
+        value: Note = dict(
+            id=int(nid),
+            title=title,
+            filename=filename,
+        )
+        message: EmptyTargetLinkSchema = dict(
+            name="empty-link-target",
+            value=value,
+        )
+        app.error_formatter.add_error(message)
+        notes.append(value)
+    return notes
 
 
 def check_invalid_links(app: App) -> t.List[InvalidLinkValue]:

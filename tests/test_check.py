@@ -22,6 +22,23 @@ def scan(app: App) -> None:
 )
 class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
+    def test_check_empty_links(self, app: App) -> None:
+        """check_empty_links must return only notes with empty links."""
+        Path("test.md").write_text(
+            "# 0 Foo\n\nFoo. []()\n\n# 1 Bar\n\nBar.\n",
+            encoding="utf-8",
+        )
+        scan(app)
+
+        result = list(check.check_empty_links(app))
+        assert result == [
+            dict(
+                id=0,
+                title="Foo",
+                filename="test.md",
+            ),
+        ]
+
     def test_check_invalid_links(self, app: App) -> None:
         """check_invalid_links must return note and invalid ID."""
         Path("test.md").write_text(
