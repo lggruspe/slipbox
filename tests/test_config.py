@@ -34,3 +34,13 @@ notes/*.tex = True
     assert not config.patterns.get("*.md")
     assert config.patterns.get("*.txt")
     assert config.patterns.get("notes/*.tex")
+
+
+def test_config_from_file_note_patterns() -> None:
+    """Config.from_file shouldn't overwrite defaults if empty."""
+    path = Path("config.cfg")
+    path.touch()
+    config = Config.from_file(path)
+
+    default = Config()
+    assert config == default

@@ -58,10 +58,11 @@ class Config:
         default.dot = parser.get("paths", "dot", fallback=default.dot)
 
         # [note-patterns]
-        default.patterns = {}
-        for key, _ in parser.items("note-patterns"):
-            val = parser.getboolean("note-patterns", key, fallback=False)
-            default.patterns[key] = val
+        if parser.has_section("note-patterns"):
+            default.patterns = {}
+            for key, _ in parser.items("note-patterns"):
+                val = parser.getboolean("note-patterns", key, fallback=False)
+                default.patterns[key] = val
 
         # [pandoc-options]
         bibliography = parser.get(
