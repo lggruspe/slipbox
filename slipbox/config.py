@@ -1,3 +1,4 @@
+# pylint: disable=too-many-instance-attributes
 """Slipbox configuration.
 
 Config overriding strategy:
@@ -31,6 +32,13 @@ class Config:
     # [pandoc-options]
     bibliography = None
     strip_comments = True
+
+    # [check]
+    checks = {
+        "empty-link-target": True,
+        "isolated-note": True,
+        "missing-citations": True,
+    }
 
     def __post_init__(self) -> None:
         self._update_from_env()
@@ -78,6 +86,14 @@ class Config:
             "strip-comments",
             fallback=default.strip_comments,
         )
+
+        # [check]
+        if parser.has_section("check"):
+            default.checks = {}
+            for key, _ in parser.items("check"):
+                val = parser.getboolean("check", key, fallback=False)
+                default.checks[key] = val
+
         default._update_from_env()  # pylint: disable=protected-access
         return default
 
@@ -90,7 +106,13 @@ class Config:
         """Convert to ConfigParser object."""
         config = ConfigParser()
 
-        sections = ["slipbox", "note-patterns", "paths", "pandoc-options"]
+        sections = [
+            "slipbox",
+            "note-patterns",
+            "paths",
+            "pandoc-options",
+            "check",
+        ]
         for section in sections:
             if not config.has_section(section):
                 config.add_section(section)
@@ -123,6 +145,13 @@ class Config:
             "strip-comments",
             "true" if self.strip_comments else "false",
         )
+
+        for check, include in self.checks.items():
+            config.set(
+                "check",
+                check,
+                "true" if include else "false",
+            )
         return config
 
     def write(self, path: Path) -> None:
