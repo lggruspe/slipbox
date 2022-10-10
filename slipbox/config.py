@@ -4,7 +4,6 @@ from configparser import ConfigParser
 from dataclasses import dataclass
 import os
 from pathlib import Path
-import typing as t
 
 
 @dataclass
@@ -66,12 +65,6 @@ class Config:
         """Update config from file."""
         config = ConfigParser()
         config.read_string(path.read_text())
-        self.read(config)
-
-    def read_dict(self, dict_: t.Dict[str, t.Any]) -> None:
-        """Update config from dict."""
-        config = ConfigParser()
-        config.read_dict(dict_)
         self.read(config)
 
     def read_env(self) -> None:
