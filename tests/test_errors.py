@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from slipbox.errors import ErrorFormatter
+from slipbox.errors import ErrorFormatter, resolve_checkers
 
 
 def test_error_formatter_duplicate_messages() -> None:
@@ -76,3 +76,28 @@ def test_error_formatter_warnings_only() -> None:
 
     result = formatter.format().strip()
     assert "Found errors" not in result
+
+
+def test_resolve_checkers_default() -> None:
+    """When args are None, should return default checkers."""
+    checkers = resolve_checkers(None, None)
+    assert checkers
+    assert "" not in checkers
+
+
+def test_resolve_checkers_enabled_only() -> None:
+    """Result should be set of checkers in comma-separated list."""
+    enabled = "graph-cycle,isolated-note"
+    checkers = resolve_checkers(enabled, None)
+    assert set(enabled.split(",")) == checkers
+    assert "" not in checkers
+
+
+def test_resolve_checkers_disabled_only() -> None:
+    """Result should contain default checkers - disabled checkers."""
+    disabled = "graph-cycle,isolated-note"
+    checkers = resolve_checkers(None, disabled)
+    assert checkers
+    assert "" not in checkers
+    assert "graph-cycle" not in checkers
+    assert "isolated-note" not in checkers

@@ -151,19 +151,22 @@ def resolve_checkers(
     disabled: t.Optional[str],
 ) -> t.Set[str]:
     """Determine set of checkers to use."""
+    default = {
+        "empty-link-target",
+        "isolated-note",
+        "missing-citations",
+    }
     if enabled is None and disabled is None:
-        # use default checkers.
-        return {
-            "empty-link-target",
-            "isolated-note",
-            "missing-citations",
-        }
-    checkers = (
-        set((enabled or "").split(",")) - set((disabled or "").split(","))
-    )
+        return default
+
+    excluded = set(disabled.split(",")) if disabled else set()
+    if enabled is None:
+        return default - excluded
+
+    included = set(enabled.split(",") if enabled else set())
+    checkers = included - excluded
     if "all" not in checkers:
         return checkers
-    # use all checkers (!= default)
     return {
         "empty-target-link",
         "graph-cycle",
@@ -212,10 +215,6 @@ class ErrorFormatter:
                         title=note["title"],
                         filename=note["filename"],
                     ))
-            elif name == "empty-link-target":
-                notes[name].append(t.cast(Note, value).copy())
-            elif name == "graph-cycle":
-                notes[name].append(t.cast(Note, value).copy())
             elif name == "invalid-link":
                 value = t.cast(InvalidLinkValue, value)
                 note = value["note"].copy()
@@ -223,9 +222,7 @@ class ErrorFormatter:
                 invalid_link_targets.setdefault(int(note["id"]), []).append(
                     value["target"],
                 )
-            elif name == "isolated-note":
-                notes[name].append(t.cast(Note, value).copy())
-            elif name == "missing-citations":
+            else:
                 notes[name].append(t.cast(Note, value).copy())
 
         invalid_link_info = {}
