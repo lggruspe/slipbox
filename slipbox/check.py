@@ -141,7 +141,11 @@ def check_notes(app: App) -> bool:
     Returns False is errors are found.
     """
     has_error = check_invalid_links(app)
-    has_warning = check_isolated_notes(app) or check_unsourced_notes(app)
+    has_warning = (
+        check_empty_links(app)
+        or check_isolated_notes(app)
+        or check_unsourced_notes(app)
+    )
     if has_error or has_warning:
         enabled = app.args.get("enable")
         disabled = app.args.get("disable")

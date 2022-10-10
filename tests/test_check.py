@@ -163,3 +163,28 @@ Bar.
         assert stdout
         assert "Test" in stdout
         assert not stderr
+
+    def test_check_notes_with_empty_links(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """check_notes must include empty-link-target check."""
+        Path("test.md").write_text("# 0 Test\n[]()", encoding="utf-8")
+        scan(app)
+        capsys.readouterr()
+
+        stdout, stderr = capsys.readouterr()
+        assert not stdout
+        assert not stderr
+
+        app.error_formatter.reset()
+        assert check.check_notes(app)
+        stdout, stderr = capsys.readouterr()
+
+        assert "Empty link target" in stdout
+        assert "#0" in stdout
+        assert "Test" in stdout
+        assert "test.md" in stdout
+
+        assert not stderr

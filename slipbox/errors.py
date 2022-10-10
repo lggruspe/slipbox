@@ -160,6 +160,10 @@ class ErrorFormatter:
     def __init__(self) -> None:
         self.messages: t.List[MessageSchema] = []
 
+    def reset(self) -> None:
+        """Clear messages."""
+        self.messages = []
+
     def format(
         self,
         enabled: t.Optional[str] = None,
