@@ -16,8 +16,10 @@ def scan(app: App) -> None:
     build(app)
 
 
-@pytest.mark.skipif(not check_requirements(startup({})),
-                    reason="missing requirements")
+@pytest.mark.skipif(
+    not check_requirements(startup({})),
+    reason="missing requirements",
+)
 class TestsWithRequirements:
     """Tests with external requirements (e.g. pandoc, graphviz, etc.)."""
     def test_check_invalid_links(self, app: App) -> None:

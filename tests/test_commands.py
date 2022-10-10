@@ -21,8 +21,10 @@ def test_show_info_missing_note(app: App) -> None:
     assert "does not exist" in system_exit.value.args[0]
 
 
-@pytest.mark.skipif(not check_requirements(startup({})),
-                    reason="missing requirements")
+@pytest.mark.skipif(
+    not check_requirements(startup({})),
+    reason="missing requirements",
+)
 def test_show_info_in_stdout(
     app: App,
     capsys: pytest.CaptureFixture[str],
