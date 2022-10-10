@@ -1,5 +1,6 @@
 """App object."""
 
+import configparser
 from dataclasses import dataclass, field
 from functools import wraps
 from pathlib import Path
@@ -86,7 +87,10 @@ def startup(args: t.Dict[str, t.Any]) -> t.Union[App, RootlessApp]:
 
     root = app.root
     if root:
-        app.config = Config.from_file(root/".slipbox"/"config.cfg")
+        try:
+            app.config = Config.from_file(root/".slipbox"/"config.cfg")
+        except configparser.Error:
+            error("invalid config file: .slipbox/config.cfg")
         app.database = connect(root/".slipbox"/"data.db")
         app = t.cast(App, app)
 

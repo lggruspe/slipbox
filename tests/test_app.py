@@ -2,7 +2,7 @@
 
 import pytest
 
-from slipbox.app import App, find_root
+from slipbox.app import App, find_root, startup
 
 
 def test_find_root_in_current(app: App) -> None:
@@ -49,3 +49,21 @@ def test_app_database_backup_and_restore(app: App) -> None:
 
     assert not backup.exists()
     assert before == after
+
+
+def test_startup_with_existing_directory(app: App) -> None:
+    """startup should find the notes directory root."""
+    alias = startup({})
+    assert alias.root == app.root
+
+
+def test_startup_with_invalid_config(app: App) -> None:
+    """The program should exit with non-zero error."""
+    config = app.root/".slipbox"/"config.cfg"
+    config.write_text("invalid config file :)")
+
+    with pytest.raises(SystemExit) as system_exit:
+        startup({})
+
+    assert system_exit.value.code != 0
+    assert "invalid config file" in system_exit.value.args[0]
