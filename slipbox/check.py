@@ -15,10 +15,11 @@ def check_invalid_links(app: App) -> t.List[InvalidLinkValue]:
     Results are reflected in app.error_formatter.
     Returns list of invalid links.
     """
+    # NOTE Ignores negative (empty) links
     sql = """
         SELECT DISTINCT id, title, filename, dest
         FROM Links JOIN Notes ON src = id
-        WHERE dest NOT IN (
+        WHERE dest >= 0 AND dest NOT IN (
             SELECT id FROM Notes
         )
         ORDER BY id

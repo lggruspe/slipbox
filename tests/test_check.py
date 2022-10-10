@@ -42,6 +42,14 @@ class TestsWithRequirements:
             ),
         ]
 
+    def test_check_invalid_links_with_empty_links(self, app: App) -> None:
+        """check_invalid_links shouldn't raise errors for empty links."""
+        Path("test.md").write_text("# 0 Test []()", encoding="utf-8")
+        scan(app)
+
+        result = list(check.check_invalid_links(app))
+        assert not result
+
     def test_check_isolated_notes(self, app: App) -> None:
         """check_isolated_notes must return untagged notes only."""
         Path("test.md").write_text("""# 0 Foo
