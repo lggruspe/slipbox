@@ -168,7 +168,7 @@ def resolve_checkers(
     if "all" not in checkers:
         return checkers
     return {
-        "empty-target-link",
+        "empty-link-target",
         "graph-cycle",
         "isolated-note",
         "missing-citations",

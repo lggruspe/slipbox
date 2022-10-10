@@ -101,3 +101,10 @@ def test_resolve_checkers_disabled_only() -> None:
     assert "" not in checkers
     assert "graph-cycle" not in checkers
     assert "isolated-note" not in checkers
+
+
+def test_resolve_checkers_default_all() -> None:
+    """Default checkers are a subset of all checkers."""
+    default = resolve_checkers(None, None)
+    all_ = resolve_checkers("all", None)
+    assert default.issubset(all_)
