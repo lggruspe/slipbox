@@ -46,9 +46,21 @@ def parse_args(argv: t.Optional[t.Sequence[str]] = None) -> t.Dict[str, t.Any]:
         help="update database only; do not generate site in output directory",
     )
 
-    subparsers.add_parser(
+    subparser = subparsers.add_parser(
         "check",
         description="Check for isolated notes and invalid links.",
+    )
+    subparser.add_argument(
+        "-e",
+        "--enable",
+        dest="enable",
+        help="comma-separated list of checkers to enable (overrides config)",
+    )
+    subparser.add_argument(
+        "-d",
+        "--disable",
+        dest="disable",
+        help="comma-separated list of checkers to disable (overrides config)",
     )
 
     subparser = subparsers.add_parser("info", description="Show note info.")

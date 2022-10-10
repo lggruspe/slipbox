@@ -102,13 +102,41 @@ def check_unsourced_notes(app: App) -> t.List[Note]:
     return unsourced_notes
 
 
+def resolve_checkers(
+    enable: t.Optional[str],
+    disable: t.Optional[str],
+) -> t.Set[str]:
+    """Determine set of checkers to use."""
+    if enable is None and disable is None:
+        # use default checkers.
+        return {
+            "empty-link-target",
+            "isolated-note",
+            "missing-citations",
+        }
+    return set((enable or "").split(",")) - set((disable or "").split(","))
+
+
 def check_notes(app: App) -> bool:
     """Check notes in slipbox.
 
     Returns False is errors are found.
     """
+    checkers = resolve_checkers(
+        enable=app.args.get("enable"),
+        disable=app.args.get("disable"),
+    )
+
+    has_warning = False
     has_error = check_invalid_links(app)
-    has_warning = check_isolated_notes(app) or check_unsourced_notes(app)
+
+    if "isolated-note" in checkers:
+        if check_isolated_notes(app):
+            has_warning = True
+    if "missing-citations" in checkers:
+        if check_unsourced_notes(app):
+            has_warning = True
+
     if has_error or has_warning:
         print(app.error_formatter.format(), end="")
     return not has_error
