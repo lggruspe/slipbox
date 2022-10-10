@@ -62,6 +62,12 @@ def parse_args(argv: t.Optional[t.Sequence[str]] = None) -> t.Dict[str, t.Any]:
         dest="disable",
         help="comma-separated list of checkers to disable (overrides config)",
     )
+    subparser.add_argument(
+        "--strict",
+        action="store_true",
+        dest="strict",
+        help="turn warnings into errors",
+    )
 
     subparser = subparsers.add_parser("info", description="Show note info.")
     subparser.add_argument("note_id", type=int)

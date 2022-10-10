@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,too-many-branches,too-many-locals
 """Collects and formats error messages."""
 
 import json
@@ -168,6 +168,7 @@ class ErrorFormatter:
         self,
         enabled: t.Optional[str] = None,
         disabled: t.Optional[str] = None,
+        strict: bool = False,
     ) -> str:
         """Minimized output for all errors and warnings."""
         checkers = resolve_checkers(enabled, disabled)
@@ -212,43 +213,50 @@ class ErrorFormatter:
             invalid_link_info[id_] = "-> " + " ".join(
                 bright(f"#{target}") for target in targets
             )
+
+        error = red("error")
+        warning = yellow("warning")
+        if strict:
+            warning = error
+
         result = (
             format_section(
                 notes["duplicate-note-id"],
-                header=red("error") + ": Duplicate note ID",
+                header=f"{error}: Duplicate note ID",
             ) +
             format_section(
                 notes["invalid-link"],
-                header=red("error") + ": Invalid link",
+                header=f"{error}: Invalid link",
                 footer="These notes link to non-existent notes.",
                 info=invalid_link_info,
             )
         )
+        has_errors = bool(result)
+        has_warnings = False
 
         if "empty-link-target" in checkers:
+            has_warnings = True
             result += format_section(
                 notes["empty-link-target"],
-                header=yellow("warning") + ": Empty link target",
+                header=f"{warning}: Empty link target",
                 footer="These notes contain links with an empty target.",
             )
         if "isolated-note" in checkers:
+            has_warnings = True
             result += format_section(
                 notes["isolated-note"],
-                header=yellow("warning") + ": Isolated note",
+                header=f"{warning}: Isolated note",
                 footer="These notes are not reachable from other notes.",
             )
         if "missing-citations" in checkers:
+            has_warnings = True
             result += format_section(
                 notes["missing-citations"],
-                header=yellow("warning") + ": Missing citations",
+                header=f"{warning}: Missing citations",
                 footer="These notes do not cite sources.",
             )
 
-        has_errors = (
-            bool(notes["duplicate-note-id"])
-            or bool(notes["invalid-link"])
-        )
-        if has_errors:
+        if has_errors or strict and has_warnings:
             result += "Found errors :(\n"
         return result
 

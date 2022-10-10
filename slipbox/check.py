@@ -146,8 +146,12 @@ def check_notes(app: App) -> bool:
         or check_isolated_notes(app)
         or check_unsourced_notes(app)
     )
+    strict = app.args.get("strict", False)
     if has_error or has_warning:
         enabled = app.args.get("enable")
         disabled = app.args.get("disable")
-        print(app.error_formatter.format(enabled, disabled), end="")
-    return not has_error
+        print(
+            app.error_formatter.format(enabled, disabled, strict=strict),
+            end="",
+        )
+    return not has_error and (not strict or not has_warning)

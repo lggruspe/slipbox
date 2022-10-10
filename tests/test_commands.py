@@ -10,6 +10,12 @@ from slipbox.config import Config
 from slipbox.dependencies import check_requirements
 
 
+def scan(app: App) -> None:
+    """Run 'slipbox build --no-output'."""
+    app.args["output"] = False
+    build(app)
+
+
 def test_show_info_missing_note(app: App) -> None:
     """show_info should print error message and exit with error code."""
     app.args = {"note_id": 0}
@@ -218,3 +224,28 @@ Bar.
 
         assert "#2" not in stdout
         assert "Baz" not in stdout
+
+    def test_check_notes_strict(
+        self,
+        app: App,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """strict=True should turn warnings into errors."""
+        Path("test.md").write_text("# 0 Test.", encoding="utf-8")
+        app.args["strict"] = True
+        scan(app)
+
+        # isolated-note is normally a warning, but should be an error if
+        # strict flag is turned on.
+        with pytest.raises(SystemExit) as system_exit:
+            commands.check_notes(app)
+
+        assert system_exit.value.code != 0
+
+        stdout, stderr = capsys.readouterr()
+        assert stdout
+        assert not stderr
+
+        assert "Found errors :(" in stdout
+        assert "error" in stdout
+        assert "warning" not in stdout
