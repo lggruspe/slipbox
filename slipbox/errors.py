@@ -229,6 +229,7 @@ class ErrorFormatter:
             result += format_section(
                 notes["empty-link-target"],
                 header=yellow("warning") + ": Empty link target",
+                footer="These notes contain links with an empty target.",
             )
         if "isolated-note" in checkers:
             result += format_section(
