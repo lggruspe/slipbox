@@ -2,7 +2,6 @@
 
 from hashlib import sha256
 from pathlib import Path
-import sys
 import typing as t
 
 from .app import App, error, require_init
@@ -85,7 +84,7 @@ def build(app: App) -> None:
     outdated = find_outdated_notes(app, notes)
     delete_notes(app, outdated)
     is_ok = process_notes(app, notes)
-    print(app.error_formatter.format(), end="", file=sys.stderr)
+    print(app.error_formatter.format(), end="")
 
     if not is_ok:
         app.restore_database_backup()
