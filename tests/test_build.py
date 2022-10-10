@@ -1,3 +1,4 @@
+# pylint: disable=too-many-public-methods
 """Test slipbox.py."""
 
 from hashlib import sha256
@@ -304,10 +305,29 @@ Test.
         result = list(app.database.execute("SELECT id, tag FROM Tags"))
         assert result == [(0, "#test")]
 
+    def test_build_with_negative_id(self, app: App) -> None:
+        """Negative numbers should not be recognized as an ID."""
+        Path("test.md").write_text("""# -1 Invalid note
+
+Invalid.
+
+# 0 Valid note
+
+[Not a note link](#-1)
+.""", encoding="utf-8")
+        build(app)
+
+        result = list(app.database.execute("SELECT id, title FROM Notes"))
+        assert result == [(0, "Valid note")]
+
+        query = "SELECT src, dest, direction FROM Links"
+        result = list(app.database.execute(query))
+        assert not result
+
     def test_build_with_duplicate_ids_in_a_file(
         self,
-        capsys: pytest.CaptureFixture[str],
         app: App,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         """If there are duplicate IDs in a file, save neither note.
 
