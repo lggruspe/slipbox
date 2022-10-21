@@ -11,10 +11,10 @@ slipbox
 Features
 --------
 
--   Interactive graph of notes and links
--   Static text search
--   Supports notes in markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags,
-    Textile and MediaWiki formats
+- Interactive graph of notes and links
+- Static text search
+- Supports notes in markdown, RST, LaTeX, dokuwiki, Org-mode, txt2tags, Textile and MediaWiki formats
+- Checkers/linters for detecting unlinked notes, missing citations, bad formatting and more
 
 Requirements
 ------------
