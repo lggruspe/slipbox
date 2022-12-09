@@ -15,6 +15,7 @@ local function update_paths()
    assert(not updated)
    if not updated then
       package.path = "lua_modules/share/lua/5.4/?.lua;" .. package.path
+      package.cpath = "lua_modules/lib/lua/5.4/?.so;" .. package.cpath
       package.cpath = "lua_modules/lib64/lua/5.4/?.so;" .. package.cpath
       updated = true
    end
