@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/lggruspe/slipbox#readme",
   "devDependencies": {
-    "@types/cytoscape": "^3.19.7",
+    "@types/cytoscape": "^3.19.9",
     "@types/flexsearch": "^0.7.3",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
@@ -43,10 +43,10 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@shoelace-style/shoelace": "^2.0.0-beta.71",
-    "boxicons": "^2.0.7",
-    "cytoscape": "^3.19.1",
+    "@shoelace-style/shoelace": "^2.0.0-beta.88",
+    "boxicons": "^2.1.4",
+    "cytoscape": "^3.23.0",
     "flexsearch": "^0.7.21",
-    "mathjax": "^3.2.0"
+    "mathjax": "^3.2.2"
   }
 }
