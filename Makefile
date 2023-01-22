@@ -56,7 +56,7 @@ lint:
 # Run python tests
 .PHONY:	test
 test:
-	tox -e py310
+	tox -e py311
 
 # Copy JS and Lua filters into slipbox/
 .PHONY:	bundle
