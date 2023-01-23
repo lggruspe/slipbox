@@ -130,8 +130,9 @@ reference.
 
 ## Styling
 
-You can style the bibliography section by specifying a CSL file to use in the
-configuration file.
+You can style the bibliography section by specifying a
+[CSL file](https://www.zotero.org/styles) to use in the configuration
+file.
 
 ```ini
 [pandoc-options]
