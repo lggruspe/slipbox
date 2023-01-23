@@ -1,4 +1,4 @@
-colorama==0.4.5
-networkx==2.8.6
+colorama==0.4.6
+networkx==3.0
 pydot==1.4.2
-pyquery==1.4.3
+pyquery==2.0.0
