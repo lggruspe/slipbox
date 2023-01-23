@@ -1,3 +1,3 @@
 """slipbox"""
 
-__version__ = "0.19.13a1"
+__version__ = "0.19.13a2"

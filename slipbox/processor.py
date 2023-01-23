@@ -149,6 +149,20 @@ def create_preprocessed_input(
     return path
 
 
+def resolve_csl_file(app: App) -> str:
+    """Return the string to pass to `pandoc --csl` option.
+
+    It either uses the config value if it's available, or a default CSL file.
+    The result is `shlex.quote`d.
+    """
+    config = app.config
+    if config.csl is not None:
+        return shlex.quote(str((app.root/config.csl).resolve()))
+
+    default = Path(__file__).parent/"data"/"default.csl"
+    return shlex.quote(str(default.resolve()))
+
+
 def build_options(app: App) -> str:
     """Build list of options to pass to pandoc based on user config."""
     options = ""
@@ -159,10 +173,7 @@ def build_options(app: App) -> str:
     if config.bibliography is not None:
         path = shlex.quote(str((app.root/config.bibliography).resolve()))
         options += f" --bibliography {path} --citeproc "
-
-        if config.csl is not None:
-            path = shlex.quote(str((app.root/config.csl).resolve()))
-            options += f" --csl {path} "
+        options += f" --csl {resolve_csl_file(app)} "
     return options
 
 

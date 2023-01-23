@@ -65,6 +65,7 @@ bundle:	check-js bundle-lua
 	mkdir -p slipbox/data
 	cp -r js/dist/* slipbox/data
 	cp filters/build/filter.lua slipbox/data
+	cp data/* slipbox/data
 
 # Build Lua filters.
 .PHONY:	bundle-lua
