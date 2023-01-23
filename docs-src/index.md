@@ -128,6 +128,18 @@ bibliography = example.bib
 Click citation links to see the other notes that cite the same
 reference.
 
+## Styling
+
+You can style the bibliography section by specifying a CSL file to use in the
+configuration file.
+
+```ini
+[pandoc-options]
+bibliography = examble.bib
+csl = example.csl
+```
+
+`slipbox` looks for these files relative to the root of your notes directory.
 
 
 # 8 How to view the generated site?

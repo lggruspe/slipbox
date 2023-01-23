@@ -31,6 +31,7 @@ class Config:
 
     # [pandoc-options]
     bibliography = None
+    csl = None
     strip_comments = True
 
     # [check]
@@ -80,6 +81,14 @@ class Config:
         )
         if bibliography:
             default.bibliography = Path(bibliography)
+
+        csl = parser.get(
+            "pandoc-options",
+            "csl",
+            fallback=None,
+        )
+        if csl:
+            default.csl = Path(csl)
 
         default.strip_comments = parser.getboolean(
             "pandoc-options",
@@ -139,6 +148,12 @@ class Config:
                 "pandoc-options",
                 "bibliography",
                 str(self.bibliography),
+            )
+        if self.csl is not None:
+            config.set(
+                "pandoc-options",
+                "csl",
+                str(self.csl),
             )
         config.set(
             "pandoc-options",

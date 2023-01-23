@@ -159,6 +159,10 @@ def build_options(app: App) -> str:
     if config.bibliography is not None:
         path = shlex.quote(str((app.root/config.bibliography).resolve()))
         options += f" --bibliography {path} --citeproc "
+
+        if config.csl is not None:
+            path = shlex.quote(str((app.root/config.csl).resolve()))
+            options += f" --csl {path} "
     return options
 
 
