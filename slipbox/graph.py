@@ -10,6 +10,10 @@ from pyquery import PyQuery     # type: ignore
 from .serializer import serialize
 
 
+# Maps note IDs to coordinates.
+GraphLayout = t.Dict[int, t.Tuple[float, float]]
+
+
 def create_graph(con: Connection) -> nx.DiGraph:
     """Construct graph from slipbox data."""
     graph = nx.DiGraph()
@@ -83,19 +87,19 @@ def get_note_titles(con: Connection) -> t.Iterable[t.Tuple[int, str]]:
 def compute_graph_layout(
     graph: nx.DiGraph,
     layout: str = "fdp",
-) -> t.Dict[int, t.Tuple[float, float]]:
+) -> GraphLayout:
     """Compute graph layout using graphviz without using cache.
 
     Expects graph without self-loops.
     """
     positions = nx.drawing.nx_pydot.graphviz_layout(graph, prog=layout)
-    return t.cast(t.Dict[int, t.Tuple[float, float]], positions)
+    return t.cast(GraphLayout, positions)
 
 
 def get_cached_graph_layout(
     con: Connection,
     key: str,
-) -> t.Optional[t.Dict[int, t.Tuple[float, float]]]:
+) -> t.Optional[GraphLayout]:
     """Return cached graph layout in json, or None."""
     sql = "SELECT layout FROM LayoutCache WHERE key = ?"
 
@@ -129,7 +133,7 @@ def get_graph_layout(
     con: Connection,
     graph: nx.DiGraph,
     layout: str = "fdp",
-) -> t.Dict[int, t.Tuple[float, float]]:
+) -> GraphLayout:
     """Get graph layout from LayoutCache or compute using graphviz.
 
     Expects graph without self-loops.
