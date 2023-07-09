@@ -6,7 +6,14 @@ module.exports = {
     jest: true,
   },
   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-  overrides: [],
+  overrides: [
+    {
+      files: ["**/*.js"],
+      rules: {
+        "@typescript-eslint/no-var-requires": "off",
+      },
+    },
+  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",

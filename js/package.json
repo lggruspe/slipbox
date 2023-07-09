@@ -7,13 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "build": "node scripts/build.cjs",
+    "build": "node scripts/build.js",
     "check": "npm run format && npm run lint && npm run typecheck",
     "check:fix": "npm run format:fix && npm run lint:fix && npm run typecheck",
     "format": "prettier -c .",
     "format:fix": "prettier -w .",
-    "lint": "eslint src test",
-    "lint:fix": "eslint src test --fix",
+    "lint": "eslint scripts src test",
+    "lint:fix": "eslint scripts src test --fix",
     "test": "nyc mocha",
     "typecheck": "tsc"
   },
