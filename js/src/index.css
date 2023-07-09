@@ -1,37 +1,37 @@
-@import '@shoelace-style/shoelace/dist/themes/light.css';
+@import "@shoelace-style/shoelace/dist/themes/light.css";
 
 html {
-	font-family: sans-serif;
-	line-height: 1.5;
+  font-family: sans-serif;
+  line-height: 1.5;
 }
 
 main {
-	max-width: 800px;
-	margin: 0 auto;
-	padding: 1em;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1em;
 }
 
 p {
-	overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 img {
-	max-width: 100%;
+  max-width: 100%;
 }
 
 #title-block-header {
-	display: none;
+  display: none;
 }
 
 .level1 {
-	display: none;
-	padding: 1em 1.5em;
+  display: none;
+  padding: 1em 1.5em;
 }
 
 .level1:target {
-	display: block;
+  display: block;
 }
 
 ul.slipbox-list {
-	list-style: none;
+  list-style: none;
 }
