@@ -1,17 +1,12 @@
 """Generate note graphs and graph layouts."""
 
-import json
 from sqlite3 import Connection
 import typing as t
 
 import networkx as nx   # type: ignore
 from pyquery import PyQuery     # type: ignore
 
-from .serializer import serialize
-
-
-# Maps note IDs to coordinates.
-GraphLayout = t.Dict[int, t.Tuple[float, float]]
+from .layout import LayoutCache
 
 
 def create_graph(con: Connection) -> nx.DiGraph:
@@ -84,72 +79,8 @@ def get_note_titles(con: Connection) -> t.Iterable[t.Tuple[int, str]]:
         yield (id_, title)
 
 
-def compute_graph_layout(
-    graph: nx.DiGraph,
-    layout: str = "fdp",
-) -> GraphLayout:
-    """Compute graph layout using graphviz without using cache.
-
-    Expects graph without self-loops.
-    """
-    positions = nx.drawing.nx_pydot.graphviz_layout(graph, prog=layout)
-    return t.cast(GraphLayout, positions)
-
-
-def get_cached_graph_layout(
-    con: Connection,
-    key: str,
-) -> t.Optional[GraphLayout]:
-    """Return cached graph layout in json, or None."""
-    sql = "SELECT layout FROM LayoutCache WHERE key = ?"
-
-    cur = con.cursor()
-    cur.execute(sql, (key,))
-    row = cur.fetchone()
-    if not row:
-        return None
-
-    cached = json.loads(row[0])
-    return {int(k): v for k, v in cached.items()}
-
-
-def save_graph_layout(con: Connection, key: str, value: str) -> None:
-    """Save key value pair in LayoutCache.
-
-    Assume that value is a valid JSON.
-    Note: JSON keys are always strings.
-
-    Caller is expected to commit changes afterward.
-    """
-    sql = """
-        INSERT INTO LayoutCache (key, layout) VALUES (?, ?)
-        ON CONFLICT (key) DO
-        UPDATE SET layout = excluded.layout
-        """
-    con.execute(sql, (key, value))
-
-
-def get_graph_layout(
-    con: Connection,
-    graph: nx.DiGraph,
-    layout: str = "fdp",
-) -> GraphLayout:
-    """Get graph layout from LayoutCache or compute using graphviz.
-
-    Expects graph without self-loops.
-    """
-    serialized = serialize(graph)
-    cached = get_cached_graph_layout(con, serialized)
-    if cached is not None:
-        return cached
-
-    result = compute_graph_layout(graph, layout)
-    save_graph_layout(con, serialized, json.dumps(result))
-    return result
-
-
 def create_graph_data(
-    con: Connection,
+    cache: LayoutCache,
     titles: t.Dict[int, str],
     graph: nx.DiGraph,
     layout: str = "fdp",
@@ -160,10 +91,17 @@ def create_graph_data(
     Prepares the graph layout and unpads title HTML.
 
     titles: dict of note IDs and title HTML fragments
+
+    All futures in the cache should have been resolved (using `cache.wait()`)
+    before being passed to this function.
     """
+    assert cache.is_done
+
     copy = without_self_loop(graph)
     data = nx.readwrite.json_graph.cytoscape_data(copy)
-    positions = get_graph_layout(con, copy, layout)
+
+    # Wait time should be 0 because of assertion.
+    positions = cache.get(copy, layout).result()
 
     for node in data["elements"]["nodes"]:
         node_id = int(node["data"]["id"])
