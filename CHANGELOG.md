@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.19.14] - 2023-07-09
+
+- Add comment trees.
+    + Usage: create a div that has the "comment" class.
+
 ## [v0.19.13] - 2023-01-23
 
 - Fix how author names are displayed in the bibliography section
