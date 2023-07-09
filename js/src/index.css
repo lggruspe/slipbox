@@ -35,3 +35,21 @@ img {
 ul.slipbox-list {
   list-style: none;
 }
+
+/* Extras */
+
+.level1 {
+  counter-reset: comment;
+}
+
+.comment {
+  counter-increment: comment;
+  border-left: 3px solid red;
+  padding-left: 1em;
+}
+
+.comment:before {
+  content: "Comment #" counter(comment);
+  color: gray;
+  font-size: 0.75rem;
+}
