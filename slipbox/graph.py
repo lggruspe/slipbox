@@ -1,5 +1,6 @@
 """Generate note graphs and graph layouts."""
 
+from collections import Counter
 import json
 from sqlite3 import Connection
 import typing as t
@@ -11,7 +12,7 @@ from .serializer import serialize
 
 
 def create_graph(con: Connection) -> nx.DiGraph:
-    """Construct graph from slipbox data."""
+    """Construct note graph from slipbox data."""
     graph = nx.DiGraph()
 
     sql = "SELECT id, filename FROM Notes"
@@ -28,6 +29,48 @@ def create_graph(con: Connection) -> nx.DiGraph:
             graph.add_edge(dest, src)
         else:
             graph.add_edge(src, dest)
+    return graph
+
+
+def create_tag_graph(con: Connection) -> nx.Graph:
+    """Construct graph of tags.
+
+    Edges represent links between notes with different tags.
+    """
+    counter: Counter[tuple[str, str]] = Counter()
+
+    # Count links between different notes with different tags.
+    query = """
+        SELECT A.tag, B.tag, count(*)
+        FROM Links
+        JOIN Tags AS A ON (A.id = src)
+        JOIN Tags AS B ON (B.id = dest)
+        where A.tag != B.tag
+        GROUP BY A.tag, B.tag
+    """
+    for tag_a, tag_b, count in con.execute(query):
+        tag_a, tag_b = min(tag_a, tag_b), max(tag_a, tag_b)
+        counter[(tag_a, tag_b)] += count
+
+    # Count pairs of tags that appear in the same note.
+    query = """
+        SELECT A.tag, B.tag, count(*)
+        FROM Tags AS A
+        JOIN Tags AS B
+        USING (id)
+        WHERE A.tag < B.tag
+        GROUP BY A.tag, B.tag
+    """
+    for tag_a, tag_b, count in con.execute(query):
+        # Sort again just to be sure, because sqlite comparison might differ
+        # from Python's.
+        tag_a, tag_b = min(tag_a, tag_b), max(tag_a, tag_b)
+        counter[(tag_a, tag_b)] += count
+
+    # Build graph.
+    graph = nx.Graph()
+    for (tag_a, tag_b), count in counter.most_common():
+        graph.add_edge(tag_a, tag_b, weight=count)
     return graph
 
 
