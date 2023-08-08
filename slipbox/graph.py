@@ -45,7 +45,7 @@ def create_tag_graph(con: Connection) -> nx.Graph:
         FROM Links
         JOIN Tags AS A ON (A.id = src)
         JOIN Tags AS B ON (B.id = dest)
-        where A.tag != B.tag
+        WHERE A.tag != B.tag
         GROUP BY A.tag, B.tag
     """
     for tag_a, tag_b, count in con.execute(query):
@@ -71,6 +71,59 @@ def create_tag_graph(con: Connection) -> nx.Graph:
     graph = nx.Graph()
     for (tag_a, tag_b), count in counter.most_common():
         graph.add_edge(tag_a, tag_b, weight=count)
+    return graph
+
+
+def create_reference_graph(con: Connection) -> nx.Graph:
+    """Construct graph of references.
+
+    An edge between two references A and B means one of the following.
+
+    - There's a link between a note that cites A and a note that cites B.
+    - There's a note that cites both references.
+    """
+    counter: Counter[tuple[str, str]] = Counter()
+
+    # Count links between notes.
+    query = """
+        SELECT A.reference, B.reference, count(*)
+        FROM Links
+        JOIN Citations AS A ON (A.note = src)
+        JOIN Citations AS B ON (B.note = dest)
+        WHERE A.reference != B.reference
+        GROUP BY A.reference, B.reference
+    """
+    for ref_a, ref_b, count in con.execute(query):
+        ref_a, ref_b = min(ref_a, ref_b), max(ref_a, ref_b)
+        counter[(ref_a, ref_b)] += count
+
+    # Count pairs of references cited by the same note.
+    query = """
+        SELECT A.reference, B.reference, count(*)
+        FROM Citations AS A
+        JOIN Citations AS B
+        USING (note)
+        WHERE A.reference < B.reference
+        GROUP BY A.reference, B.reference
+    """
+    for ref_a, ref_b, count in con.execute(query):
+        # Sort again just to be sure, because sqlite comparison might differ
+        # from Python's.
+        ref_a, ref_b = min(ref_a, ref_b), max(ref_a, ref_b)
+        counter[(ref_a, ref_b)] += count
+
+    # Get titles.
+    titles = {}
+    query = "SELECT key, html FROM Bibliography"
+    for ref, title in con.execute(query):
+        titles[ref] = title
+
+    # Build graph.
+    graph = nx.Graph()
+    for (ref_a, ref_b), count in counter.most_common():
+        graph.add_node(ref_a, title=titles[ref_a])
+        graph.add_node(ref_b, title=titles[ref_b])
+        graph.add_edge(ref_a, ref_b, weight=count)
     return graph
 
 
