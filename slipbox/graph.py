@@ -268,3 +268,15 @@ def create_graph_data(
         node["position"] = {"x": 2 * x, "y": -2 * y}
         # Scale y by -2 to flip the graph vertically so edges point downward.
     return t.cast(t.Dict[str, t.Any], data)
+
+
+def create_plain_graph_data(graph: nx.Graph) -> t.Dict[str, t.Any]:
+    """Similar to `create_graph_data` with a few changes:
+
+    - For undirected graphs instead of digraphs
+    - Does not compute graph layouts
+    """
+    return t.cast(
+        t.Dict[str, t.Any],
+        nx.readwrite.json_graph.cytoscape_data(graph),
+    )

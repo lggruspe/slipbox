@@ -11,6 +11,9 @@ from .app import App
 from .graph import (
     create_graph,
     create_graph_data,
+    create_plain_graph_data,
+    create_reference_graph,
+    create_tag_graph,
     get_cluster,
     get_components,
     get_note_titles,
@@ -127,6 +130,19 @@ class CytoscapeDataGenerator:
         (out/"graph").mkdir()
         layout = "dot" if self.graph.order() < 100 else "fdp"
         self.write(out/"graph"/"data.json", self.graph, layout)
+
+        (out/"graph"/"refs.json").write_text(
+            json.dumps(
+                create_plain_graph_data(create_reference_graph(self.con)),
+            ),
+            encoding="utf-8",
+        )
+        (out/"graph"/"tags.json").write_text(
+            json.dumps(
+                create_plain_graph_data(create_tag_graph(self.con)),
+            ),
+            encoding="utf-8",
+        )
 
         (out/"graph"/"tag").mkdir()
         for tag, in self.con.execute("SELECT DISTINCT tag FROM Tags"):
