@@ -69,6 +69,11 @@ def create_tag_graph(con: Connection) -> nx.Graph:
 
     # Build graph.
     graph = nx.Graph()
+
+    # Add all tags, including isolated ones.
+    graph.add_nodes_from(tag for tag, in con.execute("SELECT tag FROM Tags"))
+
+    # Add edges.
     for (tag_a, tag_b), count in counter.most_common():
         graph.add_edge(tag_a, tag_b, weight=count)
     return graph
@@ -112,17 +117,16 @@ def create_reference_graph(con: Connection) -> nx.Graph:
         ref_a, ref_b = min(ref_a, ref_b), max(ref_a, ref_b)
         counter[(ref_a, ref_b)] += count
 
-    # Get titles.
-    titles = {}
-    query = "SELECT key, html FROM Bibliography"
-    for ref, title in con.execute(query):
-        titles[ref] = title
-
     # Build graph.
     graph = nx.Graph()
+
+    # Add all references, including isolated ones.
+    query = "SELECT key, html FROM Bibliography"
+    for ref, title in con.execute(query):
+        graph.add_node(ref, title=title)
+
+    # Add edges.
     for (ref_a, ref_b), count in counter.most_common():
-        graph.add_node(ref_a, title=titles[ref_a])
-        graph.add_node(ref_b, title=titles[ref_b])
         graph.add_edge(ref_a, ref_b, weight=count)
     return graph
 

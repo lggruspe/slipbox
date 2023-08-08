@@ -109,8 +109,10 @@ def test_create_tag_graph_links_between_notes_with_same_tags(app: App) -> None:
 """, encoding="utf-8")
     scan(app)
     graph = create_tag_graph(app.database)
-    assert not graph.nodes
     assert not graph.edges
+
+    assert len(graph.nodes) == 1
+    assert "#foo" in graph.nodes
 
 
 def test_create_tag_graph_notes_multiple_tags(app: App) -> None:
@@ -127,6 +129,27 @@ def test_create_tag_graph_notes_multiple_tags(app: App) -> None:
     assert graph.edges[("#foo", "#bar")]["weight"] == 1
     assert graph.edges[("#bar", "#baz")]["weight"] == 1
     assert graph.edges[("#foo", "#baz")]["weight"] == 1
+
+
+def test_create_tag_graph_isolated_tags(app: App) -> None:
+    """Tag graph should contain nodes for isolated tags."""
+    Path("test.md").write_text("""
+# 0 Foo
+
+#foo
+
+# 1 Bar
+
+#bar
+""", encoding="utf-8")
+    scan(app)
+    graph = create_tag_graph(app.database)
+
+    assert not graph.edges
+    assert len(graph.nodes) == 2
+
+    assert "#foo" in graph.nodes
+    assert "#bar" in graph.nodes
 
 
 def test_create_reference_graph_no_citations(bib_app: App) -> None:
@@ -210,8 +233,10 @@ def test_create_reference_graph_links_between_notes_with_same_citations(
 
     scan(app)
     graph = create_reference_graph(app.database)
-    assert not graph.nodes
     assert not graph.edges
+
+    assert len(graph.nodes) == 1
+    assert "ref-foo2020" in graph.nodes
 
 
 def test_create_reference_graph_notes_multiple_citations(bib_app: App) -> None:
@@ -233,3 +258,25 @@ def test_create_reference_graph_notes_multiple_citations(bib_app: App) -> None:
     weight = edge["weight"]
 
     assert weight == 1
+
+
+def test_create_reference_graph_isolated_references(bib_app: App) -> None:
+    """Reference graph should contain nodes for isolated references."""
+    app = bib_app
+    Path("test.md").write_text("""
+# 0 Foo
+
+[@foo2020]
+
+# 1 Bar
+
+[@bar2020]
+""", encoding="utf-8")
+    scan(app)
+    graph = create_reference_graph(app.database)
+
+    assert not graph.edges
+    assert len(graph.nodes) == 2
+
+    assert "ref-foo2020" in graph.nodes
+    assert "ref-bar2020" in graph.nodes
