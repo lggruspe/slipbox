@@ -1,11 +1,14 @@
 import cytoscape from "cytoscape";
 import { Core, EventHandler } from "cytoscape";
+import fcose from "cytoscape-fcose";
 
 import { getRoute } from "./route";
 import { GraphSchema } from "./schema.js";
 import { fetchJson } from "./utils.js";
 
 import SlDialog from "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
+
+cytoscape.use(fcose);
 
 declare const MathJax: {
   typeset: (divs: [HTMLDivElement]) => void;
@@ -15,6 +18,15 @@ declare global {
   interface Window {
     cy: Core | undefined;
   }
+}
+
+function createLayout(): cytoscapeFcose.FcoseLayoutOptions {
+  return {
+    name: "fcose",
+    animate: true,
+    fit: true,
+    nodeDimensionsIncludeLabels: true,
+  };
 }
 
 // Returns graph dialog and rename hook for renaming label.
@@ -71,9 +83,7 @@ function createCytoscape(
         },
       },
     ],
-    layout: {
-      name: "preset",
-    },
+    layout: createLayout(),
     ...data,
   });
 
