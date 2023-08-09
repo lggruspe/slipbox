@@ -8,7 +8,7 @@ describe("Router", () => {
   describe("with no callbacks", () => {
     it("should run just fine", () => {
       const router = new Router();
-      router.visit({ type: "home" });
+      router.visit({ type: "home", hash: "" });
     });
   });
 
@@ -22,7 +22,7 @@ describe("Router", () => {
       });
 
       assert.ok(!ok);
-      router.visit({ type: "home" });
+      router.visit({ type: "home", hash: "" });
       assert.ok(ok);
     });
   });
@@ -37,7 +37,7 @@ describe("Router", () => {
       });
 
       assert.ok(!ok);
-      router.visit({ type: "home" });
+      router.visit({ type: "home", hash: "" });
       assert.ok(ok);
     });
 
@@ -49,7 +49,7 @@ describe("Router", () => {
         ok = false;
       });
 
-      router.visit({ type: "tag-list" });
+      router.visit({ type: "tag-list", hash: "" });
       assert.ok(ok);
     });
   });
@@ -64,7 +64,7 @@ describe("Router", () => {
       });
 
       assert.ok(!ok);
-      router.visit({ type: "tag-list" });
+      router.visit({ type: "tag-list", hash: "" });
       assert.ok(ok);
     });
 
@@ -76,7 +76,7 @@ describe("Router", () => {
         ok = false;
       });
 
-      router.visit({ type: "home" });
+      router.visit({ type: "home", hash: "" });
       assert.ok(ok);
     });
   });
@@ -90,7 +90,7 @@ describe("Router", () => {
       router.on("home", () => result.push(1));
 
       assert.deepEqual(result, []);
-      router.visit({ type: "home" });
+      router.visit({ type: "home", hash: "" });
       assert.deepEqual(result, [1, 2]);
     });
 
@@ -102,7 +102,7 @@ describe("Router", () => {
       router.on("home", () => result.push(2));
 
       assert.deepEqual(result, []);
-      router.visit({ type: "home" });
+      router.visit({ type: "home", hash: "" });
       assert.deepEqual(result, [1, 2]);
     });
   });

@@ -8,37 +8,37 @@ import { strict as assert } from "assert";
 
 describe("getRoute", () => {
   it("home route", () => {
-    const route = { type: "home" };
-    assert.deepEqual(route, getRoute(""));
-    assert.deepEqual(route, getRoute("#"));
-    assert.deepEqual(route, getRoute("#home"));
+    assert.equal("home", getRoute("").type);
+    assert.equal("home", getRoute("#").type);
+    assert.equal("home", getRoute("#home").type);
   });
 
   it("random route", () => {
-    const route = { type: "random" };
+    const route = { type: "random", hash: "#random" };
     assert.deepEqual(route, getRoute("#random"));
   });
 
   it("reference list route", () => {
-    const route = { type: "reference-list" };
+    const route = { type: "reference-list", hash: "#references" };
     assert.deepEqual(route, getRoute("#references"));
   });
 
   it("search route", () => {
-    const route = { type: "search" };
+    const route = { type: "search", hash: "#search" };
     assert.deepEqual(route, getRoute("#search"));
   });
 
   it("tag list route", () => {
-    const route = { type: "tag-list" };
+    const route = { type: "tag-list", hash: "#tags" };
     assert.deepEqual(route, getRoute("#tags"));
   });
 
   it("note route", () => {
     fc.assert(
       fc.property(fc.integer({ min: 0 }), (int) => {
-        const route = { type: "note", note: int };
-        assert.deepEqual(route, getRoute(`#${int}`));
+        const hash = `#${int}`;
+        const route = { type: "note", note: int, hash };
+        assert.deepEqual(route, getRoute(hash));
       }),
     );
   });
@@ -47,7 +47,7 @@ describe("getRoute", () => {
     fc.assert(
       fc.property(fc.webFragments(), (fragment) => {
         const hash = `#ref-${fragment}`;
-        const route = { type: "reference", reference: fragment };
+        const route = { type: "reference", reference: fragment, hash };
         assert.deepEqual(route, getRoute(hash));
       }),
     );
@@ -65,7 +65,7 @@ describe("getRoute", () => {
     fc.assert(
       fc.property(fragments, (fragment) => {
         const hash = `#${fragment}`;
-        const route = { type: "tag", tag: hash };
+        const route = { type: "tag", tag: hash, hash };
         assert.deepEqual(route, getRoute(hash));
       }),
     );

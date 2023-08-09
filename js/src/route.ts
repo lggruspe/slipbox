@@ -3,6 +3,7 @@
  */
 type HomeRoute = {
   type: "home";
+  hash: string;
 };
 
 /**
@@ -12,6 +13,7 @@ type NoteRoute = {
   type: "note";
   // TODO or should this be a string?
   note: number;
+  hash: string;
 };
 
 /*
@@ -19,6 +21,7 @@ type NoteRoute = {
  */
 type RandomRoute = {
   type: "random";
+  hash: string;
 };
 
 /**
@@ -27,6 +30,7 @@ type RandomRoute = {
 type ReferenceRoute = {
   type: "reference";
   reference: string;
+  hash: string;
 };
 
 /**
@@ -34,6 +38,7 @@ type ReferenceRoute = {
  */
 type ReferenceListRoute = {
   type: "reference-list";
+  hash: string;
 };
 
 /**
@@ -41,6 +46,7 @@ type ReferenceListRoute = {
  */
 type SearchRoute = {
   type: "search";
+  hash: string;
 };
 
 /**
@@ -49,6 +55,7 @@ type SearchRoute = {
 type TagRoute = {
   type: "tag";
   tag: string;
+  hash: string;
 };
 
 /**
@@ -56,6 +63,7 @@ type TagRoute = {
  */
 type TagListRoute = {
   type: "tag-list";
+  hash: string;
 };
 
 /**
@@ -79,15 +87,15 @@ export function getRoute(hash: string): Route {
     case "":
     case "#":
     case "#home":
-      return { type: "home" };
+      return { type: "home", hash };
     case "#random":
-      return { type: "random" };
+      return { type: "random", hash };
     case "#references":
-      return { type: "reference-list" };
+      return { type: "reference-list", hash };
     case "#search":
-      return { type: "search" };
+      return { type: "search", hash };
     case "#tags":
-      return { type: "tag-list" };
+      return { type: "tag-list", hash };
     default:
       break;
   }
@@ -97,6 +105,7 @@ export function getRoute(hash: string): Route {
     return {
       type: "note",
       note: Number(hash.slice(1)),
+      hash,
       // TODO check if note exists
     };
   }
@@ -106,6 +115,7 @@ export function getRoute(hash: string): Route {
     return {
       type: "reference",
       reference: hash.slice(5),
+      hash,
       // TODO check if reference exists
     };
   }
@@ -114,6 +124,7 @@ export function getRoute(hash: string): Route {
   return {
     type: "tag",
     tag: hash,
+    hash,
     // TODO check if tag exists
   };
 }
