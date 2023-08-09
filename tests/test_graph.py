@@ -72,7 +72,7 @@ def test_create_tag_graph_links_between_notes_with_different_tags(
 
     assert len(graph.edges) == 1
 
-    key = ("#bar", "#foo")
+    key = ("bar", "foo")
     edge = graph.edges[key]
     weight = edge["weight"]
 
@@ -112,7 +112,7 @@ def test_create_tag_graph_links_between_notes_with_same_tags(app: App) -> None:
     assert not graph.edges
 
     assert len(graph.nodes) == 1
-    assert "#foo" in graph.nodes
+    assert "foo" in graph.nodes
 
 
 def test_create_tag_graph_notes_multiple_tags(app: App) -> None:
@@ -126,9 +126,9 @@ def test_create_tag_graph_notes_multiple_tags(app: App) -> None:
     graph = create_tag_graph(app.database)
 
     assert len(graph.edges) == 3
-    assert graph.edges[("#foo", "#bar")]["weight"] == 1
-    assert graph.edges[("#bar", "#baz")]["weight"] == 1
-    assert graph.edges[("#foo", "#baz")]["weight"] == 1
+    assert graph.edges[("foo", "bar")]["weight"] == 1
+    assert graph.edges[("bar", "baz")]["weight"] == 1
+    assert graph.edges[("foo", "baz")]["weight"] == 1
 
 
 def test_create_tag_graph_isolated_tags(app: App) -> None:
@@ -148,8 +148,8 @@ def test_create_tag_graph_isolated_tags(app: App) -> None:
     assert not graph.edges
     assert len(graph.nodes) == 2
 
-    assert "#foo" in graph.nodes
-    assert "#bar" in graph.nodes
+    assert "foo" in graph.nodes
+    assert "bar" in graph.nodes
 
 
 def test_create_reference_graph_no_citations(bib_app: App) -> None:
@@ -184,15 +184,15 @@ def test_create_reference_graph_links_between_notes_with_different_citations(
 
     assert len(graph.edges) == 1
 
-    key = ("ref-foo2020", "ref-bar2020")
+    key = ("foo2020", "bar2020")
     edge = graph.edges[key]
     weight = edge["weight"]
 
     assert weight == 1
 
     # Let's also check node attributes while we're at it.
-    assert "Foo" in graph.nodes["ref-foo2020"]["title"]
-    assert "Bar" in graph.nodes["ref-bar2020"]["title"]
+    assert "Foo" in graph.nodes["foo2020"]["title"]
+    assert "Bar" in graph.nodes["bar2020"]["title"]
 
 
 def test_create_reference_graph_links_between_notes_without_references(
@@ -236,7 +236,7 @@ def test_create_reference_graph_links_between_notes_with_same_citations(
     assert not graph.edges
 
     assert len(graph.nodes) == 1
-    assert "ref-foo2020" in graph.nodes
+    assert "foo2020" in graph.nodes
 
 
 def test_create_reference_graph_notes_multiple_citations(bib_app: App) -> None:
@@ -253,7 +253,7 @@ def test_create_reference_graph_notes_multiple_citations(bib_app: App) -> None:
 
     assert len(graph.edges) == 1
 
-    key = ("ref-foo2020", "ref-bar2020")
+    key = ("foo2020", "bar2020")
     edge = graph.edges[key]
     weight = edge["weight"]
 
@@ -278,5 +278,5 @@ def test_create_reference_graph_isolated_references(bib_app: App) -> None:
     assert not graph.edges
     assert len(graph.nodes) == 2
 
-    assert "ref-foo2020" in graph.nodes
-    assert "ref-bar2020" in graph.nodes
+    assert "foo2020" in graph.nodes
+    assert "bar2020" in graph.nodes

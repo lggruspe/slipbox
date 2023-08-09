@@ -9,8 +9,8 @@ import typing as t
 
 from .app import App
 from .graph import (
-    create_graph,
     create_graph_data,
+    create_note_graph,
     create_plain_graph_data,
     create_reference_graph,
     create_tag_graph,
@@ -116,7 +116,7 @@ class CytoscapeDataGenerator:
     """Generate JSONs for cytoscape.js."""
     def __init__(self, con: Connection):
         self.con = con
-        self.graph = create_graph(con)
+        self.graph = create_note_graph(con)
 
         self.titles = dict(get_note_titles(self.con))
 

@@ -11,13 +11,13 @@ from pyquery import PyQuery     # type: ignore
 from .serializer import serialize
 
 
-def create_graph(con: Connection) -> nx.DiGraph:
+def create_note_graph(con: Connection) -> nx.DiGraph:
     """Construct note graph from slipbox data."""
     graph = nx.DiGraph()
 
     sql = "SELECT id, filename FROM Notes"
     for id_, filename in con.execute(sql):
-        graph.add_node(id_, filename=filename, tags=[])
+        graph.add_node(id_, filename=filename, tags=[], path=str(id_))
 
     sql = "SELECT tag, id FROM Tags"
     for tag, id_ in con.execute(sql):
@@ -71,11 +71,19 @@ def create_tag_graph(con: Connection) -> nx.Graph:
     graph = nx.Graph()
 
     # Add all tags, including isolated ones.
-    graph.add_nodes_from(tag for tag, in con.execute("SELECT tag FROM Tags"))
+    for tag, in con.execute("SELECT tag FROM Tags"):
+        # Strip prefix "#" from tags.
+        tag = tag[1:]
+        graph.add_node(
+            tag,
+            title=f"<h1>#{tag}</h1>",
+            path=f"tags/{tag}",
+        )
 
     # Add edges.
     for (tag_a, tag_b), count in counter.most_common():
-        graph.add_edge(tag_a, tag_b, weight=count)
+        # Strip prefix "#" from tags.
+        graph.add_edge(tag_a[1:], tag_b[1:], weight=count)
     return graph
 
 
@@ -123,11 +131,14 @@ def create_reference_graph(con: Connection) -> nx.Graph:
     # Add all references, including isolated ones.
     query = "SELECT key, html FROM Bibliography"
     for ref, title in con.execute(query):
-        graph.add_node(ref, title=title)
+        # Strip "ref-" prefix.
+        ref = ref[4:]
+        graph.add_node(ref, title=title, path=f"ref-{ref}")
 
     # Add edges.
     for (ref_a, ref_b), count in counter.most_common():
-        graph.add_edge(ref_a, ref_b, weight=count)
+        # Strip "ref-" prefix.
+        graph.add_edge(ref_a[4:], ref_b[4:], weight=count)
     return graph
 
 

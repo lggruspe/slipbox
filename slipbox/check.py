@@ -13,7 +13,7 @@ from .errors import (
     MissingCitationsSchema,
     Note,
 )
-from .graph import create_graph, find_cycles
+from .graph import create_note_graph, find_cycles
 
 
 def check_empty_links(app: App) -> t.List[Note]:
@@ -51,7 +51,7 @@ def check_graph_cycles(app: App) -> t.List[Note]:
     Returns list of notes in the cycle.
     """
     cycle = []
-    edges = find_cycles(create_graph(app.database))
+    edges = find_cycles(create_note_graph(app.database))
 
     query = "SELECT id, title, filename FROM Notes WHERE id = ?"
 
