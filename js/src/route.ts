@@ -67,6 +67,14 @@ type TagListRoute = {
 };
 
 /**
+ * Unknown pages.
+ */
+type UnknownRoute = {
+  type: "unknown";
+  hash: string;
+};
+
+/**
  * A route represents what kind of category a page belongs to.
  */
 export type Route =
@@ -77,7 +85,8 @@ export type Route =
   | ReferenceListRoute
   | SearchRoute
   | TagRoute
-  | TagListRoute;
+  | TagListRoute
+  | UnknownRoute;
 
 /**
  * Returns route for the given URL fragment hash.
@@ -121,10 +130,14 @@ export function getRoute(hash: string): Route {
   }
 
   // Tag route.
-  return {
-    type: "tag",
-    tag: hash,
-    hash,
-    // TODO check if tag exists
-  };
+  if (hash.startsWith("#tags/")) {
+    return {
+      type: "tag",
+      tag: hash.slice(6),
+      hash,
+      // TODO check if tag exists
+    };
+  }
+
+  return { type: "unknown", hash };
 }

@@ -64,10 +64,16 @@ describe("getRoute", () => {
 
     fc.assert(
       fc.property(fragments, (fragment) => {
-        const hash = `#${fragment}`;
-        const route = { type: "tag", tag: hash, hash };
+        const hash = `#tags/${fragment}`;
+        const route = { type: "tag", tag: fragment, hash };
         assert.deepEqual(route, getRoute(hash));
       }),
     );
+  });
+
+  it("unknown route", () => {
+    assert.equal("unknown", getRoute("#1a").type);
+    assert.equal("unknown", getRoute("##1").type);
+    assert.equal("unknown", getRoute("#test").type);
   });
 });
