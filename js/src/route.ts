@@ -61,7 +61,7 @@ type TagListRoute = {
 /**
  * A route represents what kind of category a page belongs to.
  */
-type Route =
+export type Route =
   | HomeRoute
   | NoteRoute
   | RandomRoute
