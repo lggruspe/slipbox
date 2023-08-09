@@ -1,6 +1,7 @@
 import cytoscape from "cytoscape";
 import { Core, EventHandler } from "cytoscape";
 
+import { getRoute } from "./route";
 import { GraphSchema } from "./schema.js";
 import { fetchJson } from "./utils.js";
 
@@ -17,7 +18,10 @@ declare global {
 }
 
 // Returns graph dialog and rename hook for renaming label.
-function createGraphDialog(): [SlDialog, (title: string, id: number) => void] {
+function createGraphDialog(): [
+  SlDialog,
+  (title: string, path: string) => void,
+] {
   const dialog = document.createElement("sl-dialog");
   dialog.style.setProperty("--width", "100%");
   dialog.style.setProperty("--body-spacing", "0");
@@ -29,8 +33,8 @@ function createGraphDialog(): [SlDialog, (title: string, id: number) => void] {
     `;
 
   let label = dialog.querySelector("span") as HTMLSpanElement;
-  const rename = (title: string, id: number) => {
-    const replacement = createDialogLabel(title, id, () => dialog.hide());
+  const rename = (title: string, path: string) => {
+    const replacement = createDialogLabel(title, path, () => dialog.hide());
     label.replaceWith(replacement);
     label = replacement;
   };
@@ -85,22 +89,47 @@ function createCytoscape(
   return cy;
 }
 
-function getGraphDataUrl(): string {
-  const hash = window.location.hash.slice(1);
-  if (!hash) return "graph/data.json";
-  if (hash.startsWith("tags/")) return `graph/tag/${hash.slice(5)}.json`;
-  if (Number.isInteger(Number(hash))) return `graph/note/${hash}.json`;
-  return "graph/data.json";
+/**
+ * Returns path to graph JSON for the current page.
+ */
+function getGraphDataURL(): string {
+  const route = getRoute(window.location.hash);
+  switch (route.type) {
+    case "note":
+      return `graph/note/${route.note}.json`;
+
+    case "reference":
+      // TODO show graph of notes that cite reference
+      return "graph/data.json";
+
+    case "reference-list":
+      return "graph/refs.json";
+
+    case "tag":
+      return `graph/tag/${route.tag}.json`;
+
+    case "tag-list":
+      return "graph/tags.json";
+
+    case "home":
+    case "random":
+    case "search":
+    case "unknown":
+    default:
+      // TODO maybe disable graph button instead?
+      // TODO rename data.json to notes.json
+      return "graph/data.json";
+  }
 }
 
 function createDialogLabel(
   title: string,
-  id: number,
+  path: string,
   callback?: () => void,
 ): HTMLSpanElement {
   const span = document.createElement("span");
   span.slot = "label";
-  span.innerHTML = `${title} [<a href="#${id}">${id}</a>]`;
+  span.innerHTML = `<a href="#${path}">${title}</a>`;
 
   if (callback) {
     const a = span.querySelector("a") as HTMLAnchorElement;
@@ -109,7 +138,7 @@ function createDialogLabel(
   return span;
 }
 
-function initGraphButton(button: HTMLButtonElement) {
+export function initGraphButton(button: HTMLButtonElement) {
   const [dialog, rename] = createGraphDialog();
   button.insertAdjacentElement("afterend", dialog);
   button.addEventListener("click", async () => {
@@ -118,10 +147,10 @@ function initGraphButton(button: HTMLButtonElement) {
     const container = dialog.querySelector("div") as HTMLDivElement;
     const cy = createCytoscape(
       container,
-      await fetchJson<GraphSchema>(getGraphDataUrl()),
+      await fetchJson<GraphSchema>(getGraphDataURL()),
       (event) => {
-        const { title, id } = event.target.data();
-        rename(title, id);
+        const { title, path } = event.target.data();
+        rename(title, path);
       },
     );
 
@@ -142,5 +171,3 @@ function initGraphButton(button: HTMLButtonElement) {
     window.cy = cy as Core; // expose cy
   });
 }
-
-export { initGraphButton };
