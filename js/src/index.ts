@@ -1,7 +1,7 @@
 import cytoscape from "cytoscape";
 
 import { initGraphButton } from "./graph.js";
-import { initRouter } from "./router.js";
+import { globalRouter } from "./router";
 import { GraphSchema } from "./schema.js";
 import { initShuffleButton } from "./shuffle.js";
 import { fetchJson } from "./utils.js";
@@ -17,5 +17,16 @@ window.addEventListener("DOMContentLoaded", async () => {
   initGraphButton(graphBtn as HTMLButtonElement);
   initShuffleButton(cytoscape({ headless: true, ...(await data) }));
 });
+
+function initRouter() {
+  globalRouter.on("home", (newRoute) => {
+    if (newRoute.hash !== "#home") {
+      window.location.replace("#home");
+    }
+  });
+
+  globalRouter.on([], () => window.scrollTo(0, 0));
+  globalRouter.register();
+}
 
 initRouter();

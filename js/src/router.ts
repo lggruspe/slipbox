@@ -1,43 +1,84 @@
-export type RouterCallback = (oldHash?: string) => void;
+import { getRoute, Route } from "./route";
 
-const routes: Array<[string | RegExp, RouterCallback]> = [];
+/**
+ * Callback function for route changes.
+ */
+export type RouteCallback = (
+  newRoute: Route,
+  oldRoute: Route | undefined,
+) => void;
 
-function resolveRoute(hash: string): RouterCallback {
-  const callbacks: RouterCallback[] = [];
+/*
+ * An object that runs callbacks associated with various pages.
+ */
+export class Router {
+  /**
+   * Callbacks to run on every route.
+   */
+  private afters: RouteCallback[] = [];
 
-  for (const [route, callback] of routes) {
-    const ok = route instanceof RegExp ? route.test(hash) : route === hash;
-    if (ok) {
-      callbacks.push(callback);
+  /**
+   * Callbacks to run on specific routes.
+   */
+  private callbacks: Map<string, RouteCallback[]> = new Map();
+
+  /**
+   * The previous route.
+   * This only keeps track of route changes via `listen()`.
+   */
+  private previousRoute: Route | undefined = undefined;
+
+  /**
+   * Registers callback for the given routes.
+   * If the input list of routes is an empty array, registers the callback to
+   * run on every route.
+   */
+  on(routeType: string, callback: RouteCallback): void;
+  on(routeTypes: string[], callback: RouteCallback): void;
+  on(routes: string | string[], callback: RouteCallback) {
+    if (routes instanceof Array) {
+      if (routes.length === 0) {
+        this.afters.push(callback);
+        return;
+      }
+      for (const route of routes) {
+        this.on(route, callback);
+      }
+      return;
     }
-  }
-  return (oldHash?: string) => {
-    for (const callback of callbacks) {
-      callback(oldHash);
+
+    if (!this.callbacks.has(routes)) {
+      this.callbacks.set(routes, []);
     }
-  };
-}
+    const callbacks = this.callbacks.get(routes) as RouteCallback[];
+    callbacks.push(callback);
+  }
 
-function listen(event: Event): void {
-  const callback = resolveRoute(window.location.hash);
-  if (event instanceof HashChangeEvent) {
-    const url = new URL(event.oldURL);
-    callback(url.hash);
-  } else {
-    callback();
+  /**
+   * Runs callbacks associated with the given route.
+   */
+  visit(route: Route) {
+    const prev = this.previousRoute;
+    const callbacks = this.callbacks.get(route.type) || [];
+    callbacks.forEach((callback) => callback(route, prev));
+    this.afters.forEach((callback) => callback(route, prev));
+
+    this.previousRoute = route;
+  }
+
+  /**
+   * Registers event listeners.
+   */
+  register() {
+    const listen = () => this.visit(getRoute(window.location.hash));
+
+    // TODO What if DOMContentLoaded or hashchange has already fired?
+    window.addEventListener("DOMContentLoaded", listen);
+    window.addEventListener("hashchange", listen);
   }
 }
 
-export function on(hash: string | RegExp, callback: RouterCallback): void {
-  routes.push([hash, callback]);
-}
-
-export function initRouter() {
-  window.addEventListener("DOMContentLoaded", listen);
-  window.addEventListener("hashchange", listen);
-
-  const goHome = () => window.location.replace("#home");
-  on("", goHome);
-  on("#", goHome);
-  on(/.*/, () => window.scrollTo(0, 0));
-}
+/**
+ * Global router for convenience.
+ */
+export const globalRouter = new Router();

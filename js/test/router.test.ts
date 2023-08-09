@@ -1,6 +1,6 @@
-// Test src/router2.ts.
+// Test src/router.ts.
 
-import { Router } from "../src/router2";
+import { Router } from "../src/router";
 
 import { strict as assert } from "assert";
 

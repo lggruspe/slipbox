@@ -1,6 +1,6 @@
 import { Core, NodeCollection, NodeSingular } from "cytoscape";
 
-import * as router from "./router.js";
+import { globalRouter } from "./router";
 
 function randomChoice(choices: NodeCollection): NodeSingular | undefined {
   const index = Math.floor(Math.random() * choices.length);
@@ -21,8 +21,9 @@ function shuffle(cy: Core, hash: string): number {
 }
 
 export function initShuffleButton(cy: Core) {
-  router.on("#random", (oldHash?: string) => {
-    const next = shuffle(cy, oldHash || "");
+  globalRouter.on("random", (_, oldRoute) => {
+    const oldHash = oldRoute?.hash || "";
+    const next = shuffle(cy, oldHash);
     window.location.replace(`#${next}`);
   });
 }
