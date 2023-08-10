@@ -17,11 +17,21 @@ def create_note_graph(con: Connection) -> nx.DiGraph:
 
     sql = "SELECT id, filename FROM Notes"
     for id_, filename in con.execute(sql):
-        graph.add_node(id_, filename=filename, tags=[], path=str(id_))
+        graph.add_node(
+            id_,
+            filename=filename,
+            tags=[],
+            references=[],
+            path=str(id_),
+        )
 
     sql = "SELECT tag, id FROM Tags"
     for tag, id_ in con.execute(sql):
         graph.nodes[id_]["tags"].append(tag)
+
+    sql = "SELECT note, reference FROM Citations"
+    for id_, ref in con.execute(sql):
+        graph.nodes[id_]["references"].append(ref)
 
     sql = "SELECT src, dest, direction FROM ValidLinks"
     for src, dest, direction in con.execute(sql):
@@ -158,7 +168,18 @@ def concatenate(seqs: t.Iterable[t.Iterable[t.Any]]) -> t.List[t.Any]:
     return sum(map(list, seqs), [])
 
 
-def get_cluster(graph: nx.DiGraph, tag: str) -> nx.DiGraph:
+def get_reference_cluster(graph: nx.DiGraph, reference: str) -> nx.DiGraph:
+    """Get subgraph of nodes that cite the reference plus neighbors."""
+    cites = [
+        n for n, attrs in graph.nodes.items()
+        if reference in attrs.get("references")
+    ]
+    predecessors = concatenate(map(graph.predecessors, cites))
+    successors = concatenate(map(graph.successors, cites))
+    return graph.subgraph(cites + predecessors + successors)
+
+
+def get_tag_cluster(graph: nx.DiGraph, tag: str) -> nx.DiGraph:
     """Get subgraph with tag plus neighbors (preds and succs)."""
     tagged = [
         n for n, attrs in graph.nodes.items()

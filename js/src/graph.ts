@@ -236,8 +236,7 @@ function getGraphDataURL(): string {
       return `graph/note/${route.note}.json`;
 
     case "reference":
-      // TODO show graph of notes that cite reference
-      return "graph/notes.json";
+      return `graph/ref/${route.reference}.json`;
 
     case "reference-list":
       return "graph/refs.json";

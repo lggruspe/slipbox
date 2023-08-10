@@ -14,7 +14,8 @@ from .graph import (
     create_plain_graph_data,
     create_reference_graph,
     create_tag_graph,
-    get_cluster,
+    get_reference_cluster,
+    get_tag_cluster,
     get_components,
     get_note_titles,
 )
@@ -144,10 +145,15 @@ class CytoscapeDataGenerator:
             encoding="utf-8",
         )
 
+        (out/"graph"/"ref").mkdir()
+        for ref, in self.con.execute("SELECT key FROM Bibliography"):
+            path = out/"graph"/"ref"/f"{ref[4:]}.json"
+            self.write(path, get_reference_cluster(self.graph, ref), "dot")
+
         (out/"graph"/"tag").mkdir()
         for tag, in self.con.execute("SELECT DISTINCT tag FROM Tags"):
             path = out/"graph"/"tag"/f"{tag[1:]}.json"
-            self.write(path, get_cluster(self.graph, tag), "dot")
+            self.write(path, get_tag_cluster(self.graph, tag), "dot")
 
         (out/"graph"/"note").mkdir()
         for component, subgraph in get_components(self.graph).items():
