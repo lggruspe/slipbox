@@ -27,7 +27,7 @@ const layout: cytoscapeFcose.FcoseLayoutOptions = {
   animate: true,
   fit: true,
   nodeDimensionsIncludeLabels: true,
-  idealEdgeLength: 100,
+  idealEdgeLength: 150,
 };
 
 /**
@@ -39,32 +39,33 @@ const stylesheetCommons: cytoscape.Stylesheet[] = [
     selector: "node",
     style: {
       label: "data(title)",
-      "background-color": "gray",
+      "background-color": "darkgray",
       "text-wrap": "wrap",
       "text-max-width": "120",
+
+      // For performance optimization.
+      "min-zoomed-font-size": 10,
     },
   },
   {
     selector: "node.blur",
     style: {
-      "background-opacity": 0.5,
-      "text-opacity": 0.5,
+      color: "gray",
+      "background-color": "lightgray",
     },
   },
   {
     selector: "node.sharp",
     style: {
       "background-color": "cornflowerblue",
-      "background-opacity": 1,
-      "text-opacity": 1,
+      color: "black",
     },
   },
   {
     selector: "node:selected",
     style: {
       "background-color": "blue",
-      "background-opacity": 1,
-      "text-opacity": 1,
+      color: "black",
     },
   },
 
@@ -72,23 +73,21 @@ const stylesheetCommons: cytoscape.Stylesheet[] = [
   {
     selector: "edge",
     style: {
-      width: "3px",
+      width: "2px",
       "curve-style": "straight",
-      "line-color": "gray",
-      "line-opacity": 0.5,
+      "line-color": "darkgray",
     },
   },
   {
     selector: "edge.blur",
     style: {
-      "line-opacity": 0.2,
+      "line-color": "lightgray",
     },
   },
   {
     selector: "edge.sharp",
     style: {
       "line-color": "cornflowerblue",
-      "line-opacity": 0.8,
     },
   },
 
@@ -140,8 +139,14 @@ const stylesheetDirected: cytoscape.Stylesheet[] = [
     selector: "edge",
     style: {
       "arrow-scale": 2,
-      "target-arrow-color": "gray",
+      "target-arrow-color": "darkgray",
       "target-arrow-shape": "triangle",
+    },
+  },
+  {
+    selector: "edge.blur",
+    style: {
+      "target-arrow-color": "lightgray",
     },
   },
   {
