@@ -43,6 +43,9 @@ const stylesheetCommons: cytoscape.Stylesheet[] = [
       "text-wrap": "wrap",
       "text-max-width": "120",
 
+      // Because the default behavior always draws nodes on top of edges.
+      "z-index-compare": "manual",
+
       // For performance optimization.
       "min-zoomed-font-size": 10,
     },
@@ -76,6 +79,9 @@ const stylesheetCommons: cytoscape.Stylesheet[] = [
       width: "2px",
       "curve-style": "straight",
       "line-color": "darkgray",
+
+      // Because the default behavior always draws nodes on top of edges.
+      "z-index-compare": "manual",
     },
   },
   {
