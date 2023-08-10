@@ -129,7 +129,7 @@ class CytoscapeDataGenerator:
         """Generate JSONs for cytoscape.js in out/graph."""
         (out/"graph").mkdir()
         layout = "dot" if self.graph.order() < 100 else "fdp"
-        self.write(out/"graph"/"data.json", self.graph, layout)
+        self.write(out/"graph"/"notes.json", self.graph, layout)
 
         (out/"graph"/"refs.json").write_text(
             json.dumps(

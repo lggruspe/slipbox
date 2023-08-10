@@ -237,7 +237,7 @@ function getGraphDataURL(): string {
 
     case "reference":
       // TODO show graph of notes that cite reference
-      return "graph/data.json";
+      return "graph/notes.json";
 
     case "reference-list":
       return "graph/refs.json";
@@ -254,8 +254,7 @@ function getGraphDataURL(): string {
     case "unknown":
     default:
       // TODO maybe disable graph button instead?
-      // TODO rename data.json to notes.json
-      return "graph/data.json";
+      return "graph/notes.json";
   }
 }
 

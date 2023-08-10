@@ -8,7 +8,7 @@ import { fetchJson } from "./utils.js";
 
 import "./components.js";
 
-const data = fetchJson<GraphSchema>("graph/data.json");
+const data = fetchJson<GraphSchema>("graph/notes.json");
 
 window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("title-block-header")?.remove();
