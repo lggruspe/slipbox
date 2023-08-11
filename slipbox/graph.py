@@ -214,13 +214,12 @@ def get_note_titles(con: Connection) -> t.Iterable[t.Tuple[int, str]]:
 
 def compute_graph_layout(
     graph: nx.DiGraph,
-    layout: str = "fdp",
 ) -> t.Dict[int, t.Tuple[float, float]]:
     """Compute graph layout using graphviz without using cache.
 
     Expects graph without self-loops.
     """
-    positions = nx.drawing.nx_pydot.graphviz_layout(graph, prog=layout)
+    positions = nx.drawing.nx_pydot.graphviz_layout(graph, prog="fdp")
     return t.cast(t.Dict[int, t.Tuple[float, float]], positions)
 
 
@@ -260,7 +259,6 @@ def save_graph_layout(con: Connection, key: str, value: str) -> None:
 def get_graph_layout(
     con: Connection,
     graph: nx.DiGraph,
-    layout: str = "fdp",
 ) -> t.Dict[int, t.Tuple[float, float]]:
     """Get graph layout from LayoutCache or compute using graphviz.
 
@@ -271,16 +269,15 @@ def get_graph_layout(
     if cached is not None:
         return cached
 
-    result = compute_graph_layout(graph, layout)
+    result = compute_graph_layout(graph)
     save_graph_layout(con, serialized, json.dumps(result))
     return result
 
 
-def create_graph_data(
+def create_graph_data_with_layout(
     con: Connection,
     titles: t.Dict[int, str],
     graph: nx.DiGraph,
-    layout: str = "fdp",
 ) -> t.Dict[str, t.Any]:
     """Create cytoscape.js graph data from Graph.
 
@@ -291,7 +288,7 @@ def create_graph_data(
     """
     copy = without_self_loop(graph)
     data = nx.readwrite.json_graph.cytoscape_data(copy)
-    positions = get_graph_layout(con, copy, layout)
+    positions = get_graph_layout(con, copy)
 
     for node in data["elements"]["nodes"]:
         node_id = int(node["data"]["id"])
@@ -312,3 +309,18 @@ def create_plain_graph_data(graph: nx.Graph) -> t.Dict[str, t.Any]:
         t.Dict[str, t.Any],
         nx.readwrite.json_graph.cytoscape_data(graph),
     )
+
+
+def create_graph_data(
+    con: Connection,
+    titles: t.Dict[int, str],
+    graph: nx.Graph,
+) -> t.Dict[str, t.Any]:
+    """Convert graph to cytoscape JSON format.
+
+    Computes graph layout if the graph is large enough.
+    Accepts the same arguments as `create_graph_data_with_layout`.
+    """
+    if graph.order() <= 100:
+        return create_plain_graph_data(graph)
+    return create_graph_data_with_layout(con, titles, graph)
