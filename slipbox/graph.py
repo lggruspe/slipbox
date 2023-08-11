@@ -218,7 +218,19 @@ def compute_graph_layout(
 
     Expects graph without self-loops.
     """
+    # Delete HTML titles before sending to graphviz (pydot or graphviz breaks
+    # otherwise).
+    titles = {}
+    for node, attrs in graph.nodes.items():
+        titles[node] = attrs["title"]
+        del attrs["title"]
+
     positions = nx.drawing.nx_pydot.graphviz_layout(graph, prog="fdp")
+
+    # Put titles back.
+    for node, title in titles.items():
+        graph.nodes[node]["title"] = title
+
     return t.cast(t.Dict[int, t.Tuple[float, float]], positions)
 
 
