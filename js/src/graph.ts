@@ -3,6 +3,7 @@ import fcose from "cytoscape-fcose";
 
 import { getRoute } from "./route";
 import { GraphSchema } from "./schema.js";
+import { randomChoice } from "./shuffle";
 import { fetchJson } from "./utils.js";
 
 import SlDialog from "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
@@ -284,6 +285,35 @@ function createDialogLabel(
   return span;
 }
 
+/**
+ * Preselects root nodes in directed graphs and a random node in undirected
+ * graphs.
+ * These are intended to be used as starting points for reading.
+ */
+function preselect(cy: cytoscape.Core) {
+  const nodes = cy.nodes();
+  // TODO does @types/cytoscape have a bug?
+  // @ts-ignore
+  if (cy.options().directed) {
+    const roots = nodes.roots();
+    roots.select();
+    cy.center(roots);
+    return;
+  }
+
+  const choice = randomChoice(nodes);
+  if (choice == null) {
+    return;
+  }
+
+  choice.select();
+  cy.center(choice);
+  cy.zoom({
+    level: 1,
+    renderedPosition: choice.renderedPosition(),
+  });
+}
+
 export function initGraphButton(button: HTMLButtonElement) {
   const [dialog, rename] = createGraphDialog();
   const container = dialog.querySelector("div") as HTMLDivElement;
@@ -304,20 +334,7 @@ export function initGraphButton(button: HTMLButtonElement) {
       graph.directed || false,
     );
 
-    let id = window.location.hash;
-    if (id === "" || id === "#" || !Number.isInteger(Number(id.slice(1)))) {
-      const roots = cy.nodes().roots();
-      const index = Math.floor(Math.random() * roots.length);
-      id = `#${roots[index].data("id")}`;
-    }
-    const node = cy.$(id);
-    node.select();
-    cy.center(node);
-    cy.zoom({
-      level: 1,
-      renderedPosition: node.renderedPosition(),
-    });
-
+    preselect(cy);
     window.cy = cy as cytoscape.Core; // expose cy
   });
 }
