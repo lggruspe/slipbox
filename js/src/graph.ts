@@ -21,14 +21,23 @@ declare global {
 }
 
 /**
- * Cytoscape graph layout options.
+ * Options for fcose layout.
  */
-const layout: cytoscapeFcose.FcoseLayoutOptions = {
+const layoutFCOSE: cytoscapeFcose.FcoseLayoutOptions = {
   name: "fcose",
   animate: true,
   fit: true,
   nodeDimensionsIncludeLabels: true,
   idealEdgeLength: 150,
+};
+
+/**
+ * Options for pre-computed layout.
+ */
+const layoutPreset = {
+  name: "preset",
+  animate: false,
+  fit: true,
 };
 
 /**
@@ -169,6 +178,17 @@ const stylesheetDirected: cytoscape.Stylesheet[] = [
  */
 const stylesheetUndirected: cytoscape.Stylesheet[] = [...stylesheetCommons];
 
+/**
+ * Checks if the graph data contains pre-computed node positions.
+ */
+function hasPresetLayout(data: GraphSchema): boolean {
+  const node = data.elements.nodes[0];
+  if (node == null) {
+    return false;
+  }
+  return "position" in node;
+}
+
 // Returns graph dialog and rename hook for renaming label.
 function createGraphDialog(): [
   SlDialog,
@@ -213,7 +233,7 @@ function createCytoscape(
 ): cytoscape.Core {
   const cy = cytoscape({
     container,
-    layout,
+    layout: hasPresetLayout(data) ? layoutPreset : layoutFCOSE,
     style: directed ? stylesheetDirected : stylesheetUndirected,
     selectionType: "additive",
     ...data,
