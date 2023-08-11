@@ -290,14 +290,23 @@ function createDialogLabel(
  * graphs.
  * These are intended to be used as starting points for reading.
  */
-function preselect(cy: cytoscape.Core) {
+async function preselect(cy: cytoscape.Core) {
   const nodes = cy.nodes();
   // TODO does @types/cytoscape have a bug?
   // @ts-ignore
   if (cy.options().directed) {
     const roots = nodes.roots();
-    roots.select();
+
+    // It can be slow to select multiple nodes, so we'll do it asynchronously.
+    cy.startBatch();
+    // TODO does @types/cytoscape have a bug?
+    // @ts-ignore
+    for (const root of roots) {
+      root.select();
+      await undefined;
+    }
     cy.center(roots);
+    cy.endBatch();
     return;
   }
 
