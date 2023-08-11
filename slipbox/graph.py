@@ -300,8 +300,8 @@ def create_graph_data_with_layout(
     for node in data["elements"]["nodes"]:
         node_id = int(node["data"]["id"])
         x, y = positions[node_id]   # pylint: disable=invalid-name
-        node["position"] = {"x": 2 * x, "y": -2 * y}
-        # Scale y by -2 to flip the graph vertically so edges point downward.
+        node["position"] = {"x": 2.5 * x, "y": -2.5 * y}
+        # Scale y by -2.5 to flip the graph vertically so edges point downward.
     return t.cast(t.Dict[str, t.Any], data)
 
 
