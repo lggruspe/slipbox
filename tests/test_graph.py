@@ -6,7 +6,11 @@ import typing as t
 import pytest
 
 from slipbox.app import App
-from slipbox.graph import create_reference_graph, create_tag_graph
+from slipbox.graph import (
+    create_note_graph,
+    create_reference_graph,
+    create_tag_graph,
+)
 from slipbox.build import build
 
 
@@ -280,3 +284,32 @@ def test_create_reference_graph_isolated_references(bib_app: App) -> None:
 
     assert "foo2020" in graph.nodes
     assert "bar2020" in graph.nodes
+
+
+def test_create_note_graph_node_attributes(bib_app: App) -> None:
+    """Graph nodes should contain the following attributes.
+
+    - filename
+    - tags
+    - references
+    - title (HTML)
+    """
+    app = bib_app
+
+    Path("test.md").write_text("""
+# 0 Test
+
+Test. #test [@foo2020]
+""", encoding="utf-8")
+    scan(app)
+
+    graph = create_note_graph(app.database)
+
+    assert len(graph.nodes) == 1
+
+    note = graph.nodes[0]
+    assert note["filename"] == "test.md"
+    assert note["tags"] == ["#test"]
+    assert note["references"] == ["ref-foo2020"]
+    assert "Test" in note["title"]
+    assert "h1" in note["title"]

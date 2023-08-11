@@ -17,7 +17,6 @@ from .graph import (
     get_reference_cluster,
     get_tag_cluster,
     get_components,
-    get_note_titles,
 )
 from .page import generate_index
 from .utils import temporary_directory
@@ -119,8 +118,6 @@ class CytoscapeDataGenerator:
         self.con = con
         self.graph = create_note_graph(con)
 
-        self.titles = dict(get_note_titles(self.con))
-
     def write(self, path: Path, data: t.Dict[str, t.Any]) -> None:
         """Write graph data (in cytoscape format) to path."""
         path.write_text(json.dumps(data), encoding="utf-8")
@@ -128,7 +125,7 @@ class CytoscapeDataGenerator:
     def run(self, out: Path) -> None:
         """Generate JSONs for cytoscape.js in out/graph."""
         (out/"graph").mkdir()
-        data = create_graph_data(self.con, self.titles, self.graph)
+        data = create_graph_data(self.con, self.graph)
         self.write(out/"graph"/"notes.json", data)
 
         self.write(
@@ -144,19 +141,19 @@ class CytoscapeDataGenerator:
         for ref, in self.con.execute("SELECT key FROM Bibliography"):
             path = out/"graph"/"ref"/f"{ref[4:]}.json"
             subgraph = get_reference_cluster(self.graph, ref)
-            data = create_graph_data(self.con, self.titles, subgraph)
+            data = create_graph_data(self.con, subgraph)
             self.write(path, data)
 
         (out/"graph"/"tag").mkdir()
         for tag, in self.con.execute("SELECT DISTINCT tag FROM Tags"):
             path = out/"graph"/"tag"/f"{tag[1:]}.json"
             subgraph = get_tag_cluster(self.graph, tag)
-            data = create_graph_data(self.con, self.titles, subgraph)
+            data = create_graph_data(self.con, subgraph)
             self.write(path, data)
 
         (out/"graph"/"note").mkdir()
         for component, subgraph in get_components(self.graph).items():
-            data = create_graph_data(self.con, self.titles, subgraph)
+            data = create_graph_data(self.con, subgraph)
             for note_id in component:
                 self.write(out/"graph"/"note"/f"{note_id}.json", data)
         self.con.commit()

@@ -11,18 +11,26 @@ from pyquery import PyQuery     # type: ignore
 from .serializer import serialize
 
 
+def extract_title(html: str) -> str:
+    """Extract note title from its HTML."""
+    doc = PyQuery(html)
+    title = doc("h1:first").outer_html()
+    return t.cast(str, title)
+
+
 def create_note_graph(con: Connection) -> nx.DiGraph:
     """Construct note graph from slipbox data."""
     graph = nx.DiGraph()
 
-    sql = "SELECT id, filename FROM Notes"
-    for id_, filename in con.execute(sql):
+    sql = "SELECT id, filename, html FROM Notes"
+    for id_, filename, html in con.execute(sql):
         graph.add_node(
             id_,
             filename=filename,
             tags=[],
             references=[],
             path=str(id_),
+            title=extract_title(html),
         )
 
     sql = "SELECT tag, id FROM Tags"
@@ -203,15 +211,6 @@ def without_self_loop(graph: nx.DiGraph) -> nx.DiGraph:
     return copy
 
 
-def get_note_titles(con: Connection) -> t.Iterable[t.Tuple[int, str]]:
-    """Get note title HTMLs."""
-    sql = "SELECT id, html FROM Notes"
-    for id_, html in con.execute(sql):
-        doc = PyQuery(html)
-        title = doc("h1:first").outer_html()
-        yield (id_, title)
-
-
 def compute_graph_layout(
     graph: nx.DiGraph,
 ) -> t.Dict[int, t.Tuple[float, float]]:
@@ -276,15 +275,11 @@ def get_graph_layout(
 
 def create_graph_data_with_layout(
     con: Connection,
-    titles: t.Dict[int, str],
     graph: nx.DiGraph,
 ) -> t.Dict[str, t.Any]:
-    """Create cytoscape.js graph data from Graph.
+    """Create cytoscape.js graph data from graph and computes graph layout.
 
-    Note: removes self-loops.
-    Prepares the graph layout and unpads title HTML.
-
-    titles: dict of note IDs and title HTML fragments
+    Also removes self-loops in the graph.
     """
     copy = without_self_loop(graph)
     data = nx.readwrite.json_graph.cytoscape_data(copy)
@@ -292,7 +287,6 @@ def create_graph_data_with_layout(
 
     for node in data["elements"]["nodes"]:
         node_id = int(node["data"]["id"])
-        node["data"]["title"] = titles[node_id]
         x, y = positions[node_id]   # pylint: disable=invalid-name
         node["position"] = {"x": 2 * x, "y": -2 * y}
         # Scale y by -2 to flip the graph vertically so edges point downward.
@@ -311,11 +305,7 @@ def create_plain_graph_data(graph: nx.Graph) -> t.Dict[str, t.Any]:
     )
 
 
-def create_graph_data(
-    con: Connection,
-    titles: t.Dict[int, str],
-    graph: nx.Graph,
-) -> t.Dict[str, t.Any]:
+def create_graph_data(con: Connection, graph: nx.Graph) -> t.Dict[str, t.Any]:
     """Convert graph to cytoscape JSON format.
 
     Computes graph layout if the graph is large enough.
@@ -323,4 +313,4 @@ def create_graph_data(
     """
     if graph.order() <= 100:
         return create_plain_graph_data(graph)
-    return create_graph_data_with_layout(con, titles, graph)
+    return create_graph_data_with_layout(con, graph)
