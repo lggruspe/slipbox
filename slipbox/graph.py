@@ -56,7 +56,7 @@ def create_tag_graph(con: Connection) -> nx.Graph:
     Edges represent links between notes with different tags.
     """
     # Because `Counter` and `tuple` are not subscriptable in 3.8.
-    counter: "Counter[t.Tuple[str, str]]" = Counter()
+    counter: t.Counter[t.Tuple[str, str]] = Counter()
 
     # Count links between different notes with different tags.
     query = """
@@ -115,7 +115,7 @@ def create_reference_graph(con: Connection) -> nx.Graph:
     - There's a note that cites both references.
     """
     # Because `Counter` and `tuple` are not subscriptable in 3.8.
-    counter: "Counter[t.Tuple[str, str]]" = Counter()
+    counter: t.Counter[t.Tuple[str, str]] = Counter()
 
     # Count links between notes.
     query = """
