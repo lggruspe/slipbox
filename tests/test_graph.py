@@ -1,6 +1,7 @@
 """Test slipbox.graph."""
 
 from pathlib import Path
+import shutil
 import typing as t
 
 import pytest
@@ -49,6 +50,7 @@ def scan(app: App) -> None:
     build(app)
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_tag_graph_no_tags(app: App) -> None:
     """The graph should contain no edges."""
     scan(app)
@@ -57,6 +59,7 @@ def test_create_tag_graph_no_tags(app: App) -> None:
     assert not graph.edges
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_tag_graph_links_between_notes_with_different_tags(
     app: App,
 ) -> None:
@@ -83,6 +86,7 @@ def test_create_tag_graph_links_between_notes_with_different_tags(
     assert weight == 2
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_tag_graph_links_between_untagged_notes(app: App) -> None:
     """Edge weights should not count links between untagged notes."""
     Path("test.md").write_text("""
@@ -100,6 +104,7 @@ def test_create_tag_graph_links_between_untagged_notes(app: App) -> None:
     assert not graph.edges
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_tag_graph_links_between_notes_with_same_tags(app: App) -> None:
     """Edge weights should not count links between the same tags."""
     Path("test.md").write_text("""
@@ -119,6 +124,7 @@ def test_create_tag_graph_links_between_notes_with_same_tags(app: App) -> None:
     assert "foo" in graph.nodes
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_tag_graph_notes_multiple_tags(app: App) -> None:
     """Edge weights should count pairs of tags in the same note."""
     Path("test.md").write_text("""
@@ -135,6 +141,7 @@ def test_create_tag_graph_notes_multiple_tags(app: App) -> None:
     assert graph.edges[("foo", "baz")]["weight"] == 1
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_tag_graph_isolated_tags(app: App) -> None:
     """Tag graph should contain nodes for isolated tags."""
     Path("test.md").write_text("""
@@ -156,6 +163,7 @@ def test_create_tag_graph_isolated_tags(app: App) -> None:
     assert "bar" in graph.nodes
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_reference_graph_no_citations(bib_app: App) -> None:
     """The graph should be empty."""
     app = bib_app
@@ -166,6 +174,7 @@ def test_create_reference_graph_no_citations(bib_app: App) -> None:
     assert not graph.edges
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_reference_graph_links_between_notes_with_different_citations(
     bib_app: App,
 ) -> None:
@@ -199,6 +208,7 @@ def test_create_reference_graph_links_between_notes_with_different_citations(
     assert "Bar" in graph.nodes["bar2020"]["title"]
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_reference_graph_links_between_notes_without_references(
     bib_app: App,
 ) -> None:
@@ -220,6 +230,7 @@ def test_create_reference_graph_links_between_notes_without_references(
     assert not graph.edges
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_reference_graph_links_between_notes_with_same_citations(
     bib_app: App,
 ) -> None:
@@ -243,6 +254,7 @@ def test_create_reference_graph_links_between_notes_with_same_citations(
     assert "foo2020" in graph.nodes
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_reference_graph_notes_multiple_citations(bib_app: App) -> None:
     """Edge weights should count pairs of references cited by the same note."""
     app = bib_app
@@ -264,6 +276,7 @@ def test_create_reference_graph_notes_multiple_citations(bib_app: App) -> None:
     assert weight == 1
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_reference_graph_isolated_references(bib_app: App) -> None:
     """Reference graph should contain nodes for isolated references."""
     app = bib_app
@@ -286,6 +299,7 @@ def test_create_reference_graph_isolated_references(bib_app: App) -> None:
     assert "bar2020" in graph.nodes
 
 
+@pytest.mark.skipif(not shutil.which("pandoc"), reason="requires pandoc")
 def test_create_note_graph_node_attributes(bib_app: App) -> None:
     """Graph nodes should contain the following attributes.
 
