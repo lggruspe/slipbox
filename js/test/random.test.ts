@@ -1,6 +1,6 @@
-// Test src/shuffle.ts.
+// Test src/random.ts.
 
-import { randomChoice } from "../src/shuffle";
+import { randomChoice } from "../src/random";
 
 import fc from "fast-check";
 

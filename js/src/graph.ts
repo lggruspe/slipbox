@@ -1,9 +1,9 @@
 import cytoscape from "cytoscape";
 import fcose from "cytoscape-fcose";
 
+import { randomChoice } from "./random";
 import { getRoute } from "./route";
 import { GraphSchema } from "./schema.js";
-import { randomChoice } from "./shuffle";
 import { fetchJson } from "./utils.js";
 
 import SlDialog from "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
