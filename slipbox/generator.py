@@ -9,11 +9,14 @@ import typing as t
 
 from .app import App
 from .graph import (
-    create_graph,
     create_graph_data,
-    get_cluster,
+    create_note_graph,
+    create_plain_graph_data,
+    create_reference_graph,
+    create_tag_graph,
+    get_reference_cluster,
+    get_tag_cluster,
     get_components,
-    get_note_titles,
 )
 from .page import generate_index
 from .utils import temporary_directory
@@ -113,37 +116,46 @@ class CytoscapeDataGenerator:
     """Generate JSONs for cytoscape.js."""
     def __init__(self, con: Connection):
         self.con = con
-        self.graph = create_graph(con)
+        self.graph = create_note_graph(con)
 
-        self.titles = dict(get_note_titles(self.con))
-
-    def write(self, path: Path, graph: t.Any, layout: str = "fdp") -> None:
-        """Write graph JSON data to path."""
-        graph_data = create_graph_data(self.con, self.titles, graph, layout)
-        path.write_text(json.dumps(graph_data))
+    def write(self, path: Path, data: t.Dict[str, t.Any]) -> None:
+        """Write graph data (in cytoscape format) to path."""
+        path.write_text(json.dumps(data), encoding="utf-8")
 
     def run(self, out: Path) -> None:
         """Generate JSONs for cytoscape.js in out/graph."""
         (out/"graph").mkdir()
-        layout = "dot" if self.graph.order() < 100 else "fdp"
-        self.write(out/"graph"/"data.json", self.graph, layout)
+        data = create_graph_data(self.con, self.graph)
+        self.write(out/"graph"/"notes.json", data)
+
+        self.write(
+            out/"graph"/"refs.json",
+            create_plain_graph_data(create_reference_graph(self.con)),
+        )
+        self.write(
+            out/"graph"/"tags.json",
+            create_plain_graph_data(create_tag_graph(self.con)),
+        )
+
+        (out/"graph"/"ref").mkdir()
+        for ref, in self.con.execute("SELECT key FROM Bibliography"):
+            path = out/"graph"/"ref"/f"{ref[4:]}.json"
+            subgraph = get_reference_cluster(self.graph, ref)
+            data = create_graph_data(self.con, subgraph)
+            self.write(path, data)
 
         (out/"graph"/"tag").mkdir()
         for tag, in self.con.execute("SELECT DISTINCT tag FROM Tags"):
             path = out/"graph"/"tag"/f"{tag[1:]}.json"
-            self.write(path, get_cluster(self.graph, tag), "dot")
+            subgraph = get_tag_cluster(self.graph, tag)
+            data = create_graph_data(self.con, subgraph)
+            self.write(path, data)
 
         (out/"graph"/"note").mkdir()
         for component, subgraph in get_components(self.graph).items():
-            graph_data = create_graph_data(
-                self.con,
-                self.titles,
-                subgraph,
-                "dot",
-            )
+            data = create_graph_data(self.con, subgraph)
             for note_id in component:
-                path = out/"graph"/"note"/f"{note_id}.json"
-                path.write_text(json.dumps(graph_data))
+                self.write(out/"graph"/"note"/f"{note_id}.json", data)
         self.con.commit()
 
 

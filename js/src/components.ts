@@ -6,7 +6,7 @@ import "@shoelace-style/shoelace/dist/components/tooltip/tooltip.js";
 import "./index.css";
 
 import "./icons.js";
-import * as router from "./router.js";
+import { globalRouter } from "./router";
 import { createSearchSection } from "./search.js";
 
 type Icon = {
@@ -53,7 +53,7 @@ export class SearchSection extends HTMLElement {
     super();
     const [section, autoFocus] = createSearchSection();
     this.append(section);
-    router.on("#search", autoFocus);
+    globalRouter.on("search", autoFocus);
   }
 }
 
