@@ -1,7 +1,4 @@
-require "busted.runner" ()
-
 local csv = require "src.csv"
-
 
 describe("Writer", function()
   describe("write", function()

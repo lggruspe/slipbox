@@ -1,8 +1,8 @@
 -- Bundle filters into a single-file.
 
-local utils = require "scripts.utils"
-local run = utils.run
+require "scripts.path"
 
+local exec = require("scripts.utils").exec
 local lfs = require "lfs"
 
 local function bundle()
@@ -20,7 +20,7 @@ local function bundle()
    local command = "%s %s -s src/zk.lua -o build/filter.lua"
    local prog = "lua_modules/bin/amalg.lua"
    local args = table.concat(sources, " ")
-   run(command:format(prog, args))
+   exec(command:format(prog, args))
 end
 
 lfs.mkdir "build"

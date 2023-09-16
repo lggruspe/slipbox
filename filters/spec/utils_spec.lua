@@ -1,5 +1,3 @@
-require "busted.runner" ()
-
 local utils = require "src.utils"
 
 it("hashtag_prefix", function()

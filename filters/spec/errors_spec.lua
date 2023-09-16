@@ -1,5 +1,3 @@
-require "busted.runner" ()
-
 local errors = require "src.errors"
 
 describe("duplicate_note_id", function()

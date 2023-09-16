@@ -1,5 +1,3 @@
-require "busted.runner" ()
-
 local links = require "src.links"
 
 local function join(table, sep)

@@ -1,5 +1,3 @@
-require "busted.runner" ()
-
 local metadata = require "src.metadata"
 
 describe("parse", function()

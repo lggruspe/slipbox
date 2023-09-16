@@ -13,15 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: leafo/gh-actions-lua@v8.0.0
-    - uses: leafo/gh-actions-luarocks@v4.0.0
+    - uses: leafo/gh-actions-lua@v10.0.0
+    - uses: leafo/gh-actions-luarocks@v4.3.0
     - name: Set up lua
       run: |
-        luarocks install busted
-        luarocks install luacheck
-    - name: Lint with luacheck
+        cd filters; luarocks init; luarocks test --prepare
+    - name: Run tests and linters
       run: |
-        cd filters; luacheck src/*.lua --std max+busted
-    - name: Test with busted
-      run: |
-        cd filters; busted src -p '.*.test.lua'
+        cd filters; luarocks test

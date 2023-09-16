@@ -24,7 +24,7 @@ init-js:
 
 .PHONY:	init-lua
 init-lua:
-	cd filters; lua scripts/init.lua
+	cd filters; luarocks init; luarocks test --prepare
 
 .PHONY:	init-python
 init-python:
@@ -41,7 +41,7 @@ check-js:
 
 .PHONY:	check-lua
 check-lua:
-	cd filters; lua scripts/check.lua
+	cd filters; luarocks test
 
 .PHONY:	check-python
 check-python:	lint test
