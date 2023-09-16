@@ -17,7 +17,7 @@ jobs:
     - uses: leafo/gh-actions-luarocks@v4.3.0
     - name: Set up lua
       run: |
-        cd filters; luarocks init; luarocks test --prepare
+        cd filters; luarocks init
     - name: Run tests and linters
       run: |
         cd filters; luarocks test
